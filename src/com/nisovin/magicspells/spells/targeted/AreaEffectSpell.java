@@ -13,7 +13,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.MagicSpells;
-import com.nisovin.magicspells.Spell;
+import com.nisovin.magicspells.Subspell;
 import com.nisovin.magicspells.castmodifiers.ModifierSet;
 import com.nisovin.magicspells.events.SpellTargetEvent;
 import com.nisovin.magicspells.events.SpellTargetLocationEvent;
@@ -34,7 +34,7 @@ public class AreaEffectSpell extends TargetedSpell implements TargetedLocationSp
 	private int maxTargets;
 	private List<String> spellNames;
 	private boolean spellSourceInCenter;
-	private List<Spell> spells;
+	private List<Subspell> spells;
 	
 	private ModifierSet locationTargetModifiers;
 	private ModifierSet entityTargetModifiers;
@@ -64,13 +64,13 @@ public class AreaEffectSpell extends TargetedSpell implements TargetedLocationSp
 	public void initialize() {
 		super.initialize();
 		
-		spells = new ArrayList<Spell>();
+		spells = new ArrayList<Subspell>();
 		
 		if (spellNames != null && spellNames.size() > 0) {
 			for (String spellName : spellNames) {
-				Spell spell = MagicSpells.getSpellByInternalName(spellName);
-				if (spell != null) {
-					if (spell instanceof TargetedLocationSpell || spell instanceof TargetedEntitySpell || spell instanceof TargetedEntityFromLocationSpell) {
+				Subspell spell = new Subspell(spellName);
+				if (spell.process()) {
+					if (spell.getSpell() instanceof TargetedLocationSpell || spell.getSpell() instanceof TargetedEntitySpell || spell.getSpell() instanceof TargetedEntityFromLocationSpell) {
 						spells.add(spell);
 					} else {
 						MagicSpells.error("AreaEffect spell '" + name + "' attempted to use non-targeted spell '" + spellName + "'");
@@ -159,22 +159,22 @@ public class AreaEffectSpell extends TargetedSpell implements TargetedLocationSp
 							power = event.getPower();
 						}
 					}
-					for (Spell spell : spells) {
+					for (Subspell spell : spells) {
 						if (player != null) {
-							if (spellSourceInCenter && spell instanceof TargetedEntityFromLocationSpell) {
-								((TargetedEntityFromLocationSpell)spell).castAtEntityFromLocation(player, location, target, power);
-							} else if (spell instanceof TargetedEntitySpell) {
-								((TargetedEntitySpell)spell).castAtEntity(player, target, power);
-							} else if (spell instanceof TargetedLocationSpell) {
-								((TargetedLocationSpell)spell).castAtLocation(player, target.getLocation(), power);
+							if (spellSourceInCenter && spell.getSpell() instanceof TargetedEntityFromLocationSpell) {
+								spell.castAtEntityFromLocation(player, location, target, power);
+							} else if (spell.getSpell() instanceof TargetedEntitySpell) {
+								spell.castAtEntity(player, target, power);
+							} else if (spell.getSpell() instanceof TargetedLocationSpell) {
+								spell.castAtLocation(player, target.getLocation(), power);
 							}
 						} else {
-							if (spell instanceof TargetedEntityFromLocationSpell) {
-								((TargetedEntityFromLocationSpell)spell).castAtEntityFromLocation(location, target, power);
-							} else if (spell instanceof TargetedEntitySpell) {
-								((TargetedEntitySpell)spell).castAtEntity(target, power);
-							} else if (spell instanceof TargetedLocationSpell) {
-								((TargetedLocationSpell)spell).castAtLocation(target.getLocation(), power);
+							if (spell.getSpell() instanceof TargetedEntityFromLocationSpell) {
+								spell.castAtEntityFromLocation(player, location, target, power);
+							} else if (spell.getSpell() instanceof TargetedEntitySpell) {
+								spell.castAtEntity(player, target, power);
+							} else if (spell.getSpell() instanceof TargetedLocationSpell) {
+								spell.castAtLocation(player, target.getLocation(), power);
 							}
 						}
 					}
