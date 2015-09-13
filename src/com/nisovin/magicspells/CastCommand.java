@@ -165,6 +165,41 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 							sender.sendMessage(plugin.textColor + "ERROR: The file could not be downloaded.");
 						}
 					}
+				} else if (sender.isOp() && args[0].equals("update") && args.length == 3) {
+					//TODO update the specified file AND TEST THIS FEATURE
+					File file = new File(plugin.getDataFolder(), "update-" + args[1] + ".yml");
+					boolean downloaded = Util.downloadFile(args[2], file);
+					boolean abort = false;
+					if (downloaded) {
+						sender.sendMessage(plugin.textColor + "Update file successfully downloaded.");
+						// delete the existing file
+						File old = new File(plugin.getDataFolder(), args[1] + ".yml");
+						if (old.exists()) {
+							boolean deleteSuccess = old.delete();
+							if (deleteSuccess) {
+								sender.sendMessage(plugin.textColor + "Old file successfully deleted.");
+							} else {
+								sender.sendMessage(plugin.textColor + "Old file could not be deleted.");
+								sender.sendMessage(plugin.textColor + "Aborting update, please delete the update file: " + file.getName());
+								abort = true;
+							}
+						} else {
+							sender.sendMessage(plugin.textColor + "There was no old file to delete.");
+						}
+						
+						if (!abort) {
+							// rename the update to the original file's name
+							boolean renamingSuccess = old.renameTo(new File(plugin.getDataFolder(), args[1] + ".yml"));
+							if (renamingSuccess) {
+								sender.sendMessage(plugin.textColor + "Successfully renamed the update file to " + args[1] + ".yml");
+								sender.sendMessage(plugin.textColor + "You will need to do a /cast reload to load the update.");
+							} else {
+								sender.sendMessage(plugin.textColor + "Failed to rename the update file, update failed");
+							}
+						}
+					} else {
+						sender.sendMessage(plugin.textColor + "Update file failed to download.");
+					}
 				} else if (sender.isOp() && args[0].equals("saveskin") && args.length == 3) {
 					Player player = Bukkit.getPlayerExact(args[1]);
 					if (player != null) {
