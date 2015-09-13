@@ -16,6 +16,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import com.google.common.io.Files;
 import com.nisovin.magicspells.mana.ManaChangeReason;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
@@ -189,7 +190,7 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 						
 						if (!abort) {
 							// rename the update to the original file's name
-							boolean renamingSuccess = old.renameTo(new File(plugin.getDataFolder(), args[1] + ".yml"));
+							boolean renamingSuccess = file.renameTo(new File(plugin.getDataFolder(), args[1] + ".yml"));
 							if (renamingSuccess) {
 								sender.sendMessage(plugin.textColor + "Successfully renamed the update file to " + args[1] + ".yml");
 								sender.sendMessage(plugin.textColor + "You will need to do a /cast reload to load the update.");
