@@ -201,6 +201,8 @@ public class HomingMissileSpell extends TargetedSpell implements TargetedEntityS
 			// show particle
 			if (useParticles) {
 				MagicSpells.getVolatileCodeHandler().playParticleEffect(currentLocation, particleName, particleHorizontalSpread, particleVerticalSpread, particleSpeed, particleCount, renderDistance, 0F);
+			} else {
+				playSpellEffects(EffectPosition.SPECIAL, currentLocation);
 			}
 			
 			// play effects
