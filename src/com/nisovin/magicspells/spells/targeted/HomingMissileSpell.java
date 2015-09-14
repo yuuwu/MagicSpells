@@ -41,6 +41,8 @@ public class HomingMissileSpell extends TargetedSpell implements TargetedEntityS
 	
 	HomingMissileSpell thisSpell;
 	
+	boolean useParticles = false;
+	
 	public HomingMissileSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		thisSpell = this;
@@ -61,6 +63,7 @@ public class HomingMissileSpell extends TargetedSpell implements TargetedEntityS
 		yOffset = getConfigFloat("y-offset", 0.6F);
 		renderDistance = getConfigInt("render-distance", 32);
 		hitSpellName = getConfigString("spell", "");
+		useParticles = getConfigBoolean("use-particles", false);
 	}
 
 	@Override
@@ -196,7 +199,9 @@ public class HomingMissileSpell extends TargetedSpell implements TargetedEntityS
 			currentVelocity.normalize().multiply(velocityPerTick);
 			
 			// show particle
-			MagicSpells.getVolatileCodeHandler().playParticleEffect(currentLocation, particleName, particleHorizontalSpread, particleVerticalSpread, particleSpeed, particleCount, renderDistance, 0F);
+			if (useParticles) {
+				MagicSpells.getVolatileCodeHandler().playParticleEffect(currentLocation, particleName, particleHorizontalSpread, particleVerticalSpread, particleSpeed, particleCount, renderDistance, 0F);
+			}
 			
 			// play effects
 			if (specialEffectInterval > 0 && counter % specialEffectInterval == 0) {
