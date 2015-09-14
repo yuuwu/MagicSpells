@@ -24,6 +24,7 @@ public class HomingArrowSpell extends TargetedSpell implements TargetedEntitySpe
 	float velocity;
 	int specialEffectInterval = 0;
 	Class<? extends Projectile> projectileType = Snowball.class;
+	String projectileClassName = "org.bukkit.entity.Snowball";
 	
 	List<HomingArrow> arrows = new ArrayList<HomingArrow>();
 	int monitor = 0;
@@ -33,6 +34,19 @@ public class HomingArrowSpell extends TargetedSpell implements TargetedEntitySpe
 		
 		velocity = getConfigFloat("velocity", 1F);
 		specialEffectInterval = getConfigInt("special-effect-interval", 0);
+		projectileClassName = getConfigString("projectile-class", "org.bukkit.entity.Snowball");
+		try {
+			Class<? extends Projectile> configProjectileClass = MagicSpells.plugin.getPluginClassLoader().loadClass(projectileClassName).asSubclass(Projectile.class);
+			if (!configProjectileClass.equals(Projectile.class)) {
+				MagicSpells.error("projectile-class must be a subclass of Projectile");
+			} else {
+				projectileType = configProjectileClass;
+			}
+		} catch (ClassNotFoundException e) {
+			MagicSpells.error("Couldn't find class \"" + projectileClassName + "\"");
+		} catch (ClassCastException e) {
+			MagicSpells.error("Couldn't cast \"" + projectileClassName + "\" as Projectile");
+		}
 	}
 
 	private void fireHomingArrow(Player player, Location from, LivingEntity target, float power) {

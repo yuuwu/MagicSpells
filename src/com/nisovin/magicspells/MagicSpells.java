@@ -1184,6 +1184,10 @@ public class MagicSpells extends JavaPlugin {
 		unload();
 	}
 	
+	public ClassLoader getPluginClassLoader() {
+		return getClassLoader();
+	}
+	
 }
 
 /*
