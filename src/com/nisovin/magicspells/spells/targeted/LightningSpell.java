@@ -1,13 +1,21 @@
 package com.nisovin.magicspells.spells.targeted;
 
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.CreeperPowerEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.metadata.MetadataValue;
 
+import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.events.SpellTargetLocationEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
@@ -21,6 +29,7 @@ public class LightningSpell extends TargetedSpell implements TargetedLocationSpe
 	private boolean checkPlugins;
 	private double additionalDamage;
 	private boolean noDamage;
+	boolean chargeCreepers = true;
 	
 	public LightningSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -29,6 +38,7 @@ public class LightningSpell extends TargetedSpell implements TargetedLocationSpe
 		checkPlugins = getConfigBoolean("check-plugins", true);
 		additionalDamage = getConfigFloat("additional-damage", 0);
 		noDamage = getConfigBoolean("no-damage", false);
+		chargeCreepers = getConfigBoolean("charge-creepers", true);
 	}
 
 	@Override
@@ -92,7 +102,27 @@ public class LightningSpell extends TargetedSpell implements TargetedLocationSpe
 		if (noDamage) {
 			target.getWorld().strikeLightningEffect(target);
 		} else {				
-			target.getWorld().strikeLightning(target);
+			LightningStrike strike = target.getWorld().strikeLightning(target);
+			if (!chargeCreepers) {
+				strike.setMetadata("MS"+internalName, new FixedMetadataValue(MagicSpells.plugin, new CreeperChargeOption(false)));
+			}
+		}
+	}
+	
+	@EventHandler
+	public void onCreeperCharge(CreeperPowerEvent event) {
+		LightningStrike strike = event.getLightning();
+		if (strike == null) {
+			return;
+		}
+		List<MetadataValue> data = strike.getMetadata("MS"+internalName);
+		if (data == null || data.size() == 0) return;
+		for (MetadataValue val: data) {
+			CreeperChargeOption option = (CreeperChargeOption)val.value();
+			if (!option.charge) {
+				event.setCancelled(true);
+			}
+			break;
 		}
 	}
 
@@ -108,5 +138,12 @@ public class LightningSpell extends TargetedSpell implements TargetedLocationSpe
 		lightning(target);
 		playSpellEffects(EffectPosition.CASTER, target);
 		return true;
+	}
+	
+	class CreeperChargeOption {
+		boolean charge;
+		public CreeperChargeOption(boolean value) {
+			charge = value;
+		}
 	}
 }
