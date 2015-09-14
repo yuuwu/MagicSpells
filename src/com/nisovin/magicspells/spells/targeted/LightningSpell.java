@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.CreeperPowerEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.PigZapEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
@@ -30,6 +31,7 @@ public class LightningSpell extends TargetedSpell implements TargetedLocationSpe
 	private double additionalDamage;
 	private boolean noDamage;
 	boolean chargeCreepers = true;
+	boolean zapPigs = true;
 	
 	public LightningSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -39,6 +41,7 @@ public class LightningSpell extends TargetedSpell implements TargetedLocationSpe
 		additionalDamage = getConfigFloat("additional-damage", 0);
 		noDamage = getConfigBoolean("no-damage", false);
 		chargeCreepers = getConfigBoolean("charge-creepers", true);
+		zapPigs = getConfigBoolean("zap-pigs", true);
 	}
 
 	@Override
@@ -103,9 +106,7 @@ public class LightningSpell extends TargetedSpell implements TargetedLocationSpe
 			target.getWorld().strikeLightningEffect(target);
 		} else {				
 			LightningStrike strike = target.getWorld().strikeLightning(target);
-			if (!chargeCreepers) {
-				strike.setMetadata("MS"+internalName, new FixedMetadataValue(MagicSpells.plugin, new CreeperChargeOption(false)));
-			}
+			strike.setMetadata("MS"+internalName, new FixedMetadataValue(MagicSpells.plugin, new ChargeOption(chargeCreepers, zapPigs)));
 		}
 	}
 	
@@ -118,11 +119,25 @@ public class LightningSpell extends TargetedSpell implements TargetedLocationSpe
 		List<MetadataValue> data = strike.getMetadata("MS"+internalName);
 		if (data == null || data.size() == 0) return;
 		for (MetadataValue val: data) {
-			CreeperChargeOption option = (CreeperChargeOption)val.value();
-			if (!option.charge) {
+			ChargeOption option = (ChargeOption)val.value();
+			if (!option.chargeCreeper) {
 				event.setCancelled(true);
 			}
 			break;
+		}
+	}
+	
+	@EventHandler
+	public void onPigZap(PigZapEvent event) {
+		LightningStrike strike = event.getLightning();
+		if (strike == null) return;
+		List<MetadataValue> data = strike.getMetadata("MS"+internalName);
+		if (data == null || data.size() == 0) return;
+		for (MetadataValue val: data) {
+			ChargeOption option = (ChargeOption)val.value();
+			if (!option.changePig) {
+				event.setCancelled(true);
+			}
 		}
 	}
 
@@ -140,10 +155,12 @@ public class LightningSpell extends TargetedSpell implements TargetedLocationSpe
 		return true;
 	}
 	
-	class CreeperChargeOption {
-		boolean charge;
-		public CreeperChargeOption(boolean value) {
-			charge = value;
+	class ChargeOption {
+		boolean chargeCreeper;
+		boolean changePig;
+		public ChargeOption(boolean creeper, boolean pigmen) {
+			chargeCreeper = creeper;
+			changePig = pigmen;
 		}
 	}
 }
