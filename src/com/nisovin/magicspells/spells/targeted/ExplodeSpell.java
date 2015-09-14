@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Animals;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -26,6 +27,7 @@ public class ExplodeSpell extends TargetedSpell implements TargetedLocationSpell
 	private boolean simulateTnt;
 	private boolean preventBlockDamage;
 	private boolean preventPlayerDamage;
+	private boolean preventAnimalDamage;
 	private float damageMultiplier;
 	private boolean addFire;
 	private boolean ignoreCanceled;
@@ -41,6 +43,7 @@ public class ExplodeSpell extends TargetedSpell implements TargetedLocationSpell
 		simulateTnt = getConfigBoolean("simulate-tnt", true);
 		preventBlockDamage = getConfigBoolean("prevent-block-damage", false);
 		preventPlayerDamage = getConfigBoolean("prevent-player-damage", false);
+		preventAnimalDamage = getConfigBoolean("prevent-animal-damage", false);
 		damageMultiplier = getConfigFloat("damage-multiplier", 0);
 		addFire = getConfigBoolean("add-fire", false);
 		ignoreCanceled = getConfigBoolean("ignore-canceled", false);
@@ -121,6 +124,8 @@ public class ExplodeSpell extends TargetedSpell implements TargetedLocationSpell
 				&& (event.getCause() == DamageCause.BLOCK_EXPLOSION || event.getCause() == DamageCause.ENTITY_EXPLOSION)
 				&& currentTick == Bukkit.getWorlds().get(0).getFullTime()) {
 			if (preventPlayerDamage && event.getEntity() instanceof Player) {
+				event.setCancelled(true);
+			}else if (preventAnimalDamage && event.getEntity() instanceof Animals) {
 				event.setCancelled(true);
 			} else if (damageMultiplier > 0) {
 				event.setDamage(Math.round(event.getDamage() * damageMultiplier * currentPower));
