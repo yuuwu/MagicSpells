@@ -22,6 +22,9 @@ public class FarmSpell extends TargetedSpell implements TargetedLocationSpell {
 	private int growth;
 	private MagicMaterial newCropType;
 	private boolean targeted;
+	private boolean growWheat;
+	private boolean growCarrots;
+	private boolean growPotatoes;
 	
 	public FarmSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -30,6 +33,9 @@ public class FarmSpell extends TargetedSpell implements TargetedLocationSpell {
 		growth = getConfigInt("growth", 1);
 		newCropType = MagicSpells.getItemNameResolver().resolveBlock(getConfigString("new-crop-type", "crops"));
 		targeted = getConfigBoolean("targeted", false);
+		growWheat = getConfigBoolean("grow-wheat", true);
+		growCarrots = getConfigBoolean("grow-carrots", true);
+		growPotatoes = getConfigBoolean("grow-potatoes", true);
 	}
 
 	@Override
@@ -89,7 +95,7 @@ public class FarmSpell extends TargetedSpell implements TargetedLocationSpell {
 						}
 						count++;
 					}
-				} else if ((b.getType() == Material.CROPS || b.getType() == Material.CARROT || b.getType() == Material.POTATO) && BlockUtils.getGrowthLevel(b) < 7) {
+				} else if (((growWheat && b.getType() == Material.CROPS) || (growCarrots && b.getType() == Material.CARROT) || (growPotatoes && b.getType() == Material.POTATO)) && BlockUtils.getGrowthLevel(b) < 7) {
 					int newGrowth = BlockUtils.getGrowthLevel(b) + growth;
 					if (newGrowth > 7) newGrowth = 7;
 					BlockUtils.setGrowthLevel(b, newGrowth);
