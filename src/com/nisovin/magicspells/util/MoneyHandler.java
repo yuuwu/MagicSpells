@@ -34,4 +34,9 @@ public class MoneyHandler {
 		}
 	}
 	
+	public double checkMoney(Player player) {
+		if (economy == null) return 0;
+		return economy.bankBalance(player.getName()).balance;
+	}
+	
 }
