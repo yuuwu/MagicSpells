@@ -12,11 +12,17 @@ import com.nisovin.magicspells.util.MagicConfig;
 public class ReflectSpell extends BuffSpell {
 
 	private HashSet<String> reflectors;
+	private HashSet<String> shieldBreakerNames;
+	
+	String strShieldBrokenSelf;
+	String strShieldBrokenTarget;
 	
 	public ReflectSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
 		reflectors = new HashSet<String>();
+		shieldBreakerNames = new HashSet<String>();
+		shieldBreakerNames.addAll(getConfigStringList("shield-breakers", null));
 	}
 	
 	@Override
@@ -31,6 +37,10 @@ public class ReflectSpell extends BuffSpell {
 		if (event.getTarget() instanceof Player) {
 			Player target = (Player)event.getTarget();
 			if (isActive(target)) {
+				if (shieldBreakerNames.contains(event.getSpell().getInternalName())) {
+					turnOffBuff(target);
+					return;
+				}
 				boolean ok = chargeUseCost(target);
 				if (ok) {
 					event.setTarget(event.getCaster());
