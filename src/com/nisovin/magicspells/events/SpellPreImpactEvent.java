@@ -32,6 +32,10 @@ public class SpellPreImpactEvent extends SpellEvent implements Cancellable {
 		return handlers;
 	}
 	
+	public static HandlerList getHandlerList() {
+		return handlers;
+	}
+	
 	public LivingEntity getTarget() {
 		return target;
 	}
