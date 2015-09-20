@@ -27,7 +27,6 @@ import net.minecraft.server.v1_8_R3.ChatComponentText;
 import net.minecraft.server.v1_8_R3.DataWatcher;
 import net.minecraft.server.v1_8_R3.EntityEnderDragon;
 import net.minecraft.server.v1_8_R3.EntityFallingBlock;
-import net.minecraft.server.v1_8_R3.EntityHuman;
 import net.minecraft.server.v1_8_R3.EntityInsentient;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.EntityOcelot;
@@ -41,15 +40,11 @@ import net.minecraft.server.v1_8_R3.IAttribute;
 import net.minecraft.server.v1_8_R3.MobEffect;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityDestroy;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityStatus;
-import net.minecraft.server.v1_8_R3.PacketPlayOutEntityTeleport;
 import net.minecraft.server.v1_8_R3.PacketPlayOutNamedSoundEffect;
 import net.minecraft.server.v1_8_R3.PacketPlayOutSpawnEntityLiving;
 import net.minecraft.server.v1_8_R3.PacketPlayOutTitle;
 import net.minecraft.server.v1_8_R3.PacketPlayOutTitle.EnumTitleAction;
 import net.minecraft.server.v1_8_R3.PacketPlayOutWorldParticles;
-import net.minecraft.server.v1_8_R3.PathfinderGoalFloat;
-import net.minecraft.server.v1_8_R3.PathfinderGoalLookAtPlayer;
-import net.minecraft.server.v1_8_R3.PathfinderGoalSelector;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -517,11 +512,14 @@ public class VolatileCodePowerNBT implements VolatileCodeHandle {
 	@Override
 	public void removeAI(LivingEntity entity) {
         try {
-        	EntityInsentient ev = (EntityInsentient)((CraftLivingEntity)entity).getHandle();
+        	//EntityInsentient ev = entity.getHandle()
+        	Object ev = entityUtil.getHandleEntity(entity);
                
             Field goalsField = VolatileReferenceHelper.entityInsentientClass.getRealClass().getDeclaredField("goalSelector");
             goalsField.setAccessible(true);
-            PathfinderGoalSelector goals = (PathfinderGoalSelector) goalsField.get(ev);
+            
+            //PathfinderGoalSelector goals = (PathfinderGoalSelector) goalsField.get(ev)
+            Object goals = goalsField.get(ev);
            
             Field listField = VolatileReferenceHelper.pathfinderGoalSelectorClass.getRealClass().getDeclaredField("b");
             listField.setAccessible(true);
@@ -531,8 +529,12 @@ public class VolatileCodePowerNBT implements VolatileCodeHandle {
             listField.setAccessible(true);
             list = (List)listField.get(goals);
             list.clear();
-
-            goals.a(0, new PathfinderGoalFloat(ev));
+            
+            //PathfinderGoalFloat newGoal = new PathfinderGoalFloat( nms EntityInsentient)
+            Object newGoal = VolatileReferenceHelper.pathfinderGoalFloatClass.getConstructor(VolatileReferenceHelper.entityInsentientClass.getRealClass()).create(ev);
+            
+            //PathfinderGoalSelector.a(int, nms PathfinderGoal)
+            VolatileReferenceHelper.pathfinderGoalSelectorClass.getMethod("a", int.class, VolatileReferenceHelper.pathfinderGoalFloatClass.getRealClass()).getRealMethod().invoke(goals, 0, newGoal);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -541,13 +543,20 @@ public class VolatileCodePowerNBT implements VolatileCodeHandle {
 	@Override
 	public void addAILookAtPlayer(LivingEntity entity, int range) {
         try {
-        	EntityInsentient ev = (EntityInsentient)((CraftLivingEntity)entity).getHandle();
-               
+        	//EntityInsentient ev
+        	Object ev = entityUtil.getHandleEntity(entity);
+            
             Field goalsField = VolatileReferenceHelper.entityInsentientClass.getRealClass().getDeclaredField("goalSelector");
             goalsField.setAccessible(true);
-            PathfinderGoalSelector goals = (PathfinderGoalSelector) goalsField.get(ev);
-
-            goals.a(1, new PathfinderGoalLookAtPlayer(ev, EntityHuman.class, range, 1.0F));
+            
+            //PathfinderGoalSelector goals
+            Object goals = goalsField.get(ev);
+            //PathfinderGoalLookAtPlayer goal = new PathfinderGoalLookAtPlayer(nms EntityInsentient, Class<? extends nms Entity>, float, float)
+            RefConstructor<?> goalConstructor = VolatileReferenceHelper.pathfinderGoalLookAtPlayerClass.getConstructor(VolatileReferenceHelper.entityInsentientClass.getRealClass(), Class.class, float.class, float.class);
+            Object goal = goalConstructor.create(ev, VolatileReferenceHelper.entityHumanClass.getRealClass(), range, 1.0F);
+            
+            //int, nms PathfinderGoal
+            VolatileReferenceHelper.pathfinderGoalSelectorClass.getMethod("a", int.class, VolatileReferenceHelper.pathfinderGoalLookAtPlayerClass.getRealClass()).getRealMethod().invoke(goals, 1, goal);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -557,13 +566,17 @@ public class VolatileCodePowerNBT implements VolatileCodeHandle {
 	public void setBossBar(Player player, String title, double percent) {
 		updateBossBarEntity(player, title, percent);
 		
-		PacketPlayOutEntityDestroy packetDestroy = new PacketPlayOutEntityDestroy(bossBarEntity.getId());
+		
+		RefConstructor<?> destroyPacketConstructor = VolatileReferenceHelper.packetPlayOutEntityDestroyClass.getConstructor(int[].class);
+		Object packetDestroy = destroyPacketConstructor.create(bossBarEntity.getId());
 		packetUtil.sendPacket(player, packetDestroy);
 		
-		PacketPlayOutSpawnEntityLiving packetSpawn = new PacketPlayOutSpawnEntityLiving(bossBarEntity);
+		RefConstructor<?> packetSpawnConstructor = VolatileReferenceHelper.packetPlayOutSpawnEntityLivingClass.getConstructor(VolatileReferenceHelper.nmsEntityClass);
+		Object packetSpawn = packetSpawnConstructor.create(bossBarEntity);
 		packetUtil.sendPacket(player, packetSpawn);
 		
-		PacketPlayOutEntityTeleport packetTeleport = new PacketPlayOutEntityTeleport(bossBarEntity);
+		RefConstructor<?> packetTeleportConstructor = VolatileReferenceHelper.packetPlayOutEntityTeleportClass.getConstructor(VolatileReferenceHelper.nmsEntityClass);
+		Object packetTeleport = packetTeleportConstructor.create(bossBarEntity);
 		packetUtil.sendPacket(player, packetTeleport);
 		
 		//PacketPlayOutEntityVelocity packetVelocity = new PacketPlayOutEntityVelocity(bossBarEntity.getId(), 1, 0, 1);		
