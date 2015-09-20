@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+import org.bukkit.material.NetherWarts;
 
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.events.SpellTargetLocationEvent;
@@ -25,10 +26,11 @@ public class FarmSpell extends TargetedSpell implements TargetedLocationSpell {
 	private boolean growWheat;
 	private boolean growCarrots;
 	private boolean growPotatoes;
-	
+	private boolean growWart;
+
 	public FarmSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
-		
+
 		radius = getConfigInt("radius", 3);
 		growth = getConfigInt("growth", 1);
 		newCropType = MagicSpells.getItemNameResolver().resolveBlock(getConfigString("new-crop-type", "crops"));
@@ -36,6 +38,7 @@ public class FarmSpell extends TargetedSpell implements TargetedLocationSpell {
 		growWheat = getConfigBoolean("grow-wheat", true);
 		growCarrots = getConfigBoolean("grow-carrots", true);
 		growPotatoes = getConfigBoolean("grow-potatoes", true);
+		growWart = getConfigBoolean("grow-wart", false);
 	}
 
 	@Override
@@ -75,7 +78,7 @@ public class FarmSpell extends TargetedSpell implements TargetedLocationSpell {
 		int cx = center.getX();
 		int y = center.getY();
 		int cz = center.getZ();
-		
+
 		int count = 0;
 		for (int x = cx - radius; x <= cx + radius; x++) {
 			for (int z = cz - radius; z <= cz + radius; z++) {
@@ -100,13 +103,15 @@ public class FarmSpell extends TargetedSpell implements TargetedLocationSpell {
 					if (newGrowth > 7) newGrowth = 7;
 					BlockUtils.setGrowthLevel(b, newGrowth);
 					count++;
+				} else if ((growWart && b.getType() == Material.NETHER_WARTS)) {
+					if (BlockUtils.growWarts((NetherWarts) b, growth)) count++;
 				}
 			}
 		}
-		
+
 		return count > 0;
 	}
-	
+
 	@Override
 	public boolean castAtLocation(Player caster, Location target, float power) {
 		return farm(target.subtract(0, 1, 0).getBlock(), Math.round(radius * power));

@@ -3,6 +3,7 @@ package com.nisovin.magicspells.volatilecode;
 import java.io.File;
 import java.io.FileWriter;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -80,17 +81,17 @@ public class VolatileCodePowerNBT implements VolatileCodeHandle {
 	NBTManager nbt = PowerNBT.getApi();
 	PacketUtils packetUtil = PacketUtils.packetUtils;
 	EntityUtils entityUtil = EntityUtils.entityUtils;
-	
+
 	EntityInsentient bossBarEntity;
 	VolatileCodeDisabled fallback = new VolatileCodeDisabled();
-	
+
 	private static ItemStack setTag(ItemStack item, NBTCompound tag) {
 		return setTag(item, tag);
 	}
-	
+
 	public VolatileCodePowerNBT() {
 		try {
-			
+
 			packet63Fields[0] = VolatileReferenceHelper.packetPlayOutWorldParticlesClass.getRealClass().getDeclaredField("a");
 			packet63Fields[1] = VolatileReferenceHelper.packetPlayOutWorldParticlesClass.getRealClass().getDeclaredField("b");
 			packet63Fields[2] = VolatileReferenceHelper.packetPlayOutWorldParticlesClass.getRealClass().getDeclaredField("c");
@@ -114,31 +115,48 @@ public class VolatileCodePowerNBT implements VolatileCodeHandle {
 				particleMap.put(particle.b(), particle);
 			}
 		}
-		
+
 		bossBarEntity = new EntityWither(((CraftWorld)Bukkit.getWorlds().get(0)).getHandle());
 		bossBarEntity.setCustomNameVisible(false);
 		bossBarEntity.getDataWatcher().watch(0, (Byte)(byte)0x20);
 		bossBarEntity.getDataWatcher().watch(20, (Integer)0);
-		
+
 	}
-	
+
 	@Override
 	public void addPotionGraphicalEffect(LivingEntity entity, int color, int duration) {
-		final EntityLiving el = ((CraftLivingEntity)entity).getHandle();
-		final DataWatcher dw = el.getDataWatcher();
-		dw.watch(7, Integer.valueOf(color));
 		
+		final EntityLiving el = (EntityLiving) entityUtil.getHandleEntity(entity);
+		final DataWatcher dw = (DataWatcher) getEntityDataWatcher(el);
+		//nms DataWatcher.watch( int, Integer)
+		dw.watch(7, Integer.valueOf(color));
+
 		if (duration > 0) {
 			MagicSpells.scheduleDelayedTask(new Runnable() {
 				public void run() {
 					int c = 0;
 					if (!el.effects.isEmpty()) {
+						//c = net.minecraft.server.v1_8_R3.PotionBrewer.a(Collection<MobEffect>);
 						c = net.minecraft.server.v1_8_R3.PotionBrewer.a(el.effects.values());
 					}
 					dw.watch(7, Integer.valueOf(c));
 				}
 			}, duration);
 		}
+	}
+	
+	private Object getEntityDataWatcher(Object entity) {
+		if (!VolatileReferenceHelper.nmsEntityClass.isInstance(entity)) return null;
+		try {
+			return VolatileReferenceHelper.nmsEntityClass.getMethod("getDataWatcher", null).getRealMethod().invoke(entity, null);
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	@Override
@@ -185,13 +203,13 @@ public class VolatileCodePowerNBT implements VolatileCodeHandle {
 		Object craftWorldHandle = ReflectionUtils.getRefClass(target.getWorld().getClass()).findMethod(new MethodCondition().withName("getHandle").withReturnType(void.class)).of(target.getWorld()).call(null);
 		Object sourceHandle = entityUtil.getHandleEntity(source);
 		Object e = primedTntConstructor.create(craftWorldHandle, target.getX(), target.getY(), target.getZ(), sourceHandle);
-		
+
 		//cb entity.CraftTNTPrimed(cb CraftServer, nms EntityTNTPrimed)
 		RefConstructor<?> craftTNTPrimedConstructor = VolatileReferenceHelper.craftTNTPrimedClass.getConstructor(VolatileReferenceHelper.craftServerClass.getRealClass(), VolatileReferenceHelper.entityTNTPrimedClass.getRealClass());
 		Object c = craftTNTPrimedConstructor.create(Bukkit.getServer(), e);
-        ExplosionPrimeEvent event = new ExplosionPrimeEvent((Entity) c, explosionSize, fire);
-        Bukkit.getServer().getPluginManager().callEvent(event);
-        return event.isCancelled();
+		ExplosionPrimeEvent event = new ExplosionPrimeEvent((Entity) c, explosionSize, fire);
+		Bukkit.getServer().getPluginManager().callEvent(event);
+		return event.isCancelled();
 	}
 
 	@Override
@@ -225,16 +243,16 @@ public class VolatileCodePowerNBT implements VolatileCodeHandle {
 		net.minecraft.server.v1_8_R3.World w = ((CraftWorld)player.getWorld()).getHandle();
 		Location playerLoc = player.getLocation();
 		Vector loc = player.getEyeLocation().toVector().add(player.getLocation().getDirection().multiply(10));
-		
+
 		double d0 = loc.getX() - playerLoc.getX();
-        double d1 = loc.getY() - (playerLoc.getY() + 1.5);
-        double d2 = loc.getZ() - playerLoc.getZ();
+		double d1 = loc.getY() - (playerLoc.getY() + 1.5);
+		double d2 = loc.getZ() - playerLoc.getZ();
 		EntitySmallFireball entitysmallfireball = new EntitySmallFireball(w, ((CraftPlayer)player).getHandle(), d0, d1, d2);
 
-        entitysmallfireball.locY = playerLoc.getY() + 1.5;
-        w.addEntity(entitysmallfireball);
-        
-        return (Fireball)entitysmallfireball.getBukkitEntity();
+		entitysmallfireball.locY = playerLoc.getY() + 1.5;
+		w.addEntity(entitysmallfireball);
+
+		return (Fireball)entitysmallfireball.getBukkitEntity();
 	}
 
 	@Override
@@ -276,11 +294,11 @@ public class VolatileCodePowerNBT implements VolatileCodeHandle {
 			Field field = VolatileReferenceHelper.entityFallingBlockClass.getRealClass().getDeclaredField("hurtEntities");
 			field.setAccessible(true);
 			field.setBoolean(efb, true);
-			
+
 			field = VolatileReferenceHelper.entityFallingBlockClass.getRealClass().getDeclaredField("fallHurtAmount");
 			field.setAccessible(true);
 			field.setFloat(efb, damage);
-			
+
 			field = VolatileReferenceHelper.entityFallingBlockClass.getRealClass().getDeclaredField("fallHurtMax");
 			field.setAccessible(true);
 			field.setInt(efb, max);
@@ -302,7 +320,7 @@ public class VolatileCodePowerNBT implements VolatileCodeHandle {
 			entity = null;
 		}
 		if (entity == null) return;
-		
+
 		entity.setPosition(location.getX(), instant ? location.getY() : -5, location.getZ());
 		((CraftWorld)location.getWorld()).getHandle().addEntity(entity);
 		entity.addEffect(new MobEffect(14, 40));
@@ -324,7 +342,7 @@ public class VolatileCodePowerNBT implements VolatileCodeHandle {
 	public void createFireworksExplosion(Location location, boolean flicker, boolean trail, int type, int[] colors, int[] fadeColors, int flightDuration) {
 		fallback.createFireworksExplosion(location, flicker, trail, type, colors, fadeColors, flightDuration);
 	}
-	
+
 	Field[] packet63Fields = new Field[11];
 	Map<String, EnumParticle> particleMap = new HashMap<String, EnumParticle>();
 	@Override
@@ -363,7 +381,7 @@ public class VolatileCodePowerNBT implements VolatileCodeHandle {
 				packet63Fields[10].set(packet,data);
 			}
 			int rSq = radius * radius;
-			
+
 			for (Player player : location.getWorld().getPlayers()) {
 				if (player.getLocation().distanceSquared(location) <= rSq) {
 					packetUtil.sendPacket(player, packet);
@@ -374,16 +392,16 @@ public class VolatileCodePowerNBT implements VolatileCodeHandle {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
 	public void playDragonDeathEffect(Location location) {
 		EntityEnderDragon dragon = new EntityEnderDragon(((CraftWorld)location.getWorld()).getHandle());
 		dragon.setPositionRotation(location.getX(), location.getY(), location.getZ(), location.getYaw(), 0F);
-		
+
 		PacketPlayOutSpawnEntityLiving packet24 = new PacketPlayOutSpawnEntityLiving(dragon);
 		PacketPlayOutEntityStatus packet38 = new PacketPlayOutEntityStatus(dragon, (byte)3);
 		final PacketPlayOutEntityDestroy packet29 = new PacketPlayOutEntityDestroy(dragon.getBukkitEntity().getEntityId());
-		
+
 		BoundingBox box = new BoundingBox(location, 64);
 		final List<Player> players = new ArrayList<Player>();
 		for (Player player : location.getWorld().getPlayers()) {
@@ -393,7 +411,7 @@ public class VolatileCodePowerNBT implements VolatileCodeHandle {
 				packetUtil.sendPacket(player, packet38);
 			}
 		}
-		
+
 		MagicSpells.scheduleDelayedTask(new Runnable() {
 			public void run() {
 				for (Player player : players) {
@@ -404,12 +422,12 @@ public class VolatileCodePowerNBT implements VolatileCodeHandle {
 			}
 		}, 250);
 	}
-	
+
 	@Override
 	public void setKiller(LivingEntity entity, Player killer) {
 		((CraftLivingEntity)entity).getHandle().killer = ((CraftPlayer)killer).getHandle();
 	}
-	
+
 	@Override
 	public DisguiseManager getDisguiseManager(MagicConfig config) {
 		if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) {
@@ -422,7 +440,7 @@ public class VolatileCodePowerNBT implements VolatileCodeHandle {
 	@Override
 	public ItemStack addAttributes(ItemStack item, String[] names, String[] types, double[] amounts, int[] operations) {
 		NBTCompound tag = nbt.read(item);
-		
+
 		NBTList list = new NBTList();
 		for (int i = 0; i < names.length; i++) {
 			if (names[i] != null) {
@@ -437,13 +455,13 @@ public class VolatileCodePowerNBT implements VolatileCodeHandle {
 				list.add(attr);
 			}
 		}
-		
+
 		tag.bind("AttributeModifiers", list);
-		
+
 		setTag(item, tag);
 		return item;
 	}
-	
+
 	@Override
 	public ItemStack hideTooltipCrap(ItemStack item) {
 		if (!(item instanceof CraftItemStack)) {
@@ -494,7 +512,7 @@ public class VolatileCodePowerNBT implements VolatileCodeHandle {
 					method = clazz.getDeclaredMethod("aW");
 					break;
 				} catch (NoSuchMethodException e1) {
-				    clazz = clazz.getSuperclass();
+					clazz = clazz.getSuperclass();
 				}
 			}
 			if (method != null) {
@@ -511,105 +529,105 @@ public class VolatileCodePowerNBT implements VolatileCodeHandle {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void removeAI(LivingEntity entity) {
-        try {
-        	//EntityInsentient ev = entity.getHandle()
-        	Object ev = entityUtil.getHandleEntity(entity);
-               
-            Field goalsField = VolatileReferenceHelper.entityInsentientClass.getRealClass().getDeclaredField("goalSelector");
-            goalsField.setAccessible(true);
-            
-            //PathfinderGoalSelector goals = (PathfinderGoalSelector) goalsField.get(ev)
-            Object goals = goalsField.get(ev);
-           
-            Field listField = VolatileReferenceHelper.pathfinderGoalSelectorClass.getRealClass().getDeclaredField("b");
-            listField.setAccessible(true);
-            List list = (List)listField.get(goals);
-            list.clear();
-            listField = VolatileReferenceHelper.pathfinderGoalSelectorClass.getRealClass().getDeclaredField("c");
-            listField.setAccessible(true);
-            list = (List)listField.get(goals);
-            list.clear();
-            
-            //PathfinderGoalFloat newGoal = new PathfinderGoalFloat( nms EntityInsentient)
-            Object newGoal = VolatileReferenceHelper.pathfinderGoalFloatClass.getConstructor(VolatileReferenceHelper.entityInsentientClass.getRealClass()).create(ev);
-            
-            //PathfinderGoalSelector.a(int, nms PathfinderGoal)
-            VolatileReferenceHelper.pathfinderGoalSelectorClass.getMethod("a", int.class, VolatileReferenceHelper.pathfinderGoalFloatClass.getRealClass()).getRealMethod().invoke(goals, 0, newGoal);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+		try {
+			//EntityInsentient ev = entity.getHandle()
+			Object ev = entityUtil.getHandleEntity(entity);
+
+			Field goalsField = VolatileReferenceHelper.entityInsentientClass.getRealClass().getDeclaredField("goalSelector");
+			goalsField.setAccessible(true);
+
+			//PathfinderGoalSelector goals = (PathfinderGoalSelector) goalsField.get(ev)
+			Object goals = goalsField.get(ev);
+
+			Field listField = VolatileReferenceHelper.pathfinderGoalSelectorClass.getRealClass().getDeclaredField("b");
+			listField.setAccessible(true);
+			List list = (List)listField.get(goals);
+			list.clear();
+			listField = VolatileReferenceHelper.pathfinderGoalSelectorClass.getRealClass().getDeclaredField("c");
+			listField.setAccessible(true);
+			list = (List)listField.get(goals);
+			list.clear();
+
+			//PathfinderGoalFloat newGoal = new PathfinderGoalFloat( nms EntityInsentient)
+			Object newGoal = VolatileReferenceHelper.pathfinderGoalFloatClass.getConstructor(VolatileReferenceHelper.entityInsentientClass.getRealClass()).create(ev);
+
+			//PathfinderGoalSelector.a(int, nms PathfinderGoal)
+			VolatileReferenceHelper.pathfinderGoalSelectorClass.getMethod("a", int.class, VolatileReferenceHelper.pathfinderGoalFloatClass.getRealClass()).getRealMethod().invoke(goals, 0, newGoal);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void addAILookAtPlayer(LivingEntity entity, int range) {
-        try {
-        	//EntityInsentient ev
-        	Object ev = entityUtil.getHandleEntity(entity);
-            
-            Field goalsField = VolatileReferenceHelper.entityInsentientClass.getRealClass().getDeclaredField("goalSelector");
-            goalsField.setAccessible(true);
-            
-            //PathfinderGoalSelector goals
-            Object goals = goalsField.get(ev);
-            //PathfinderGoalLookAtPlayer goal = new PathfinderGoalLookAtPlayer(nms EntityInsentient, Class<? extends nms Entity>, float, float)
-            RefConstructor<?> goalConstructor = VolatileReferenceHelper.pathfinderGoalLookAtPlayerClass.getConstructor(VolatileReferenceHelper.entityInsentientClass.getRealClass(), Class.class, float.class, float.class);
-            Object goal = goalConstructor.create(ev, VolatileReferenceHelper.entityHumanClass.getRealClass(), range, 1.0F);
-            
-            //int, nms PathfinderGoal
-            VolatileReferenceHelper.pathfinderGoalSelectorClass.getMethod("a", int.class, VolatileReferenceHelper.pathfinderGoalLookAtPlayerClass.getRealClass()).getRealMethod().invoke(goals, 1, goal);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+		try {
+			//EntityInsentient ev
+			Object ev = entityUtil.getHandleEntity(entity);
+
+			Field goalsField = VolatileReferenceHelper.entityInsentientClass.getRealClass().getDeclaredField("goalSelector");
+			goalsField.setAccessible(true);
+
+			//PathfinderGoalSelector goals
+			Object goals = goalsField.get(ev);
+			//PathfinderGoalLookAtPlayer goal = new PathfinderGoalLookAtPlayer(nms EntityInsentient, Class<? extends nms Entity>, float, float)
+			RefConstructor<?> goalConstructor = VolatileReferenceHelper.pathfinderGoalLookAtPlayerClass.getConstructor(VolatileReferenceHelper.entityInsentientClass.getRealClass(), Class.class, float.class, float.class);
+			Object goal = goalConstructor.create(ev, VolatileReferenceHelper.entityHumanClass.getRealClass(), range, 1.0F);
+
+			//int, nms PathfinderGoal
+			VolatileReferenceHelper.pathfinderGoalSelectorClass.getMethod("a", int.class, VolatileReferenceHelper.pathfinderGoalLookAtPlayerClass.getRealClass()).getRealMethod().invoke(goals, 1, goal);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
-	
+
 	@Override
 	public void setBossBar(Player player, String title, double percent) {
 		updateBossBarEntity(player, title, percent);
-		
-		
+
+
 		RefConstructor<?> destroyPacketConstructor = VolatileReferenceHelper.packetPlayOutEntityDestroyClass.getConstructor(int[].class);
 		Object packetDestroy = destroyPacketConstructor.create(bossBarEntity.getId());
 		packetUtil.sendPacket(player, packetDestroy);
-		
+
 		RefConstructor<?> packetSpawnConstructor = VolatileReferenceHelper.packetPlayOutSpawnEntityLivingClass.getConstructor(VolatileReferenceHelper.nmsEntityClass);
 		Object packetSpawn = packetSpawnConstructor.create(bossBarEntity);
 		packetUtil.sendPacket(player, packetSpawn);
-		
+
 		RefConstructor<?> packetTeleportConstructor = VolatileReferenceHelper.packetPlayOutEntityTeleportClass.getConstructor(VolatileReferenceHelper.nmsEntityClass);
 		Object packetTeleport = packetTeleportConstructor.create(bossBarEntity);
 		packetUtil.sendPacket(player, packetTeleport);
-		
+
 		//PacketPlayOutEntityVelocity packetVelocity = new PacketPlayOutEntityVelocity(bossBarEntity.getId(), 1, 0, 1);		
 		//((CraftPlayer)player).getHandle().playerConnection.sendPacket(packetVelocity);
 	}
-	
+
 	@Override
 	public void updateBossBar(Player player, String title, double percent) {
 		updateBossBarEntity(player, title, percent);
-		
+
 		if (title != null) {
 			//int, DataWatcher, Boolean
 			RefConstructor<?> packetDataConstructor = VolatileReferenceHelper.packetPlayOutEntityMetadataClass.getConstructor(int.class, VolatileReferenceHelper.dataWatcherClass.getRealClass(), boolean.class);
 			Object packetData = packetDataConstructor.create(bossBarEntity.getId(), bossBarEntity.getDataWatcher(), true);
 			packetUtil.sendPacket(player, packetData);
 		}
-		
+
 		//nms Entity
 		RefConstructor<?> packetTeleportConstructor = VolatileReferenceHelper.packetPlayOutEntityTeleportClass.getConstructor(VolatileReferenceHelper.nmsEntityClass);
 		Object packetTeleport = packetTeleportConstructor.create(bossBarEntity);
 		packetUtil.sendPacket(player, packetTeleport);
-		
+
 		//PacketPlayOutEntityVelocity packetVelocity = new PacketPlayOutEntityVelocity(bossBarEntity.getId(), 1, 0, 1);
 		//((CraftPlayer)player).getHandle().playerConnection.sendPacket(packetVelocity);
 	}
-	
+
 	private void updateBossBarEntity(Player player, String title, double percent) {
 		if (title != null) {
 			if (percent <= 0.01) percent = 0.01D;
 			bossBarEntity.setCustomName(ChatColor.translateAlternateColorCodes('&', title));
 			bossBarEntity.getDataWatcher().watch(6, (float)(percent * 300f));
 		}
-		
+
 		Location l = player.getLocation();
 		l.setPitch(l.getPitch() + 10);
 		Vector v = l.getDirection().multiply(20);
@@ -617,7 +635,7 @@ public class VolatileCodePowerNBT implements VolatileCodeHandle {
 		l.add(v);
 		bossBarEntity.setLocation(l.getX(), l.getY(), l.getZ(), 0, 0);
 	}
-	
+
 	@Override
 	public void removeBossBar(Player player) {
 		//constructor parameter type actually was 'int...'
@@ -625,7 +643,7 @@ public class VolatileCodePowerNBT implements VolatileCodeHandle {
 		Object packetDestroy = packetConstructor.create(bossBarEntity.getId());
 		packetUtil.sendPacket(player, packetDestroy);
 	}
-	
+
 	@Override
 	public void saveSkinData(Player player, String name) {
 		GameProfile profile = ((CraftPlayer)player).getHandle().getProfile();
@@ -633,7 +651,7 @@ public class VolatileCodePowerNBT implements VolatileCodeHandle {
 		for (Property prop : props) {
 			String skin = prop.getValue();
 			String sig = prop.getSignature();
-			
+
 			File folder = new File(MagicSpells.getInstance().getDataFolder(), "disguiseskins");
 			if (!folder.exists()) {
 				folder.mkdir();
@@ -652,7 +670,7 @@ public class VolatileCodePowerNBT implements VolatileCodeHandle {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
+
 			break;
 		}
 	}
@@ -667,7 +685,7 @@ public class VolatileCodePowerNBT implements VolatileCodeHandle {
 		nbt.write(item, tag);
 		return item;
 	}
-		
+
 	@Override
 	public void setArrowsStuck(LivingEntity entity, int count) {
 		// TODO: fix this
@@ -679,10 +697,12 @@ public class VolatileCodePowerNBT implements VolatileCodeHandle {
 		PacketPlayOutTitle packet = new PacketPlayOutTitle(EnumTitleAction.TIMES, null, fadeIn, stay, fadeOut);
 		packetUtil.sendPacket(player, packet);
 		if (title != null) {
+			//packet = new PacketPlayOutTitle(EnumtitleAction.TITLE, new ChatComponentText(title))
 			packet = new PacketPlayOutTitle(EnumTitleAction.TITLE, new ChatComponentText(title));
 			packetUtil.sendPacket(player, packet);
 		}
 		if (subtitle != null) {
+			//packet = new PacketPlayOutTitle(EnumtitleAction.SUBTITLE, new ChatComponentText(subtitle))
 			packet = new PacketPlayOutTitle(EnumTitleAction.SUBTITLE, new ChatComponentText(subtitle));
 			packetUtil.sendPacket(player, packet);
 		}
@@ -710,7 +730,7 @@ public class VolatileCodePowerNBT implements VolatileCodeHandle {
 			MagicSpells.handleException(e);
 		}
 	}
-	
+
 	private static Object makeChatComponentText(String content) {
 		RefConstructor<?> constructor = VolatileReferenceHelper.chatComponentTextClass.getConstructor(String.class);
 		return constructor.create(content);

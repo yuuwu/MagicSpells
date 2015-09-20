@@ -57,10 +57,10 @@ public class VolatileReferenceHelper {
 
 	//nms ChatComponentText
 	public static RefClass<?> chatComponentTextClass = ReflectionUtils.getRefClass("{nms}.ChatComponentText");
-	
+
 	//nms IChatBaseComponent
 	public static RefClass<?> iChatBaseComponentClass = ReflectionUtils.getRefClass("{nms}.IChatBaseComponent");
-	
+
 	//nms PathfinderGoalLookAtPlayer
 	public static RefClass<?> pathfinderGoalLookAtPlayerClass = ReflectionUtils.getRefClass("{nms}.PathfinderGoalLookAtPlayer");
 
@@ -114,37 +114,41 @@ public class VolatileReferenceHelper {
 
 	//nms IAttribute (interface)
 	public static RefClass<?> iAttributeClass = ReflectionUtils.getRefClass("{nms}.IAttribute");
-	
+
 	//cb CraftServer
 	public static RefClass<?> craftServerClass = ReflectionUtils.getRefClass("{cb}.CraftServer");
-	
+
 	//cb CraftWorld
 	public static RefClass<?> craftWorldClass = ReflectionUtils.getRefClass("{cb}.CraftWorld");
-	
+
 	//cb entity.CraftFallingSand
 	public static RefClass<?> craftFallingSandClass = ReflectionUtils.getRefClass("{cb}.entity.CraftFallingSand");
-	
+
 	//cb entity.CraftLivingEntity
 	public static RefClass<?> craftLivingEntityClass = ReflectionUtils.getRefClass("{cb}.entity.CraftLivingEntity");
-	
+
 	//cb entity.CraftPlayer
 	public static RefClass<?> craftPlayerClass = ReflectionUtils.getRefClass("{cb}.entity.CraftPlayer");
-	
+
 	//cb entity.CraftTNTPrimed
 	public static RefClass<?> craftTNTPrimedClass = ReflectionUtils.getRefClass("{cb}.entity.CraftTNTPrimed");
-	
+
 	//cb inventory.CraftItemStack
 	public static RefClass<?> craftItemStackClass = ReflectionUtils.getRefClass("{cb}.inventoy.CraftItemStack");
-	
+
 	//nms ItemStack
 	public static RefClass<?> nmsItemStackClass = ReflectionUtils.getRefClass("{nms}.ItemStack");
-	
+
 	//nms World
 	public static RefClass<?> nmsWorldClass = ReflectionUtils.getRefClass("{nms}.World");
-	
+
 	//nms Entity
 	public static RefClass<?> nmsEntityClass = ReflectionUtils.getRefClass("{nms}.Entity");
-	
+
 	//nms Vec3D
 	public static RefClass<?> vec3DClass = ReflectionUtils.getRefClass("{nms}.Vec3D");
+	
+	//nms PotionBrewer
+	
+	//
 }

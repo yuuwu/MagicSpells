@@ -1,19 +1,36 @@
 package com.nisovin.magicspells.util;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NetherWartsState;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.material.NetherWarts;
 
-import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spell;
 
 public class BlockUtils {
-
+	
+	private static HashMap<NetherWartsState, Integer> wartStateToInt = new HashMap<NetherWartsState, Integer>();
+	private static HashMap<Integer, NetherWartsState> intToWartState = new HashMap<Integer, NetherWartsState>();
+	
+	static {
+		wartStateToInt.put(NetherWartsState.SEEDED, 1);
+		wartStateToInt.put(NetherWartsState.STAGE_ONE, 2);
+		wartStateToInt.put(NetherWartsState.STAGE_TWO, 3);
+		wartStateToInt.put(NetherWartsState.RIPE, 4);
+		
+		intToWartState.put(1, NetherWartsState.SEEDED);
+		intToWartState.put(2, NetherWartsState.STAGE_ONE);
+		intToWartState.put(3, NetherWartsState.STAGE_TWO);
+		intToWartState.put(4, NetherWartsState.RIPE);
+	}
+	
 	public static boolean isTransparent(Spell spell, Block block) {
 		return spell.getLosTransparentBlocks().contains((byte)block.getTypeId());
 	}
@@ -52,6 +69,15 @@ public class BlockUtils {
 	
 	public static void setGrowthLevel(Block block, int level) {
 		block.setData((byte)level);
+	}
+	
+	public static boolean growWarts(NetherWarts wart, int stagesToGrow) {
+		if (wart.getState() == NetherWartsState.RIPE) return false;
+		int state = wartStateToInt.get(wart.getState());
+		state= Math.min(state+stagesToGrow, 4);
+		wart.setState(intToWartState.get(state));
+		return true;
+		
 	}
 	
 	public static int getWaterLevel(BlockState blockState) {

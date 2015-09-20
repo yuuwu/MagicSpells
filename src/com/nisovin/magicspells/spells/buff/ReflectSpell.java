@@ -35,7 +35,6 @@ public class ReflectSpell extends BuffSpell {
 		reflectedSpellPowerMultiplier = (float) getConfigDouble("reflected-spell-power-multiplier", 1.0);
 		spellPowerAffectsReflectedPower = getConfigBoolean("spell-power-affects-reflected-power", false);
 		delayedReflectionSpellsUsePayloadShieldBreaker = getConfigBoolean("delayed-reflection-spells-use-payload-shield-breaker", true);
-
 	}
 
 	@Override
