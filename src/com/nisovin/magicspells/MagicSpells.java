@@ -55,8 +55,14 @@ import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.MoneyHandler;
 import com.nisovin.magicspells.util.Util;
 import com.nisovin.magicspells.variables.VariableManager;
-import com.nisovin.magicspells.volatilecode.*;
+import com.nisovin.magicspells.volatilecode.VolatileCodeDisabled;
+import com.nisovin.magicspells.volatilecode.VolatileCodeEnabled_1_8_R1;
+import com.nisovin.magicspells.volatilecode.VolatileCodeEnabled_1_8_R3;
+import com.nisovin.magicspells.volatilecode.VolatileCodeHandle;
+import com.nisovin.magicspells.volatilecode.VolatileCodeProtocolLib;
 import com.nisovin.magicspells.zones.NoMagicZoneManager;
+
+import de.slikey.effectlib.EffectManager;
 
 public class MagicSpells extends JavaPlugin {
 
@@ -142,6 +148,9 @@ public class MagicSpells extends JavaPlugin {
 	HashMap<String, Long> profilingTotalTime;
 	HashMap<String, Integer> profilingRuns;
 	
+	public EffectManager effectManager;
+	
+	
 	@Override
 	public void onEnable() {
 		load();
@@ -202,6 +211,7 @@ public class MagicSpells extends JavaPlugin {
 		
 		debug = config.getBoolean("general.debug", false);
 		debugLevel = config.getInt("general.debug-level", 3);
+		
 		enableErrorLogging = config.getBoolean("general.enable-error-logging", true);
 		enableProfiling = config.getBoolean("general.enable-profiling", false);
 		textColor = ChatColor.getByChar(config.getString("general.text-color", ChatColor.DARK_AQUA.getChar() + ""));
@@ -247,6 +257,8 @@ public class MagicSpells extends JavaPlugin {
 				}
 			}
 		}
+		
+		effectManager = new EffectManager(this);
 		
 		strCastUsage = config.getString("general.str-cast-usage", "Usage: /cast <spell>. Use /cast list to see a list of spells.");
 		strUnknownSpell = config.getString("general.str-unknown-spell", "You do not know a spell with that name.");
@@ -1177,10 +1189,12 @@ public class MagicSpells extends JavaPlugin {
 		Bukkit.getScheduler().cancelTasks(this);
 		
 		plugin = null;
+		effectManager.dispose();
+		effectManager = null;
 	}
 	
 	@Override
-	public void onDisable() {		
+	public void onDisable() {	
 		unload();
 	}
 	
