@@ -275,6 +275,7 @@ public abstract class SpellEffect {
 		effects.put("splash", SplashPotionEffect.class);
 		effects.put("title", TitleEffect.class);
 		effects.put("effectlib", EffectLibEffect.class);
+		effects.put("effectlibparticles", EffectLibParticlesEffect.class);
 	}
 	
 }

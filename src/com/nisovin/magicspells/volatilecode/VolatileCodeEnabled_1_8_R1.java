@@ -161,7 +161,6 @@ public class VolatileCodeEnabled_1_8_R1 implements VolatileCodeHandle {
 		((CraftPlayer)player).getHandle().playerConnection.sendPacket(packet);
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void toggleLeverOrButton(Block block) {
 		// TODO: fix this
@@ -169,7 +168,6 @@ public class VolatileCodeEnabled_1_8_R1 implements VolatileCodeHandle {
 		//net.minecraft.server.v1_8_R1.Block.getById(block.getType().getId()).interact(((CraftWorld)block.getWorld()).getHandle(), new BlockPosition(block.getX(), block.getY(), block.getZ()), null, 0, 0, 0, 0);
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void pressPressurePlate(Block block) {
 		fallback.pressPressurePlate(block);
