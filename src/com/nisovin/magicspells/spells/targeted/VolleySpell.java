@@ -192,10 +192,10 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 		//let's see if this can redirect it
 		if (preImpactEvent.getRedirected()) {
 			event.setCancelled(true);
+			//TODO: if this doesn't work, make a new arrow and copy values over to it
 			a.setVelocity(a.getVelocity().multiply(-1));
 			a.teleport(a.getLocation().add(a.getVelocity()));
 		}
-		
 	}
 	
 	private class ArrowShooter implements Runnable {

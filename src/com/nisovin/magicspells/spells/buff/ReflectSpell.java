@@ -71,7 +71,6 @@ public class ReflectSpell extends BuffSpell {
 
 	@EventHandler
 	public void onSpellPreImpact(SpellPreImpactEvent event) {
-
 		if (event.getTarget() instanceof Player) {
 			Player target = (Player)event.getTarget();
 			if (isActive(target)) {

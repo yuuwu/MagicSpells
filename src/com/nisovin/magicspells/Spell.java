@@ -1104,7 +1104,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	}
 	
 	/**
-	 * Removes the reagent cost of this spell from the player's inventoryy.
+	 * Removes the reagent cost of this spell from the player's inventory.
 	 * This does not check if the player has the reagents, use hasReagents() for that.
 	 * @param player the player to remove reagents from
 	 */
@@ -1113,7 +1113,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	}
 	
 	/**
-	 * Removes the specified reagents from the player's inventoryy.
+	 * Removes the specified reagents from the player's inventory.
 	 * This does not check if the player has the reagents, use hasReagents() for that.
 	 * @param player the player to remove the reagents from
 	 * @param reagents the inventory item reagents to remove
@@ -1294,6 +1294,10 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		Location l;
 		int bx, by, bz;
 		double ex, ey, ez;
+		//how far can a target be from the line of sight along the x, y, and z directions
+		double xTolLower = 0.75, xTolUpper = 1.75;
+		double yTolLower = 1, yTolUpper = 2.5;
+		double zTolLower = 0.75, zTolUpper = 1.75;
 		// do min range
 		for (int i = 0; i < minRange && bi.hasNext(); i++) {
 			bi.next();
@@ -1314,7 +1318,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 					ex = l.getX();
 					ey = l.getY();
 					ez = l.getZ();
-					if ((bx-.75 <= ex && ex <= bx+1.75) && (bz-.75 <= ez && ez <= bz+1.75) && (by-1 <= ey && ey <= by+2.5)) {
+					if ((bx-xTolLower <= ex && ex <= bx+xTolUpper) && (bz-zTolLower <= ez && ez <= bz+zTolUpper) && (by-yTolLower <= ey && ey <= by+yTolUpper)) {
 						// entity is close enough, set target and stop
 						target = e;
 						
@@ -1771,6 +1775,9 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		private SpellCastEvent spellCast;
 		private int taskId;
 		private boolean cancelled = false;
+		private double motionToleranceX = 0.2;
+		private double motionToleranceY = 0.2;
+		private double motionToleranceZ = 0.2;
 		
 		public DelayedSpellCast(SpellCastEvent spellCast) {
 			this.player = spellCast.getCaster();
@@ -1786,7 +1793,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		public void run() {
 			if (!cancelled && player.isOnline() && !player.isDead()) {
 				Location currLoc = player.getLocation();
-				if (!interruptOnMove || (Math.abs(currLoc.getX() - prevLoc.getX()) < .2 && Math.abs(currLoc.getY() - prevLoc.getY()) < .2 && Math.abs(currLoc.getZ() - prevLoc.getZ()) < .2)) {
+				if (!interruptOnMove || (Math.abs(currLoc.getX() - prevLoc.getX()) < motionToleranceX && Math.abs(currLoc.getY() - prevLoc.getY()) < motionToleranceY && Math.abs(currLoc.getZ() - prevLoc.getZ()) < motionToleranceZ)) {
 					if (!spell.hasReagents(player, reagents)) {
 						spellCast.setSpellCastState(SpellCastState.MISSING_REAGENTS);
 					}
@@ -1845,6 +1852,10 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		private int interval = 5;
 		private int elapsed = 0;
 		
+		private double motionToleranceX = 0.2;
+		private double motionToleranceY = 0.2;
+		private double motionToleranceZ = 0.2;
+		
 		public DelayedSpellCastWithBar(SpellCastEvent spellCast) {
 			this.player = spellCast.getCaster();
 			this.prevLoc = player.getLocation().clone();
@@ -1863,7 +1874,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 			if (!cancelled && player.isOnline() && !player.isDead()) {
 				elapsed += interval;
 				Location currLoc = player.getLocation();
-				if (!interruptOnMove || (Math.abs(currLoc.getX() - prevLoc.getX()) < .2 && Math.abs(currLoc.getY() - prevLoc.getY()) < .2 && Math.abs(currLoc.getZ() - prevLoc.getZ()) < .2)) {
+				if (!interruptOnMove || (Math.abs(currLoc.getX() - prevLoc.getX()) < motionToleranceX && Math.abs(currLoc.getY() - prevLoc.getY()) < motionToleranceY && Math.abs(currLoc.getZ() - prevLoc.getZ()) < motionToleranceZ)) {
 					if (elapsed >= castTime) {
 						if (!spell.hasReagents(player, reagents)) {
 							spellCast.setSpellCastState(SpellCastState.MISSING_REAGENTS);

@@ -221,9 +221,12 @@ public class HomingMissileSpell extends TargetedSpell implements TargetedEntityS
 			if (hitRadius > 0 && spell != null) {
 				BoundingBox hitBox = new BoundingBox(currentLocation, hitRadius);
 				if (hitBox.contains(target.getLocation().add(0, yOffset, 0))) {
+					//fire off a preimpact event so reflect spells can still let us have our animation
 					SpellPreImpactEvent preImpact = new SpellPreImpactEvent(spell.getSpell(), thisSpell, caster, target, power);
 					Bukkit.getPluginManager().callEvent(preImpact);
+					//should we bounce the missile back?
 					if (!preImpact.getRedirected()) {
+						//apparently didn't get redirected, carry out the plans
 						if (spell.isTargetedEntitySpell()) {
 							spell.castAtEntity(caster, target, power);
 						} else if (spell.isTargetedLocationSpell()) {
