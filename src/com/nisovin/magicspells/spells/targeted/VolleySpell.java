@@ -8,12 +8,18 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.util.Vector;
 
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.events.SpellPreImpactEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedEntityFromLocationSpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
@@ -167,6 +173,31 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 		}
 	}
 	
+	@EventHandler
+	public void onArrowHit(EntityDamageByEntityEvent event) {
+		//if it isn't from a projectile, don't care about it here
+		if (event.getCause() != DamageCause.PROJECTILE) return;
+		//damaged entity has to be a player
+		if (!(event.getEntity() instanceof Player)) return;
+		Entity damagerEntity = event.getDamager();
+		//gotta be an arrow and have some metadata
+		if (!(damagerEntity instanceof Arrow) || !damagerEntity.hasMetadata("MagicSpellsSource")) return;
+		MetadataValue meta = damagerEntity.getMetadata("MagicSpellsSource").iterator().next();
+		//make sure it is actually from this spell
+		if (!meta.value().equals("VolleySpell" + internalName)) return;
+		Player p = (Player) event.getEntity();
+		Arrow a = (Arrow)damagerEntity;
+		SpellPreImpactEvent preImpactEvent = new SpellPreImpactEvent(thisSpell, thisSpell, (Player) a.getShooter(), p, 1);
+		Bukkit.getPluginManager().callEvent(preImpactEvent);
+		//let's see if this can redirect it
+		if (preImpactEvent.getRedirected()) {
+			event.setCancelled(true);
+			a.setVelocity(a.getVelocity().multiply(-1));
+			a.teleport(a.getLocation().add(a.getVelocity()));
+		}
+		
+	}
+	
 	private class ArrowShooter implements Runnable {
 		Player player;
 		Location spawn;
@@ -230,5 +261,7 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 			count++;
 		}
 	}
+	
+	
 
 }
