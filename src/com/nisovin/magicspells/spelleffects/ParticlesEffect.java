@@ -4,6 +4,8 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 
+import com.nisovin.magicspells.util.ColorUtil;
+
 import de.slikey.effectlib.util.ParticleEffect;
 
 class ParticlesEffect extends SpellEffect {
@@ -41,8 +43,9 @@ class ParticlesEffect extends SpellEffect {
 			if (data.length >= 6) {
 				yOffset = Float.parseFloat(data[5]);
 			}
-			
-			//TODO load the colors from the string
+			if (data.length >= 7) {
+				color = ColorUtil.getColorFromHexString(data[6]);
+			}
 		}
 		findEffect();
 	}
@@ -56,7 +59,7 @@ class ParticlesEffect extends SpellEffect {
 		count = config.getInt("count", count);
 		yOffset = (float)config.getDouble("y-offset", yOffset);
 		renderDistance = config.getInt("render-distance", renderDistance);
-		//TODO load colors
+		color = ColorUtil.getColorFromHexString(config.getString("color", null));
 		findEffect();
 	}
 	
