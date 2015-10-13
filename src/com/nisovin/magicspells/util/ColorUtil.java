@@ -5,6 +5,7 @@ import org.bukkit.Color;
 public class ColorUtil {
 	
 	public static Color getColorFromHexString(String hex) {
+		if (hex == null) return null;
 		String working = hex;
 		working = working.replace("#", "");
 		try {
