@@ -27,6 +27,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.PlayerNameUtils;
 import com.nisovin.magicspells.util.Util;
 
 public class ArmorSpell extends BuffSpell {
@@ -250,7 +251,7 @@ public class ArmorSpell extends BuffSpell {
 	@Override
 	protected void turnOff() {
 		for (String name : new HashSet<String>(armored)) {
-			Player p = Bukkit.getPlayerExact(name);
+			Player p = PlayerNameUtils.getPlayerExact(name);
 			if (p != null && p.isOnline()) {
 				turnOff(p);
 			}

@@ -1,11 +1,11 @@
 package com.nisovin.magicspells.castmodifiers.conditions;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.castmodifiers.Condition;
+import com.nisovin.magicspells.util.PlayerNameUtils;
 
 public class PlayerOnlineCondition extends Condition {
 	
@@ -19,7 +19,7 @@ public class PlayerOnlineCondition extends Condition {
 	
 	@Override
 	public boolean check(Player player) {
-		return Bukkit.getPlayerExact(name) != null;
+		return PlayerNameUtils.getPlayerExact(name) != null;
 	}
 	
 	@Override

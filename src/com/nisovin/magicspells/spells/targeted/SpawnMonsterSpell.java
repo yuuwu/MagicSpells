@@ -276,14 +276,17 @@ public class SpawnMonsterSpell extends TargetedSpell implements TargetedLocation
 					if (attributeTypes[i] != null) {
 						//System.out.println("adding attr " + attributeTypes[i] + " " + attributeValues[i] + " " + attributeOperations[i]);
 						MagicSpells.getVolatileCodeHandler().addEntityAttribute((LivingEntity)entity, attributeTypes[i], attributeValues[i], attributeOperations[i]);
+						//TODO use a non volatile handler for this
 					}
 				}
 			}
 			// set AI
 			if (removeAI) {
 				MagicSpells.getVolatileCodeHandler().removeAI((LivingEntity)entity);
+				//TODO use a non volatile handler for this
 				if (addLookAtPlayerAI) {
 					MagicSpells.getVolatileCodeHandler().addAILookAtPlayer((LivingEntity)entity, 10);
+					//TODO use a non volatile handler for this
 				}
 			}
 			// play effects

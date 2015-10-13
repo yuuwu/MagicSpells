@@ -29,9 +29,11 @@ public class ActionBarTextEffect extends SpellEffect {
 		if (broadcast) {
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				MagicSpells.getVolatileCodeHandler().sendActionBarMessage(player, message);
+				//TODO use a non volatile handler for this
 			}
 		} else if (entity instanceof Player) {
 			MagicSpells.getVolatileCodeHandler().sendActionBarMessage((Player)entity, message);
+			//TODO use a non volatile handler for this
 		}
 	}
 	

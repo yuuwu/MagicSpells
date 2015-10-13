@@ -16,6 +16,7 @@ import org.bukkit.util.Vector;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.PlayerNameUtils;
 
 public class WindwalkSpell extends BuffSpell {
 
@@ -101,7 +102,7 @@ public class WindwalkSpell extends BuffSpell {
 		
 		public void run() {
 			for (String name : flyers) {
-				Player p = Bukkit.getPlayerExact(name);
+				Player p = PlayerNameUtils.getPlayerExact(name);
 				if (p != null && p.isValid()) {
 					if (maxY > 0) {
 						int ydiff = p.getLocation().getBlockY() - maxY;
@@ -149,7 +150,7 @@ public class WindwalkSpell extends BuffSpell {
 	protected void turnOff() {
 		HashSet<String> flyers = new HashSet<String>(this.flyers);
 		for (String name : flyers) {
-			Player player = Bukkit.getPlayerExact(name);
+			Player player = PlayerNameUtils.getPlayerExact(name);
 			if (player != null) {
 				turnOff(player);
 			}

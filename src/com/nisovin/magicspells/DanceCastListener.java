@@ -3,7 +3,6 @@ package com.nisovin.magicspells;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,6 +17,8 @@ import com.nisovin.magicspells.Spell.SpellCastResult;
 import com.nisovin.magicspells.Spell.SpellCastState;
 import com.nisovin.magicspells.util.CastItem;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.PlayerNameUtils;
+import com.nisovin.magicspells.util.SoundUtils;
 import com.nisovin.magicspells.util.Util;
 
 public class DanceCastListener implements Listener {
@@ -131,7 +132,8 @@ public class DanceCastListener implements Listener {
 					}
 					MagicSpells.sendMessage(player, strDanceStart);
 					if (startSound != null) {
-						MagicSpells.getVolatileCodeHandler().playSound(player, startSound, startSoundVolume, startSoundPitch);
+						//MagicSpells.getVolatileCodeHandler().playSound(player, startSound, startSoundVolume, startSoundPitch);
+						SoundUtils.playSound(player, startSound, startSoundVolume, startSoundPitch); //the new system again
 					}
 					if (duration > 0) {
 						playerTasks.put(playerName, MagicSpells.scheduleDelayedTask(new DanceCastDuration(playerName), duration));
@@ -219,7 +221,7 @@ public class DanceCastListener implements Listener {
 			playerLocations.remove(playerName);
 			playerTasks.remove(playerName);
 			if (cast != null) {
-				Player player = Bukkit.getPlayerExact(playerName);
+				Player player = PlayerNameUtils.getPlayerExact(playerName);
 				if (player != null) {
 					MagicSpells.sendMessage(player, strDanceFail);
 				}

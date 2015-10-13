@@ -2,7 +2,6 @@ package com.nisovin.magicspells.spells.instant;
 
 import java.util.HashMap;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -14,6 +13,7 @@ import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.MagicLocation;
+import com.nisovin.magicspells.util.PlayerNameUtils;
 
 public class RecallSpell extends InstantSpell implements TargetedEntitySpell {
 	
@@ -57,7 +57,7 @@ public class RecallSpell extends InstantSpell implements TargetedEntitySpell {
 		if (state == SpellCastState.NORMAL) {
 			Location mark = null;
 			if (args != null && args.length == 1 && player.hasPermission("magicspells.advanced." + internalName)) {
-				Player target = Bukkit.getPlayer(args[0]);				
+				Player target = PlayerNameUtils.getPlayer(args[0]);				
 				if (useBedLocation) {
 					if (target != null) {
 						mark = target.getBedSpawnLocation();

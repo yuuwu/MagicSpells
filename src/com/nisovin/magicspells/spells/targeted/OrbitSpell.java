@@ -1,5 +1,6 @@
 package com.nisovin.magicspells.spells.targeted;
 
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -10,7 +11,10 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.ParticleNameUtil;
 import com.nisovin.magicspells.util.TargetInfo;
+
+import de.slikey.effectlib.util.ParticleEffect;
 
 public class OrbitSpell extends TargetedSpell implements TargetedEntitySpell {
 
@@ -35,6 +39,9 @@ public class OrbitSpell extends TargetedSpell implements TargetedEntitySpell {
 	boolean targetPlayers;
 	boolean targetNonPlayers;
 	
+	Color particleColor = null;
+	ParticleEffect effect;
+	
 	public OrbitSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
@@ -58,6 +65,8 @@ public class OrbitSpell extends TargetedSpell implements TargetedEntitySpell {
 		
 		targetPlayers = getConfigBoolean("target-players", true);
 		targetNonPlayers = getConfigBoolean("target-non-players", false);
+		//TODO add color config
+		effect = ParticleNameUtil.findEffect(particleName);
 	}
 
 	@Override
@@ -125,7 +134,10 @@ public class OrbitSpell extends TargetedSpell implements TargetedEntitySpell {
 			Location loc = getLocation();
 			
 			// show particle
-			MagicSpells.getVolatileCodeHandler().playParticleEffect(loc, particleName, particleHorizontalSpread, particleVerticalSpread, particleSpeed, particleCount, renderDistance, 0F);
+			//MagicSpells.getVolatileCodeHandler().playParticleEffect(loc, particleName, particleHorizontalSpread, particleVerticalSpread, particleSpeed, particleCount, renderDistance, 0F);
+			
+			effect.display(null, loc, particleColor, renderDistance, particleHorizontalSpread, particleVerticalSpread, particleHorizontalSpread, particleSpeed, particleCount);
+			//ParticleData data, Location center, Color color, double range, float offsetX, float offsetY, float offsetZ, float speed, int amount
 			
 		}
 		

@@ -140,6 +140,7 @@ public class Util {
 					item.addUnsafeEnchantments(enchants);
 				} else {
 					item = MagicSpells.getVolatileCodeHandler().addFakeEnchantment(item);
+					//TODO use a non volatile handler for this
 				}
 			}
 			return item;
@@ -341,11 +342,13 @@ public class Util {
 			// unbreakable
 			if (config.getBoolean("unbreakable", false)) {
 				item = MagicSpells.getVolatileCodeHandler().setUnbreakable(item);
+				//TODO use a non volatile handler for this
 			}
 			
 			// empty enchant
 			if (emptyEnchants) {
 				item = MagicSpells.getVolatileCodeHandler().addFakeEnchantment(item);
+				//TODO use a non volatile handler for this
 			}
 			
 			// attributes
@@ -380,6 +383,7 @@ public class Util {
 					i++;
 				}
 				item = MagicSpells.getVolatileCodeHandler().addAttributes(item, attrNames, attrTypes, attrAmounts, attrOperations);
+				//TODO use a non volatile handler for this
 			}
 			
 			return item;

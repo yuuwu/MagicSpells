@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -23,6 +22,7 @@ import com.nisovin.magicspells.materials.MagicBlockMaterial;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.PlayerNameUtils;
 import com.nisovin.magicspells.util.Util;
 
 public class StonevisionSpell extends BuffSpell {
@@ -189,7 +189,7 @@ public class StonevisionSpell extends BuffSpell {
 		
 		public boolean moveTransparency() {
 			if (player.isDead()) {
-				player = Bukkit.getServer().getPlayer(player.getName());
+				player = PlayerNameUtils.getPlayer(player.getName());
 			}
 			Location loc = player.getLocation();
 			if (!center.getWorld().equals(loc.getWorld()) || center.getX() != loc.getBlockX() || center.getY() != loc.getBlockY() || center.getZ() != loc.getBlockZ()) {

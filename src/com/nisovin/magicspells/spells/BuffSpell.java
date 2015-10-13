@@ -24,6 +24,7 @@ import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spelleffects.SpellEffect;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.PlayerNameUtils;
 import com.nisovin.magicspells.util.SpellReagents;
 import com.nisovin.magicspells.util.TargetInfo;
 
@@ -210,7 +211,7 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 			final String name = player.getName();
 			Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
 				public void run() {
-					Player p = Bukkit.getPlayerExact(name);
+					Player p = PlayerNameUtils.getPlayerExact(name);
 					if (p == null) p = player;
 					if (p != null && isExpired(p)) {
 						turnOff(p);

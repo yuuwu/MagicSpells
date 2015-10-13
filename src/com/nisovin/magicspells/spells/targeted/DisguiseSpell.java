@@ -35,6 +35,7 @@ import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.DisguiseManager;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.PlayerNameUtils;
 import com.nisovin.magicspells.util.TargetInfo;
 
 public class DisguiseSpell extends TargetedSpell implements TargetedEntitySpell {
@@ -74,6 +75,7 @@ public class DisguiseSpell extends TargetedSpell implements TargetedEntitySpell 
 		if (manager == null) {
 			try {
 				manager = MagicSpells.getVolatileCodeHandler().getDisguiseManager(config);
+				//TODO use a non volatile handler for this
 			} catch (Exception e) {
 				manager = null;
 			}
@@ -440,7 +442,7 @@ public class DisguiseSpell extends TargetedSpell implements TargetedEntitySpell 
 	public void turnOff() {
 		if (manager != null) {
 			for (String name : new ArrayList<String>(disguised.keySet())) {
-				Player player = Bukkit.getPlayerExact(name);
+				Player player = PlayerNameUtils.getPlayerExact(name);
 				if (player != null) {
 					manager.removeDisguise(player, false);
 				}

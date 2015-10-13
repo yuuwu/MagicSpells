@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.PlayerNameUtils;
 
 public class WaterwalkSpell extends BuffSpell {
 
@@ -57,7 +58,7 @@ public class WaterwalkSpell extends BuffSpell {
 	@Override
 	protected void turnOff() {
 		for (String playerName : waterwalking) {
-			Player player = Bukkit.getPlayerExact(playerName);
+			Player player = PlayerNameUtils.getPlayerExact(playerName);
 			if (player != null && player.isValid()) {
 				player.setFlying(false);
 				if (player.getGameMode() != GameMode.CREATIVE) {
@@ -97,7 +98,7 @@ public class WaterwalkSpell extends BuffSpell {
 			Location loc;
 			Block feet, underfeet;
 			for (String n : waterwalking) {
-				Player p = Bukkit.getPlayerExact(n);
+				Player p = PlayerNameUtils.getPlayerExact(n);
 				if (p != null && p.isOnline() && p.isValid()) {
 					loc = p.getLocation();
 					feet = loc.getBlock();

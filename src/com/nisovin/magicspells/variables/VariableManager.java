@@ -29,6 +29,7 @@ import com.nisovin.magicspells.Spell.SpellCastState;
 import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.events.SpellCastedEvent;
 import com.nisovin.magicspells.events.SpellTargetEvent;
+import com.nisovin.magicspells.util.PlayerNameUtils;
 import com.nisovin.magicspells.util.Util;
 
 public class VariableManager implements Listener {
@@ -190,7 +191,7 @@ public class VariableManager implements Listener {
 					MagicSpells.getBossBarManager().setPlayerBar(p, var.bossBar, pct);
 				}
 			} else if (var instanceof PlayerVariable) {
-				Player p = Bukkit.getPlayerExact(player);
+				Player p = PlayerNameUtils.getPlayerExact(player);
 				if (p != null) {
 					MagicSpells.getBossBarManager().setPlayerBar(p, var.bossBar, var.getValue(p) / var.maxValue);
 				}
@@ -206,7 +207,7 @@ public class VariableManager implements Listener {
 					MagicSpells.getVolatileCodeHandler().setExperienceBar(p, (int)var.getValue(""), (float)pct);
 				}
 			} else if (var instanceof PlayerVariable) {
-				Player p = Bukkit.getPlayerExact(player);
+				Player p = PlayerNameUtils.getPlayerExact(player);
 				if (p != null) {
 					MagicSpells.getVolatileCodeHandler().setExperienceBar(p, (int)var.getValue(p), (float)(var.getValue(p) / var.maxValue));
 				}

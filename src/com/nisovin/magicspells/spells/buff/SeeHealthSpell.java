@@ -21,6 +21,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.PlayerNameUtils;
 import com.nisovin.magicspells.util.TargetInfo;
 
 public class SeeHealthSpell extends BuffSpell {
@@ -115,6 +116,7 @@ public class SeeHealthSpell extends BuffSpell {
 		item.setItemMeta(meta);
 		// send update
 		MagicSpells.getVolatileCodeHandler().sendFakeSlotUpdate(player, slot, item);
+		//TODO use a non volatile handler for this
 	}
 	
 	//private void resetHealthBar(Player player) {
@@ -123,6 +125,7 @@ public class SeeHealthSpell extends BuffSpell {
 	
 	private void resetHealthBar(Player player, int slot) {
 		MagicSpells.getVolatileCodeHandler().sendFakeSlotUpdate(player, slot, player.getItemInHand());
+		//TODO use a non volatile handler for this
 	}
 	
 	@EventHandler
@@ -191,7 +194,7 @@ public class SeeHealthSpell extends BuffSpell {
 		@Override
 		public void run() {
 			for (String playerName : bars.keySet()) {
-				Player player = Bukkit.getPlayerExact(playerName);
+				Player player = PlayerNameUtils.getPlayerExact(playerName);
 				if (player != null && player.isValid()) {
 					TargetInfo<LivingEntity> target = getTargetedEntity(player, 1F);
 					if (target != null) {

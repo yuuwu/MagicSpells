@@ -28,6 +28,7 @@ import com.nisovin.magicspells.castmodifiers.ModifierSet;
 import com.nisovin.magicspells.events.MagicSpellsGenericPlayerEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.PlayerNameUtils;
 import com.nisovin.magicspells.util.TargetInfo;
 import com.nisovin.magicspells.util.Util;
 
@@ -326,7 +327,7 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 	@Override
 	public boolean castFromConsole(CommandSender sender, String[] args) {
 		if (args.length == 1) {
-			Player player = Bukkit.getPlayer(args[0]);
+			Player player = PlayerNameUtils.getPlayer(args[0]);
 			if (player != null) {
 				open(null, player, null, null, 1);
 				return true;

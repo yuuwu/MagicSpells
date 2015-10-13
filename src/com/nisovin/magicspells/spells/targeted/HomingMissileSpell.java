@@ -15,7 +15,10 @@ import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.BoundingBox;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.ParticleNameUtil;
 import com.nisovin.magicspells.util.TargetInfo;
+
+import de.slikey.effectlib.util.ParticleEffect;
 
 public class HomingMissileSpell extends TargetedSpell implements TargetedEntitySpell, TargetedEntityFromLocationSpell {
 
@@ -43,6 +46,8 @@ public class HomingMissileSpell extends TargetedSpell implements TargetedEntityS
 
 	HomingMissileSpell thisSpell;
 
+	ParticleEffect effect;
+	
 	boolean useParticles = false;
 
 	public HomingMissileSpell(MagicConfig config, String spellName) {
@@ -66,6 +71,8 @@ public class HomingMissileSpell extends TargetedSpell implements TargetedEntityS
 		renderDistance = getConfigInt("render-distance", 32);
 		hitSpellName = getConfigString("spell", "");
 		useParticles = getConfigBoolean("use-particles", false);
+		
+		effect = ParticleNameUtil.findEffect(particleName);
 	}
 
 	@Override
@@ -176,6 +183,7 @@ public class HomingMissileSpell extends TargetedSpell implements TargetedEntityS
 			this.taskId = MagicSpells.scheduleRepeatingTask(this, 0, tickInterval);
 			this.redirected = false;
 			this.originalTarget = target;
+			
 		}
 
 		@Override
@@ -206,7 +214,10 @@ public class HomingMissileSpell extends TargetedSpell implements TargetedEntityS
 
 			// show particle
 			if (useParticles) {
-				MagicSpells.getVolatileCodeHandler().playParticleEffect(currentLocation, particleName, particleHorizontalSpread, particleVerticalSpread, particleSpeed, particleCount, renderDistance, 0F);
+				//MagicSpells.getVolatileCodeHandler().playParticleEffect(currentLocation, particleName, particleHorizontalSpread, particleVerticalSpread, particleSpeed, particleCount, renderDistance, 0F);
+				
+				effect.display(null, currentLocation, null, renderDistance, particleHorizontalSpread, particleVerticalSpread, particleHorizontalSpread, particleSpeed, particleCount);
+				//ParticleData data, Location center, Color color, double range, float offsetX, float offsetY, float offsetZ, float speed, int amount
 			} else {
 				playSpellEffects(EffectPosition.SPECIAL, currentLocation);
 			}

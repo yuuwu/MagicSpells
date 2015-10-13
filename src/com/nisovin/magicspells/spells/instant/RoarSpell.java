@@ -33,6 +33,7 @@ public class RoarSpell extends InstantSpell {
 			for (Entity entity : entities) {
 				if (entity instanceof LivingEntity && !(entity instanceof Player) && validTargetList.canTarget(player, (LivingEntity)entity)) {
 					MagicSpells.getVolatileCodeHandler().setTarget((LivingEntity)entity, player);
+					//TODO use a non volatile handler for this
 					count++;
 					playSpellEffects(EffectPosition.TARGET, entity);
 				}

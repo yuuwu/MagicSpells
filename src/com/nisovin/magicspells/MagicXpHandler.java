@@ -25,6 +25,7 @@ import com.nisovin.magicspells.events.SpellLearnEvent;
 import com.nisovin.magicspells.events.SpellLearnEvent.LearnSource;
 import com.nisovin.magicspells.util.IntMap;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.PlayerNameUtils;
 import com.nisovin.magicspells.util.Util;
 
 public class MagicXpHandler implements Listener {
@@ -243,7 +244,7 @@ public class MagicXpHandler implements Listener {
 	
 	public void saveAll() {
 		for (String playerName : dirty) {
-			Player player = Bukkit.getPlayerExact(playerName);
+			Player player = PlayerNameUtils.getPlayerExact(playerName);
 			if (player != null) {
 				save(player);
 			}

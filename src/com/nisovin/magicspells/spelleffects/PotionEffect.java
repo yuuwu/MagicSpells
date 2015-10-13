@@ -45,6 +45,7 @@ class PotionEffect extends SpellEffect {
 		if (entity instanceof LivingEntity) {
 			LivingEntity le = (LivingEntity)entity;
 			MagicSpells.getVolatileCodeHandler().addPotionGraphicalEffect(le, color, duration);
+			//TODO use a non volatile handler for this
 		}
 	}
 	

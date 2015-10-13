@@ -56,6 +56,7 @@ import com.nisovin.magicspells.util.MoneyHandler;
 import com.nisovin.magicspells.util.Util;
 import com.nisovin.magicspells.variables.VariableManager;
 import com.nisovin.magicspells.volatilecode.VolatileCodeDisabled;
+import com.nisovin.magicspells.volatilecode.VolatileCodeEffectLib;
 import com.nisovin.magicspells.volatilecode.VolatileCodeEnabled_1_8_R1;
 import com.nisovin.magicspells.volatilecode.VolatileCodeEnabled_1_8_R3;
 import com.nisovin.magicspells.volatilecode.VolatileCodeHandle;
@@ -160,6 +161,8 @@ public class MagicSpells extends JavaPlugin {
 		plugin = this;
 		PluginManager pm = plugin.getServer().getPluginManager();
 		
+		effectManager = new EffectManager(this);
+		
 		// create storage stuff
 		spells = new HashMap<String,Spell>();
 		spellNames = new HashMap<String,Spell>();
@@ -257,8 +260,6 @@ public class MagicSpells extends JavaPlugin {
 				}
 			}
 		}
-		
-		effectManager = new EffectManager(this);
 		
 		strCastUsage = config.getString("general.str-cast-usage", "Usage: /cast <spell>. Use /cast list to see a list of spells.");
 		strUnknownSpell = config.getString("general.str-unknown-spell", "You do not know a spell with that name.");

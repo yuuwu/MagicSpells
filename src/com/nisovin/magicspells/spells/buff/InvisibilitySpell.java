@@ -17,6 +17,7 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.PlayerNameUtils;
 
 public class InvisibilitySpell extends BuffSpell {
 
@@ -94,7 +95,7 @@ public class InvisibilitySpell extends BuffSpell {
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		for (String name : invisibles.keySet()) {
-			Player p = Bukkit.getPlayerExact(name);
+			Player p = PlayerNameUtils.getPlayerExact(name);
 			if (p != null && !name.equals(player.getName())) {
 				player.hidePlayer(p);
 			}

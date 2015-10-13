@@ -4,7 +4,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.util.SoundUtils;
 
 public class SoundPersonalEffect extends SpellEffect {
 	
@@ -41,7 +41,8 @@ public class SoundPersonalEffect extends SpellEffect {
 	@Override
 	public void playEffectEntity(Entity entity) {
 		if (entity instanceof Player) {
-			MagicSpells.getVolatileCodeHandler().playSound((Player)entity, sound, volume, pitch);
+			//MagicSpells.getVolatileCodeHandler().playSound((Player)entity, sound, volume, pitch);
+			SoundUtils.playSound((Player) entity, sound, volume, pitch);
 		}
 	}
 	

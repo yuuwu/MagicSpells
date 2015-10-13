@@ -14,6 +14,7 @@ import com.nisovin.magicspells.events.SpellForgetEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.CommandSpell;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.PlayerNameUtils;
 import com.nisovin.magicspells.util.Util;
 
 public class ForgetSpell extends CommandSpell {
@@ -140,7 +141,7 @@ public class ForgetSpell extends CommandSpell {
 			// fail: missing args
 			sender.sendMessage(strUsage);
 		} else {
-			Player target = Bukkit.getPlayer(args[0]);
+			Player target = PlayerNameUtils.getPlayer(args[0]);
 			if (target == null) {
 				// fail: no player match
 				sender.sendMessage(strNoTarget);

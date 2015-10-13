@@ -23,7 +23,10 @@ import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.util.BlockUtils;
 import com.nisovin.magicspells.util.BoundingBox;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.ParticleNameUtil;
 import com.nisovin.magicspells.util.Util;
+
+import de.slikey.effectlib.util.ParticleEffect;
 
 public class ParticleProjectileSpell extends InstantSpell implements TargetedLocationSpell {
 
@@ -72,6 +75,8 @@ public class ParticleProjectileSpell extends InstantSpell implements TargetedLoc
 	
 	ParticleProjectileSpell thisSpell;
 	Random rand = new Random();
+	
+	ParticleEffect effect;
 
 	public ParticleProjectileSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -123,6 +128,8 @@ public class ParticleProjectileSpell extends InstantSpell implements TargetedLoc
 		stopOnHitGround = getConfigBoolean("stop-on-hit-ground", true);
 		
 		landSpellName = getConfigString("spell", "explode");
+		
+		effect = ParticleNameUtil.findEffect(particleName);
 	}
 	
 	@Override
@@ -281,8 +288,10 @@ public class ParticleProjectileSpell extends InstantSpell implements TargetedLoc
 			}
 			
 			// show particle
-			MagicSpells.getVolatileCodeHandler().playParticleEffect(currentLocation, particleName, particleHorizontalSpread, particleVerticalSpread, particleSpeed, particleCount, renderDistance, 0F);
-			
+			//MagicSpells.getVolatileCodeHandler().playParticleEffect(currentLocation, particleName, particleHorizontalSpread, particleVerticalSpread, particleSpeed, particleCount, renderDistance, 0F);
+			effect.display(null, currentLocation, null, renderDistance, particleHorizontalSpread, particleVerticalSpread, particleHorizontalSpread, particleSpeed, particleCount);
+			//ParticleData data, Location center, Color color, double range, float offsetX, float offsetY, float offsetZ, float speed, int amount
+						
 			// play effects
 			if (specialEffectInterval > 0 && counter % specialEffectInterval == 0) {
 				playSpellEffects(EffectPosition.SPECIAL, currentLocation);

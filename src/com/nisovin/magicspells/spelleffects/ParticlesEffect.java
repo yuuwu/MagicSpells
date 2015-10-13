@@ -1,12 +1,14 @@
 package com.nisovin.magicspells.spelleffects;
 
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 
-import com.nisovin.magicspells.MagicSpells;
+import de.slikey.effectlib.util.ParticleEffect;
 
 class ParticlesEffect extends SpellEffect {
 	
+	ParticleEffect effect;
 	String name = "explode";
 	float horizSpread = 0.2F;
 	float vertSpread = 0.2F;
@@ -14,6 +16,7 @@ class ParticlesEffect extends SpellEffect {
 	int count = 5;
 	float yOffset = 0F;
 	int renderDistance = 32;
+	Color color = null;
 
 	@Override
 	public void loadFromString(String string) {
@@ -38,7 +41,10 @@ class ParticlesEffect extends SpellEffect {
 			if (data.length >= 6) {
 				yOffset = Float.parseFloat(data[5]);
 			}
+			
+			//TODO load the colors from the string
 		}
+		findEffect();
 	}
 
 	@Override
@@ -50,11 +56,21 @@ class ParticlesEffect extends SpellEffect {
 		count = config.getInt("count", count);
 		yOffset = (float)config.getDouble("y-offset", yOffset);
 		renderDistance = config.getInt("render-distance", renderDistance);
+		//TODO load colors
+		findEffect();
+	}
+	
+	protected void findEffect() {
+		effect = ParticleEffect.fromName(name);
+		if (effect == null) {
+			throw new NullPointerException("No particle could be found from: \"" + name + "\"");
+		}
 	}
 
 	@Override
 	public void playEffectLocation(Location location) {
-		MagicSpells.getVolatileCodeHandler().playParticleEffect(location, name, horizSpread, vertSpread, speed, count, renderDistance, yOffset);
+		//ParticleData data, Location center, Color color, double range, float offsetX, float offsetY, float offsetZ, float speed, int amount
+		effect.display(null, location.add(0, yOffset, 0), color, renderDistance, horizSpread, vertSpread, horizSpread, speed, count);
 	}
 	
 }

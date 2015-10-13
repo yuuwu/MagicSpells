@@ -82,6 +82,7 @@ public class FireworksEffect extends SpellEffect {
 	@Override
 	public void playEffectLocation(Location location) {
 		MagicSpells.getVolatileCodeHandler().createFireworksExplosion(location, flicker, trail, type, colors, fadeColors, flightDuration);
+		//TODO use a non volatile handler for this
 	}
 	
 }

@@ -68,11 +68,13 @@ public class TelekinesisSpell extends TargetedSpell implements TargetedLocationS
 		if (target.getType() == Material.LEVER || target.getType() == Material.STONE_BUTTON || target.getType() == Material.WOOD_BUTTON) {
 			if (checkPlugins(caster, target)) {
 				MagicSpells.getVolatileCodeHandler().toggleLeverOrButton(target);
+				//TODO use a non volatile handler for this
 				return true;
 			}
 		} else if (target.getType() == Material.WOOD_PLATE || target.getType() == Material.STONE_PLATE || target.getType() == Material.IRON_PLATE || target.getType() == Material.GOLD_PLATE) {
 			if (checkPlugins(caster, target)) {
 				MagicSpells.getVolatileCodeHandler().pressPressurePlate(target);
+				//TODO use a non volatile handler for this
 				return true;
 			}
 		}		

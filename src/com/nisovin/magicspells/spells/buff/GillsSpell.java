@@ -3,7 +3,6 @@ package com.nisovin.magicspells.spells.buff;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.PlayerNameUtils;
 
 public class GillsSpell extends BuffSpell {
 
@@ -83,7 +83,7 @@ public class GillsSpell extends BuffSpell {
 	protected void turnOff() {
 		for (String name : fishes) {
 			if (glassHeadEffect) {
-				Player player = Bukkit.getPlayerExact(name);
+				Player player = PlayerNameUtils.getPlayerExact(name);
 				if (player != null && player.isOnline()) {
 					if (helmets.containsKey(player)) {
 						player.getInventory().setHelmet(helmets.get(player));

@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.spells.BuffSpell;
+import com.nisovin.magicspells.util.PlayerNameUtils;
 import com.nisovin.magicspells.zones.NoMagicZoneManager;
 
 public class BuffManager {
@@ -58,7 +59,7 @@ public class BuffManager {
 			NoMagicZoneManager noMagicZones = MagicSpells.getNoMagicZoneManager();
 			if (noMagicZones != null) {
 				for (String playerName : activeBuffs.keySet()) {
-					Player p = Bukkit.getPlayerExact(playerName);
+					Player p = PlayerNameUtils.getPlayerExact(playerName);
 					if (p != null) {
 						HashSet<BuffSpell> buffs = new HashSet<BuffSpell>(activeBuffs.get(playerName));
 						for (BuffSpell spell : buffs) {

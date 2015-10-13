@@ -49,6 +49,7 @@ public class BossBarManager implements Listener {
 		if (bossBarTitles.remove(player.getName()) != null) {
 			bossBarValues.remove(player.getName());
 			MagicSpells.getVolatileCodeHandler().removeBossBar(player);
+			//TODO use a non volatile handler for this
 		}
 	}
 	
@@ -56,6 +57,7 @@ public class BossBarManager implements Listener {
 		try {
 			if (player != null && player.isValid()) {
 				MagicSpells.getVolatileCodeHandler().setBossBar(player, bossBarTitles.get(player.getName()), bossBarValues.get(player.getName()));
+				//TODO use a non volatile handler for this
 			}
 		} catch (Exception e) {
 			System.out.println("BOSS BAR EXCEPTION: " + e.getMessage());
@@ -64,6 +66,7 @@ public class BossBarManager implements Listener {
 	
 	private void updateBar(Player player, String title, double val) {
 		MagicSpells.getVolatileCodeHandler().updateBossBar(player, title, val);
+		//TODO use a non volatile handler for this
 	}
 	
 	@EventHandler
@@ -98,6 +101,7 @@ public class BossBarManager implements Listener {
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			if (bossBarTitles.containsKey(player.getName())) {
 				MagicSpells.getVolatileCodeHandler().removeBossBar(player);
+				//TODO use a non volatile handler for this
 			}
 		}
 		bossBarTitles.clear();

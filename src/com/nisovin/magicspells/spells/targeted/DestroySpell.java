@@ -215,6 +215,7 @@ public class DestroySpell extends TargetedSpell implements TargetedLocationSpell
 			}
 			if (fallingBlockDamage > 0) {
 				MagicSpells.getVolatileCodeHandler().setFallingBlockHurtEntities(fb, fallingBlockDamage, fallingBlockDamage);
+				//TODO use a non volatile handler for this
 			}
 			if (preventLandingBlocks) {
 				fallingBlocks.add(fb);

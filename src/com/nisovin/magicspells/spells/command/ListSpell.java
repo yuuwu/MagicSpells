@@ -13,6 +13,7 @@ import com.nisovin.magicspells.Spell;
 import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.spells.CommandSpell;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.PlayerNameUtils;
 
 public class ListSpell extends CommandSpell {
 	
@@ -39,7 +40,7 @@ public class ListSpell extends CommandSpell {
 			Spellbook spellbook = MagicSpells.getSpellbook(player);
 			String extra = "";
 			if (args != null && args.length > 0 && spellbook.hasAdvancedPerm("list")) {
-				Player p = Bukkit.getServer().getPlayer(args[0]);
+				Player p = PlayerNameUtils.getPlayer(args[0]);
 				if (p != null) {
 					spellbook = MagicSpells.getSpellbook(p);
 					extra = "(" + p.getDisplayName() + ") ";
@@ -93,7 +94,7 @@ public class ListSpell extends CommandSpell {
 		// get spell list
 		Collection<Spell> spells = MagicSpells.spells();
 		if (args != null && args.length > 0) {
-			Player p = Bukkit.getServer().getPlayer(args[0]);
+			Player p = PlayerNameUtils.getPlayer(args[0]);
 			if (p == null) {
 				sender.sendMessage("No such player.");
 				return true;

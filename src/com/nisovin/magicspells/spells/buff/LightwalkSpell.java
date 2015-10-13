@@ -2,7 +2,6 @@ package com.nisovin.magicspells.spells.buff;
 
 import java.util.HashMap;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -16,6 +15,7 @@ import com.nisovin.magicspells.materials.MagicBlockMaterial;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.PlayerNameUtils;
 import com.nisovin.magicspells.util.Util;
 
 public class LightwalkSpell extends BuffSpell {
@@ -87,7 +87,7 @@ public class LightwalkSpell extends BuffSpell {
 	@Override
 	protected void turnOff() {
 		for (String s : lightwalkers.keySet()) {
-			Player p = Bukkit.getServer().getPlayer(s);
+			Player p = PlayerNameUtils.getPlayer(s);
 			if (p != null) {
 				Block b = lightwalkers.get(s);
 				if (b != null) {

@@ -15,6 +15,7 @@ import org.bukkit.material.LongGrass;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.PlayerNameUtils;
 
 public class LifewalkSpell extends BuffSpell {
 	
@@ -84,7 +85,7 @@ public class LifewalkSpell extends BuffSpell {
 		
 		public void run() {
 			for (String s : lifewalkers.toArray(strArr)) {
-				Player player = Bukkit.getServer().getPlayer(s);
+				Player player = PlayerNameUtils.getPlayer(s);
 				if (player != null) {
 					if (isExpired(player)) {
 						turnOff(player);

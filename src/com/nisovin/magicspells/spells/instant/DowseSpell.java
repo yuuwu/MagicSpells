@@ -19,6 +19,7 @@ import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.PlayerNameUtils;
 import com.nisovin.magicspells.util.Util;
 
 public class DowseSpell extends InstantSpell {
@@ -121,7 +122,7 @@ public class DowseSpell extends InstantSpell {
 				double distanceSq = radius * radius;
 				if (entityType == EntityType.PLAYER && playerName != null) {
 					// find specific player
-					foundEntity = Bukkit.getPlayerExact(playerName);
+					foundEntity = PlayerNameUtils.getPlayerExact(playerName);
 					if (foundEntity != null) {
 						if (!foundEntity.getWorld().equals(player.getWorld())) {
 							foundEntity = null;

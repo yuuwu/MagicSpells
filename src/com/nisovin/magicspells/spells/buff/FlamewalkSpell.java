@@ -14,6 +14,7 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.PlayerNameUtils;
 
 public class FlamewalkSpell extends BuffSpell {
 	
@@ -79,7 +80,7 @@ public class FlamewalkSpell extends BuffSpell {
 		
 		public void run() {
 			for (String s : flamewalkers.keySet().toArray(strArr)) {
-				Player player = Bukkit.getServer().getPlayer(s);
+				Player player = PlayerNameUtils.getPlayer(s);
 				float power = flamewalkers.get(s);
 				if (player != null) {
 					if (isExpired(player)) {

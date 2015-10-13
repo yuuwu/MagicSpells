@@ -38,6 +38,7 @@ public class ConfusionSpell extends InstantSpell {
 					next = 0;
 				}
 				MagicSpells.getVolatileCodeHandler().setTarget(monsters.get(i), monsters.get(next));
+				//TODO use a non volatile handler for this
 				playSpellEffects(EffectPosition.TARGET, monsters.get(i));
 			}
 			playSpellEffects(EffectPosition.CASTER, player);

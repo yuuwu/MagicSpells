@@ -19,6 +19,7 @@ import org.bukkit.inventory.ItemStack;
 import com.nisovin.magicspells.mana.ManaChangeReason;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
+import com.nisovin.magicspells.util.PlayerNameUtils;
 import com.nisovin.magicspells.util.Util;
 
 public class CastCommand implements CommandExecutor, TabCompleter {
@@ -43,7 +44,7 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 						sender.sendMessage(plugin.textColor + plugin.strCastUsage);
 					}
 				} else if (sender.isOp() && args[0].equals("forcecast") && args.length >= 3) {
-					Player target = Bukkit.getPlayer(args[1]);
+					Player target = PlayerNameUtils.getPlayer(args[1]);
 					if (target == null) {
 						sender.sendMessage(plugin.textColor + "No matching player found");
 						return true;
@@ -77,7 +78,7 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 				} else if (sender.isOp() && args[0].equals("resetcd")) {
 					Player p = null;
 					if (args.length > 1) {
-						p = Bukkit.getPlayer(args[1]);
+						p = PlayerNameUtils.getPlayer(args[1]);
 						if (p == null) {
 							sender.sendMessage(plugin.textColor + "No matching player found");
 							return true;
@@ -92,13 +93,13 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 					}
 					sender.sendMessage(plugin.textColor + "Cooldowns reset" + (p != null ? " for " + p.getName() : ""));
 				} else if (sender.isOp() && args[0].equals("resetmana") && args.length > 1 && plugin.mana != null) {
-					Player p = Bukkit.getPlayer(args[1]);
+					Player p = PlayerNameUtils.getPlayer(args[1]);
 					if (p != null) {
 						plugin.mana.createManaBar(p);
 						sender.sendMessage(plugin.textColor + p.getName() + "'s mana reset.");
 					}
 				} else if (sender.isOp() && args[0].equals("updatemanarank") && args.length > 1 && plugin.mana != null) {
-					Player p = Bukkit.getPlayer(args[1]);
+					Player p = PlayerNameUtils.getPlayer(args[1]);
 					if (p != null) {
 						boolean updated = plugin.mana.updateManaRankIfNecessary(p);
 						plugin.mana.showMana(p);
@@ -109,21 +110,21 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 						}
 					}
 				} else if (sender.isOp() && args[0].equalsIgnoreCase("setmaxmana") && args.length == 3 && plugin.mana != null) {
-					Player p = Bukkit.getPlayer(args[1]);
+					Player p = PlayerNameUtils.getPlayer(args[1]);
 					if (p != null) {
 						int amt = Integer.parseInt(args[2]);
 						plugin.mana.setMaxMana(p, amt);
 						sender.sendMessage(plugin.textColor + p.getName() + "'s max mana set to " + amt + ".");
 					}					
 				} else if (sender.isOp() && args[0].equalsIgnoreCase("modifymana") && args.length == 3 && plugin.mana != null) {
-					Player p = Bukkit.getPlayer(args[1]);
+					Player p = PlayerNameUtils.getPlayer(args[1]);
 					if (p != null) {
 						int amt = Integer.parseInt(args[2]);
 						plugin.mana.addMana(p, amt, ManaChangeReason.OTHER);
 						sender.sendMessage(plugin.textColor + p.getName() + "'s mana modified by " + amt + ".");
 					}					
 				} else if (sender.isOp() && args[0].equalsIgnoreCase("setmana") && args.length == 3 && plugin.mana != null) {
-					Player p = Bukkit.getPlayer(args[1]);
+					Player p = PlayerNameUtils.getPlayer(args[1]);
 					if (p != null) {
 						int amt = Integer.parseInt(args[2]);
 						plugin.mana.setMana(p, amt, ManaChangeReason.OTHER);
@@ -201,7 +202,7 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 						sender.sendMessage(plugin.textColor + "Update file failed to download.");
 					}
 				} else if (sender.isOp() && args[0].equals("saveskin") && args.length == 3) {
-					Player player = Bukkit.getPlayerExact(args[1]);
+					Player player = PlayerNameUtils.getPlayerExact(args[1]);
 					if (player != null) {
 						MagicSpells.getVolatileCodeHandler().saveSkinData(player, args[2]);
 						sender.sendMessage("Skin data for player " + player.getName() + " saved as " + args[2]);
@@ -270,7 +271,7 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 							boolean ok = spell.castFromConsole(sender, spellArgs);
 							if (!ok) {
 								if ((spell instanceof TargetedEntitySpell || spell instanceof TargetedLocationSpell) && spellArgs != null && spellArgs.length == 1 && spellArgs[0].matches("^[A-Za-z0-9_]+$")) {
-									Player target = Bukkit.getPlayer(spellArgs[0]);
+									Player target = PlayerNameUtils.getPlayer(spellArgs[0]);
 									if (target != null) {
 										if (spell instanceof TargetedEntitySpell) {
 											ok = ((TargetedEntitySpell)spell).castAtEntity(target, 1.0F);

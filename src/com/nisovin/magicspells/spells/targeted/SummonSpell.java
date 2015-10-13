@@ -20,6 +20,7 @@ import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.BlockUtils;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.PlayerNameUtils;
 
 public class SummonSpell extends TargetedSpell implements TargetedEntitySpell, TargetedEntityFromLocationSpell {
 
@@ -88,7 +89,7 @@ public class SummonSpell extends TargetedSpell implements TargetedEntitySpell, T
 			// get player
 			Player target = null;
 			if (requireExactName) {
-				target = Bukkit.getServer().getPlayer(targetName);
+				target = PlayerNameUtils.getPlayer(targetName);
 				if (target != null && !target.getName().equalsIgnoreCase(targetName)) {
 					target = null;
 				}

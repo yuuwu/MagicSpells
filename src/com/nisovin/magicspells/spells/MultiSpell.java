@@ -13,6 +13,7 @@ import com.nisovin.magicspells.Spell;
 import com.nisovin.magicspells.Subspell;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.PlayerNameUtils;
 
 public final class MultiSpell extends InstantSpell {
 
@@ -192,7 +193,7 @@ public final class MultiSpell extends InstantSpell {
 		
 		@Override
 		public void run() {
-			Player player = Bukkit.getPlayerExact(playerName);
+			Player player = PlayerNameUtils.getPlayerExact(playerName);
 			if (player != null && player.isValid()) {
 				spell.cast(player, power);
 			}

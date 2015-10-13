@@ -20,6 +20,7 @@ public class ExperienceBarManager {
 		if (lock == null || (object != null && object.equals(lock))) {
 			if (player.getOpenInventory().getType() != InventoryType.ENCHANTING) {
 				MagicSpells.getVolatileCodeHandler().setExperienceBar(player, level, percent);
+				//TODO use a non volatile handler for this
 			}
 		}
 	}
