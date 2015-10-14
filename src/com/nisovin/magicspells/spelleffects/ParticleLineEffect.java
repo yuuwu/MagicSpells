@@ -3,6 +3,8 @@ package com.nisovin.magicspells.spelleffects;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
+import com.nisovin.magicspells.util.ColorUtil;
+
 public class ParticleLineEffect extends ParticlesEffect {
 		
 	@Override
@@ -30,6 +32,9 @@ public class ParticleLineEffect extends ParticlesEffect {
 			}
 			if (data.length >= 7) {
 				yOffset = Float.parseFloat(data[6]);
+			}
+			if (data.length >= 8) {
+				color = ColorUtil.getColorFromHexString(data[7]);
 			}
 		}
 		super.findEffect();
