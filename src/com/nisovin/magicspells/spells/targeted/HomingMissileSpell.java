@@ -43,6 +43,7 @@ public class HomingMissileSpell extends TargetedSpell implements TargetedEntityS
 
 	String hitSpellName;
 	Subspell spell;
+	boolean changeCasterOnReflect = true;
 
 	HomingMissileSpell thisSpell;
 
@@ -71,6 +72,7 @@ public class HomingMissileSpell extends TargetedSpell implements TargetedEntityS
 		renderDistance = getConfigInt("render-distance", 32);
 		hitSpellName = getConfigString("spell", "");
 		useParticles = getConfigBoolean("use-particles", false);
+		changeCasterOnReflect = getConfigBoolean("change-caster-on-reflect", true);
 		
 		effect = ParticleNameUtil.findEffect(particleName);
 	}
@@ -145,6 +147,7 @@ public class HomingMissileSpell extends TargetedSpell implements TargetedEntityS
 	class MissileTracker implements Runnable {
 
 		Player caster;
+		Player originalCaster;
 		LivingEntity target;
 		LivingEntity originalTarget;
 		float power;
@@ -183,6 +186,7 @@ public class HomingMissileSpell extends TargetedSpell implements TargetedEntityS
 			this.taskId = MagicSpells.scheduleRepeatingTask(this, 0, tickInterval);
 			this.redirected = false;
 			this.originalTarget = target;
+			this.originalCaster = caster;
 			
 		}
 
@@ -248,9 +252,15 @@ public class HomingMissileSpell extends TargetedSpell implements TargetedEntityS
 					} else {
 						//if it got redirected, redirect it!
 						if (!redirected) {
-							target = caster;
+							target = originalCaster;
+							if (originalTarget instanceof Player && changeCasterOnReflect) {
+								caster = (Player) originalTarget;
+							}
 						} else {
 							target = originalTarget;
+							if (originalCaster instanceof Player && changeCasterOnReflect) {
+								caster = (Player) originalCaster;
+							}
 						}
 						currentVelocity.multiply(-1F);
 						redirected = !redirected;
