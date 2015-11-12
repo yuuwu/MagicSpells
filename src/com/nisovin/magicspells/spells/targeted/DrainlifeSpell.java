@@ -21,6 +21,22 @@ import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellAnimation;
 import com.nisovin.magicspells.util.TargetInfo;
 
+/**
+ * public class DrainlifeSpell extends {@link TargetedSpell} implements {@link TargetedEntitySpell}, {@link SpellDamageSpell}
+ * Configuration fields:
+ * <ul>
+ * <li>take-type: "health"</li>
+ * <li>take-amt: 2<br>Affected by spell power</li>
+ * <li>give-type: "health"</li>
+ * <li>give-amt: 2<br>Affected by spell power</li>
+ * <li>spell-damage-type: ""</li>
+ * <li>show-spell-effect: true</li>
+ * <li>animation-speed: 2</li>
+ * <li>instant: true</li>
+ * <li>ignore-armor: false</li>
+ * <li>check-plugins: true</li>
+ * </ul>
+ */
 public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell, SpellDamageSpell {
 	
 	private String takeType;

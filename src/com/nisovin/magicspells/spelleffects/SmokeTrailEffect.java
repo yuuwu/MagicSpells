@@ -7,7 +7,16 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
+
+/**
+ * class SmokeTrailEffect<p>
+ * Configuration fields:<br>
+ * <ul>
+ * <li>interval</li>
+ * </ul>
+ */
 
 class SmokeTrailEffect extends SpellEffect {
 
@@ -19,6 +28,7 @@ class SmokeTrailEffect extends SpellEffect {
 			try {
 				interval = Integer.parseInt(string);
 			} catch (NumberFormatException e) {
+				DebugHandler.debugNumberFormat(e);
 			}
 		}
 	}

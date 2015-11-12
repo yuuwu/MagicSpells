@@ -22,6 +22,25 @@ import com.nisovin.magicspells.spells.CommandSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.Util;
 
+/**
+ * Configuration fields:
+ * <ul>
+ * <li>cancel-read-on-learn: true</li>
+ * <li>consume-book: false</li>
+ * <li>allow-overwrite: false</li>
+ * <li>default-uses: -1</li>
+ * <li>max-uses: 5</li>
+ * <li>require-teach-perm: true</li>
+ * <li>str-usage: "Usage: While holding a book, /cast " + name + " <spell> [uses]"</li>
+ * <li>str-no-spell: "You do not know a spell with that name."</li>
+ * <li>str-cant-teach: "You cannot create a tome with that spell."</li>
+ * <li>str-no-book: "You must be holding a book."</li>
+ * <li>str-already-has-spell: "That book already contains a spell."</li>
+ * <li>str-already-known: "You already know the %s spell."</li>
+ * <li>str-cant-learn: "You cannot learn the spell in this tome."</li>
+ * <li>str-learned: "You have learned the %s spell."</li>
+ * </ul>
+ */
 public class TomeSpell extends CommandSpell {
 
 	private boolean cancelReadOnLearn;

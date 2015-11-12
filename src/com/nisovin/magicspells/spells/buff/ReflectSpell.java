@@ -7,6 +7,8 @@ import java.util.HashSet;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 
+import com.nisovin.magicspells.DebugHandler;
+import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.events.SpellPreImpactEvent;
 import com.nisovin.magicspells.events.SpellTargetEvent;
 import com.nisovin.magicspells.spells.BuffSpell;
@@ -50,11 +52,11 @@ public class ReflectSpell extends BuffSpell {
 			Player target = (Player)event.getTarget();
 			if (isActive(target)) {
 				float power = reflectors.get(target.getName());
-				if (shieldBreakerNames.contains(event.getSpell().getInternalName())) {
+				if (shieldBreakerNames != null && shieldBreakerNames.contains(event.getSpell().getInternalName())) {
 					turnOffBuff(target);
 					return;
 				}
-				if (delayedReflectionSpells.contains(event.getSpell().getInternalName())) {
+				if (delayedReflectionSpells != null && delayedReflectionSpells.contains(event.getSpell().getInternalName())) {
 					//let the delayed reflection spells target the reflector so the animations run
 					//it will get reflected later
 					return;
@@ -71,16 +73,41 @@ public class ReflectSpell extends BuffSpell {
 
 	@EventHandler
 	public void onSpellPreImpact(SpellPreImpactEvent event) {
+		if (event == null) {
+			if (DebugHandler.isNullCheckEnabled()) {
+			NullPointerException e = new NullPointerException("SpellPreImpactEvent was null!");
+			e.fillInStackTrace();
+			DebugHandler.nullCheck(e);
+			}
+			return;
+		}
+		if (event.getTarget() == null) {
+			MagicSpells.plugin.getLogger().warning("Spell preimpact event had a null target, the spell cannot be reflected.");
+			if (DebugHandler.isNullCheckEnabled()) {
+			NullPointerException e = new NullPointerException("Spell preimpact event had a null target");
+			e.fillInStackTrace();
+			DebugHandler.nullCheck(e);
+			}
+			return;
+		}
+		if (event.getCaster() == null) {
+			if (DebugHandler.isNullCheckEnabled()) {
+			NullPointerException e = new NullPointerException("SpellPreImpactEvent had a null caster!");
+			e.fillInStackTrace();
+			DebugHandler.nullCheck(e);
+			}
+			return;
+		}
 		if (event.getTarget() instanceof Player) {
 			Player target = (Player)event.getTarget();
 			if (isActive(target)) {
-				if (delayedReflectionSpellsUsePayloadShieldBreaker && shieldBreakerNames.contains(event.getSpell().getInternalName())) {
+				if (delayedReflectionSpellsUsePayloadShieldBreaker && (event.getSpell() != null && shieldBreakerNames.contains(event.getSpell().getInternalName()))) {
 					turnOffBuff(target);
 					return;
 				}
 				event.setRedirected(true);
 				float powerMultiplier = 1.0F;
-				powerMultiplier *= reflectedSpellPowerMultiplier * (spellPowerAffectsReflectedPower ? reflectors.get(target) : 1.0);
+				powerMultiplier *= reflectedSpellPowerMultiplier * (spellPowerAffectsReflectedPower ? (reflectors.get(target) == null? 1.0: reflectors.get(target)) : 1.0);
 				event.setPower(event.getPower() * powerMultiplier);
 				addUse(target);
 			}

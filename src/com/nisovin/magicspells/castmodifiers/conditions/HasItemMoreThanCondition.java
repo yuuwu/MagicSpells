@@ -5,6 +5,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.castmodifiers.Condition;
 import com.nisovin.magicspells.util.Util;
 
@@ -22,6 +23,7 @@ public class HasItemMoreThanCondition extends Condition {
 			count = Integer.parseInt(s[1]);
 			return true;
 		} catch (Exception e) {
+			DebugHandler.debugGeneral(e);
 			return false;
 		}
 	}

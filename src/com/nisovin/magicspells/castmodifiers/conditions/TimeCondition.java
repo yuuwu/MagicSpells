@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.castmodifiers.Condition;
 
 public class TimeCondition extends Condition {
@@ -19,6 +20,7 @@ public class TimeCondition extends Condition {
 			end = Integer.parseInt(vardata[1]);
 			return true;
 		} catch (Exception e) {
+			DebugHandler.debugNumberFormat(e);
 			return false;
 		}
 	}

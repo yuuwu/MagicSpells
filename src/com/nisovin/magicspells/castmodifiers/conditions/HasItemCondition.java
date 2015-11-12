@@ -7,6 +7,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.castmodifiers.Condition;
 
 public class HasItemCondition extends Condition {
@@ -46,6 +47,7 @@ public class HasItemCondition extends Condition {
 			}
 			return true;
 		} catch (Exception e) {
+			DebugHandler.debugGeneral(e);
 			return false;
 		}
 	}
@@ -60,7 +62,9 @@ public class HasItemCondition extends Condition {
 						if (item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
 							thisname = item.getItemMeta().getDisplayName();
 						}
-					} catch (Exception e) {}
+					} catch (Exception e) {
+						DebugHandler.debugGeneral(e);
+					}
 					if (item.getTypeId() == id && (!checkData || item.getDurability() == data) && (!checkName || strEquals(thisname, name))) {
 						return true;
 					}

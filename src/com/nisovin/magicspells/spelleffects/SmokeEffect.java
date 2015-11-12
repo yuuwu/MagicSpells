@@ -4,6 +4,16 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 
+import com.nisovin.magicspells.DebugHandler;
+
+/**
+ * class SoundEffect<p>
+ * Configuration fields:<br>
+ * <ul>
+ * <li>dir</li>
+ * </ul>
+ */
+
 class SmokeEffect extends SpellEffect {
 
 	int dir = 4;
@@ -13,7 +23,8 @@ class SmokeEffect extends SpellEffect {
 		if (string != null && !string.isEmpty()) {
 			try {
 				dir = Integer.parseInt(string);
-			} catch (NumberFormatException e) {			
+			} catch (NumberFormatException e) {
+				DebugHandler.debugNumberFormat(e);
 			}
 		}
 	}

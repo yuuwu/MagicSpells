@@ -5,6 +5,8 @@ import java.lang.reflect.InvocationTargetException;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import com.nisovin.magicspells.DebugHandler;
+
 import de.slikey.effectlib.util.ReflectionUtils;
 
 public class SoundUtils {
@@ -30,13 +32,13 @@ public class SoundUtils {
 			//call makeSound(location.getX(), location.getY(), location.getZ(), sound, volume, pitch);
 			ReflectionUtils.invokeMethod(worldHandle, "makeSound", location.getX(), location.getY(), location.getZ(), soundName, volume, pitch);
 		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
+			DebugHandler.debugIllegalArgumentException(e);
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			DebugHandler.debugIllegalAccessException(e);
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			DebugHandler.debugInvocationTargetException(e);
 		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
+			DebugHandler.debugNoSuchMethodException(e);
 		}
 	}
 	
@@ -44,13 +46,13 @@ public class SoundUtils {
 		try {
 			ReflectionUtils.invokeMethod(loc.getWorld(), "getHandle");
 		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
+			DebugHandler.debugIllegalArgumentException(e);
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			DebugHandler.debugIllegalAccessException(e);
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			DebugHandler.debugInvocationTargetException(e);
 		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
+			DebugHandler.debugNoSuchMethodException(e);
 		}
 		return null;
 	}
@@ -65,17 +67,16 @@ public class SoundUtils {
 							name, loc.getX(), loc.getY(), loc.getZ(), volume,
 							pitch);
 		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
+			DebugHandler.debugIllegalArgumentException(e);
 		} catch (InstantiationException e) {
-			e.printStackTrace();
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			DebugHandler.debugIllegalAccessException(e);
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			DebugHandler.debugInvocationTargetException(e);
 		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
+			DebugHandler.debugNoSuchMethodException(e);
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			DebugHandler.debugClassNotFoundException(e);
 		}
 		return null;
 	}
@@ -93,17 +94,17 @@ public class SoundUtils {
 			// send the packet
 			ReflectionUtils.invokeMethod(connection, "sendPacket", packet);
 		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
+			DebugHandler.debugIllegalArgumentException(e);
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			DebugHandler.debugIllegalAccessException(e);
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			DebugHandler.debugInvocationTargetException(e);
 		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
+			DebugHandler.debugNoSuchMethodException(e);
 		} catch (SecurityException e) {
-			e.printStackTrace();
+			DebugHandler.debugSecurityException(e);
 		} catch (NoSuchFieldException e) {
-			e.printStackTrace();
+			DebugHandler.debugNoSuchFieldException(e);
 		}
 	}
 

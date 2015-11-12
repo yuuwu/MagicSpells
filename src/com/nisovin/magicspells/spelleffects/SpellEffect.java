@@ -7,11 +7,27 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 
 /**
  * 
- * Represents a graphical effect that can be used with the 'effects' option of a spell.
+ * Represents a graphical effect that can be used with the 'effects' option of a spell.<p>
+ * 
+ * Configurable fields<br>
+ * <ul>
+ * <li>height-offset</li>
+ * <li>forward-offset</li>
+ * <li>delay</li>
+ * <li>distance-between</li>
+ * <li>effect-interval</li>
+ * <li>orbit-radius</li>
+ * <li>orbit-seconds-per-revolution</li>
+ * <li>orbit-counter-clockwise</li>
+ * <li>orbit-tick-interval</li>
+ * <li>orbit-y-offset</li>
+ * </ul>
+ * 
  *
  */
 public abstract class SpellEffect {
@@ -230,6 +246,7 @@ public abstract class SpellEffect {
 			try {
 				return clazz.newInstance();
 			} catch (Exception e) {
+				DebugHandler.debugGeneral(e);
 				return null;
 			}
 		}

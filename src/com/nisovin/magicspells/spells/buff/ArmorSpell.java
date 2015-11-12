@@ -24,6 +24,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.util.MagicConfig;
@@ -78,7 +79,14 @@ public class ArmorSpell extends BuffSpell {
 				
 				// get type and data
 				ItemStack item = Util.getItemStackFromString(info[0]);
-				if (item == null) return null;
+				if (item == null) {
+					if (DebugHandler.isNullCheckEnabled()) {
+						NullPointerException e = new NullPointerException("ItemStack is null");
+						e.fillInStackTrace();
+						DebugHandler.nullCheck(e);
+					}
+					return null;
+				}
 				item.setAmount(1);
 				if (!permanent) {
 					ItemMeta meta = item.getItemMeta();
@@ -110,6 +118,7 @@ public class ArmorSpell extends BuffSpell {
 				
 				return item;
 			} catch (NumberFormatException e) {
+				DebugHandler.debugNumberFormat(e);
 				return null;
 			}
 		} else {

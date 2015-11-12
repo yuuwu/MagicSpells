@@ -57,15 +57,21 @@ public class Subspell {
 					} else if (keyval[0].equalsIgnoreCase("power")) {
 						try {
 							subPower = Float.parseFloat(keyval[1]);
-						} catch (NumberFormatException e) {}
+						} catch (NumberFormatException e) {
+							DebugHandler.debugNumberFormat(e);
+						}
 					} else if (keyval[0].equalsIgnoreCase("delay")) {
 						try {
 							delay = Integer.parseInt(keyval[1]);
-						} catch (NumberFormatException e) {}
+						} catch (NumberFormatException e) {
+							DebugHandler.debugNumberFormat(e);
+						}
 					} else if (keyval[0].equalsIgnoreCase("chance")) {
 						try {
 							chance = Double.parseDouble(keyval[1]) / 100;
-						} catch (NumberFormatException e) {}
+						} catch (NumberFormatException e) {
+							DebugHandler.debugNumberFormat(e);
+						}
 					}
 				} else if (arg.equalsIgnoreCase("hard")) {
 					mode = CastMode.HARD;

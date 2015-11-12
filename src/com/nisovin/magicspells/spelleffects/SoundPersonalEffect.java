@@ -4,8 +4,17 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import com.nisovin.magicspells.util.SoundUtils;
+import com.nisovin.magicspells.MagicSpells;
 
+/**
+ * class SoundPersonalEffect<p>
+ * Configuration fields:<br>
+ * <ul>
+ * <li>sound</li>
+ * <li>volume</li>
+ * <li>pitch</li>
+ * </ul>
+ */
 public class SoundPersonalEffect extends SpellEffect {
 	
 	String sound = "random.pop";
@@ -41,8 +50,8 @@ public class SoundPersonalEffect extends SpellEffect {
 	@Override
 	public void playEffectEntity(Entity entity) {
 		if (entity instanceof Player) {
-			//MagicSpells.getVolatileCodeHandler().playSound((Player)entity, sound, volume, pitch);
-			SoundUtils.playSound((Player) entity, sound, volume, pitch);
+			MagicSpells.getVolatileCodeHandler().playSound((Player)entity, sound, volume, pitch);
+			//SoundUtils.playSound((Player) entity, sound, volume, pitch);
 		}
 	}
 	

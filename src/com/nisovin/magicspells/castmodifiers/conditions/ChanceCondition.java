@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.castmodifiers.Condition;
 
 public class ChanceCondition extends Condition {
@@ -23,6 +24,7 @@ public class ChanceCondition extends Condition {
 			}
 			return true;
 		} catch (NumberFormatException e) {
+			DebugHandler.debugNumberFormat(e);
 			return false;
 		}
 	}

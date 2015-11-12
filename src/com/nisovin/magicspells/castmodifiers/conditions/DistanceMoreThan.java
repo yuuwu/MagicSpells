@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.castmodifiers.Condition;
 
 public class DistanceMoreThan extends Condition {
@@ -17,6 +18,7 @@ public class DistanceMoreThan extends Condition {
 			distanceSq = distanceSq * distanceSq;
 			return true;
 		} catch (NumberFormatException e) {
+			DebugHandler.debugNumberFormat(e);
 			return false;
 		}
 	}

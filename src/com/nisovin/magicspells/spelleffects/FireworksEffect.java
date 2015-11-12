@@ -3,7 +3,21 @@ package com.nisovin.magicspells.spelleffects;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
+
+/**
+ * class FireworksEffect<p>
+ * Configuration fields:<br>
+ * <ul>
+ * <li>flicker</li>
+ * <li>trail</li>
+ * <li>type</li>
+ * <li>flight</li>
+ * <li>colors</li>
+ * <li>fade-colors</li>
+ * </ul>
+ */
 
 public class FireworksEffect extends SpellEffect {
 
@@ -62,6 +76,7 @@ public class FireworksEffect extends SpellEffect {
 					colors[i] = Integer.parseInt(c[i], 16);
 				} catch (NumberFormatException e) {
 					colors[i] = 0;
+					DebugHandler.debugNumberFormat(e); //TODO make this one a warning
 				}
 			}
 		}
@@ -74,6 +89,7 @@ public class FireworksEffect extends SpellEffect {
 					fadeColors[i] = Integer.parseInt(fc[i], 16);
 				} catch (NumberFormatException e) {
 					fadeColors[i] = 0;
+					DebugHandler.debugNumberFormat(e); //TODO make this one a warning
 				}
 			}
 		}

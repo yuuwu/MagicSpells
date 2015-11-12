@@ -14,6 +14,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.events.SpellTargetLocationEvent;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
@@ -56,6 +57,7 @@ public class ExplodeSpell extends TargetedSpell implements TargetedLocationSpell
 			try {
 				target = getTargetedBlock(player, power);
 			} catch (IllegalStateException e) {
+				DebugHandler.debugIllegalState(e);
 				target = null;
 			}
 			if (target != null && target.getType() != Material.AIR) {

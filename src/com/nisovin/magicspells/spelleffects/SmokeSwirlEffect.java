@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 
 class SmokeSwirlEffect extends SpellEffect {
@@ -18,6 +19,7 @@ class SmokeSwirlEffect extends SpellEffect {
 			try {
 				duration = Integer.parseInt(string);
 			} catch (NumberFormatException e) {
+				DebugHandler.debugNumberFormat(e);
 			}
 		}
 	}

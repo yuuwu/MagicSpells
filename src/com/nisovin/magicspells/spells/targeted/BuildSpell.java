@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
@@ -62,6 +63,7 @@ public class BuildSpell extends TargetedSpell implements TargetedLocationSpell {
 			try {
 				lastBlocks = getLastTwoTargetedBlocks(player, power);
 			} catch (IllegalStateException e) {
+				DebugHandler.debugIllegalState(e);
 				lastBlocks = null;
 			}
 			if (lastBlocks == null || lastBlocks.size() < 2 || lastBlocks.get(1).getType() == Material.AIR) {

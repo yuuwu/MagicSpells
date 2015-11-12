@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.castmodifiers.Condition;
 import com.nisovin.magicspells.materials.MagicMaterial;
@@ -24,6 +25,7 @@ public class TestForBlockCondition extends Condition {
 			if (blockType == null) return false;
 			return true;
 		} catch (Exception e) {
+			DebugHandler.debugGeneral(e);
 			return false;
 		}
 	}

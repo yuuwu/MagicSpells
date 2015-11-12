@@ -7,7 +7,18 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.MagicSpells;
-
+/**
+ * class TitleEffect<p>
+ * Configuration fields:<br>
+ * <ul>
+ * <li>title</li>
+ * <li>subtitle</li>
+ * <li>fade-in</li>
+ * <li>stay</li>
+ * <li>fade-out</li>
+ * <li>broadcast</li>
+ * </ul>
+ */
 public class TitleEffect extends SpellEffect {
 
 	String title = null;

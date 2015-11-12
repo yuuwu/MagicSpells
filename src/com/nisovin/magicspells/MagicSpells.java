@@ -72,6 +72,8 @@ public class MagicSpells extends JavaPlugin {
 	VolatileCodeHandle volatileCodeHandle;
 	
 	boolean debug;
+	boolean debugNull;
+	boolean debugNumberFormat;
 	int debugLevel;
 	boolean enableErrorLogging;
 	boolean enableProfiling;
@@ -213,6 +215,8 @@ public class MagicSpells extends JavaPlugin {
 		}
 		
 		debug = config.getBoolean("general.debug", false);
+		debugNull = config.getBoolean("general.debug-null", true);
+		debugNumberFormat = config.getBoolean("general.debug-number-format", true);
 		debugLevel = config.getInt("general.debug-level", 3);
 		
 		enableErrorLogging = config.getBoolean("general.enable-error-logging", true);
@@ -872,6 +876,7 @@ public class MagicSpells extends JavaPlugin {
         try {
             methods = listener.getClass().getDeclaredMethods();
         } catch (NoClassDefFoundError e) {
+        	DebugHandler.debugNoClassDefFoundError(e);
             return;
         }
         for (int i = 0; i < methods.length; i++) {

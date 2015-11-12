@@ -150,6 +150,7 @@ public class Spellbook {
 				scanner.close();
 			}
 		} catch (Exception e) {
+			DebugHandler.debugGeneral(e);
 		}
 	}
 	

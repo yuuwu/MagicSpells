@@ -15,12 +15,23 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.materials.MagicUnknownMaterial;
 import com.nisovin.magicspells.util.BlockUtils;
 import com.nisovin.magicspells.util.SpellAnimation;
 import com.nisovin.magicspells.util.Util;
+
+/**
+ * class SoundEffect<p>
+ * Configuration fields:<br>
+ * <ul>
+ * <li>type</li>
+ * <li>radius</li>
+ * <li>expand-interval</li>
+ * </ul>
+ */
 
 class NovaEffect extends SpellEffect {
 	
@@ -37,26 +48,30 @@ class NovaEffect extends SpellEffect {
 			if (params.length >= 1) {
 				try {
 					type = Integer.parseInt(params[0]);
-				} catch (NumberFormatException e) {					
+				} catch (NumberFormatException e) {
+					DebugHandler.debugNumberFormat(e);
 				}
 			}
 			if (params.length >= 2) {
 				try {
 					data = Byte.parseByte(params[1]);
 				} catch (NumberFormatException e) {
+					DebugHandler.debugNumberFormat(e);
 				}
 			}
 			mat = new MagicUnknownMaterial(type, data);
 			if (params.length >= 3) {
 				try {
 					radius = Integer.parseInt(params[2]);
-				} catch (NumberFormatException e) {					
+				} catch (NumberFormatException e) {
+					DebugHandler.debugNumberFormat(e);
 				}
 			}
 			if (params.length >= 4) {
 				try {
 					tickInterval = Integer.parseInt(params[3]);
-				} catch (NumberFormatException e) {					
+				} catch (NumberFormatException e) {
+					DebugHandler.debugNumberFormat(e);
 				}
 			}
 		}

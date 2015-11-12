@@ -8,7 +8,16 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.util.BlockUtils;
+
+/**
+ * class CloudEffect<p>
+ * Configuration fields:<br>
+ * <ul>
+ * <li>radius</li>
+ * </ul>
+ */
 
 class CloudEffect extends SpellEffect {
 
@@ -22,6 +31,7 @@ class CloudEffect extends SpellEffect {
 			radius = Integer.parseInt(string);
 		} catch (NumberFormatException e) {
 			radius = 3;
+			DebugHandler.debugNumberFormat(e); //TODO make this a warning
 		}
 	}
 

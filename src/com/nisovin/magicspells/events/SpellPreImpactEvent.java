@@ -1,10 +1,13 @@
 package com.nisovin.magicspells.events;
 
+import java.util.Arrays;
+
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.Spell;
 
 public class SpellPreImpactEvent extends SpellEvent implements Cancellable {
@@ -25,6 +28,9 @@ public class SpellPreImpactEvent extends SpellEvent implements Cancellable {
 		redirect = false;
 		this.deliverySpell = deliverySpell;
 		canceled = false;
+		if (DebugHandler.isSpellPreImpactEventCheckEnabled()) {
+			
+		}
 	}
 
 	@Override
@@ -68,5 +74,14 @@ public class SpellPreImpactEvent extends SpellEvent implements Cancellable {
 	@Override
 	public void setCancelled(boolean canceled) {
 		this.canceled = canceled;
+	}
+	
+	@Override
+	public String toString() {
+		String casterLabel = "Caster: " + ((caster == null) ? "null": caster.toString());
+		String targetLabel = "Target: " + ((target == null) ? "null": target.toString());
+		String spellLabel = "SpellPayload: " + ((spell == null)? "null": spell.toString());
+		String payloadSpellLabel = "Delivery Spell: " + ((deliverySpell == null)? "null": deliverySpell.toString());
+		return Arrays.deepToString(new String[]{casterLabel, targetLabel, spellLabel, payloadSpellLabel});
 	}
 }

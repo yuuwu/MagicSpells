@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.castmodifiers.Condition;
 
 public class FoodBelowCondition extends Condition {
@@ -16,6 +17,7 @@ public class FoodBelowCondition extends Condition {
 			food = Integer.parseInt(var);
 			return true;
 		} catch (NumberFormatException e) {
+			DebugHandler.debugNumberFormat(e);
 			return false;
 		}
 	}

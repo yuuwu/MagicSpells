@@ -12,6 +12,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockPlaceEvent;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.events.SpellTargetLocationEvent;
 import com.nisovin.magicspells.materials.MagicMaterial;
@@ -51,6 +52,7 @@ public class MaterializeSpell extends TargetedSpell implements TargetedLocationS
 			try {
 				lastTwo = getLastTwoTargetedBlocks(player, power);
 			} catch (IllegalStateException e) {
+				DebugHandler.debugIllegalState(e);
 				lastTwo = null;
 			}
 			if (lastTwo != null && lastTwo.size() == 2 && lastTwo.get(1).getType() != Material.AIR && lastTwo.get(0).getType() == Material.AIR) {

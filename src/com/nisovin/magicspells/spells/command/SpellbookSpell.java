@@ -19,6 +19,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spell;
 import com.nisovin.magicspells.Spellbook;
@@ -30,6 +31,25 @@ import com.nisovin.magicspells.spells.CommandSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.MagicLocation;
 
+/**
+ * public class SpellbookSpell extends {@link CommandSpell}
+ * Configuration fields:
+ * <ul>
+ * <li>default-uses: -1</li>
+ * <li>destroy-when-used-up: false</li>
+ * <li>spellbook-block: bookshelf</li>
+ * <li>str-usage: "Usage: /cast spellbook <spell> [uses]"</li>
+ * <li>str-no-spell: "You do not know a spell by that name."</li>
+ * <li>str-cant-teach: "You can't create a spellbook with that spell."</li>
+ * <li>str-no-target: "You must target a bookcase to create a spellbook."</li>
+ * <li>str-has-spellbook: "That bookcase already has a spellbook."</li>
+ * <li>str-cant-destroy: "You cannot destroy a bookcase with a spellbook."</li>
+ * <li>str-learn-error: ""</li>
+ * <li>str-cant-learn: "You cannot learn the spell in this spellbook."</li>
+ * <li>str-already-known: "You already know the %s spell."</li>
+ * <li>str-learned: "You have learned the %s spell!"</li>
+ * </ul>
+ */
 public class SpellbookSpell extends CommandSpell {
 	
 	private int defaultUses;
@@ -246,6 +266,7 @@ public class SpellbookSpell extends CommandSpell {
 				}
 			}
 		} catch (FileNotFoundException e) {
+			DebugHandler.debugFileNotFoundException(e);
 		} 
 	}
 	

@@ -23,6 +23,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spell.PostCastAction;
 import com.nisovin.magicspells.Spell.SpellCastState;
@@ -343,7 +344,9 @@ public class VariableManager implements Listener {
 				if (writer != null) {
 					try {
 						writer.close();
-					} catch (Exception e) {}
+					} catch (Exception e) {
+						DebugHandler.debugGeneral(e);
+					}
 				}
 			}
 		}

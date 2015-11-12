@@ -24,7 +24,32 @@ import com.nisovin.magicspells.spells.CommandSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellReagents;
 import com.nisovin.magicspells.util.Util;
-
+/**
+ * public class ScrollSpell extends {@link CommandSpell}
+ * Configuration fields:
+ * <ul>
+ * <li>cast-for-free: true</li>
+ * <li>ignore-cast-perm: false</li>
+ * <li>bypass-normal-checks: false</li>
+ * <li>default-uses: 5</li>
+ * <li>max-uses: 10</li>
+ * <li>item-id: paper</li>
+ * <li>right-click-cast: true</li>
+ * <li>left-click-cast: false</li>
+ * <li>remove-scroll-when-depleted: true</li>
+ * <li>charge-reagents-for-spell-per-charge: false</li>
+ * <li>require-teach-perm: true</li>
+ * <li>require-scroll-cast-perm-on-use: true</li>
+ * <li>str-scroll-name: "Magic Scroll: %s"</li>
+ * <li>str-scroll-subtext: "Uses remaining: %u"</li>
+ * <li>str-usage: "You must hold a single blank paper \nand type /cast scroll <spell> <uses>."</li>
+ * <li>str-no-spell: "You do not know a spell by that name."</li>
+ * <li>str-cant-teach: "You cannot create a scroll with that spell."</li>
+ * <li>str-on-use: "Spell Scroll: %s used. %u uses remaining."</li>
+ * <li>str-use-fail: "Unable to use this scroll right now."</li>
+ * <li>predefined-scrolls: null</li>
+ * <ul>
+*/
 public class ScrollSpell extends CommandSpell {
 
 	private boolean castForFree;

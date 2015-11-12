@@ -11,6 +11,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Subspell;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
@@ -105,6 +106,7 @@ public final class TargetedMultiSpell extends TargetedSpell implements TargetedE
 						locTarget = b.getLocation();
 					}
 				} catch (IllegalStateException e) {
+					DebugHandler.debugIllegalState(e);
 					b = null;
 				}
 			}

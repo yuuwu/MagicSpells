@@ -261,7 +261,9 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 										loc.add(x, y, z);
 										loc.setYaw(yaw);
 										loc.setPitch(pitch);
-									} catch (NumberFormatException e) {}
+									} catch (NumberFormatException e) {
+										DebugHandler.debugNumberFormat(e);
+									}
 								}
 								((TargetedLocationSpell)spell).castAtLocation(loc, 1.0F);
 								casted = true;

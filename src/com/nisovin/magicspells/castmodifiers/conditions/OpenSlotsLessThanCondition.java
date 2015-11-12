@@ -5,6 +5,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.castmodifiers.Condition;
 
 public class OpenSlotsLessThanCondition extends Condition {
@@ -17,6 +18,7 @@ public class OpenSlotsLessThanCondition extends Condition {
 			slots = Integer.parseInt(var);
 			return true;
 		} catch (NumberFormatException e) {
+			DebugHandler.debugNumberFormat(e);
 			return false;
 		}
 	}

@@ -15,6 +15,17 @@ import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
 
+/**
+ * public class PainSpell extends {@link TargetedSpell} implements {@link TargetedEntitySpell}, {@link SpellDamageSpell}
+ * Configuration fields:
+ * <ul>
+ * <li>damage: 4<br>Affected by spell power</li>
+ * <li>spell-damage-type: ""</li>
+ * <li>ignore-armor: false</li>
+ * <li>check-plugins: true</li>
+ * <li>damage-type: "ENTITY_ATTACK"</li>
+ * </ul>
+ */
 public class PainSpell extends TargetedSpell implements TargetedEntitySpell, SpellDamageSpell {
 
 	private double damage;

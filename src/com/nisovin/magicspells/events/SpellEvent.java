@@ -7,8 +7,8 @@ import com.nisovin.magicspells.Spell;
 
 public abstract class SpellEvent extends Event {
 
-	private Spell spell;
-	private Player caster;
+	protected Spell spell;
+	protected Player caster;
 	
 	public SpellEvent(Spell spell, Player caster) {
 		this.spell = spell;

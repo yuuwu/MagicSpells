@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.castmodifiers.Condition;
 import com.nisovin.magicspells.mana.ManaHandler;
@@ -30,6 +31,7 @@ public class ManaBelowCondition extends Condition {
 			num = Integer.parseInt(var);
 			return true;
 		} catch (NumberFormatException e) {
+			DebugHandler.debugNumberFormat(e);
 			return false;
 		}
 	}

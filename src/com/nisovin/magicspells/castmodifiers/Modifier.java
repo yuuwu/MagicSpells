@@ -2,6 +2,7 @@ package com.nisovin.magicspells.castmodifiers;
 
 import org.bukkit.entity.Player;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spell;
 import com.nisovin.magicspells.Spell.SpellCastState;
@@ -63,6 +64,7 @@ public class Modifier {
 				m.modifierVarInt = Integer.parseInt(m.modifierVar);
 			}
 		} catch (NumberFormatException e) {
+			DebugHandler.debugNumberFormat(e);
 			return null;
 		}
 		
@@ -79,24 +81,24 @@ public class Modifier {
 		Player player = event.getCaster();
 		boolean check = condition.check(player);
 		if (negated) check = !check;
-		if (check == false && type == ModifierType.REQUIRED) {
+		if (!check && type == ModifierType.REQUIRED) {
 			event.setCancelled(true);
 			return false;
-		} else if (check == true && type == ModifierType.DENIED) {
+		} else if (check && type == ModifierType.DENIED) {
 			event.setCancelled(true);
 			return false;
-		} else if (check == true && type == ModifierType.CAST) {
+		} else if (check && type == ModifierType.CAST) {
 			Spell spell = MagicSpells.getSpellByInternalName(modifierVar);
 			if (spell != null) {
 				spell.cast(event.getCaster(), event.getPower(), event.getSpellArgs());
 			}
-		} else if (check == true && type == ModifierType.CAST_INSTEAD) {
+		} else if (check && type == ModifierType.CAST_INSTEAD) {
 			Spell spell = MagicSpells.getSpellByInternalName(modifierVar);
 			if (spell != null) {
 				spell.cast(event.getCaster(), event.getPower(), event.getSpellArgs());
 			}
 			event.setCancelled(true);
-		} else if (check == true) {
+		} else if (check) {
 			if (type == ModifierType.STOP) {
 				return false;
 			} else if (type == ModifierType.POWER) {
@@ -110,7 +112,7 @@ public class Modifier {
 			} else if (type == ModifierType.CAST_TIME) {
 				event.setCastTime(modifierVarInt);
 			}
-		} else if (check == false && type == ModifierType.CONTINUE) {
+		} else if (!check && type == ModifierType.CONTINUE) {
 			return false;
 		}
 		return true;
@@ -120,28 +122,28 @@ public class Modifier {
 		Player player = event.getPlayer();
 		boolean check = condition.check(player);
 		if (negated) check = !check;
-		if (check == false && type == ModifierType.REQUIRED) {
+		if (!check && type == ModifierType.REQUIRED) {
 			event.setNewAmount(event.getOldAmount());
 			return false;
-		} else if (check == true && type == ModifierType.DENIED) {
+		} else if (check && type == ModifierType.DENIED) {
 			event.setNewAmount(event.getOldAmount());
 			return false;
-		} else if (check == true && type == ModifierType.STOP) {
+		} else if (check && type == ModifierType.STOP) {
 			return false;
-		} else if (check == false && type == ModifierType.CONTINUE) {
+		} else if (!check && type == ModifierType.CONTINUE) {
 			return false;
-		} else if (check == true && type == ModifierType.POWER) {
+		} else if (check && type == ModifierType.POWER) {
 			int gain = event.getNewAmount() - event.getOldAmount();
 			gain = Math.round(gain * modifierVarFloat);
 			int newAmt = event.getOldAmount() + gain;
 			if (newAmt > event.getMaxMana()) newAmt = event.getMaxMana();
 			event.setNewAmount(newAmt);
-		} else if (check == true && type == ModifierType.ADD_POWER) {
+		} else if (check && type == ModifierType.ADD_POWER) {
 			int newAmt = event.getNewAmount() + (int)modifierVarFloat;
 			if (newAmt > event.getMaxMana()) newAmt = event.getMaxMana();
 			if (newAmt < 0) newAmt = 0;
 			event.setNewAmount(newAmt);
-		} else if (check == true && (type == ModifierType.CAST || type == ModifierType.CAST_INSTEAD)) {
+		} else if (check && (type == ModifierType.CAST || type == ModifierType.CAST_INSTEAD)) {
 			Spell spell = MagicSpells.getSpellByInternalName(modifierVar);
 			if (spell != null) {
 				spell.cast(event.getPlayer(), 1, null);
@@ -154,26 +156,26 @@ public class Modifier {
 		Player player = event.getCaster();
 		boolean check = condition.check(player, event.getTarget());
 		if (negated) check = !check;
-		if (check == false && type == ModifierType.REQUIRED) {
+		if (!check && type == ModifierType.REQUIRED) {
 			event.setCancelled(true);
 			return false;
-		} else if (check == true && type == ModifierType.DENIED) {
+		} else if (check && type == ModifierType.DENIED) {
 			event.setCancelled(true);
 			return false;
-		} else if (check == true && type == ModifierType.STOP) {
+		} else if (check && type == ModifierType.STOP) {
 			return false;
-		} else if (check == false && type == ModifierType.CONTINUE) {
+		} else if (!check && type == ModifierType.CONTINUE) {
 			return false;
-		} else if (check == true && type == ModifierType.POWER) {
+		} else if (check && type == ModifierType.POWER) {
 			event.increasePower(modifierVarFloat);
-		} else if (check == true && type == ModifierType.ADD_POWER) {
+		} else if (check && type == ModifierType.ADD_POWER) {
 			event.setPower(event.getPower() + modifierVarFloat);
-		} else if (check == true && type == ModifierType.CAST) {
+		} else if (check && type == ModifierType.CAST) {
 			Spell spell = MagicSpells.getSpellByInternalName(modifierVar);
 			if (spell != null) {
 				spell.cast(event.getCaster(), 1, null);
 			}
-		} else if (check == true && type == ModifierType.CAST_INSTEAD) {
+		} else if (check && type == ModifierType.CAST_INSTEAD) {
 			Spell spell = MagicSpells.getSpellByInternalName(modifierVar);
 			if (spell != null) {
 				if (spell instanceof TargetedEntitySpell) {
@@ -190,17 +192,17 @@ public class Modifier {
 		Player player = event.getCaster();
 		boolean check = condition.check(player, event.getTargetLocation());
 		if (negated) check = !check;
-		if (check == false && type == ModifierType.REQUIRED) {
+		if (!check && type == ModifierType.REQUIRED) {
 			event.setCancelled(true);
 			return false;
-		} else if (check == true && type == ModifierType.DENIED) {
+		} else if (check && type == ModifierType.DENIED) {
 			event.setCancelled(true);
 			return false;
-		} else if (check == true && type == ModifierType.STOP) {
+		} else if (check && type == ModifierType.STOP) {
 			return false;
-		} else if (check == false && type == ModifierType.CONTINUE) {
+		} else if (!check && type == ModifierType.CONTINUE) {
 			return false;
-		} else if (check == true && (type == ModifierType.CAST || type == ModifierType.CAST_INSTEAD)) {
+		} else if (check && (type == ModifierType.CAST || type == ModifierType.CAST_INSTEAD)) {
 			Spell spell = MagicSpells.getSpellByInternalName(modifierVar);
 			if (spell != null && spell instanceof TargetedLocationSpell) {
 				((TargetedLocationSpell)spell).castAtLocation(event.getCaster(), event.getTargetLocation(), 1F);
@@ -215,22 +217,22 @@ public class Modifier {
 	public boolean apply(MagicSpellsGenericPlayerEvent event) {
 		boolean check = condition.check(event.getPlayer());
 		if (negated) check = !check;
-		if (check == false && type == ModifierType.REQUIRED) {
+		if (!check && type == ModifierType.REQUIRED) {
 			event.setCancelled(true);
 			return false;
-		} else if (check == true && type == ModifierType.DENIED) {
+		} else if (check && type == ModifierType.DENIED) {
 			event.setCancelled(true);
 			return false;
-		} else if (check == true && type == ModifierType.STOP) {
+		} else if (check && type == ModifierType.STOP) {
 			return false;
-		} else if (check == false && type == ModifierType.CONTINUE) {
+		} else if (!check && type == ModifierType.CONTINUE) {
 			return false;
-		} else if (check == true && type == ModifierType.CAST) {
+		} else if (check && type == ModifierType.CAST) {
 			Spell spell = MagicSpells.getSpellByInternalName(modifierVar);
 			if (spell != null) {
 				spell.cast(event.getPlayer(), 1, null);
 			}
-		} else if (check == true && type == ModifierType.CAST_INSTEAD) {
+		} else if (check && type == ModifierType.CAST_INSTEAD) {
 			Spell spell = MagicSpells.getSpellByInternalName(modifierVar);
 			if (spell != null) {
 				spell.cast(event.getPlayer(), 1, null);

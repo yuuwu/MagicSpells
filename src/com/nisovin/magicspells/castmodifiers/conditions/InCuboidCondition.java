@@ -6,6 +6,7 @@ import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.castmodifiers.Condition;
 
 public class InCuboidCondition extends Condition {
@@ -52,6 +53,7 @@ public class InCuboidCondition extends Condition {
 			}
 			return true;
 		} catch (Exception e) {
+			DebugHandler.debugGeneral(e);
 			return false;
 		}
 	}

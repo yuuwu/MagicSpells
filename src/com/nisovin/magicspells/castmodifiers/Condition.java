@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.castmodifiers.conditions.*;
 
 public abstract class Condition {
@@ -32,6 +33,7 @@ public abstract class Condition {
 		try {
 			return clazz.newInstance();
 		} catch (Exception e) {
+			DebugHandler.debugGeneral(e);
 			return null;
 		}
 	}

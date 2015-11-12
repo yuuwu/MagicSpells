@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.bukkit.inventory.ItemStack;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.util.wrappers.CraftItemStackWrapper;
 import com.nisovin.magicspells.util.wrappers.NBTTagCompoundWrapper;
 import com.nisovin.magicspells.util.wrappers.NBTTagListWrapper;
@@ -18,6 +19,7 @@ public class ItemUtil {
 			try {
 				item = (ItemStack) CraftItemStackWrapper.asCraftCopyMethod.invoke(null, item);
 			} catch (Exception e) {
+				DebugHandler.debugGeneral(e);
 			}
 		}
 		Object tag = getTag(item);
@@ -37,6 +39,7 @@ public class ItemUtil {
 			try {
 				return NMSItemStackWrapper.getTagMethod.invoke(CraftItemStackWrapper.craftItemStackHandleField.get(item));
 			} catch (Exception e) {
+				DebugHandler.debugGeneral(e);
 			}
 		}
 		return null;
@@ -65,11 +68,13 @@ public class ItemUtil {
 		try {
 			nmsItem = CraftItemStackWrapper.craftItemStackHandleField.get(item);
 		} catch (Exception e) {
+			DebugHandler.debugGeneral(e);
 		}
 		if (nmsItem == null) {
 			try {
 				nmsItem = CraftItemStackWrapper.asNMSCopyMethod.invoke(null, craftItem);
 			} catch (Exception e) {
+				DebugHandler.debugGeneral(e);
 			}
 		}
 		
@@ -77,10 +82,12 @@ public class ItemUtil {
 			try {
 				NMSItemStackWrapper.setTagMethod.invoke(nmsItem, tag);
 			} catch (Exception e) {
+				DebugHandler.debugGeneral(e);
 			}
 			try {
 				CraftItemStackWrapper.craftItemStackHandleField.set(craftItem, nmsItem);;
 			} catch (Exception e) {
+				DebugHandler.debugGeneral(e);
 			}
 		}
 		
@@ -92,6 +99,7 @@ public class ItemUtil {
 			try {
 				item = (ItemStack) CraftItemStackWrapper.asCraftCopyMethod.invoke(null, item);
 			} catch (Exception e) {
+				DebugHandler.debugGeneral(e);
 			}
 		}
 		Object tag = getTag(item);		
@@ -100,10 +108,10 @@ public class ItemUtil {
 		}
 		try {
 			if (!(Boolean)NBTTagCompoundWrapper.hasKeyMethod.invoke(tag, "ench")) {
-				;
 				NBTTagCompoundWrapper.setMethod.invoke(tag, "ench", NBTTagListWrapper.newInstance());
 			}
 		} catch (Exception e) {
+			DebugHandler.debugGeneral(e);
 		}		
 		return setTag(item, tag);
 	}
@@ -114,6 +122,7 @@ public class ItemUtil {
 			try {
 				item = (ItemStack) CraftItemStackWrapper.asCraftCopyMethod.invoke(null, item);
 			} catch (Exception e) {
+				DebugHandler.debugGeneral(e);
 			}
 		}
 		Object tag = getTag(item);
@@ -125,32 +134,39 @@ public class ItemUtil {
 				try {
 					NBTTagCompoundWrapper.setStringMethod.invoke(attr, "Name", names[i]);
 				} catch (Exception e) {
+					DebugHandler.debugGeneral(e);
 				}
 				try {
 					NBTTagCompoundWrapper.setStringMethod.invoke(attr, "AttributeName", names[i]);
 				} catch (Exception e) {
+					DebugHandler.debugGeneral(e);
 				}
 				try {
 					NBTTagCompoundWrapper.setDoubleMethod.invoke(attr, "Amount", amounts[i]);
 				} catch (Exception e) {
+					DebugHandler.debugGeneral(e);
 				}
 				try {
 					NBTTagCompoundWrapper.setIntMethod.invoke(attr, "Operation", operations[i]);
 				} catch (Exception e) {
+					DebugHandler.debugGeneral(e);
 				}
 				UUID uuid = UUID.randomUUID();
 				try {
 					NBTTagCompoundWrapper.setLongMethod.invoke(attr, "UUIDLeast", uuid.getLeastSignificantBits());
 				} catch (Exception e) {
+					DebugHandler.debugGeneral(e);
 				}
 				try {
 					NBTTagCompoundWrapper.setLongMethod.invoke(attr, "UUIDMost", uuid.getMostSignificantBits());
 				} catch (Exception e) {
+					DebugHandler.debugGeneral(e);
 				}
 				//list.add(attr);
 				try {
 					NBTTagListWrapper.addMethod.invoke(list, attr);
 				} catch (Exception e) {
+					DebugHandler.debugGeneral(e);
 				}
 			}
 		}
@@ -159,7 +175,7 @@ public class ItemUtil {
 		try {
 			NBTTagCompoundWrapper.setMethod.invoke(tag, "AttributeModifiers", list);
 		} catch (Exception e) {
-			e.printStackTrace();
+			DebugHandler.debugGeneral(e);
 		}
 		setTag(item, tag);
 		return item;
@@ -171,7 +187,7 @@ public class ItemUtil {
 			try {
 				item = (ItemStack) CraftItemStackWrapper.asCraftCopyMethod.invoke(null, item);
 			} catch (Exception e) {
-				e.printStackTrace();
+				DebugHandler.debugGeneral(e);
 			}
 		}
 		Object tag = getTag(item);
@@ -181,6 +197,7 @@ public class ItemUtil {
 		try {
 			NBTTagCompoundWrapper.setIntMethod.invoke(tag, "HideFlags", 63);
 		} catch (Exception e) {
+			DebugHandler.debugGeneral(e);
 		}
 		setTag(item, tag);
 		return item;

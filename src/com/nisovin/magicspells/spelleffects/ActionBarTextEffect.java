@@ -8,6 +8,14 @@ import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.MagicSpells;
 
+/**
+ * class ActionBarTextEffect<p>
+ * Configuration fields:<br>
+ * <ul>
+ * <li>message</li>
+ * <li>broadcast</li>
+ * </ul>
+ */
 public class ActionBarTextEffect extends SpellEffect {
 
 	String message = "";

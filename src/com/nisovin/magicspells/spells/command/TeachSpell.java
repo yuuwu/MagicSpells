@@ -16,6 +16,19 @@ import com.nisovin.magicspells.spells.CommandSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.Util;
 
+/**
+ * Configuration fields:
+ * <ul>
+ * <li>require-known-spell: true</li>
+ * <li>str-usage: "Usage: /cast teach <target> <spell>"</li>
+ * <li>str-no-target: "No such player."</li>
+ * <li>str-no-spell: "You do not know a spell by that name."</li>
+ * <li>str-cant-teach: "You can't teach that spell."</li>
+ * <li>str-cant-learn: "That person cannot learn that spell."</li>
+ * <li>str-already-known: "That person already knows that spell."</li>
+ * <li>str-cast-target: "%a has taught you the %s spell."</li>
+ * </ul>
+ */
 public class TeachSpell extends CommandSpell {
 
 	private boolean requireKnownSpell;

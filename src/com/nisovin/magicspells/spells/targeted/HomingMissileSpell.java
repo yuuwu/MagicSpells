@@ -147,15 +147,12 @@ public class HomingMissileSpell extends TargetedSpell implements TargetedEntityS
 	class MissileTracker implements Runnable {
 
 		Player caster;
-		Player originalCaster;
 		LivingEntity target;
-		LivingEntity originalTarget;
 		float power;
 		long startTime;
 		Location currentLocation;
 		Vector currentVelocity;
 		int taskId;
-		boolean redirected;
 
 		int counter = 0;
 
@@ -184,10 +181,6 @@ public class HomingMissileSpell extends TargetedSpell implements TargetedEntityS
 			this.power = power;
 			this.startTime = System.currentTimeMillis();
 			this.taskId = MagicSpells.scheduleRepeatingTask(this, 0, tickInterval);
-			this.redirected = false;
-			this.originalTarget = target;
-			this.originalCaster = caster;
-			
 		}
 
 		@Override
@@ -251,24 +244,20 @@ public class HomingMissileSpell extends TargetedSpell implements TargetedEntityS
 						stop();
 					} else {
 						//if it got redirected, redirect it!
-						if (!redirected) {
-							target = originalCaster;
-							if (originalTarget instanceof Player && changeCasterOnReflect) {
-								caster = (Player) originalTarget;
-							}
-						} else {
-							target = originalTarget;
-							if (originalCaster instanceof Player && changeCasterOnReflect) {
-								caster = (Player) originalCaster;
-							}
-						}
-						currentVelocity.multiply(-1F);
-						redirected = !redirected;
+						redirect();
 						power = preImpact.getPower();
 						
 					}
 				}
 			}
+		}
+		
+		private void redirect() {
+			Player c = caster;
+			Player t = (Player) target;
+			caster = t;
+			target = c;
+			currentVelocity.multiply(-1F);
 		}
 
 		public void stop() {

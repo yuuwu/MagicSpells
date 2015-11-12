@@ -12,6 +12,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
@@ -88,6 +89,7 @@ public class MarkSpell extends InstantSpell {
 			}
 			scanner.close();
 		} catch (Exception e) {
+			DebugHandler.debugGeneral(e);
 		}
 	}
 	

@@ -18,7 +18,6 @@ import com.nisovin.magicspells.Spell.SpellCastState;
 import com.nisovin.magicspells.util.CastItem;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
-import com.nisovin.magicspells.util.SoundUtils;
 import com.nisovin.magicspells.util.Util;
 
 public class DanceCastListener implements Listener {
@@ -132,8 +131,8 @@ public class DanceCastListener implements Listener {
 					}
 					MagicSpells.sendMessage(player, strDanceStart);
 					if (startSound != null) {
-						//MagicSpells.getVolatileCodeHandler().playSound(player, startSound, startSoundVolume, startSoundPitch);
-						SoundUtils.playSound(player, startSound, startSoundVolume, startSoundPitch); //the new system again
+						MagicSpells.getVolatileCodeHandler().playSound(player, startSound, startSoundVolume, startSoundPitch);
+						//SoundUtils.playSound(player, startSound, startSoundVolume, startSoundPitch); //the new system again
 					}
 					if (duration > 0) {
 						playerTasks.put(playerName, MagicSpells.scheduleDelayedTask(new DanceCastDuration(playerName), duration));

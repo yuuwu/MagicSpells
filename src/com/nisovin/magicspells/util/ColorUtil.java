@@ -2,6 +2,8 @@ package com.nisovin.magicspells.util;
 
 import org.bukkit.Color;
 
+import com.nisovin.magicspells.DebugHandler;
+
 public class ColorUtil {
 	
 	public static Color getColorFromHexString(String hex) {
@@ -12,7 +14,7 @@ public class ColorUtil {
 		int value = Integer.parseInt(working, 16);
 		return Color.fromRGB(value);
 		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
+			DebugHandler.debugIllegalArgumentException(e);
 			return null;
 		}
 	}
@@ -31,6 +33,7 @@ public class ColorUtil {
 		blue = Integer.parseInt(splits[2]);
 		return Color.fromRGB(red, green, blue);
 		} catch (IllegalArgumentException e) {
+			DebugHandler.debugIllegalArgumentException(e);
 			//TODO determine an appropriate means of logging this
 			return null;
 		}

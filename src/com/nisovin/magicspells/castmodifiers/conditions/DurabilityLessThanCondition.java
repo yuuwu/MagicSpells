@@ -5,6 +5,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.castmodifiers.Condition;
 
 public class DurabilityLessThanCondition extends Condition {
@@ -30,6 +31,7 @@ public class DurabilityLessThanCondition extends Condition {
 			}
 			return true;
 		} catch (Exception e) {
+			DebugHandler.debugGeneral(e);
 			return false;
 		}
 	}

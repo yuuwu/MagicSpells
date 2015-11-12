@@ -4,6 +4,14 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 
+import com.nisovin.magicspells.DebugHandler;
+/**
+ * class SplashPotionEffect<p>
+ * Configuration fields:<br>
+ * <ul>
+ * <li>potion</li>
+ * </ul>
+ */
 class SplashPotionEffect extends SpellEffect {
 	
 	int pot = 0;
@@ -13,7 +21,8 @@ class SplashPotionEffect extends SpellEffect {
 		if (string != null && !string.isEmpty()) {
 			try {
 				pot = Integer.parseInt(string);
-			} catch (NumberFormatException e) {			
+			} catch (NumberFormatException e) {
+				DebugHandler.debugNumberFormat(e);
 			}
 		}
 	}

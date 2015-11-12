@@ -4,8 +4,17 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 
+/**
+ * class PotionEffect<p>
+ * Configuration fields:<br>
+ * <ul>
+ * <li>color: the color of the potion particles in rgb hex code.</li>
+ * <li>duration: a base 10 integer representing how long the particles should play for.</li>
+ * </ul>
+ */
 class PotionEffect extends SpellEffect {
 	
 	int color = 0xFF0000;
@@ -17,17 +26,19 @@ class PotionEffect extends SpellEffect {
 			String[] data = string.split(" ");
 			try {
 				color = Integer.parseInt(data[0], 16);
-			} catch (NumberFormatException e) {					
+			} catch (NumberFormatException e) {
+				DebugHandler.debugNumberFormat(e);
 			}
 			if (data.length > 1) {
 				try {
 					duration = Integer.parseInt(data[1]);
-				} catch (NumberFormatException e) {						
+				} catch (NumberFormatException e) {
+					DebugHandler.debugNumberFormat(e);
 				}
 			}
 		}
 	}
-
+	
 	@Override
 	public void loadFromConfig(ConfigurationSection config) {
 		String c = config.getString("color", "");
@@ -35,6 +46,7 @@ class PotionEffect extends SpellEffect {
 			try {
 				color = Integer.parseInt(c, 16);
 			} catch (NumberFormatException e) {
+				DebugHandler.debugNumberFormat(e);
 			}
 		}
 		duration = config.getInt("duration", duration);

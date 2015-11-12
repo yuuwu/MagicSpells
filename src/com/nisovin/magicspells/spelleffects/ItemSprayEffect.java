@@ -7,9 +7,21 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Item;
 import org.bukkit.util.Vector;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.materials.MagicUnknownMaterial;
+
+/**
+ * class ItemSprayEffect<p>
+ * Configuration fields:<br>
+ * <ul>
+ * <li>mat</li>
+ * <li>quantity</li>
+ * <li>duration</li>
+ * <li>force</li>
+ * </ul>
+ */
 
 class ItemSprayEffect extends SpellEffect {
 
@@ -30,12 +42,14 @@ class ItemSprayEffect extends SpellEffect {
 						String[] typeData = data[0].split(":");
 						type = Integer.parseInt(typeData[0]);
 						dura = Short.parseShort(typeData[1]);
-					} catch (NumberFormatException e) {						
+					} catch (NumberFormatException e) {
+						DebugHandler.debugNumberFormat(e);
 					}
 				} else {
 					try {
 						type = Integer.parseInt(data[0]);
 					} catch (NumberFormatException e) {
+						DebugHandler.debugNumberFormat(e);
 					}
 				}
 			}
@@ -44,18 +58,21 @@ class ItemSprayEffect extends SpellEffect {
 				try {
 					num = Integer.parseInt(data[1]);
 				} catch (NumberFormatException e) {
+					DebugHandler.debugNumberFormat(e);
 				}
 			}
 			if (data.length >= 3) {
 				try {
 					duration = Integer.parseInt(data[2]);
 				} catch (NumberFormatException e) {
+					DebugHandler.debugNumberFormat(e);
 				}
 			}
 			if (data.length >= 4) {
 				try {
 					force = Float.parseFloat(data[3]);
 				} catch (NumberFormatException e) {
+					DebugHandler.debugNumberFormat(e);
 				}
 			}
 		}

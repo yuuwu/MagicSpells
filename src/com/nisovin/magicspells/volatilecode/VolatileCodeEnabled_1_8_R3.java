@@ -37,6 +37,7 @@ import org.bukkit.util.Vector;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.util.BoundingBox;
 import com.nisovin.magicspells.util.DisguiseManager;
@@ -55,6 +56,7 @@ public class VolatileCodeEnabled_1_8_R3 implements VolatileCodeHandle {
 				field.setAccessible(true);
 				return ((net.minecraft.server.v1_8_R3.ItemStack)field.get(item)).getTag();
 			} catch (Exception e) {
+				DebugHandler.debugGeneral(e);
 			}
 		}
 		return null;
@@ -74,6 +76,7 @@ public class VolatileCodeEnabled_1_8_R3 implements VolatileCodeHandle {
 			field.setAccessible(true);
 			nmsItem = ((net.minecraft.server.v1_8_R3.ItemStack)field.get(item));
 		} catch (Exception e) {
+			DebugHandler.debugGeneral(e);
 		}
 		if (nmsItem == null) {
 			nmsItem = CraftItemStack.asNMSCopy(craftItem);
@@ -86,6 +89,7 @@ public class VolatileCodeEnabled_1_8_R3 implements VolatileCodeHandle {
 				field.setAccessible(true);
 				field.set(craftItem, nmsItem);
 			} catch (Exception e) {
+				DebugHandler.debugGeneral(e);
 			}
 		}
 		

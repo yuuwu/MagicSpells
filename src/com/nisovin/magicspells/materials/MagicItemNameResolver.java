@@ -18,6 +18,7 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.material.Tree;
 import org.bukkit.material.Wool;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 
 public class MagicItemNameResolver implements ItemNameResolver {
@@ -133,7 +134,9 @@ public class MagicItemNameResolver implements ItemNameResolver {
 			short durability = 0;
 			try {
 				durability = Short.parseShort(sdata);
-			} catch (NumberFormatException e) {}
+			} catch (NumberFormatException e) {
+				DebugHandler.debugNumberFormat(e);
+			}
 			return new MagicItemMaterial(type, durability);
 		}
 	}
@@ -217,6 +220,7 @@ public class MagicItemNameResolver implements ItemNameResolver {
 				return new MagicUnknownMaterial(type, data);
 			}
 		} catch (NumberFormatException e) {
+			DebugHandler.debugNumberFormat(e);
 			return null;
 		}
 	}

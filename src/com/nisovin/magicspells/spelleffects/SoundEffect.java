@@ -7,7 +7,17 @@ import java.util.TreeSet;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 
-import com.nisovin.magicspells.util.SoundUtils;
+import com.nisovin.magicspells.MagicSpells;
+
+/**
+ * class SoundEffect<p>
+ * Configuration fields:<br>
+ * <ul>
+ * <li>sound</li>
+ * <li>volume</li>
+ * <li>pitch</li>
+ * </ul>
+ */
 
 public class SoundEffect extends SpellEffect {
 	
@@ -43,8 +53,8 @@ public class SoundEffect extends SpellEffect {
 	
 	@Override
 	public void playEffectLocation(Location location) {
-		//MagicSpells.getVolatileCodeHandler().playSound(location, sound, volume, pitch);
-		SoundUtils.makeSound(location, sound, volume, pitch);
+		MagicSpells.getVolatileCodeHandler().playSound(location, sound, volume, pitch);
+		//SoundUtils.makeSound(location, sound, volume, pitch);
 	}
 	
 	public static void main(String[] args) {

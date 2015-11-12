@@ -8,6 +8,7 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.castmodifiers.Condition;
 
 public class WearingCondition extends Condition {
@@ -56,6 +57,7 @@ public class WearingCondition extends Condition {
 			}
 			return true;
 		} catch (Exception e) {
+			DebugHandler.debugGeneral(e);
 			return false;
 		}
 	}
@@ -114,7 +116,9 @@ public class WearingCondition extends Condition {
 			if (item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
 				thisname = item.getItemMeta().getDisplayName();
 			}
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			DebugHandler.debugGeneral(e);
+		}
 		for (int i = 0; i < ids.length; i++) {
 			if (ids[i] == thisid && (!checkData[i] || datas[i] == thisdata) && (!checkName[i] || strEquals(names[i], thisname))) {
 				return true;

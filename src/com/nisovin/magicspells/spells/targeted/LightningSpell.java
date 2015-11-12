@@ -16,6 +16,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.events.SpellTargetLocationEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
@@ -73,7 +74,8 @@ public class LightningSpell extends TargetedSpell implements TargetedLocationSpe
 			} else {
 				try {
 					target = getTargetedBlock(player, power);
-				} catch (IllegalStateException e) {	
+				} catch (IllegalStateException e) {
+					DebugHandler.debugIllegalState(e);
 					target = null;
 				}
 				if (target != null) {

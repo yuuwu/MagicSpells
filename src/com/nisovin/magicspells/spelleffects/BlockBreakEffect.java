@@ -4,6 +4,8 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 
+import com.nisovin.magicspells.DebugHandler;
+
 class BlockBreakEffect extends SpellEffect {
 
 	int id = 1;
@@ -13,7 +15,8 @@ class BlockBreakEffect extends SpellEffect {
 		if (string != null && !string.isEmpty()) {
 			try {
 				id = Integer.parseInt(string);
-			} catch (NumberFormatException e) {			
+			} catch (NumberFormatException e) {		
+				DebugHandler.debugNumberFormat(e);
 			}
 		}
 	}

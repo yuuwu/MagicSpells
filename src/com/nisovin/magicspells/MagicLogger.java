@@ -144,6 +144,7 @@ public class MagicLogger implements Listener {
 			try {
 				writer.write("[" + dateFormat.format(new Date()) + "] " + string + "\n");
 			} catch (IOException e) {
+				DebugHandler.debugIOException(e);
 			}
 		}
 	}

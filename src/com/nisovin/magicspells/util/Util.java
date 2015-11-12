@@ -45,6 +45,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spell;
 import com.nisovin.magicspells.Spellbook;
@@ -190,13 +191,15 @@ public class Util {
 						e = Enchantment.getById(id);
 					} catch (NumberFormatException ex) {
 						e = Enchantment.getByName(data[0].toUpperCase());
+						DebugHandler.debugNumberFormat(ex);
 					}
 					if (e != null) {
 						int level = 0;
 						if (data.length > 1) {
 							try {
 								level = Integer.parseInt(data[1]);
-							} catch (NumberFormatException ex) {						
+							} catch (NumberFormatException ex) {
+								DebugHandler.debugNumberFormat(ex);
 							}
 						}
 						if (meta instanceof EnchantmentStorageMeta) {
@@ -216,7 +219,8 @@ public class Util {
 				try {
 					int color = Integer.parseInt(config.getString("color").replace("#", ""), 16);
 					((LeatherArmorMeta)meta).setColor(Color.fromRGB(color));
-				} catch (NumberFormatException e) {				
+				} catch (NumberFormatException e) {
+					DebugHandler.debugNumberFormat(e);
 				}
 			}
 			
@@ -232,20 +236,23 @@ public class Util {
 						t = PotionEffectType.getById(id);
 					} catch (NumberFormatException e) {
 						t = PotionEffectType.getByName(data[0].toUpperCase());
+						DebugHandler.debugNumberFormat(e);
 					}
 					if (t != null) {
 						int level = 0;
 						if (data.length > 1) {
 							try {
 								level = Integer.parseInt(data[1]);
-							} catch (NumberFormatException ex) {						
+							} catch (NumberFormatException ex) {
+								DebugHandler.debugNumberFormat(ex);
 							}
 						}
 						int duration = 600;
 						if (data.length > 2) {
 							try {
 								duration = Integer.parseInt(data[2]);
-							} catch (NumberFormatException ex) {						
+							} catch (NumberFormatException ex) {
+								DebugHandler.debugNumberFormat(ex);
 							}
 						}
 						boolean ambient = false;
@@ -365,7 +372,9 @@ public class Util {
 					double attrAmt = 1;
 					try {
 						attrAmt = Double.parseDouble(attrData[1]);
-					} catch (NumberFormatException e) {}
+					} catch (NumberFormatException e) {
+						DebugHandler.debugNumberFormat(e);
+					}
 					int attrOp = 0; // add number
 					if (attrData.length > 2) {
 						if (attrData[2].toLowerCase().startsWith("mult")) {

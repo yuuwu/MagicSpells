@@ -48,7 +48,6 @@ import com.nisovin.magicspells.util.ExperienceUtils;
 import com.nisovin.magicspells.util.IntMap;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.MoneyHandler;
-import com.nisovin.magicspells.util.SoundUtils;
 import com.nisovin.magicspells.util.SpellReagents;
 import com.nisovin.magicspells.util.TargetInfo;
 import com.nisovin.magicspells.util.Util;
@@ -85,7 +84,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	protected HashMap<EffectPosition, List<SpellEffect>> effects;
 	
 	protected int minRange;
-	private int range;
+	protected int range;
 	protected boolean spellPowerAffectsRange;
 	protected boolean obeyLos;
 	protected ValidTargetList validTargetList;
@@ -1005,8 +1004,8 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 					public void run() {
 						chargesConsumed.decrement(name);
 						if (rechargeSound != null && !rechargeSound.isEmpty()) {
-							//MagicSpells.getVolatileCodeHandler().playSound(player, rechargeSound, 1.0F, 1.0F);
-							SoundUtils.playSound(player, rechargeSound, 1.0F, 1.0F); //lets try this new thing, a bit less volatile
+							MagicSpells.getVolatileCodeHandler().playSound(player, rechargeSound, 1.0F, 1.0F);
+							//SoundUtils.playSound(player, rechargeSound, 1.0F, 1.0F); //lets try this new thing, a bit less volatile
 						}
 					}
 				}, Math.round(20F * cooldown));
@@ -1290,6 +1289,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		try {
 			bi = new BlockIterator(player, range);
 		} catch (IllegalStateException e) {
+			DebugHandler.debugIllegalState(e);
 			return null;
 		}
 		Block b;
