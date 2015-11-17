@@ -23,25 +23,25 @@ import com.nisovin.magicspells.util.ValidTargetList;
 
 public class ExternalCommandSpell extends TargetedSpell implements TargetedEntitySpell {
 	
-	private static MessageBlocker messageBlocker;
+	static MessageBlocker messageBlocker;
 	
 	private boolean castWithItem;
 	private boolean castByCommand;
 	private List<String> commandToExecute;
-	private List<String> commandToExecuteLater;
+	List<String> commandToExecuteLater;
 	private int commandDelay;
 	private List<String> commandToBlock;
-	private List<String> temporaryPermissions;
-	private boolean temporaryOp;
+	List<String> temporaryPermissions;
+	boolean temporaryOp;
 	private boolean requirePlayerTarget;
-	private boolean blockChatOutput;
-	private boolean executeAsTargetInstead;
-	private boolean executeOnConsoleInstead;
+	boolean blockChatOutput;
+	boolean executeAsTargetInstead;
+	boolean executeOnConsoleInstead;
 	private String strCantUseCommand;
 	private String strNoTarget;
-	private String strBlockedOutput;
+	String strBlockedOutput;
 	
-	private ConversationFactory convoFac;
+	ConversationFactory convoFac;
 	private Prompt convoPrompt;
 
 	public ExternalCommandSpell(MagicConfig config, String spellName) {
@@ -74,9 +74,11 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 				}
 			} else {
 				convoPrompt = new StringPrompt() {	
+					@Override
 					public String getPromptText(ConversationContext arg0) {
 						return strBlockedOutput;
 					}
+					@Override
 					public Prompt acceptInput(ConversationContext arg0, String arg1) {
 						return Prompt.END_OF_CONVERSATION;
 					}

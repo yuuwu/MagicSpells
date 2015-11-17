@@ -298,6 +298,7 @@ public class SpawnMonsterSpell extends TargetedSpell implements TargetedLocation
 			// schedule removal
 			if (duration > 0) {
 				MagicSpells.scheduleDelayedTask(new Runnable() {
+					@Override
 					public void run() {
 						entity.remove();
 					}

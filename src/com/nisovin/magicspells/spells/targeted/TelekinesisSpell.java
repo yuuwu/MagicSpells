@@ -37,6 +37,7 @@ public class TelekinesisSpell extends TargetedSpell implements TargetedLocationS
 		losTransparentBlocks.remove((byte)Material.WOOD_BUTTON.getId());
 	}
 	
+	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			Block target = getTargetedBlock(player, power);

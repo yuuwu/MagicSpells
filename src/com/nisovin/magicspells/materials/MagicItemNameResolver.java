@@ -241,7 +241,7 @@ public class MagicItemNameResolver implements ItemNameResolver {
 		} else {
 			DyeColor color = DyeColor.WHITE;
 			if (data != null && data.length() > 0) {
-				data = data.replace("_", "").replace(" ", "").toLowerCase();
+				data = data.replace("_", "").replace(" ", "").toLowerCase(); //TODO find an alternative to reassigning the parameter
 				for (DyeColor c : DyeColor.values()) {
 					if (data.equals(c.name().replace("_", "").toLowerCase())) {
 						color = c;

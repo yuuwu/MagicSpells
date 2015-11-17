@@ -5,15 +5,17 @@ import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 
 import com.nisovin.magicspells.DebugHandler;
+import com.nisovin.magicspells.util.ConfigData;
 /**
- * class SplashPotionEffect<p>
+ * public class SplashPotionEffect<p>
  * Configuration fields:<br>
  * <ul>
  * <li>potion</li>
  * </ul>
  */
-class SplashPotionEffect extends SpellEffect {
+public class SplashPotionEffect extends SpellEffect {
 	
+	@ConfigData(field="potion", dataType="int", defaultValue="0")
 	int pot = 0;
 
 	@Override

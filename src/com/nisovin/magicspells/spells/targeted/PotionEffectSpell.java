@@ -55,7 +55,7 @@ public class PotionEffectSpell extends TargetedSpell implements TargetedEntitySp
 				TargetInfo<LivingEntity> targetInfo = getTargetedEntity(player, power);
 				if (targetInfo != null) {
 					target = targetInfo.getTarget();
-					power = targetInfo.getPower();
+					power = targetInfo.getPower(); //TODO make an alternative to overriding the parameter
 				}
 			} else {
 				target = player;

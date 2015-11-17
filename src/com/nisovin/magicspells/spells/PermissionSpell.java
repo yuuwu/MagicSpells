@@ -6,11 +6,15 @@ import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
+import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.MagicConfig;
 
 public class PermissionSpell extends InstantSpell {
 
+	@ConfigData(field="duration", dataType="int", defaultValue="0")
 	private int duration;
+	
+	@ConfigData(field="permission-nodes", dataType="String[]", defaultValue="null")
 	private List<String> permissionNodes;
 	
 	public PermissionSpell(MagicConfig config, String spellName) {

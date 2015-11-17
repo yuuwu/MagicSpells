@@ -29,7 +29,7 @@ public class ManaSystem extends ManaHandler {
 	private int defaultRegenAmount;
 	
 	private boolean showManaOnUse;
-	private boolean showManaOnRegen;
+	boolean showManaOnRegen;
 	private boolean showManaOnWoodTool;
 	private boolean showManaOnHungerBar;
 	private boolean showManaOnExperienceBar;
@@ -40,7 +40,7 @@ public class ManaSystem extends ManaHandler {
 	private ManaRank defaultRank;
 	private ArrayList<ManaRank> ranks;
 	
-	private HashMap<String, ManaBar> manaBars;
+	HashMap<String, ManaBar> manaBars;
 	
 	private int taskId = -1;
 

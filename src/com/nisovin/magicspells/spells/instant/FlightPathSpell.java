@@ -145,7 +145,7 @@ public class FlightPathSpell extends InstantSpell {
 	class ActiveFlight {
 		Player player;
 		EntityType mountType;
-		Entity mount;
+		Entity mountActive;
 		Entity entityToPush;
 		FlightPathSpell spell;
 		FlightState state;
@@ -171,12 +171,12 @@ public class FlightPathSpell extends InstantSpell {
 			if (mountType == null) {
 				entityToPush = player;
 			} else {
-				mount = player.getWorld().spawnEntity(player.getLocation(), mountType);
-				entityToPush = mount;
+				mountActive = player.getWorld().spawnEntity(player.getLocation(), mountType);
+				entityToPush = mountActive;
 				if (player.getVehicle() != null) {
 					player.getVehicle().eject();
 				}
-				mount.setPassenger(player);
+				mountActive.setPassenger(player);
 			}
 		}
 		
@@ -238,14 +238,14 @@ public class FlightPathSpell extends InstantSpell {
 				state = FlightState.DONE;
 				player.setFlying(wasFlying);
 				player.setAllowFlight(wasFlyingAllowed);
-				if (mount != null) {
-					mount.eject();
-					mount.remove();
+				if (mountActive != null) {
+					mountActive.eject();
+					mountActive.remove();
 				}
 				spell.playSpellEffects(EffectPosition.DELAYED, player);
 				
 				player = null;
-				mount = null;
+				mountActive = null;
 				entityToPush = null;
 				spell = null;
 			}

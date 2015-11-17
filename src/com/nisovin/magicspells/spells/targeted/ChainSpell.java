@@ -141,7 +141,7 @@ public class ChainSpell extends TargetedSpell implements TargetedEntitySpell, Ta
 		}
 	}
 	
-	private boolean castSpellAt(Player caster, Location from, LivingEntity target, float power) {
+	boolean castSpellAt(Player caster, Location from, LivingEntity target, float power) {
 		if (spellToCast.isTargetedEntityFromLocationSpell() && from != null) {
 			return spellToCast.castAtEntityFromLocation(caster, from, target, power);
 		} else if (spellToCast.isTargetedEntitySpell()) {
@@ -192,6 +192,7 @@ public class ChainSpell extends TargetedSpell implements TargetedEntitySpell, Ta
 			taskId = MagicSpells.scheduleRepeatingTask(this, 0, interval);
 		}
 		
+		@Override
 		public void run() {
 			Location from = null;
 			if (current == 0) {

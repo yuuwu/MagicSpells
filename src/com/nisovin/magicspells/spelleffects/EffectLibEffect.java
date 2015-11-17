@@ -15,6 +15,7 @@ public class EffectLibEffect extends SpellEffect {
 	
 	@Override
 	public void loadFromString(String string) {
+		//TODO make a string loading schema
 	}
 
 	@Override

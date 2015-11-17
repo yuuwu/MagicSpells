@@ -170,6 +170,7 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 			final LivingEntity e = entityTarget;
 			final Location l = locTarget;
 			MagicSpells.scheduleDelayedTask(new Runnable() {
+				@Override
 				public void run() {
 					openMenu(caster, p, e, l, power);
 				}
@@ -267,6 +268,7 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 				
 				if (close) {
 					MagicSpells.scheduleDelayedTask(new Runnable() {
+						@Override
 						public void run() {
 							player.closeInventory();
 						}
@@ -292,7 +294,7 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 		if (targetOpensMenuInstead) {
 			if (target instanceof Player) {
 				opener = (Player)target;
-				target = null;
+				target = null; //TODO make an alternative to overriding the parameter
 			} else {
 				return false;
 			}

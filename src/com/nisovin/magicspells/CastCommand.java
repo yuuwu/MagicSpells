@@ -36,7 +36,7 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 	public boolean onCommand(CommandSender sender, Command command, String label, String [] args) {
 		try {
 			if (command.getName().equalsIgnoreCase("magicspellcast")) {
-				args = Util.splitParams(args);
+				args = Util.splitParams(args); //TODO find an alternative to reassigning the parameter
 				if (args == null || args.length == 0) {
 					if (sender instanceof Player) {
 						MagicSpells.sendMessage((Player)sender, plugin.strCastUsage);

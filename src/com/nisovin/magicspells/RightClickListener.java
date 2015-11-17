@@ -43,7 +43,7 @@ public class RightClickListener implements Listener {
 	    if (!event.hasItem()) return;	    
 
 	    CastItem castItem = new CastItem(event.getItem());
-	    final Spell spell = (Spell)this.rightClickCastItems.get(castItem);
+	    final Spell spell = this.rightClickCastItems.get(castItem);
 	    if (spell == null) return;
 
 	    Player player = event.getPlayer();
@@ -61,6 +61,7 @@ public class RightClickListener implements Listener {
 	    	}
 			
 	    	MagicSpells.scheduleDelayedTask(new Runnable() {
+	    		@Override
 	    		public void run() {
 	    	    	spell.cast(event.getPlayer());
 	    		}

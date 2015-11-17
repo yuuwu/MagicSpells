@@ -22,11 +22,11 @@ public class WindwalkSpell extends BuffSpell {
 
 	private int launchSpeed;
 	private float flySpeed;
-	private int maxY;
-	private int maxAltitude;
+	int maxY;
+	int maxAltitude;
     private boolean cancelOnLand;
 	
-	private HashSet<String> flyers;
+	HashSet<String> flyers;
 	private HashMap<String, Integer> tasks;
 	private HeightMonitor heightMonitor = null;
 	
@@ -68,6 +68,7 @@ public class WindwalkSpell extends BuffSpell {
 		// set cost interval
 		if (useCostInterval > 0 || numUses > 0) {
 			int taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(MagicSpells.plugin, new Runnable() {
+				@Override
 				public void run() {
 					addUseAndChargeCost(player);
 				}
@@ -100,6 +101,7 @@ public class WindwalkSpell extends BuffSpell {
 			taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(MagicSpells.plugin, this, 20, 20);
 		}
 		
+		@Override
 		public void run() {
 			for (String name : flyers) {
 				Player p = PlayerNameUtils.getPlayerExact(name);

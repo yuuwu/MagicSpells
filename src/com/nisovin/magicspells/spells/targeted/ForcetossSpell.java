@@ -39,7 +39,7 @@ public class ForcetossSpell extends TargetedSpell implements TargetedEntitySpell
 				return noTarget(player);
 			}
 			LivingEntity target = targetInfo.getTarget();
-			power = targetInfo.getPower();
+			power = targetInfo.getPower(); //TODO make an alternative to overriding the parameter
 			
 			// do damage
 			if (damage > 0) {
@@ -65,7 +65,7 @@ public class ForcetossSpell extends TargetedSpell implements TargetedEntitySpell
 	}
 	
 	private void toss(Player player, LivingEntity target, float power) {
-		if (!powerAffectsForce) power = 1f;
+		if (!powerAffectsForce) power = 1f; //TODO make an alternative to overriding the parameter
 		Vector v = target.getLocation().toVector().subtract(player.getLocation().toVector())
 				.setY(0)
 				.normalize()

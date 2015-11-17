@@ -30,7 +30,7 @@ import com.nisovin.magicspells.util.TargetInfo;
 
 public abstract class BuffSpell extends TargetedSpell implements TargetedEntitySpell {
 	
-	private BuffSpell thisSpell;
+	BuffSpell thisSpell;
 	
 	protected boolean targeted;
 	protected boolean toggle;
@@ -108,10 +108,12 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 		castByCommand = getConfigBoolean("can-cast-by-command", true);
 	}
 	
+	@Override
 	public boolean canCastWithItem() {
 		return castWithItem;
 	}
 	
+	@Override
 	public boolean canCastByCommand() {
 		return castByCommand;
 	}
@@ -123,7 +125,7 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 			TargetInfo<Player> targetInfo = getTargetedPlayer(player, power);
 			if (targetInfo == null) return noTarget(player);
 			target = targetInfo.getTarget();
-			power = targetInfo.getPower();
+			power = targetInfo.getPower(); //TODO make an alternative to overriding the parameter
 		} else {
 			target = player;
 		}
@@ -210,6 +212,7 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 			durationEndTime.put(player.getName(), System.currentTimeMillis() + Math.round(dur * 1000));
 			final String name = player.getName();
 			Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
+				@Override
 				public void run() {
 					Player p = PlayerNameUtils.getPlayerExact(name);
 					if (p == null) p = player;

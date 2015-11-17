@@ -90,6 +90,7 @@ public abstract class SpellEffect {
 			playEffectEntity(entity);
 		} else {
 			MagicSpells.scheduleDelayedTask(new Runnable() {
+				@Override
 				public void run() {
 					playEffectEntity(entity);
 				}
@@ -111,6 +112,7 @@ public abstract class SpellEffect {
 			playEffectLocationReal(location);
 		} else {
 			MagicSpells.scheduleDelayedTask(new Runnable() {
+				@Override
 				public void run() {
 					playEffectLocationReal(location);
 				}
@@ -118,7 +120,7 @@ public abstract class SpellEffect {
 		}
 	}
 	
-	private void playEffectLocationReal(Location location) {
+	void playEffectLocationReal(Location location) {
 		if (heightOffset != 0 || forwardOffset != 0) {
 			Location loc = location.clone();
 			if (heightOffset != 0) {
@@ -134,7 +136,7 @@ public abstract class SpellEffect {
 	}
 	
 	protected void playEffectLocation(Location location) {
-		
+		//expect to be overridden
 	}
 	
 	/**
@@ -160,6 +162,7 @@ public abstract class SpellEffect {
 	
 	public void playEffectWhileActiveOnEntity(final Entity entity, final SpellEffectActiveChecker checker) {
 		taskId = MagicSpells.scheduleRepeatingTask(new Runnable() {
+			@Override
 			public void run() {
 				if (checker.isActive(entity)) {
 					playEffect(entity);
@@ -168,8 +171,8 @@ public abstract class SpellEffect {
 		}, 0, effectInterval);
 	}
 	
-	public void playEffectWhileActiveOrbit(final Entity entity, final SpellEffectActiveChecker checker) {
-		new OrbitTracker(entity, checker);
+	public OrbitTracker playEffectWhileActiveOrbit(final Entity entity, final SpellEffectActiveChecker checker) {
+		return new OrbitTracker(entity, checker);
 	}
 	
 	public interface SpellEffectActiveChecker {

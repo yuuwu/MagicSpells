@@ -5,7 +5,7 @@ import org.bukkit.configuration.ConfigurationSection;
 
 import de.slikey.effectlib.util.ParticleEffect;
 
-class AngryEffect extends SpellEffect {
+public class AngryEffect extends SpellEffect {
 
 	private ParticleEffect effect = ParticleEffect.VILLAGER_ANGRY;
 	
@@ -26,10 +26,12 @@ class AngryEffect extends SpellEffect {
 	
 	@Override
 	public void loadFromString(String string) {
+		//TODO make a string loading schema
 	}
 
 	@Override
 	public void loadFromConfig(ConfigurationSection config) {
+		//TODO make a config loading schema
 	}
 
 	@Override

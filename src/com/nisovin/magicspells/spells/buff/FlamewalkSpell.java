@@ -18,13 +18,13 @@ import com.nisovin.magicspells.util.PlayerNameUtils;
 
 public class FlamewalkSpell extends BuffSpell {
 	
-	private int range;
-	private int fireTicks;
-	private int tickInterval;
-	private boolean targetPlayers;
-	private boolean checkPlugins;
+	int range;
+	int fireTicks;
+	int tickInterval;
+	boolean targetPlayers;
+	boolean checkPlugins;
 	
-	private HashMap<String, Float> flamewalkers;
+	HashMap<String, Float> flamewalkers;
 	private Burner burner;
 	
 	public FlamewalkSpell(MagicConfig config, String spellName) {
@@ -78,6 +78,7 @@ public class FlamewalkSpell extends BuffSpell {
 			Bukkit.getServer().getScheduler().cancelTask(taskId);
 		}
 		
+		@Override
 		public void run() {
 			for (String s : flamewalkers.keySet().toArray(strArr)) {
 				Player player = PlayerNameUtils.getPlayer(s);

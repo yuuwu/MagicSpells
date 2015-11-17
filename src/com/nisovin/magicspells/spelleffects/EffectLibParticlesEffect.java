@@ -9,7 +9,7 @@ import de.slikey.effectlib.util.ParticleEffect;
 import de.slikey.effectlib.util.ParticleEffect.ItemData;
 import de.slikey.effectlib.util.ParticleEffect.ParticleData;
 
-class EffectLibParticlesEffect extends SpellEffect {
+public class EffectLibParticlesEffect extends SpellEffect {
 
 	String name = "";
 	float offsetX = 1;
@@ -28,6 +28,7 @@ class EffectLibParticlesEffect extends SpellEffect {
 
 	@Override
 	public void loadFromString(String string) {
+		//TODO make a string loading schema
 	}
 
 	@Override

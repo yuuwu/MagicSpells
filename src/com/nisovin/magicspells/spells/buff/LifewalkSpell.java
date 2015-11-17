@@ -14,21 +14,33 @@ import org.bukkit.material.LongGrass;
 
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spells.BuffSpell;
+import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
 
 public class LifewalkSpell extends BuffSpell {
 	
-	private HashSet<String> lifewalkers;
+	HashSet<String> lifewalkers;
 	private Grower grower;
-	private Random random;
+	Random random;
 	
-	private int tickInterval;
-	private int redFlowerChance;
-	private int yellowFlowerChance;
-	private int saplingChance;
-	private int tallgrassChance;
-	private int fernChance;
+	@ConfigData(field="tick-interval", dataType="int", defaultValue="15")
+	int tickInterval;
+	
+	@ConfigData(field="red-flower-chance", dataType="int", defaultValue="15")
+	int redFlowerChance;
+	
+	@ConfigData(field="yellow-flower-chance", dataType="int", defaultValue="15")
+	int yellowFlowerChance;
+	
+	@ConfigData(field="sapling-chance", dataType="int", defaultValue="5")
+	int saplingChance;
+	
+	@ConfigData(field="tallgrass-chance", dataType="int", defaultValue="25")
+	int tallgrassChance;
+	
+	@ConfigData(field="fern-chance", dataType="int", defaultValue="15")
+	int fernChance;
 	
 	public LifewalkSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -83,6 +95,7 @@ public class LifewalkSpell extends BuffSpell {
 			Bukkit.getServer().getScheduler().cancelTask(taskId);
 		}
 		
+		@Override
 		public void run() {
 			for (String s : lifewalkers.toArray(strArr)) {
 				Player player = PlayerNameUtils.getPlayer(s);

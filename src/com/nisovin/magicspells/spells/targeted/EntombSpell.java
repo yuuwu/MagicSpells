@@ -21,12 +21,12 @@ import com.nisovin.magicspells.util.TargetInfo;
 
 public class EntombSpell extends TargetedSpell implements TargetedEntitySpell {
 
-	private MagicMaterial tombBlockType;
+	MagicMaterial tombBlockType;
 	private int tombDuration;
 	private boolean closeTopAndBottom;
 	private boolean allowBreaking;
 	
-	private HashSet<Block> blocks;
+	HashSet<Block> blocks;
 	
 	public EntombSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -49,7 +49,7 @@ public class EntombSpell extends TargetedSpell implements TargetedEntitySpell {
 			TargetInfo<LivingEntity> targetInfo = getTargetedEntity(player, power);
 			if (targetInfo != null) {
 				LivingEntity target = targetInfo.getTarget();
-				power = targetInfo.getPower();
+				power = targetInfo.getPower(); //TODO make an alternative to overriding the parameter
 				int x = target.getLocation().getBlockX();
 				int y = target.getLocation().getBlockY();
 				int z = target.getLocation().getBlockZ();

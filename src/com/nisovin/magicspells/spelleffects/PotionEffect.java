@@ -6,18 +6,22 @@ import org.bukkit.entity.LivingEntity;
 
 import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.util.ConfigData;
 
 /**
- * class PotionEffect<p>
+ * public class PotionEffect<p>
  * Configuration fields:<br>
  * <ul>
  * <li>color: the color of the potion particles in rgb hex code.</li>
  * <li>duration: a base 10 integer representing how long the particles should play for.</li>
  * </ul>
  */
-class PotionEffect extends SpellEffect {
+public class PotionEffect extends SpellEffect {
 	
+	@ConfigData(field="color", dataType="String", defaultValue="", description="Color of the potion effect using hexidecimal color format")
 	int color = 0xFF0000;
+	
+	@ConfigData(field="duration", dataType="int", defaultValue="30")
 	int duration = 30;
 	
 	@Override

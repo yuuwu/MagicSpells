@@ -9,17 +9,19 @@ import org.bukkit.configuration.ConfigurationSection;
 
 import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.util.ConfigData;
 
 /**
- * class SmokeTrailEffect<p>
+ * public class SmokeTrailEffect<p>
  * Configuration fields:<br>
  * <ul>
  * <li>interval</li>
  * </ul>
  */
 
-class SmokeTrailEffect extends SpellEffect {
+public class SmokeTrailEffect extends SpellEffect {
 
+	@ConfigData(field="interval", dataType="int", defaultValue="0")
 	int interval = 0;
 	
 	@Override

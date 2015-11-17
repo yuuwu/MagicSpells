@@ -17,7 +17,7 @@ public abstract class MagicMaterial {
 		setBlock(block, true);
 	}
 	
-	public void setBlock(Block block, boolean applyPhysics) {}
+	public void setBlock(Block block, boolean applyPhysics) { /* NO OP */}
 	
 	public FallingBlock spawnFallingBlock(Location location) { return null; }
 	

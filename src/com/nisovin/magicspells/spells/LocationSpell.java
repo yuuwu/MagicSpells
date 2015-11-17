@@ -5,12 +5,16 @@ import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Subspell;
+import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.MagicLocation;
 
 public class LocationSpell extends InstantSpell {
 
+	@ConfigData(field="location", dataType="String", defaultValue="world,0,0,0")
 	MagicLocation location;
+	
+	@ConfigData(field="spell", dataType="String", defaultValue="")
 	Subspell spell;
 	
 	public LocationSpell(MagicConfig config, String spellName) {

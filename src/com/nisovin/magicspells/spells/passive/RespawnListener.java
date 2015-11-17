@@ -26,6 +26,7 @@ public class RespawnListener extends PassiveListener {
 			final Player player = event.getPlayer();
 			final Spellbook spellbook = MagicSpells.getSpellbook(player);
 			MagicSpells.scheduleDelayedTask(new Runnable() {
+				@Override
 				public void run() {
 					for (PassiveSpell spell : spells) {
 						if (spellbook.hasSpell(spell)) {

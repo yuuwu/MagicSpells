@@ -8,9 +8,11 @@ import org.bukkit.entity.Entity;
 
 import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.util.ConfigData;
 
-class SmokeSwirlEffect extends SpellEffect {
+public class SmokeSwirlEffect extends SpellEffect {
 
+	@ConfigData
 	int duration = 20;
 	
 	@Override
@@ -26,11 +28,12 @@ class SmokeSwirlEffect extends SpellEffect {
 
 	@Override
 	public void loadFromConfig(ConfigurationSection config) {
+		//TODO make a config load form
 	}
 
-	private int[] x = {1,1,0,-1,-1,-1,0,1};
-	private int[] z = {0,1,1,1,0,-1,-1,-1};
-	private int[] v = {7,6,3,0,1,2,5,8};
+	int[] x = {1,1,0,-1,-1,-1,0,1};
+	int[] z = {0,1,1,1,0,-1,-1,-1};
+	int[] v = {7,6,3,0,1,2,5,8};
 	
 	@Override
 	public void playEffectLocation(Location location) {		

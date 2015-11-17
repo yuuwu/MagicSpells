@@ -35,7 +35,7 @@ public class SilenceSpell extends TargetedSpell implements TargetedEntitySpell {
 	private Set<Spell> allowedSpells;
 	private String strSilenced;
 	
-	private Map<String,Unsilencer> silenced;
+	Map<String,Unsilencer> silenced;
 	
 	public SilenceSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -141,6 +141,7 @@ public class SilenceSpell extends TargetedSpell implements TargetedEntitySpell {
 			if (event.getCaster() != null && silenced.containsKey(event.getCaster().getName()) && (allowedSpells == null || !allowedSpells.contains(event.getSpell()))) {
 				event.setCancelled(true);
 				Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
+					@Override
 					public void run() {
 						sendMessage(event.getCaster(), strSilenced);
 					}

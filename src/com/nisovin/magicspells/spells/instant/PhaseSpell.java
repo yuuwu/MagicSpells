@@ -73,7 +73,7 @@ public class PhaseSpell extends InstantSpell {
 			if (start != null) {
 				if (allowedPassThru != null && !canPassThru(start)) {
 					// can't phase through the block
-					location = null;
+					location = null; //TODO make an alternative to overriding the parameter
 				} else {
 					// get next empty space
 					Block end = null;

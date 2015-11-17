@@ -182,6 +182,7 @@ public class PasteSpell extends TargetedSpell implements TargetedLocationSpell {
 		
 		public void build() {
 			taskId = MagicSpells.scheduleRepeatingTask(new Runnable() {
+				@Override
 				public void run() {
 					if (current >= blocks.size()) {
 						MagicSpells.cancelTask(taskId);

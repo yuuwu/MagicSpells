@@ -49,6 +49,7 @@ public class SwitchSpell extends TargetedSpell implements TargetedEntitySpell {
 		
 		if (switchBack > 0) {
 			Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
+				@Override
 				public void run() {
 					if (!player.isDead() && !target.isDead()) {
 						Location targetLoc = target.getLocation();

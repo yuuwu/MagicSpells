@@ -28,17 +28,17 @@ import com.nisovin.magicspells.util.MagicConfig;
 
 public class VolleySpell extends TargetedSpell implements TargetedLocationSpell, TargetedEntityFromLocationSpell {
 
-	private VolleySpell thisSpell;
+	VolleySpell thisSpell;
 	
-	private int arrows;
-	private int speed;
-	private int spread;
-	private int fire;
-	private int shootInterval;
-	private int removeDelay;
+	int arrows;
+	int speed;
+	int spread;
+	int fire;
+	int shootInterval;
+	int removeDelay;
 	private boolean noTarget;
-	private boolean powerAffectsArrowCount;
-	private boolean powerAffectsSpeed;
+	boolean powerAffectsArrowCount;
+	boolean powerAffectsSpeed;
 	
 	public VolleySpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -109,6 +109,7 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 			
 			if (removeDelay > 0) {
 				Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
+					@Override
 					public void run() {
 						for (Arrow a : arrowList) {
 							a.remove();
@@ -129,7 +130,7 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 				playSpellEffects(EffectPosition.CASTER, player);
 			}
 		} else {
-			if (from != null) {
+			if (from != null) { //TODO check null checks
 				playSpellEffects(EffectPosition.CASTER, from);
 			}
 			if (target != null) {
@@ -202,8 +203,8 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 		Player player;
 		Location spawn;
 		Vector dir;
-		int arrows;
-		float speed;
+		int arrowsShooter;
+		float speedShooter;
 		int taskId;
 		int count;
 		HashMap<Integer, Arrow> arrowMap;
@@ -212,9 +213,9 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 			this.player = player;
 			this.spawn = spawn;
 			this.dir = dir;
-			this.arrows = powerAffectsArrowCount ? Math.round(thisSpell.arrows * power) : thisSpell.arrows;
-			this.speed = thisSpell.speed / 10F;
-			if (powerAffectsSpeed) this.speed *= power;
+			this.arrowsShooter = powerAffectsArrowCount ? Math.round(thisSpell.arrows * power) : thisSpell.arrows;
+			this.speedShooter = thisSpell.speed / 10F;
+			if (powerAffectsSpeed) this.speedShooter *= power;
 			this.count = 0;
 			
 			if (removeDelay > 0) {
@@ -227,8 +228,8 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 		@Override
 		public void run() {			
 			// fire an arrow
-			if (count < arrows) {
-				Arrow a = spawn.getWorld().spawnArrow(spawn, dir, speed, (spread/10.0F));
+			if (count < arrowsShooter) {
+				Arrow a = spawn.getWorld().spawnArrow(spawn, dir, speedShooter, (spread/10.0F));
 				a.setVelocity(a.getVelocity());
 				if (player != null) {
 					a.setShooter(player);
@@ -254,7 +255,7 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 			}
 			
 			// end if it's done
-			if (count >= arrows + removeDelay) {
+			if (count >= arrowsShooter + removeDelay) {
 				Bukkit.getScheduler().cancelTask(taskId);
 			}
 

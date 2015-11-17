@@ -56,7 +56,6 @@ import com.nisovin.magicspells.util.MoneyHandler;
 import com.nisovin.magicspells.util.Util;
 import com.nisovin.magicspells.variables.VariableManager;
 import com.nisovin.magicspells.volatilecode.VolatileCodeDisabled;
-import com.nisovin.magicspells.volatilecode.VolatileCodeEffectLib;
 import com.nisovin.magicspells.volatilecode.VolatileCodeEnabled_1_8_R1;
 import com.nisovin.magicspells.volatilecode.VolatileCodeEnabled_1_8_R3;
 import com.nisovin.magicspells.volatilecode.VolatileCodeHandle;
@@ -845,7 +844,7 @@ public class MagicSpells extends JavaPlugin {
 	static public void sendMessage(Player player, String message) {
 		if (message != null && !message.equals("")) {
 			// do var replacements
-			message = doVariableReplacements(player, message);
+			message = doVariableReplacements(player, message); //TODO find an alternative to reassigning the parameter
 			// send messages
 			String [] msgs = message.replaceAll("&([0-9a-fk-or])", "\u00A7$1").split("\n");
 			for (String msg : msgs) {
@@ -865,7 +864,7 @@ public class MagicSpells extends JavaPlugin {
 				String[] varData = varText.substring(5, varText.length() - 1).split(":");
 				double val = plugin.variableManager.getValue(varData[0], player);
 				String sval = varData.length == 1 ? Util.getStringNumber(val, -1) : Util.getStringNumber(val, Integer.parseInt(varData[1]));
-				string = string.replace(varText, sval);
+				string = string.replace(varText, sval); //TODO find an alternative to reassigning the parameter
 			}
 		}
 		return string;
@@ -892,7 +891,9 @@ public class MagicSpells extends JavaPlugin {
             method.setAccessible(true);
             EventExecutor executor = new EventExecutor() {
             	final String eventKey = plugin.enableProfiling ? "Event:" + listener.getClass().getName().replace("com.nisovin.magicspells.","") + "." + method.getName() + "(" + eventClass.getSimpleName() + ")" : null;
-                public void execute(Listener listener, Event event) {
+                
+            	@Override
+            	public void execute(Listener listener, Event event) {
                     try {
                         if (!eventClass.isAssignableFrom(event.getClass())) {
                             return;
@@ -920,6 +921,7 @@ public class MagicSpells extends JavaPlugin {
 	
 	public static int scheduleDelayedTask(final Runnable task, int delay) {
 		return Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, !plugin.enableErrorLogging ? task : new Runnable() {
+			@Override
 			public void run() {
 				try {
 					task.run();
@@ -932,6 +934,7 @@ public class MagicSpells extends JavaPlugin {
 	
 	public static int scheduleRepeatingTask(final Runnable task, int delay, int interval) {
 		return Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, !plugin.enableErrorLogging ? task : new Runnable() {
+			@Override
 			public void run() {
 				try {
 					task.run();

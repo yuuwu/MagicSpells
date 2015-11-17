@@ -26,8 +26,8 @@ import com.nisovin.magicspells.util.Util;
 
 public class KeybindSpell extends CommandSpell {
 
-	private ItemStack wandItem;
-	private ItemStack defaultSpellIcon;
+	ItemStack wandItem;
+	ItemStack defaultSpellIcon;
 	
 	private HashMap<String,Keybinds> playerKeybinds;
 	
@@ -185,8 +185,8 @@ public class KeybindSpell extends CommandSpell {
 	}
 	
 	private class Keybinds {
-		private Player player;
-		private Spell[] keybinds;
+		Player player;
+		Spell[] keybinds;
 		
 		public Keybinds(Player player) {
 			this.player = player;

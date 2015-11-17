@@ -102,6 +102,7 @@ public class VariableManager implements Listener {
 		
 		// start save task
 		MagicSpells.scheduleRepeatingTask(new Runnable() {
+			@Override
 			public void run() {
 				if (dirtyGlobalVars) {
 					saveGlobalVars();
@@ -241,7 +242,7 @@ public class VariableManager implements Listener {
 		dirtyGlobalVars = false;
 	}
 	
-	private void saveGlobalVars() {
+	void saveGlobalVars() {
 		File file = new File(folder, "GLOBAL.txt");
 		if (file.exists()) file.delete();
 		
@@ -354,7 +355,7 @@ public class VariableManager implements Listener {
 		dirtyPlayerVars.remove(player);
 	}
 	
-	private void saveAllPlayerVars() {
+	void saveAllPlayerVars() {
 		for (String playerName : new HashSet<String>(dirtyPlayerVars)) {
 			String uid = Util.getUniqueId(playerName);
 			if (uid != null) {
@@ -372,7 +373,7 @@ public class VariableManager implements Listener {
 		}
 	}
 	
-	private void loadExpBar(Player player) {
+	void loadExpBar(Player player) {
 		for (Variable var : variables.values()) {
 			if (var.expBar) {
 				MagicSpells.getVolatileCodeHandler().setExperienceBar(player, (int)var.getValue(player), (float)(var.getValue(player) / var.maxValue));
@@ -397,6 +398,7 @@ public class VariableManager implements Listener {
 		loadPlayerVars(player.getName(), Util.getUniqueId(player));
 		loadBossBar(player);
 		MagicSpells.scheduleDelayedTask(new Runnable() {
+			@Override
 			public void run() {
 				loadExpBar(player);
 			}

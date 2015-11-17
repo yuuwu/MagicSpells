@@ -54,7 +54,7 @@ public class HomingArrowSpell extends TargetedSpell implements TargetedEntitySpe
 		Vector v = null;
 		if (from != null) {
 			v = target.getLocation().toVector().subtract(from.toVector()).normalize();
-			from = from.clone().setDirection(v);
+			from = from.clone().setDirection(v); //TODO make an alternative to overriding the parameter
 			projectile = from.getWorld().spawn(from, projectileType);
 			if (player != null) {
 				projectile.setShooter(player);
@@ -131,6 +131,8 @@ public class HomingArrowSpell extends TargetedSpell implements TargetedEntitySpe
 	
 	class HomingArrowMonitor implements Runnable {
 		int c = 0;
+		
+		@Override
 		public void run() {
 			c++;
 			Iterator<HomingArrow> iter = arrows.iterator();

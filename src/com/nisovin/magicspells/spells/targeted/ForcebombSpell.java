@@ -50,7 +50,7 @@ public class ForcebombSpell extends TargetedSpell implements TargetedLocationSpe
 					block = null;
 				} else {
 					block = event.getTargetLocation().getBlock();
-					power = event.getPower();
+					power = event.getPower(); //TODO make an alternative to overriding the parameter
 				}
 			}
 			if (block != null && block.getType() != Material.AIR) {
@@ -75,7 +75,7 @@ public class ForcebombSpell extends TargetedSpell implements TargetedLocationSpe
 	}
 	
 	public void knockback(Player player, Location location, float basePower) {
-		location = location.clone().add(0, yOffset, 0);
+		location = location.clone().add(0, yOffset, 0); //TODO make an alternative to overriding the parameter
 	    Vector t = location.toVector();
 		Collection<Entity> entities = location.getWorld().getEntitiesByClasses(LivingEntity.class);
 		Vector e, v;

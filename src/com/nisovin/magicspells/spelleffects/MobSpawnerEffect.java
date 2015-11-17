@@ -4,14 +4,16 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 
-class MobSpawnerEffect extends SpellEffect {
+public class MobSpawnerEffect extends SpellEffect {
 
 	@Override
 	public void loadFromString(String string) {
+		//no current string loading schema
 	}
 
 	@Override
 	public void loadFromConfig(ConfigurationSection config) {
+		//TODO make a config schema for this effect
 	}
 
 	@Override

@@ -123,12 +123,12 @@ public class TomeSpell extends CommandSpell {
 	
 	public ItemStack createTome(Spell spell, int uses, ItemStack item) {
 		if (maxUses > 0 && uses > maxUses) {
-			uses = maxUses;
+			uses = maxUses; //TODO make an alternative to overriding the parameter
 		} else if (uses < 0) {
-			uses = defaultUses;
+			uses = defaultUses; //TODO make an alternative to overriding the parameter
 		}
 		if (item == null) {
-			item = new ItemStack(Material.WRITTEN_BOOK, 1);
+			item = new ItemStack(Material.WRITTEN_BOOK, 1); //TODO make an alternative to overriding the parameter
 			BookMeta bookMeta = (BookMeta)item.getItemMeta();
 			bookMeta.setTitle(getName() + ": " + spell.getName());
 			item.setItemMeta(bookMeta);

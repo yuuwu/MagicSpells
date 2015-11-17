@@ -161,8 +161,9 @@ public class ThrowBlockSpell extends InstantSpell implements TargetedLocationSpe
 		}
 	}
 	
-	private void startTask() {
+	void startTask() {
 		cleanTask = Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
+			@Override
 			public void run() {
 				Iterator<Entity> iter = fallingBlocks.keySet().iterator();
 				while (iter.hasNext()) {

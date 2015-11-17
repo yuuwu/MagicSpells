@@ -46,7 +46,7 @@ public class FireballSpell extends TargetedSpell implements TargetedEntityFromLo
 	private int noExplosionDamageRange;
 	private boolean noFire;
 	
-	private HashMap<Fireball,Float> fireballs;
+	HashMap<Fireball,Float> fireballs;
 	private int taskId;
 	
 	public FireballSpell(MagicConfig config, String spellName) {
@@ -65,6 +65,7 @@ public class FireballSpell extends TargetedSpell implements TargetedEntityFromLo
 		
 		fireballs = new HashMap<Fireball, Float>();
 		taskId = MagicSpells.scheduleRepeatingTask(new Runnable() {
+			@Override
 			public void run() {
 				Iterator<Map.Entry<Fireball, Float>> iter = fireballs.entrySet().iterator();
 				while (iter.hasNext()) {
@@ -87,7 +88,7 @@ public class FireballSpell extends TargetedSpell implements TargetedEntityFromLo
 					return noTarget(player);
 				}
 				LivingEntity entity = targetInfo.getTarget();
-				power = targetInfo.getPower();
+				power = targetInfo.getPower(); //TODO make an alternative to overriding the parameter
 				if (entity == null) {
 					return noTarget(player);
 				} else if (entity instanceof Player && checkPlugins) {
@@ -224,6 +225,7 @@ public class FireballSpell extends TargetedSpell implements TargetedEntityFromLo
 				} else {
 					// schedule removal (gotta wait for damage events)
 					Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
+						@Override
 						public void run() {
 							fireballs.remove(fireball);
 						}

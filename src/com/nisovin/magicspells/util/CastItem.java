@@ -187,6 +187,7 @@ public class CastItem {
 	
 	private static void sortEnchants(int[][] enchants) {
 		Arrays.sort(enchants, new Comparator<int[]>() {
+			@Override
 			public int compare(int[] o1, int[] o2) {
 				if (o1[0] > o2[0]) return 1;
 				if (o1[0] < o2[0]) return -1;

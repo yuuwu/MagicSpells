@@ -101,7 +101,7 @@ public class VinesSpell extends TargetedSpell {
 		return true;
 	}
 	
-	private void setBlockToVine(Block block, BlockFace face) {
+	void setBlockToVine(Block block, BlockFace face) {
 		if (block.getType() == Material.AIR) {
 			BlockState state = block.getState();
 			state.setType(Material.VINE);

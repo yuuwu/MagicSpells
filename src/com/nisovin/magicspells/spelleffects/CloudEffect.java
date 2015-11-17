@@ -10,19 +10,21 @@ import org.bukkit.configuration.ConfigurationSection;
 
 import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.util.BlockUtils;
+import com.nisovin.magicspells.util.ConfigData;
 
 /**
- * class CloudEffect<p>
+ * public class CloudEffect<p>
  * Configuration fields:<br>
  * <ul>
  * <li>radius</li>
  * </ul>
  */
 
-class CloudEffect extends SpellEffect {
+public class CloudEffect extends SpellEffect {
 
 	Random rand = new Random();
 
+	@ConfigData(field="radius", dataType="int", defaultValue="3")
 	int radius = 3;
 	
 	@Override

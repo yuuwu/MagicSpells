@@ -100,6 +100,7 @@ public class DestroySpell extends TargetedSpell implements TargetedLocationSpell
 		if (preventLandingBlocks) {
 			registerEvents(new FallingBlockListener());
 			MagicSpells.scheduleRepeatingTask(new Runnable() {
+				@Override
 				public void run() {
 					if (fallingBlocks.size() > 0) {
 						Iterator<FallingBlock> iter = fallingBlocks.iterator();
@@ -125,7 +126,7 @@ public class DestroySpell extends TargetedSpell implements TargetedLocationSpell
 					b = null;
 				} else {
 					b = event.getTargetLocation().getBlock();
-					power = event.getPower();
+					power = event.getPower(); //TODO make an alternative to overriding the parameter
 				}
 			}
 			if (b != null && b.getType() != Material.AIR) {

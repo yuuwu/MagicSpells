@@ -116,6 +116,7 @@ public class DisguiseManager_1_8_R3 extends DisguiseManager {
 				}
 				@Override
 				public void sendMessage(IChatBaseComponent arg0) {
+					//no op
 				}
 				@Override
 				public BlockPosition getChunkCoordinates() {
@@ -126,7 +127,7 @@ public class DisguiseManager_1_8_R3 extends DisguiseManager {
 					return false;
 				}
 			};
-			entity.getDataWatcher().watch(10, (Byte)(byte)255);
+			entity.getDataWatcher().watch(10, (byte)255);
 			yOffset = -1.5F;
 		} else if (entityType == EntityType.ZOMBIE) {
 			entity = new EntityZombie(world);
@@ -333,6 +334,7 @@ public class DisguiseManager_1_8_R3 extends DisguiseManager {
 				dw.a(16, Byte.valueOf((byte)1));
 				broadcastPacket(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
 				Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
+					@Override
 					public void run() {
 						dw.watch(16, Byte.valueOf((byte)0));
 						broadcastPacket(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
@@ -345,6 +347,7 @@ public class DisguiseManager_1_8_R3 extends DisguiseManager {
 				dw.a(21, Byte.valueOf((byte)1));
 				broadcastPacket(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
 				Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
+					@Override
 					public void run() {
 						dw.watch(21, Byte.valueOf((byte)0));
 						broadcastPacket(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
@@ -369,6 +372,7 @@ public class DisguiseManager_1_8_R3 extends DisguiseManager {
 				dw.a(16, Byte.valueOf((byte)(p.isSneaking() ? 3 : 2)));
 				broadcastPacket(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
 				Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
+					@Override
 					public void run() {
 						dw.watch(16, Byte.valueOf((byte)(p.isSneaking() ? 1 : 0)));
 						broadcastPacket(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
@@ -381,6 +385,7 @@ public class DisguiseManager_1_8_R3 extends DisguiseManager {
 				dw.a(16, Byte.valueOf((byte)(p.isSneaking() ? 2 : 3)));
 				broadcastPacket(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
 				Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
+					@Override
 					public void run() {
 						dw.watch(16, Byte.valueOf((byte)(p.isSneaking() ? 1 : 2)));
 						broadcastPacket(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
@@ -473,6 +478,7 @@ public class DisguiseManager_1_8_R3 extends DisguiseManager {
 				final DisguiseSpell.Disguise disguise = disguises.get(name.toLowerCase());
 				if (player != null && disguise != null) {
 					Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
+						@Override
 						public void run() {
 							Player disguised = Bukkit.getPlayer(name);
 							if (disguised != null) {

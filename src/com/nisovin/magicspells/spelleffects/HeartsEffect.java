@@ -8,7 +8,7 @@ import org.bukkit.entity.Tameable;
 
 import de.slikey.effectlib.util.ParticleEffect;
 
-class HeartsEffect extends SpellEffect {
+public class HeartsEffect extends SpellEffect {
 	
 	private ParticleEffect effect = ParticleEffect.HEART;
 	
@@ -22,10 +22,12 @@ class HeartsEffect extends SpellEffect {
 	
 	@Override
 	public void loadFromString(String string) {
+		//no current string loading schema
 	}
 
 	@Override
 	public void loadFromConfig(ConfigurationSection config) {
+		//TODO make a config loading schema
 	}
 	
 	@Override

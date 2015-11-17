@@ -55,7 +55,7 @@ public class BlinkSpell extends TargetedSpell implements TargetedLocationSpell {
 					if (BlockUtils.isTransparent(this, b)) {
 						prev = b;
 						if (smokeTrail) {
-							smokes.add(b.getLocation());
+							smokes.add(b.getLocation()); //TODO check null access here
 						}
 					} else {
 						found = b;
@@ -69,7 +69,7 @@ public class BlinkSpell extends TargetedSpell implements TargetedLocationSpell {
 				if (range > 0 && !inRange(found.getLocation(), player.getLocation(), range)) {
 				} else if (!passThroughCeiling && found.getRelative(0,-1,0).equals(prev)) {
 					// trying to move upward
-					if (BlockUtils.isPathable(prev) && BlockUtils.isPathable(prev.getRelative(0,-1,0))) {
+					if (BlockUtils.isPathable(prev) && BlockUtils.isPathable(prev.getRelative(0,-1,0))) { //TODO check null access here
 						loc = prev.getRelative(0,-1,0).getLocation();
 					}
 				} else if (BlockUtils.isPathable(found.getRelative(0,1,0)) && BlockUtils.isPathable(found.getRelative(0,2,0))) {

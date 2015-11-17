@@ -22,6 +22,7 @@ public class BossBarManager implements Listener {
 		MagicSpells.registerEvents(this);
 		
 		MagicSpells.scheduleRepeatingTask(new Runnable() {
+			@Override
 			public void run() {
 				for (String name : bossBarTitles.keySet()) {
 					Player player = Bukkit.getPlayerExact(name);
@@ -73,6 +74,7 @@ public class BossBarManager implements Listener {
 	public void onRespawn(final PlayerRespawnEvent event) {
 		if (bossBarTitles.containsKey(event.getPlayer().getName())) {
 			MagicSpells.scheduleDelayedTask(new Runnable() {
+				@Override
 				public void run() {
 					showBar(event.getPlayer());
 				}
@@ -84,6 +86,7 @@ public class BossBarManager implements Listener {
 	public void onTeleport(final PlayerTeleportEvent event) {
 		if (bossBarTitles.containsKey(event.getPlayer().getName())) {
 			MagicSpells.scheduleDelayedTask(new Runnable() {
+				@Override
 				public void run() {
 					showBar(event.getPlayer());
 				}

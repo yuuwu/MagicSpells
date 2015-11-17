@@ -79,6 +79,7 @@ public class MagicXpHandler implements Listener {
 		}
 		
 		MagicSpells.scheduleRepeatingTask(new Runnable() {
+			@Override
 			public void run() {
 				saveAll();
 			}
@@ -140,6 +141,7 @@ public class MagicXpHandler implements Listener {
 			final Player player = event.getCaster();
 			final Spell castedSpell = event.getSpell();
 			MagicSpells.scheduleDelayedTask(new Runnable() {
+				@Override
 				public void run() {
 					
 					// get spells to check if learned

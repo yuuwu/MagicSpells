@@ -13,10 +13,12 @@ public abstract class CommandSpell extends Spell {
 		super(config, spellName);
 	}
 	
+	@Override
 	public boolean canCastWithItem() {
 		return false;
 	}
 	
+	@Override
 	public boolean canCastByCommand() {
 		return true;
 	}

@@ -63,8 +63,8 @@ public abstract class TargetedSpell extends InstantSpell {
 	
 	private String prepareMessage(String message, Player caster, String targetName, Player playerTarget) {
 		if (message != null && !message.isEmpty()) {
-			message = message.replace("%a", caster.getDisplayName());
-			message = message.replace("%t", targetName);
+			message = message.replace("%a", caster.getDisplayName()); //TODO make an alternative to overriding the parameter
+			message = message.replace("%t", targetName); //TODO make an alternative to overriding the parameter
 			if (playerTarget != null && MagicSpells.getVariableManager() != null && message.contains("%targetvar")) {
 				Matcher matcher = chatVarTargetMatchPattern.matcher(message);
 				while (matcher.find()) {
@@ -72,17 +72,17 @@ public abstract class TargetedSpell extends InstantSpell {
 					String[] varData = varText.substring(5, varText.length() - 1).split(":");
 					double val = MagicSpells.getVariableManager().getValue(varData[0], playerTarget);
 					String sval = varData.length == 1 ? Util.getStringNumber(val, -1) : Util.getStringNumber(val, Integer.parseInt(varData[1]));
-					message = message.replace(varText, sval);
+					message = message.replace(varText, sval); //TODO make an alternative to overriding the parameter
 				}
 			}
-			if (caster != null && MagicSpells.getVariableManager() != null && message.contains("%castervar")) {
+			if (caster != null && MagicSpells.getVariableManager() != null && message.contains("%castervar")) { 
 				Matcher matcher = chatVarCasterMatchPattern.matcher(message);
 				while (matcher.find()) {
 					String varText = matcher.group();
 					String[] varData = varText.substring(5, varText.length() - 1).split(":");
 					double val = MagicSpells.getVariableManager().getValue(varData[0], caster);
 					String sval = varData.length == 1 ? Util.getStringNumber(val, -1) : Util.getStringNumber(val, Integer.parseInt(varData[1]));
-					message = message.replace(varText, sval);
+					message = message.replace(varText, sval); //TODO make an alternative to overriding the parameter
 				}
 			}
 		}

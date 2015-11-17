@@ -44,6 +44,7 @@ import com.nisovin.magicspells.spelleffects.SpellEffect;
 import com.nisovin.magicspells.spells.PassiveSpell;
 import com.nisovin.magicspells.util.BlockUtils;
 import com.nisovin.magicspells.util.CastItem;
+import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.ExperienceUtils;
 import com.nisovin.magicspells.util.IntMap;
 import com.nisovin.magicspells.util.MagicConfig;
@@ -58,90 +59,215 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 
 	private MagicConfig config;
 	
+	@ConfigData(field="debug", dataType="boolean", defaultValue="false")
 	private boolean debug;
 	protected String internalName;
+	
+	@ConfigData(field="name", dataType="String", defaultValue="<internal name>")
 	protected String name;
+	
 	protected String profilingKey;
+	
+	@ConfigData(field="aliases", dataType="String[]", defaultValue="null")
 	protected String[] aliases;
+	
+	@ConfigData(field="helper-spell", dataType="boolean", defaultValue="false")
 	protected boolean helperSpell;
+	
+	@ConfigData(field="always-granted", dataType="boolean", defaultValue="false")
 	protected boolean alwaysGranted;
+	
+	@ConfigData(field="permission-name", dataType="String", defaultValue="<internal name>")
 	protected String permName;
+	
+	@ConfigData(field="incantations", dataType="String[]", defaultValue="null")
 	protected List<String> incantations;
 	
+	@ConfigData(field="description", dataType="String", defaultValue="null")
 	protected String description;
+	
+	@ConfigData
 	protected CastItem[] castItems;
+	
+	@ConfigData
 	protected CastItem[] rightClickCastItems;
+	
+	@ConfigData
 	protected CastItem[] consumeCastItems;
+	
+	@ConfigData(field="left-click-cast-item", dataType="boolean")
 	protected boolean castWithLeftClick;
+	
+	@ConfigData(field="right-click-cast-item", dataType="boolean")
 	protected boolean castWithRightClick;
+	
+	@ConfigData
 	protected String danceCastSequence;
+	
+	@ConfigData
 	protected boolean requireCastItemOnCommand;
+	
+	@ConfigData(field="bindable", dataType="boolean", defaultValue="true")
 	protected boolean bindable;
+	
+	@ConfigData
 	protected HashSet<CastItem> bindableItems;
+	
+	@ConfigData
 	protected ItemStack spellIcon;
+	
+	@ConfigData
 	protected int broadcastRange;
+	
+	@ConfigData
 	protected int experience;
+	
+	@ConfigData
 	protected HashMap<EffectPosition, List<SpellEffect>> effects;
 	
+	@ConfigData
 	protected int minRange;
+	
+	@ConfigData
 	protected int range;
+	
+	@ConfigData
 	protected boolean spellPowerAffectsRange;
+	
+	@ConfigData
 	protected boolean obeyLos;
+	
+	@ConfigData
 	protected ValidTargetList validTargetList;
+	
+	@ConfigData(field="beneficial", dataType="boolean", defaultValue="false")
 	protected boolean beneficial;
+	
+	@ConfigData
 	private DamageCause targetDamageCause;
+	
 	private double targetDamageAmount;
+	
 	protected HashSet<Byte> losTransparentBlocks;
 
+	@ConfigData
 	protected int castTime;
+	
+	@ConfigData
 	protected boolean interruptOnMove;
+	
+	@ConfigData
 	protected boolean interruptOnTeleport;
+	
+	@ConfigData
 	protected boolean interruptOnDamage;
+	
+	@ConfigData
 	protected boolean interruptOnCast;
+	
+	@ConfigData
 	protected String spellNameOnInterrupt;
+	
+	@ConfigData
 	protected Spell spellOnInterrupt;
 	
+	@ConfigData
 	protected SpellReagents reagents;
 	
+	@ConfigData
 	protected float cooldown;
+	
+	@ConfigData
 	protected List<String> rawSharedCooldowns;
 	protected HashMap<Spell, Float> sharedCooldowns;
+	
+	@ConfigData
 	protected boolean ignoreGlobalCooldown;
+	
+	@ConfigData
 	protected int charges;
+	
+	@ConfigData
 	protected String rechargeSound;
 
+	@ConfigData(field="modifiers", dataType="String[]", defaultValue="null")
 	private List<String> modifierStrings;
+	
+	@ConfigData(field="target-modifiers", dataType="String[]", defaultValue="null")
 	private List<String> targetModifierStrings;
+	
 	protected ModifierSet modifiers;
 	protected ModifierSet targetModifiers;
 	
+	@ConfigData(field="prerequisites", dataType="String[]", defaultValue="null")
 	protected List<String> prerequisites;
+	
+	@ConfigData(field="replaces", dataType="String[]", defaultValue="null")
 	protected List<String> replaces;
+	
+	@ConfigData(field="precludes", dataType="String[]", defaultValue="null")
 	protected List<String> precludes;
+	
+	@ConfigData
 	protected Map<String, Integer> xpGranted;
+	
+	@ConfigData
 	protected Map<String, Integer> xpRequired;
+	
+	@ConfigData
 	protected List<String> worldRestrictions;
 	
+	@ConfigData
 	protected Map<String, Double> variableModsCast;
+	
+	@ConfigData
 	protected Map<String, Double> variableModsCasted;
+	
+	@ConfigData
 	protected Map<String, Double> variableModsTarget;
 	
+	
+	@ConfigData
 	protected String strCost;
+	
+	@ConfigData
 	protected String strCastSelf;
+	
+	@ConfigData
 	protected String strCastOthers;
+	
+	@ConfigData
 	protected String strOnCooldown;
+	
+	@ConfigData
 	protected String strMissingReagents;
+	
+	@ConfigData
 	protected String strCantCast;
+	
+	@ConfigData
 	protected String strCantBind;
+	
+	@ConfigData
 	protected String strWrongWorld;
+	
+	@ConfigData
 	protected String strWrongCastItem;
+	
+	@ConfigData
 	protected String strCastStart;
+	
+	@ConfigData
 	protected String strInterrupted;
+	
+	@ConfigData
 	protected String strModifierFailed;
+	
+	@ConfigData
 	protected String strXpAutoLearned;
 	
 	private HashMap<String, Long> nextCast;
-	private IntMap<String> chargesConsumed;
+	IntMap<String> chargesConsumed;
 	
 	public Spell(MagicConfig config, String spellName) {
 		this.config = config;
@@ -772,7 +898,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		return event;
 	}
 	
-	private PostCastAction handleCast(SpellCastEvent spellCast) {
+	PostCastAction handleCast(SpellCastEvent spellCast) {
 		long start = System.nanoTime();
 		Player player = spellCast.getCaster();
 		SpellCastState state = spellCast.getSpellCastState();
@@ -1001,6 +1127,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 				final String name = player.getName();
 				chargesConsumed.increment(name);
 				MagicSpells.scheduleDelayedTask(new Runnable() {
+					@Override
 					public void run() {
 						chargesConsumed.decrement(name);
 						if (rechargeSound != null && !rechargeSound.isEmpty()) {
@@ -1203,6 +1330,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	}
 	
 	private boolean inventoryContains(Inventory inventory, ItemStack item) {
+		if (inventory == null) return false;
 		int count = 0;
 		ItemStack[] items = inventory.getContents();
 		for (int i = 0; i < items.length; i++) {
@@ -1217,6 +1345,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	}
 	
 	private void removeFromInventory(Inventory inventory, ItemStack item) {
+		if (inventory == null) return;
 		int amt = item.getAmount();
 		ItemStack[] items = inventory.getContents();
 		for (int i = 0; i < items.length; i++) {
@@ -1339,7 +1468,9 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 						// check for teams
 						if (target != null && target instanceof Player && MagicSpells.plugin.checkScoreboardTeams) {
 							Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+							@SuppressWarnings("deprecation")
 							Team playerTeam = scoreboard.getPlayerTeam(player);
+							@SuppressWarnings("deprecation")
 							Team targetTeam = scoreboard.getPlayerTeam((Player)target);
 							if (playerTeam != null && targetTeam != null) {
 								if (playerTeam.equals(targetTeam)) {
@@ -1371,6 +1502,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 						
 						// call damage event
 						if (targetDamageCause != null) {
+							@SuppressWarnings("deprecation")
 							EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(player, target, targetDamageCause, targetDamageAmount);
 							Bukkit.getServer().getPluginManager().callEvent(event);
 							if (event.isCancelled()) {

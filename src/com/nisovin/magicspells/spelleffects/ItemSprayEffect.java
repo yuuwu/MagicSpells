@@ -11,9 +11,10 @@ import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.materials.MagicUnknownMaterial;
+import com.nisovin.magicspells.util.ConfigData;
 
 /**
- * class ItemSprayEffect<p>
+ * public class ItemSprayEffect<p>
  * Configuration fields:<br>
  * <ul>
  * <li>mat</li>
@@ -23,11 +24,18 @@ import com.nisovin.magicspells.materials.MagicUnknownMaterial;
  * </ul>
  */
 
-class ItemSprayEffect extends SpellEffect {
+public class ItemSprayEffect extends SpellEffect {
 
+	@ConfigData(field="type", dataType="String", defaultValue="redstone")
 	MagicMaterial mat;
+	
+	@ConfigData(field="quantity", dataType="int", defaultValue="15")
 	int num = 15;
+	
+	@ConfigData(field="duration", dataType="int", defaultValue="10")
 	int duration = 10;
+	
+	@ConfigData(field="force", dataType="double", defaultValue="1.0")
 	float force = 1.0F;
 
 	@Override

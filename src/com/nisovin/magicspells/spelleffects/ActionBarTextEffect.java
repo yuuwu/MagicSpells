@@ -7,9 +7,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.util.ConfigData;
 
 /**
- * class ActionBarTextEffect<p>
+ * public class ActionBarTextEffect<p>
  * Configuration fields:<br>
  * <ul>
  * <li>message</li>
@@ -18,7 +19,10 @@ import com.nisovin.magicspells.MagicSpells;
  */
 public class ActionBarTextEffect extends SpellEffect {
 
+	@ConfigData(field="message", dataType="String", defaultValue="")
 	String message = "";
+	
+	@ConfigData(field="broadcast", dataType="boolean", defaultValue="false")
 	boolean broadcast = false;
 	
 	@Override

@@ -142,6 +142,7 @@ public class PassiveSpell extends Spell {
 			return activateSpells(caster, target, location, power);
 		} else {
 			Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
+				@Override
 				public void run() {
 					activateSpells(caster, target, location, power);
 				}
@@ -150,7 +151,7 @@ public class PassiveSpell extends Spell {
 		}
 	}
 	
-	private boolean activateSpells(Player caster, LivingEntity target, Location location, float basePower) {
+	boolean activateSpells(Player caster, LivingEntity target, Location location, float basePower) {
 		SpellCastState state = getCastState(caster);
 		MagicSpells.debug(3, "Activating passive spell '" + name + "' for player " + caster.getName() + " (state: " + state + ")");
 		if (!disabled && (chance >= .999 || random.nextFloat() <= chance) && state == SpellCastState.NORMAL) {
@@ -163,7 +164,7 @@ public class PassiveSpell extends Spell {
 					return false;
 				}
 				setCooldown(caster, event.getCooldown());
-				basePower = event.getPower();
+				basePower = event.getPower(); //TODO make an alternative to overriding the parameter
 				boolean spellEffectsDone = false;
 				for (Subspell spell : spells) {
 					MagicSpells.debug(3, "    Casting spell effect '" + spell.getSpell().getName() + "'");
@@ -179,7 +180,7 @@ public class PassiveSpell extends Spell {
 						SpellTargetEvent targetEvent = new SpellTargetEvent(this, caster, target, basePower);
 						Bukkit.getPluginManager().callEvent(targetEvent);
 						if (!targetEvent.isCancelled()) {
-							target = targetEvent.getTarget();
+							target = targetEvent.getTarget(); //TODO make an alternative to overriding the parameter
 							spell.castAtEntity(caster, target, targetEvent.getPower());
 							if (!spellEffectsDone) {
 								playSpellEffects(caster, target);

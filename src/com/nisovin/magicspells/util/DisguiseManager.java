@@ -103,6 +103,7 @@ public abstract class DisguiseManager implements Listener {
 	private void applyDisguise(final Player player, final DisguiseSpell.Disguise disguise) {
 		sendDestroyEntityPackets(player);
 		MagicSpells.scheduleDelayedTask(new Runnable() {
+			@Override
 			public void run() {
 				sendDisguisedSpawnPackets(player, disguise);
 			}
@@ -119,6 +120,7 @@ public abstract class DisguiseManager implements Listener {
 		if (sendPlayerPackets && player.isValid()) {
 			if (delaySpawnPacket) {
 				MagicSpells.scheduleDelayedTask(new Runnable() {
+					@Override
 					public void run() {
 						sendPlayerSpawnPackets(player);
 					}

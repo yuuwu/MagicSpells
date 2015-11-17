@@ -22,7 +22,7 @@ public class ManaAboveCondition extends Condition {
 		
 		if (var.endsWith("%")) {
 			percent = true;
-			var = var.replace("%", "");
+			var = var.replace("%", ""); //TODO find an alternative to reassigning the parameter
 		} else {
 			percent = false;
 		}

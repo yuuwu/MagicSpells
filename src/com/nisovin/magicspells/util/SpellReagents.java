@@ -161,6 +161,7 @@ public class SpellReagents {
 		}
 	}
 	
+	@Override
 	public SpellReagents clone() {
 		SpellReagents other = new SpellReagents();
 		if (this.items != null) {

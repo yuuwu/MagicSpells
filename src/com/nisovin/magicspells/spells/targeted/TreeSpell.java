@@ -70,7 +70,7 @@ public class TreeSpell extends TargetedSpell implements TargetedLocationSpell {
 
 	private boolean growTree(Block target) {
 		// switch to block above
-		target = target.getRelative(BlockFace.UP);
+		target = target.getRelative(BlockFace.UP); //TODO make an alternative to overriding the parameter
 		if (target.getType() != Material.AIR) {
 			return false;
 		}

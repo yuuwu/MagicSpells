@@ -41,7 +41,7 @@ public class ConsumeListener implements Listener {
 	@EventHandler
 	public void onConsume(final PlayerItemConsumeEvent event) {
 	    CastItem castItem = new CastItem(event.getItem());
-	    final Spell spell = (Spell)this.consumeCastItems.get(castItem);
+	    final Spell spell = this.consumeCastItems.get(castItem);
 	    if (spell == null) return;
 
 	    Player player = event.getPlayer();

@@ -23,7 +23,7 @@ public class HasItemCondition extends Condition {
 		try {
 			if (var.contains("|")) {
 				String[] subvardata = var.split("\\|");
-				var = subvardata[0];
+				var = subvardata[0]; //TODO find an alternative to reassigning the parameter
 				name = ChatColor.translateAlternateColorCodes('&', subvardata[1]).replace("__", " ");
 				if (name.isEmpty()) name = null;
 				checkName = true;

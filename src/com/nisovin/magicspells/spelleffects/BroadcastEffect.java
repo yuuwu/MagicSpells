@@ -7,12 +7,19 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.util.ConfigData;
 
 public class BroadcastEffect extends SpellEffect {
 
+	@ConfigData(field="message", dataType="String", defaultValue="")
 	String message = "";
+	
+	@ConfigData(field="range", dataType="int", defaultValue="0")
 	int range = 0;
+	
 	int rangeSq = 0;
+	
+	@ConfigData(field="targeted", dataType="boolean", defaultValue="false")
 	boolean targeted = false;
 	
 	@Override

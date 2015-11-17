@@ -15,22 +15,27 @@ public class DisguiseManagerEmpty extends DisguiseManager {
 
 	@Override
 	protected void cleanup() {
+		//no op
 	}
 
 	@Override
 	protected void sendDestroyEntityPackets(Player disguised) {
+		//no op
 	}
 
 	@Override
 	protected void sendDestroyEntityPackets(Player disguised, int entityId) {
+		//no op
 	}
 
 	@Override
 	protected void sendDisguisedSpawnPackets(Player disguised, Disguise disguise) {
+		//no op
 	}
 
 	@Override
 	protected void sendPlayerSpawnPackets(Player player) {
+		//no op
 	}
 
 }

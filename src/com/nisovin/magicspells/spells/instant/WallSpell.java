@@ -31,12 +31,12 @@ public class WallSpell extends InstantSpell {
 	private int wallDepth;
 	private MagicMaterial wallMaterial;
 	private int wallDuration;
-	private boolean preventBreaking;
+	boolean preventBreaking;
 	private boolean preventDrops;
 	private boolean checkPlugins;
 	private String strNoTarget;
 	
-	private ArrayList<TemporaryBlockSet> blockSets;
+	ArrayList<TemporaryBlockSet> blockSets;
 	
 	public WallSpell(MagicConfig config, String spellName) {
 		super(config, spellName);

@@ -89,6 +89,7 @@ public class DisarmSpell extends TargetedSpell implements TargetedEntitySpell {
 				// hide item
 				setItemInHand(target, null);
 				Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
+					@Override
 					public void run() {
 						// give the item back
 						ItemStack inHand2 = getItemInHand(target);
@@ -124,7 +125,7 @@ public class DisarmSpell extends TargetedSpell implements TargetedEntitySpell {
 		}
 	}
 	
-	private ItemStack getItemInHand(LivingEntity entity) {
+	ItemStack getItemInHand(LivingEntity entity) {
 		if (entity instanceof Player) {
 			return ((Player)entity).getItemInHand();
 		} else {
@@ -136,7 +137,7 @@ public class DisarmSpell extends TargetedSpell implements TargetedEntitySpell {
 		return null;
 	}
 	
-	private void setItemInHand(LivingEntity entity, ItemStack item) {
+	void setItemInHand(LivingEntity entity, ItemStack item) {
 		if (entity instanceof Player) {
 			((Player)entity).setItemInHand(item);
 		} else {

@@ -5,9 +5,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.util.ConfigData;
 
 /**
- * class SoundPersonalEffect<p>
+ * public class SoundPersonalEffect<p>
  * Configuration fields:<br>
  * <ul>
  * <li>sound</li>
@@ -17,8 +18,13 @@ import com.nisovin.magicspells.MagicSpells;
  */
 public class SoundPersonalEffect extends SpellEffect {
 	
+	@ConfigData(field="sound", dataType="String", defaultValue="random.pop")
 	String sound = "random.pop";
+	
+	@ConfigData(field="volume", dataType="double", defaultValue="1.0")
 	float volume = 1.0F;
+	
+	@ConfigData(field="pitch", dataType="double", defaultValue="1.0")
 	float pitch = 1.0F;
 
 	@Override

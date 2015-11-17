@@ -8,7 +8,7 @@ import com.nisovin.magicspells.util.ColorUtil;
 
 import de.slikey.effectlib.util.ParticleEffect;
 
-class ParticlesEffect extends SpellEffect {
+public class ParticlesEffect extends SpellEffect {
 	
 	ParticleEffect effect;
 	String name = "explode";

@@ -49,6 +49,7 @@ public class BuildSpell extends TargetedSpell implements TargetedLocationSpell {
 		strCantBuild = getConfigString("str-cant-build", "You can't build there.");
 	}
 	
+	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			// get mat

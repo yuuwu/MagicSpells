@@ -24,13 +24,13 @@ import com.nisovin.magicspells.util.TargetInfo;
 
 public class LevitateSpell extends TargetedSpell implements TargetedEntitySpell {
 
-	private int tickRate;
+	int tickRate;
 	private int duration;
 	private boolean cancelOnItemSwitch;
 	private boolean cancelOnSpellCast;
 	private boolean cancelOnTakeDamage;
 	
-	private HashMap<Player,Levitator> levitating;
+	HashMap<Player,Levitator> levitating;
 	
 	public LevitateSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -139,7 +139,7 @@ public class LevitateSpell extends TargetedSpell implements TargetedEntitySpell 
 		
 		private Player caster;
 		private Entity target;
-		private int duration;
+		private int durationLevitator;
 		private double distance;
 		private int counter;
 		private int taskId;
@@ -148,7 +148,7 @@ public class LevitateSpell extends TargetedSpell implements TargetedEntitySpell 
 		public Levitator(Player caster, Entity target, int duration, double distance) {
 			this.caster = caster;
 			this.target = target;
-			this.duration = duration;
+			this.durationLevitator = duration;
 			this.distance = distance;
 			this.counter = 0;
 			taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(MagicSpells.plugin, this, tickRate, tickRate);
@@ -168,7 +168,7 @@ public class LevitateSpell extends TargetedSpell implements TargetedEntitySpell 
 					Vector v = wantedLocation.subtract(targetLocation).multiply(tickRate/25F + .1);
 					target.setVelocity(v);
 					counter++;
-					if (duration > 0 && counter > duration) {
+					if (durationLevitator > 0 && counter > durationLevitator) {
 						stop();
 					}
 				}

@@ -55,7 +55,7 @@ public class StunSpell extends TargetedSpell implements TargetedEntitySpell {
 				return noTarget(player);
 			} else {
 				LivingEntity target = targetInfo.getTarget();
-				power = targetInfo.getPower();
+				power = targetInfo.getPower(); //TODO make an alternative to overriding the parameter
 				if (target instanceof Player) {
 					stunPlayer(player, (Player)target, Math.round(duration * power));
 				} else {

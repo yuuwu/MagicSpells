@@ -50,9 +50,9 @@ public class LeapSpell extends InstantSpell {
 	@EventHandler
 	public void onEntityDamage(EntityDamageEvent event) {
 		if (event.isCancelled()) return;
-		if (cancelDamage && event.getCause() == DamageCause.FALL && event.getEntity() instanceof Player && jumping.contains((Player)event.getEntity())) {
+		if (cancelDamage && event.getCause() == DamageCause.FALL && event.getEntity() instanceof Player && jumping.contains(event.getEntity())) {
 			event.setCancelled(true);
-			jumping.remove((Player)event.getEntity());
+			jumping.remove(event.getEntity());
 			playSpellEffects(EffectPosition.TARGET, event.getEntity().getLocation());
 		}
 	}

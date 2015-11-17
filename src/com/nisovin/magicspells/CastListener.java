@@ -90,11 +90,12 @@ public class CastListener implements Listener {
 					// use cool new text thingy
 					boolean yay = false;
 					if (yay) {
-						final ItemStack fake = inHand.clone();
+						final ItemStack fake = inHand.clone(); //TODO ensure this is not null
 						ItemMeta meta = fake.getItemMeta();
 						meta.setDisplayName("Spell: " + spell.getName());
 						fake.setItemMeta(meta);
 						MagicSpells.scheduleDelayedTask(new Runnable() {
+							@Override
 							public void run() {
 								MagicSpells.getVolatileCodeHandler().sendFakeSlotUpdate(player, player.getInventory().getHeldItemSlot(), fake);
 							}
@@ -107,7 +108,7 @@ public class CastListener implements Listener {
 					// find mana potion TODO: fix this, it's not good
 					int restoreAmt = 0;
 					for (Map.Entry<ItemStack, Integer> entry : plugin.manaPotions.entrySet()) {
-						if (inHand.isSimilar(entry.getKey())) {
+						if (inHand.isSimilar(entry.getKey())) { //TODO make sure this is not null
 							restoreAmt = entry.getValue();
 							break;
 						}
@@ -129,7 +130,7 @@ public class CastListener implements Listener {
 								plugin.manaPotionCooldowns.put(player, System.currentTimeMillis() + plugin.manaPotionCooldown*1000);
 							}
 							// remove item
-							if (inHand.getAmount() == 1) {
+							if (inHand.getAmount() == 1) { //TODO make sure this is not null
 								inHand = null;
 							} else {
 								inHand.setAmount(inHand.getAmount()-1);
@@ -186,7 +187,7 @@ public class CastListener implements Listener {
 	}
 	
 	private void showIcon(Player player, int slot, ItemStack icon) {
-		if (icon == null) icon = player.getInventory().getItem(plugin.spellIconSlot);
+		if (icon == null) icon = player.getInventory().getItem(plugin.spellIconSlot); //TODO find an alternative to reassigning the parameter
 		MagicSpells.getVolatileCodeHandler().sendFakeSlotUpdate(player, slot, icon);
 	}
 

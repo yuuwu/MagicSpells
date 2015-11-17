@@ -31,21 +31,21 @@ import com.nisovin.magicspells.util.MagicConfig;
 public class PulserSpell extends TargetedSpell implements TargetedLocationSpell {
 
 	private int yOffset;
-	private int totalPulses;
-	private int interval;
+	int totalPulses;
+	int interval;
 	private int capPerPlayer;
-	private int maxDistanceSquared;
-	private MagicMaterial material;
+	int maxDistanceSquared;
+	MagicMaterial material;
 	private boolean unbreakable;
-	private boolean onlyCountOnSuccess;
+	boolean onlyCountOnSuccess;
 	private List<String> spellNames;
-	private List<TargetedLocationSpell> spells;
+	List<TargetedLocationSpell> spells;
 	private String spellNameOnBreak;
-	private TargetedLocationSpell spellOnBreak;
+	TargetedLocationSpell spellOnBreak;
 
 	private String strAtCap;
 
-	private HashMap<Block, Pulser> pulsers;
+	HashMap<Block, Pulser> pulsers;
 	private PulserTicker ticker;
 
 	public PulserSpell(MagicConfig config, String spellName) {
@@ -134,7 +134,7 @@ public class PulserSpell extends TargetedSpell implements TargetedLocationSpell 
 					return noTarget(player);
 				} else {
 					target = event.getTargetLocation().getBlock();
-					power = event.getPower();
+					power = event.getPower(); //TODO make an alternative to overriding the parameter
 				}
 			}
 			createPulser(player, target, power);
@@ -348,6 +348,7 @@ public class PulserSpell extends TargetedSpell implements TargetedLocationSpell 
 			}
 		}
 
+		@Override
 		public void run() {
 			for (Map.Entry<Block, Pulser> entry : new HashMap<Block, Pulser>(pulsers).entrySet()) {
 				boolean remove = entry.getValue().pulse();

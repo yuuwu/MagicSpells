@@ -195,7 +195,7 @@ public class ScrollSpell extends CommandSpell {
 	
 	public ItemStack createScroll(Spell spell, int uses, ItemStack item) {
 		if (item == null) {
-			item = itemType.toItemStack(1);
+			item = itemType.toItemStack(1); //TODO make an alternative to overriding the parameter
 		}
 		item.setDurability((short)0);
 		ItemMeta meta = item.getItemMeta();
@@ -207,7 +207,7 @@ public class ScrollSpell extends CommandSpell {
 		}
 		item.setItemMeta(meta);
 		Util.setLoreData(item, internalName + ":" + spell.getInternalName() + (uses > 0 ? "," + uses : ""));
-		item = MagicSpells.getVolatileCodeHandler().addFakeEnchantment(item);
+		item = MagicSpells.getVolatileCodeHandler().addFakeEnchantment(item); //TODO make an alternative to overriding the parameter
 		return item;
 	}
 	

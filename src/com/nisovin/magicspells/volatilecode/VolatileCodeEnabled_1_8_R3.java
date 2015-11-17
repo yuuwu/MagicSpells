@@ -124,7 +124,7 @@ public class VolatileCodeEnabled_1_8_R3 implements VolatileCodeHandle {
 		
 		bossBarEntity = new EntityWither(((CraftWorld)Bukkit.getWorlds().get(0)).getHandle());
 		bossBarEntity.setCustomNameVisible(false);
-		bossBarEntity.getDataWatcher().watch(0, (Byte)(byte)0x20);
+		bossBarEntity.getDataWatcher().watch(0, (byte)0x20);
 		bossBarEntity.getDataWatcher().watch(20, (Integer)0);
 		
 	}
@@ -137,6 +137,7 @@ public class VolatileCodeEnabled_1_8_R3 implements VolatileCodeHandle {
 		
 		if (duration > 0) {
 			MagicSpells.scheduleDelayedTask(new Runnable() {
+				@Override
 				public void run() {
 					int c = 0;
 					if (!el.effects.isEmpty()) {
@@ -309,6 +310,7 @@ public class VolatileCodeEnabled_1_8_R3 implements VolatileCodeHandle {
 		} else {
 			entity.setPosition(location.getX(), location.getY(), location.getZ());
 			MagicSpells.scheduleDelayedTask(new Runnable() {
+				@Override
 				public void run() {
 					((CraftWorld)location.getWorld()).getHandle().broadcastEntityEffect(entity, (byte)animationId);
 					entity.getBukkitEntity().remove();
@@ -428,6 +430,7 @@ public class VolatileCodeEnabled_1_8_R3 implements VolatileCodeHandle {
 		}
 		
 		MagicSpells.scheduleDelayedTask(new Runnable() {
+			@Override
 			public void run() {
 				for (Player player : players) {
 					if (player.isValid()) {

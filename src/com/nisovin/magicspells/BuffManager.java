@@ -12,8 +12,8 @@ import com.nisovin.magicspells.zones.NoMagicZoneManager;
 
 public class BuffManager {
 	
-	private HashMap<String,HashSet<BuffSpell>> activeBuffs;
-	private int taskId = -1;
+	HashMap<String,HashSet<BuffSpell>> activeBuffs;
+	int taskId = -1;
 	
 	public BuffManager(int interval) {
 		activeBuffs = new HashMap<String, HashSet<BuffSpell>>();

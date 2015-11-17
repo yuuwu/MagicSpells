@@ -31,9 +31,9 @@ public class GeyserSpell extends TargetedSpell implements TargetedEntitySpell {
 	
 	private double damage;
 	private double velocity;
-	private int tickInterval;
-	private int geyserHeight;
-	private MagicMaterial geyserType;
+	int tickInterval;
+	int geyserHeight;
+	MagicMaterial geyserType;
 	private boolean ignoreArmor;
 	private boolean checkPlugins;
 

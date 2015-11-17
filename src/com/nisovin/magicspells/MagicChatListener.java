@@ -17,6 +17,7 @@ public class MagicChatListener implements Listener {
 	@EventHandler(ignoreCancelled=true)
 	public void onPlayerChat(final AsyncPlayerChatEvent event) {
 		MagicSpells.scheduleDelayedTask(new Runnable() {
+			@Override
 			public void run() {
 				handleIncantation(event.getPlayer(), event.getMessage());
 			}

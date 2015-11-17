@@ -23,12 +23,12 @@ import com.nisovin.magicspells.util.MagicConfig;
 
 public class CarpetSpell extends BuffSpell {
 	
-	private Material platformBlock;
+	Material platformBlock;
 	private int size;
 	private boolean cancelOnTeleport;
 	
-	private HashMap<String,BlockPlatform> windwalkers;
-	private HashSet<Player> falling;
+	HashMap<String,BlockPlatform> windwalkers;
+	HashSet<Player> falling;
 	private Listener listener;
 
 	public CarpetSpell(MagicConfig config, String spellName) {

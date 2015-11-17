@@ -14,21 +14,23 @@ import com.nisovin.magicspells.spells.CommandSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
 
-public class ListSpell extends CommandSpell {
+public class SublistSpell extends CommandSpell {
 	
 	private int lineLength = 60;
 	private boolean onlyShowCastableSpells;
 	private boolean reloadGrantedSpells;
 	private List<String> spellsToHide;
+	private List<String> spellsToShow;
 	private String strNoSpells;
 	private String strPrefix;
 
-	public ListSpell(MagicConfig config, String spellName) {
+	public SublistSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
 		onlyShowCastableSpells = getConfigBoolean("only-show-castable-spells", false);
 		reloadGrantedSpells = getConfigBoolean("reload-granted-spells", true);
 		spellsToHide = getConfigStringList("spells-to-hide", null);
+		spellsToShow = getConfigStringList("spells-to-show", null);
 		strNoSpells = getConfigString("str-no-spells", "You do not know any spells.");
 		strPrefix = getConfigString("str-prefix", "Known spells:");
 	}
@@ -54,7 +56,7 @@ public class ListSpell extends CommandSpell {
 			} else {
 				String s = "";
 				for (Spell spell : spellbook.getSpells()) {
-					if (!spell.isHelperSpell() && (!onlyShowCastableSpells || spellbook.canCast(spell)) && !(spellsToHide != null && spellsToHide.contains(spell.getInternalName()))) {
+					if (!spell.isHelperSpell() && (!onlyShowCastableSpells || spellbook.canCast(spell)) && !(spellsToHide != null && spellsToHide.contains(spell.getInternalName())) && (spellsToShow == null || spellsToShow.contains(spell.getInternalName()))) {
 						if (s.equals("")) {
 							s = spell.getName();
 						} else {

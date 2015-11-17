@@ -12,14 +12,16 @@ import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spells.BuffSpell;
+import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
 
 public class WaterwalkSpell extends BuffSpell {
 
-	private float speed;
+	@ConfigData(field="speed", dataType="float", defaultValue="0.05")
+	float speed;
 	
-	private HashSet<String> waterwalking;
+	HashSet<String> waterwalking;
 	private Ticker ticker = null;
 	
 	public WaterwalkSpell(MagicConfig config, String spellName) {
@@ -92,6 +94,7 @@ public class WaterwalkSpell extends BuffSpell {
 			taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(MagicSpells.plugin, this, 5, 5);
 		}
 		
+		@Override
 		public void run() {
 			count += 1;
 			if (count >= 4) count = 0;

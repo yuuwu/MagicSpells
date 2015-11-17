@@ -5,9 +5,10 @@ import org.bukkit.configuration.ConfigurationSection;
 
 import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.util.ConfigData;
 
 /**
- * class FireworksEffect<p>
+ * public class FireworksEffect<p>
  * Configuration fields:<br>
  * <ul>
  * <li>flicker</li>
@@ -21,11 +22,22 @@ import com.nisovin.magicspells.MagicSpells;
 
 public class FireworksEffect extends SpellEffect {
 
+	@ConfigData(field="flicker", dataType="boolean", defaultValue="false")
 	boolean flicker = false;
+	
+	@ConfigData(field="trail", dataType="boolean", defaultValue="false")
 	boolean trail = false;
+	
+	@ConfigData(field="type", dataType="int", defaultValue="0")
 	int type = 0;
+	
+	@ConfigData(field="colors", dataType="String", defaultValue="FF0000")
 	int[] colors = new int[] { 0xFF0000 };
+	
+	@ConfigData(field="fade-colors", dataType="String", defaultValue="")
 	int[] fadeColors = new int[] { 0xFF0000 };
+	
+	@ConfigData(field="flight", dataType="int", defaultValue="0")
 	int flightDuration = 0;
 	
 	@Override

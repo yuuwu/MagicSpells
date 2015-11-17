@@ -50,10 +50,10 @@ public class ProjectileSpell extends InstantSpell {
 	private double vertSpread;
 	private boolean applySpellPowerToVelocity;
 	private boolean requireHitEntity;
-	private boolean cancelDamage;
-	private boolean removeProjectile;
+	boolean cancelDamage;
+	boolean removeProjectile;
 	private int maxDistanceSquared;
-	private int effectInterval;
+	int effectInterval;
 	private List<String> spellNames;
 	private List<Subspell> spells;
 	private int aoeRadius;
@@ -62,8 +62,8 @@ public class ProjectileSpell extends InstantSpell {
 	private String strHitCaster;
 	private String strHitTarget;
 	
-	private HashMap<Projectile, ProjectileInfo> projectiles;
-	private HashMap<Item, ProjectileInfo> itemProjectiles;
+	HashMap<Projectile, ProjectileInfo> projectiles;
+	HashMap<Item, ProjectileInfo> itemProjectiles;
 	
 	private Random random = new Random();
 	
@@ -200,7 +200,7 @@ public class ProjectileSpell extends InstantSpell {
 				if (evt.isCancelled()) {
 					return false;
 				} else if (allowTargetChange) {
-					target = evt.getTarget();
+					target = evt.getTarget(); //TODO make an alternative to overriding the parameter
 					power = evt.getPower();
 				}
 				
@@ -240,7 +240,7 @@ public class ProjectileSpell extends InstantSpell {
 		return true;
 	}
 	
-	private boolean projectileHitLocation(Entity projectile, ProjectileInfo info) {
+	boolean projectileHitLocation(Entity projectile, ProjectileInfo info) {
 		if (!requireHitEntity && !info.done && (maxDistanceSquared == 0 || projectile.getLocation().distanceSquared(info.start) <= maxDistanceSquared)) {
 			if (aoeRadius == 0) {
 				for (Subspell spell : spells) {
@@ -325,7 +325,7 @@ public class ProjectileSpell extends InstantSpell {
 		
 		@EventHandler
 		public void onProjectileHit(ProjectileHitEvent event) {
-			final Projectile projectile = (Projectile)event.getEntity();
+			final Projectile projectile = event.getEntity();
 			ProjectileInfo info = projectiles.get(projectile);
 			if (info != null) {
 				projectileHitLocation(projectile, info);
@@ -336,6 +336,7 @@ public class ProjectileSpell extends InstantSpell {
 				}
 				// remove it at end of tick
 				Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
+					@Override
 					public void run() {
 						projectiles.remove(projectile);
 					}
@@ -400,7 +401,7 @@ public class ProjectileSpell extends InstantSpell {
 		}
 	}
 	
-	private boolean locationsEqual(Location loc1, Location loc2) {
+	boolean locationsEqual(Location loc1, Location loc2) {
 		return 
 				Math.abs(loc1.getX() - loc2.getX()) < 0.1
 				&& Math.abs(loc1.getY() - loc2.getY()) < 0.1
@@ -462,6 +463,7 @@ public class ProjectileSpell extends InstantSpell {
 			}
 		}
 		
+		@Override
 		public void stop() {
 			item.remove();
 			itemProjectiles.remove(item);
@@ -497,6 +499,7 @@ public class ProjectileSpell extends InstantSpell {
 			}
 		}
 		
+		@Override
 		public void stop() {
 			Bukkit.getScheduler().cancelTask(taskId);
 		}

@@ -8,6 +8,7 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
 import com.nisovin.magicspells.DebugHandler;
+import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spell;
 
 public class SpellPreImpactEvent extends SpellEvent implements Cancellable {
@@ -29,7 +30,7 @@ public class SpellPreImpactEvent extends SpellEvent implements Cancellable {
 		this.deliverySpell = deliverySpell;
 		canceled = false;
 		if (DebugHandler.isSpellPreImpactEventCheckEnabled()) {
-			
+			MagicSpells.plugin.getLogger().info(this.toString());
 		}
 	}
 

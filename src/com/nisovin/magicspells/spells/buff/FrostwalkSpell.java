@@ -13,11 +13,15 @@ import org.bukkit.event.player.PlayerMoveEvent;
 
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.util.BlockPlatform;
+import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.MagicConfig;
 
 public class FrostwalkSpell extends BuffSpell {
 	
+	@ConfigData(field="size", dataType="int", defaultValue="2")
 	private int size;
+	
+	@ConfigData(field="leave-frozen", dataType="boolean", defaultValue="false")
 	private boolean leaveFrozen;
 	
 	private HashMap<String,BlockPlatform> frostwalkers;

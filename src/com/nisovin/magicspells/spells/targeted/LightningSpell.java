@@ -54,7 +54,7 @@ public class LightningSpell extends TargetedSpell implements TargetedLocationSpe
 				TargetInfo<LivingEntity> targetInfo = getTargetedEntity(player, power);
 				if (targetInfo != null) {
 					entityTarget = targetInfo.getTarget();
-					power = targetInfo.getPower();
+					power = targetInfo.getPower(); //TODO make an alternative to overriding the parameter
 				}
 				if (entityTarget != null && entityTarget instanceof Player && checkPlugins) {
 					EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(player, entityTarget, DamageCause.ENTITY_ATTACK, 1 + additionalDamage);
@@ -85,7 +85,7 @@ public class LightningSpell extends TargetedSpell implements TargetedLocationSpe
 						target = null;
 					} else {
 						target = event.getTargetLocation().getBlock();
-						power = event.getPower();
+						power = event.getPower(); //TODO make an alternative to overriding the parameter
 					}
 				}
 			}

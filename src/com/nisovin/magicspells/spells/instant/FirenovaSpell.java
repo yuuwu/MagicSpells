@@ -21,13 +21,13 @@ import com.nisovin.magicspells.util.MagicConfig;
 
 public class FirenovaSpell extends InstantSpell implements TargetedLocationSpell {
 
-	private int range;
-	private int tickSpeed;
-	private MagicMaterial mat;
-	private boolean burnTallGrass;
+	int range;
+	int tickSpeed;
+	MagicMaterial mat;
+	boolean burnTallGrass;
 	private boolean checkPlugins;
 	
-	private HashSet<Player> fireImmunity;
+	HashSet<Player> fireImmunity;
 	
 	public FirenovaSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -113,6 +113,7 @@ public class FirenovaSpell extends InstantSpell implements TargetedLocationSpell
 			taskId = MagicSpells.scheduleRepeatingTask(this, 0, tickSpeed);
 		}
 		
+		@Override
 		public void run() {
 			// remove old fire blocks
 			for (Block block : fireBlocks) {

@@ -27,13 +27,13 @@ import com.nisovin.magicspells.util.TargetInfo;
 public class SeeHealthSpell extends BuffSpell {
 
 	private String mode;
-	private int interval;
+	int interval;
 	
 	private String symbol = "=";
 	private int barSize = 20;
 	private boolean colorBlind = false;
 	
-	private HashMap<String, Integer> bars;
+	HashMap<String, Integer> bars;
 	private Updater updater;
 	
 	public SeeHealthSpell(MagicConfig config, String spellName) {
@@ -72,7 +72,7 @@ public class SeeHealthSpell extends BuffSpell {
 		return bars.containsKey(player.getName());
 	}
 	
-	private void showHealthBar(Player player, LivingEntity entity) {
+	void showHealthBar(Player player, LivingEntity entity) {
 		int slot = player.getInventory().getHeldItemSlot();
 		// get item
 		ItemStack item = player.getItemInHand();

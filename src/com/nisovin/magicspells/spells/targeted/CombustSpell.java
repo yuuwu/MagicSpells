@@ -24,7 +24,7 @@ public class CombustSpell extends TargetedSpell implements TargetedEntitySpell {
 	private boolean preventImmunity;
 	private boolean checkPlugins;
 	
-	private HashMap<Integer, CombustData> combusting = new HashMap<Integer, CombustData>();
+	HashMap<Integer, CombustData> combusting = new HashMap<Integer, CombustData>();
 	
 	public CombustSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -75,6 +75,7 @@ public class CombustSpell extends TargetedSpell implements TargetedEntitySpell {
 			playSpellEffects(EffectPosition.TARGET, target);
 		}
 		Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
+			@Override
 			public void run() {
 				CombustData data = combusting.get(target.getEntityId());
 				if (data != null) {
@@ -94,6 +95,7 @@ public class CombustSpell extends TargetedSpell implements TargetedEntitySpell {
 			event.setDamage(Math.round(fireTickDamage * data.power));
 			if (preventImmunity) {
 				Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
+					@Override
 					public void run() {
 						((LivingEntity)event.getEntity()).setNoDamageTicks(0);
 					}

@@ -20,11 +20,12 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.materials.MagicUnknownMaterial;
 import com.nisovin.magicspells.util.BlockUtils;
+import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.SpellAnimation;
 import com.nisovin.magicspells.util.Util;
 
 /**
- * class SoundEffect<p>
+ * public class SoundEffect<p>
  * Configuration fields:<br>
  * <ul>
  * <li>type</li>
@@ -33,11 +34,16 @@ import com.nisovin.magicspells.util.Util;
  * </ul>
  */
 
-class NovaEffect extends SpellEffect {
+public class NovaEffect extends SpellEffect {
 	
+	@ConfigData(field="type", dataType="String", defaultValue="fire")
 	MagicMaterial mat;
+	
+	@ConfigData(field="radius", dataType="int", defaultValue="3")
 	int radius = 3;
-	int tickInterval = 5;
+	
+	@ConfigData(field="expand-interval", dataType="int", defaultValue="5")
+	int novaTickInterval = 5;
 
 	@Override
 	public void loadFromString(String string) {
@@ -69,7 +75,7 @@ class NovaEffect extends SpellEffect {
 			}
 			if (params.length >= 4) {
 				try {
-					tickInterval = Integer.parseInt(params[3]);
+					novaTickInterval = Integer.parseInt(params[3]);
 				} catch (NumberFormatException e) {
 					DebugHandler.debugNumberFormat(e);
 				}
@@ -81,7 +87,7 @@ class NovaEffect extends SpellEffect {
 	public void loadFromConfig(ConfigurationSection config) {
 		mat = MagicSpells.getItemNameResolver().resolveBlock(config.getString("type", "fire"));
 		radius = config.getInt("radius", radius);
-		tickInterval = config.getInt("expand-interval", tickInterval);
+		novaTickInterval = config.getInt("expand-interval", novaTickInterval);
 	}
 
 	@Override
@@ -104,23 +110,23 @@ class NovaEffect extends SpellEffect {
 		if (!BlockUtils.isPathable(b)) {
 			b = b.getRelative(BlockFace.UP);
 		}
-		new NovaAnimation(nearby, location.getBlock(), mat, radius, tickInterval);
+		new NovaAnimation(nearby, location.getBlock(), mat, radius, novaTickInterval);
 	}
 	
 
 	private class NovaAnimation extends SpellAnimation {
 		List<Player> nearby;
 		Block center;
-		MagicMaterial mat;
-		int radius;
+		MagicMaterial matNova;
+		int radiusNova;
 		Set<Block> blocks;
 		
 		public NovaAnimation(List<Player> nearby, Block center, MagicMaterial mat, int radius, int tickInterval) {
 			super(tickInterval, true);
 			this.nearby = nearby;
 			this.center = center;
-			this.mat = mat;
-			this.radius = radius;
+			this.matNova = mat;
+			this.radiusNova = radius;
 			blocks = new HashSet<Block>();
 		}
 
@@ -134,7 +140,7 @@ class NovaEffect extends SpellEffect {
 			}
 			blocks.clear();
 			
-			if (tick <= radius) {
+			if (tick <= radiusNova) {
 				// set next ring on fire
 				int bx = center.getX();
 				int y = center.getY();
@@ -149,20 +155,20 @@ class NovaEffect extends SpellEffect {
 									b = under;
 								}
 								for (Player p : nearby) {
-									Util.sendFakeBlockChange(p, b, mat);
+									Util.sendFakeBlockChange(p, b, matNova);
 								}
 								blocks.add(b);
 							} else if (b.getRelative(BlockFace.UP).getType() == Material.AIR || b.getRelative(BlockFace.UP).getType() == Material.LONG_GRASS) {
 								b = b.getRelative(BlockFace.UP);
 								for (Player p : nearby) {
-									Util.sendFakeBlockChange(p, b, mat);
+									Util.sendFakeBlockChange(p, b, matNova);
 								}
 								blocks.add(b);
 							}
 						}
 					}
 				}
-			} else if (tick > radius+1) {
+			} else if (tick > radiusNova+1) {
 				// stop if done
 				stop();
 			}

@@ -121,6 +121,7 @@ public final class MultiSpell extends InstantSpell {
 					} else {
 						final Spell spell = action.getSpell().getSpell();
 						MagicSpells.scheduleDelayedTask(new Runnable() {
+							@Override
 							public void run() {
 								spell.castFromConsole(sender, args);
 							}

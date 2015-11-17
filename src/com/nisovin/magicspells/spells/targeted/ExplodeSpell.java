@@ -51,6 +51,7 @@ public class ExplodeSpell extends TargetedSpell implements TargetedLocationSpell
 		
 	}
 	
+	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			Block target = null;
@@ -67,7 +68,7 @@ public class ExplodeSpell extends TargetedSpell implements TargetedLocationSpell
 					target = null;
 				} else {
 					target = event.getTargetLocation().getBlock();
-					power = event.getPower();
+					power = event.getPower(); //TODO make an alternative to overriding the parameter
 				}
 			}
 			if (target == null || target.getType() == Material.AIR) {

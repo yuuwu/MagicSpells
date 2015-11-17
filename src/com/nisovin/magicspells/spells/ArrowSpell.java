@@ -142,6 +142,7 @@ public class ArrowSpell extends Spell {
 				final ArrowSpellData data = (ArrowSpellData)meta.value();
 				if (data.spell.spellOnHitGround != null) {
 					MagicSpells.scheduleDelayedTask(new Runnable() {
+						@Override
 						public void run() {
 							Player shooter = (Player)arrow.getShooter();
 							if (!data.casted && !data.spell.onCooldown(shooter) && data.spell.hasReagents(shooter, data.reagents)) {

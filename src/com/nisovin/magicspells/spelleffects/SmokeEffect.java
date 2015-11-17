@@ -5,17 +5,19 @@ import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 
 import com.nisovin.magicspells.DebugHandler;
+import com.nisovin.magicspells.util.ConfigData;
 
 /**
- * class SoundEffect<p>
+ * public class SoundEffect<p>
  * Configuration fields:<br>
  * <ul>
  * <li>dir</li>
  * </ul>
  */
 
-class SmokeEffect extends SpellEffect {
+public class SmokeEffect extends SpellEffect {
 
+	@ConfigData(field="dir", dataType="int", defaultValue="4")
 	int dir = 4;
 	
 	@Override

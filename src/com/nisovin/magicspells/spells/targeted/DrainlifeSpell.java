@@ -45,8 +45,8 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 	private double giveAmt;
 	private String spellDamageType;
 	private boolean showSpellEffect;
-	private int animationSpeed;
-	private boolean instant;
+	int animationSpeed;
+	boolean instant;
 	private boolean ignoreArmor;
 	private boolean checkPlugins;
 	
@@ -161,7 +161,7 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 		return true;
 	}
 	
-	private void giveToCaster(Player player, double give) {
+	void giveToCaster(Player player, double give) {
 		if (giveType.equals("health")) {
 			double h = player.getHealth() + give;
 			if (h > player.getMaxHealth()) h = player.getMaxHealth();
@@ -197,7 +197,7 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 		Vector current;
 		Player caster;
 		World world;
-		double giveAmt;
+		double giveAmtAnimator;
 		int range;
 		
 		public DrainlifeAnim(Location start, Player caster, double giveAmt, float power) {
@@ -206,7 +206,7 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 			this.current = start.toVector();
 			this.caster = caster;
 			this.world = caster.getWorld();
-			this.giveAmt = giveAmt;
+			this.giveAmtAnimator = giveAmt;
 			this.range = getRange(power);
 		}
 
@@ -220,7 +220,7 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 			if (current.distanceSquared(targetVector) < 4 || tick > range * 1.5) {
 				stop();
 				if (!instant) {
-					giveToCaster(caster, giveAmt);
+					giveToCaster(caster, giveAmtAnimator);
 					playSpellEffects(EffectPosition.CASTER, caster);
 				}
 			}

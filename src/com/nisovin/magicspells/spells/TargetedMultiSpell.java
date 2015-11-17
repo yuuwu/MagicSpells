@@ -25,7 +25,7 @@ public final class TargetedMultiSpell extends TargetedSpell implements TargetedE
 	private boolean pointBlank;
 	private int yOffset;
 	private boolean castRandomSpellInstead;
-	private boolean stopOnFail;
+	boolean stopOnFail;
 	
 	private List<String> spellList;
 	private ArrayList<Action> actions;
@@ -94,7 +94,7 @@ public final class TargetedMultiSpell extends TargetedSpell implements TargetedE
 				TargetInfo<LivingEntity> info = getTargetedEntity(player, power);
 				if (info != null) {
 					entTarget = info.getTarget();
-					power = info.getPower();
+					power = info.getPower(); //TODO make an alternative to overriding the parameter
 				}
 			} else if (pointBlank) {
 				locTarget = player.getLocation();
@@ -208,7 +208,7 @@ public final class TargetedMultiSpell extends TargetedSpell implements TargetedE
 		return somethingWasDone;
 	}
 	
-	private boolean castTargetedSpell(Subspell spell, Player caster, LivingEntity entTarget, Location locTarget, float power) {
+	boolean castTargetedSpell(Subspell spell, Player caster, LivingEntity entTarget, Location locTarget, float power) {
 		boolean success = false;
 		if (spell.isTargetedEntitySpell() && entTarget != null) {
 			success = spell.castAtEntity(caster, entTarget, power);

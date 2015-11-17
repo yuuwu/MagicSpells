@@ -5,9 +5,11 @@ import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 
 import com.nisovin.magicspells.DebugHandler;
+import com.nisovin.magicspells.util.ConfigData;
 
-class BlockBreakEffect extends SpellEffect {
+public class BlockBreakEffect extends SpellEffect {
 
+	@ConfigData(field="id", dataType="int", defaultValue="1")
 	int id = 1;
 	
 	@Override

@@ -126,6 +126,7 @@ public class Subspell {
 			return castReal(player, power);
 		} else {
 			MagicSpells.scheduleDelayedTask(new Runnable() {
+				@Override
 				public void run() {
 					castReal(player, power);
 				}
@@ -134,7 +135,7 @@ public class Subspell {
 		}
 	}
 	
-	private PostCastAction castReal(Player player, float power) {
+	PostCastAction castReal(Player player, float power) {
 		if ((mode == CastMode.HARD || mode == CastMode.FULL) && player != null) {
 			return spell.cast(player, power * subPower, null).action;
 		} else if (mode == CastMode.PARTIAL) {
@@ -156,6 +157,7 @@ public class Subspell {
 			return castAtEntityReal(player, target, power);
 		} else {
 			MagicSpells.scheduleDelayedTask(new Runnable() {
+				@Override
 				public void run() {
 					castAtEntityReal(player, target, power);
 				}
@@ -164,7 +166,7 @@ public class Subspell {
 		}
 	}
 	
-	private boolean castAtEntityReal(Player player, LivingEntity target, float power) {
+	boolean castAtEntityReal(Player player, LivingEntity target, float power) {
 		boolean ret = false;
 		if (isTargetedEntity) {
 			if (mode == CastMode.HARD && player != null) {
@@ -209,6 +211,7 @@ public class Subspell {
 			return castAtLocationReal(player, target, power);
 		} else {
 			MagicSpells.scheduleDelayedTask(new Runnable() {
+				@Override
 				public void run() {
 					castAtLocationReal(player, target, power);
 				}
@@ -217,7 +220,7 @@ public class Subspell {
 		}
 	}
 	
-	private boolean castAtLocationReal(Player player, Location target, float power) {
+	boolean castAtLocationReal(Player player, Location target, float power) {
 		boolean ret = false;
 		if (isTargetedLocation) {
 			if (mode == CastMode.HARD && player != null) {
@@ -260,6 +263,7 @@ public class Subspell {
 			return castAtEntityFromLocationReal(player, from, target, power);
 		} else {
 			MagicSpells.scheduleDelayedTask(new Runnable() {
+				@Override
 				public void run() {
 					castAtEntityFromLocationReal(player, from, target, power);
 				}
@@ -268,7 +272,7 @@ public class Subspell {
 		}
 	}
 	
-	private boolean castAtEntityFromLocationReal(Player player, Location from, LivingEntity target, float power) {
+	boolean castAtEntityFromLocationReal(Player player, Location from, LivingEntity target, float power) {
 		boolean ret = false;
 		if (isTargetedEntityFromLocation) {
 			if (mode == CastMode.HARD && player != null) {

@@ -42,7 +42,7 @@ public class DisguiseSpell extends TargetedSpell implements TargetedEntitySpell 
 
 	static DisguiseManager manager;
 
-	private DisguiseSpell thisSpell;
+	DisguiseSpell thisSpell;
 	private EntityType entityType;
 	private boolean flag = false;
 	private int var1 = 0;
@@ -60,13 +60,13 @@ public class DisguiseSpell extends TargetedSpell implements TargetedEntitySpell 
 	private boolean undisguiseOnDeath = true;
 	private boolean undisguiseOnLogout = false;
 	private boolean undisguiseOnCast = false;
-	private boolean undisguiseOnGiveDamage = false;
-	private boolean undisguiseOnTakeDamage = false;
+	boolean undisguiseOnGiveDamage = false;
+	boolean undisguiseOnTakeDamage = false;
 	private int duration;
 	private boolean toggle;
 	private String strFade;
 	
-	private Map<String, Disguise> disguised = new HashMap<String, Disguise>();
+	Map<String, Disguise> disguised = new HashMap<String, Disguise>();
 	
 	public DisguiseSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -458,7 +458,7 @@ public class DisguiseSpell extends TargetedSpell implements TargetedEntitySpell 
 	
 	public class Disguise {
 
-		private Player player;
+		Player player;
 		private EntityType entityType;
 		private String nameplateText;
 		private PlayerDisguiseData playerDisguiseData;
@@ -531,6 +531,7 @@ public class DisguiseSpell extends TargetedSpell implements TargetedEntitySpell 
 			
 		private void startDuration(int duration) {
 			taskId = Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
+				@Override
 				public void run() {
 					DisguiseSpell.manager.removeDisguise(player);
 				}

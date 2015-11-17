@@ -25,7 +25,7 @@ public class LilywalkSpell extends BuffSpell {
 	
 	private boolean cancelOnTeleport;
 	
-	private HashMap<String,Lilies> lilywalkers;
+	HashMap<String,Lilies> lilywalkers;
 	private Listener listener;
 
 	public LilywalkSpell(MagicConfig config, String spellName) {

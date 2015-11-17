@@ -106,6 +106,7 @@ public class IntMap<T> {
 		return map;
 	}
 	
+	@Override
 	public IntMap<T> clone() {
 		IntMap<T> newMap = new IntMap<T>();
 		newMap.putAll(map);

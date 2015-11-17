@@ -88,8 +88,8 @@ public class HoldingCondition extends Condition {
 	
 	private boolean check(ItemStack item) {
 		if (item == null) return false;
-		int thisid = item == null ? 0 : item.getTypeId();
-		short thisdata = item == null ? 0 : item.getDurability();
+		int thisid = item.getTypeId();
+		short thisdata = item.getDurability();
 		String thisname = null;
 		try {
 			if (item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {

@@ -226,7 +226,7 @@ public class Spellbook {
 		String[] data = Util.splitParams(partial, 2);
 		if (data.length == 1) {
 			// complete spell name
-			partial = data[0].toLowerCase();
+			partial = data[0].toLowerCase(); //TODO find an alternative to reassigning the parameter
 			List<String> options = new ArrayList<String>();
 			for (Spell spell : allSpells) {
 				if (spell.canCastByCommand() && !spell.isHelperSpell()) {

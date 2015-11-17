@@ -190,17 +190,17 @@ public class DanceCastListener implements Listener {
 		if (diff < 0) diff += 360;
 		
 		if (diff < 20 || diff > 340) {
-			castSequence += "F";
+			castSequence += "F"; //TODO find an alternative to reassigning the parameter
 		} else if (70 < diff && diff < 110) {
-			castSequence += "L";
+			castSequence += "L"; //TODO find an alternative to reassigning the parameter
 		} else if (160 < diff && diff < 200) {
-			castSequence += "B";
+			castSequence += "B"; //TODO find an alternative to reassigning the parameter
 		} else if (250 < diff && diff < 290) {
-			castSequence += "R";
+			castSequence += "R"; //TODO find an alternative to reassigning the parameter
 		}
 		
 		if (player.getLocation().getY() - firstLoc.getY() > 0.4) {
-			castSequence += "J";
+			castSequence += "J"; //TODO find an alternative to reassigning the parameter
 		}
 		
 		return castSequence;

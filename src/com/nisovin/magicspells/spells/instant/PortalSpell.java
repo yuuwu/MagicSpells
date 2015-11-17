@@ -24,20 +24,20 @@ import com.nisovin.magicspells.util.SpellReagents;
 public class PortalSpell extends InstantSpell {
 
 	private String markSpellName;
-	private int duration;
-	private int teleportCooldown;
+	int duration;
+	int teleportCooldown;
 	private int minDistanceSq;
 	private int maxDistanceSq;
-	private int effectInterval;
-	private SpellReagents teleportCost;
-	private boolean allowReturn;
-	private boolean chargeCostToTeleporter;
+	int effectInterval;
+	SpellReagents teleportCost;
+	boolean allowReturn;
+	boolean chargeCostToTeleporter;
 	
 	private String strNoMark;
 	private String strTooClose;
 	private String strTooFar;
-	private String strTeleportCostFail;
-	private String strTeleportCooldownFail;
+	String strTeleportCostFail;
+	String strTeleportCooldownFail;
 	
 	private HashMap<String, MagicLocation> marks;
 	
@@ -153,6 +153,7 @@ public class PortalSpell extends InstantSpell {
 		void startTasks() {
 			if (effectInterval > 0) {
 				taskId1 = MagicSpells.scheduleRepeatingTask(new Runnable() {
+					@Override
 					public void run() {
 						if (caster.isValid()) {
 							playSpellEffects(EffectPosition.SPECIAL, loc1);
@@ -164,6 +165,7 @@ public class PortalSpell extends InstantSpell {
 				}, effectInterval, effectInterval);
 			}
 			taskId2 = MagicSpells.scheduleDelayedTask(new Runnable() {
+				@Override
 				public void run() {
 					disable();
 				}

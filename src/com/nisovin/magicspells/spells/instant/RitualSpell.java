@@ -21,23 +21,23 @@ import com.nisovin.magicspells.util.MagicConfig;
 
 public class RitualSpell extends InstantSpell {
 	
-	private int ritualDuration;
-	private int reqParticipants;
+	int ritualDuration;
+	int reqParticipants;
 	private boolean needSpellToParticipate;
-	private boolean showProgressOnExpBar;
-	private boolean chargeReagentsImmediately;
-	private boolean setCooldownImmediately;
-	private boolean setCooldownForAll;
+	boolean showProgressOnExpBar;
+	boolean chargeReagentsImmediately;
+	boolean setCooldownImmediately;
+	boolean setCooldownForAll;
 	private Spell spell;
 	private String theSpellName;
-	private int tickInterval;
-	private int effectInterval;
+	int tickInterval;
+	int effectInterval;
 	private String strRitualJoined;
-	private String strRitualSuccess;
-	private String strRitualInterrupted;
-	private String strRitualFailed;
+	String strRitualSuccess;
+	String strRitualInterrupted;
+	String strRitualFailed;
 	
-	private HashMap<Player, ActiveRitual> activeRituals;
+	HashMap<Player, ActiveRitual> activeRituals;
 	
 	public RitualSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -91,7 +91,7 @@ public class RitualSpell extends InstantSpell {
 	@EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
 	public void onPlayerInteract(PlayerInteractEntityEvent event) {
 		if (event.getRightClicked() instanceof Player) {
-			ActiveRitual channel = activeRituals.get((Player)event.getRightClicked());
+			ActiveRitual channel = activeRituals.get(event.getRightClicked());
 			if (channel != null) {
 				if (!needSpellToParticipate || hasThisSpell(event.getPlayer())) {
 					channel.addChanneler(event.getPlayer());

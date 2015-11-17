@@ -42,7 +42,7 @@ public class ArmorSpell extends BuffSpell {
 	private ItemStack boots;
 	
 	private String strHasArmor;
-	private String strLoreText;
+	String strLoreText;
 	
 	private Set<String> armored;
 	
@@ -148,7 +148,7 @@ public class ArmorSpell extends BuffSpell {
 		return castBuff(player, power, args);
 	}
 	
-	private void setArmor(PlayerInventory inv) {
+	void setArmor(PlayerInventory inv) {
 		if (helmet != null) {
 			inv.setHelmet(helmet.clone());
 		}
@@ -163,7 +163,7 @@ public class ArmorSpell extends BuffSpell {
 		}
 	}
 	
-	private void removeArmor(PlayerInventory inv) {
+	void removeArmor(PlayerInventory inv) {
 		if (helmet != null && inv.getHelmet() != null && inv.getHelmet().getType() == helmet.getType()) {
 			inv.setHelmet(null);
 		}
@@ -217,6 +217,7 @@ public class ArmorSpell extends BuffSpell {
 			if (isActive(event.getPlayer()) && !isExpired(event.getPlayer())) {
 				final PlayerInventory inv = event.getPlayer().getInventory();
 				Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
+					@Override
 					public void run() {
 						setArmor(inv);
 					}

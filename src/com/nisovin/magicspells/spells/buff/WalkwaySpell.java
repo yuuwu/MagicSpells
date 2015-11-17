@@ -28,7 +28,7 @@ public class WalkwaySpell extends BuffSpell {
 	private int size;
 	private boolean cancelOnTeleport;
 	
-	private HashMap<String, Platform> platforms;
+	HashMap<String, Platform> platforms;
 	private WalkwayListener listener;
 	
 	public WalkwaySpell(MagicConfig config, String spellName) {
@@ -42,6 +42,7 @@ public class WalkwaySpell extends BuffSpell {
 		
 	}
 
+	@Override
 	public void initialize() {
 		super.initialize();
 		if (cancelOnTeleport) {
@@ -133,8 +134,8 @@ public class WalkwaySpell extends BuffSpell {
 	private class Platform {
 		
 		private Player player;
-		private Material material;
-		private int size;
+		private Material materialPlatform;
+		private int sizePlatform;
 		private List<Block> platform;
 		
 		private int prevX;
@@ -145,8 +146,8 @@ public class WalkwaySpell extends BuffSpell {
 		
 		public Platform(Player player, Material material, int size) {
 			this.player = player;
-			this.material = material;
-			this.size = size;
+			this.materialPlatform = material;
+			this.sizePlatform = size;
 			this.platform = new ArrayList<Block>();
 			
 			move();
@@ -197,7 +198,7 @@ public class WalkwaySpell extends BuffSpell {
 				if (origin.getType() == Material.AIR) {
 					// check for weird stair positioning
 					Block up = origin.getRelative(0,1,0);
-					if (up != null && ((material == Material.WOOD && up.getType() == Material.WOOD_STAIRS) || (material == Material.COBBLESTONE && up.getType() == Material.COBBLESTONE_STAIRS))) {
+					if (up != null && ((materialPlatform == Material.WOOD && up.getType() == Material.WOOD_STAIRS) || (materialPlatform == Material.COBBLESTONE && up.getType() == Material.COBBLESTONE_STAIRS))) {
 						origin = up;
 					} else {					
 						// allow down movement when stepping out over an edge
@@ -234,9 +235,9 @@ public class WalkwaySpell extends BuffSpell {
 		
 		public void drawCarpet(Block origin, int dirX, int dirY, int dirZ) {
 			// determine block type and maybe stair direction
-			Material mat = material;
+			Material mat = materialPlatform;
 			byte data = 0;
-			if ((material == Material.WOOD || material == Material.COBBLESTONE) && dirY != 0) {
+			if ((materialPlatform == Material.WOOD || materialPlatform == Material.COBBLESTONE) && dirY != 0) {
 				boolean changed = false;
 				if (dirY == -1) {
 					if (dirX == -1 && dirZ == 0) {
@@ -268,9 +269,9 @@ public class WalkwaySpell extends BuffSpell {
 					}
 				}
 				if (changed) {
-					if (material == Material.WOOD) {
+					if (materialPlatform == Material.WOOD) {
 						mat = Material.WOOD_STAIRS;
-					} else if (material == Material.COBBLESTONE) {
+					} else if (materialPlatform == Material.COBBLESTONE) {
 						mat = Material.COBBLESTONE_STAIRS;
 					}
 				}
@@ -279,7 +280,7 @@ public class WalkwaySpell extends BuffSpell {
 			// get platform blocks
 			List<Block> blocks = new ArrayList<Block>();
 			blocks.add(origin); // add standing block
-			for (int i = 1; i < size; i++) { // add blocks ahead
+			for (int i = 1; i < sizePlatform; i++) { // add blocks ahead
 				Block b = origin.getRelative(dirX*i, dirY*i, dirZ*i);
 				if (b != null) {
 					blocks.add(b);

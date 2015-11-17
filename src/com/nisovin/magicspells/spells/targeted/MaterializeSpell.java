@@ -23,12 +23,12 @@ import com.nisovin.magicspells.util.MagicConfig;
 
 public class MaterializeSpell extends TargetedSpell implements TargetedLocationSpell {
 
-	private MagicMaterial material;
+	MagicMaterial material;
 	private int resetDelay;
 	private boolean falling;
 	private boolean applyPhysics;
 	private boolean checkPlugins;
-	private boolean playBreakEffect;
+	boolean playBreakEffect;
 	private String strFailed;
 	
 	public MaterializeSpell(MagicConfig config, String spellName) {
@@ -107,6 +107,7 @@ public class MaterializeSpell extends TargetedSpell implements TargetedLocationS
 		
 		if (resetDelay > 0 && !falling) {
 			Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
+				@Override
 				public void run() {
 					if (material.getMaterial().equals(block.getType())) {
 						block.setType(Material.AIR);

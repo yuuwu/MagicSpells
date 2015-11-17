@@ -61,6 +61,7 @@ public class BuffListener extends PassiveListener {
 	@EventHandler
 	public void onPlayerRespawn(final PlayerRespawnEvent event) {
 		Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
+			@Override
 			public void run() {
 				on(event.getPlayer());
 			}
@@ -71,6 +72,7 @@ public class BuffListener extends PassiveListener {
 	public void onSpellLearn(final SpellLearnEvent event) {
 		if (event.getSpell() instanceof PassiveSpell && spells.contains(event.getSpell())) {
 			Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
+				@Override
 				public void run() {
 					on(event.getLearner(), (PassiveSpell)event.getSpell());
 				}
@@ -85,7 +87,7 @@ public class BuffListener extends PassiveListener {
 		}
 	}
 	
-	private void on(Player player) {
+	void on(Player player) {
 		Spellbook spellbook = MagicSpells.getSpellbook(player);
 		for (PassiveSpell spell : spells) {
 			if (spellbook.hasSpell(spell)) {
@@ -94,7 +96,7 @@ public class BuffListener extends PassiveListener {
 		}
 	}
 	
-	private void on(Player player, PassiveSpell spell) {
+	void on(Player player, PassiveSpell spell) {
 		for (Subspell s : spell.getActivatedSpells()) {
 			if (s.getSpell() instanceof BuffSpell) {
 				BuffSpell buff = (BuffSpell)s.getSpell();

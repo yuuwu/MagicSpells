@@ -17,7 +17,7 @@ public class HealthBelowCondition extends Condition {
 		try {
 			if (var.endsWith("%")) {
 				percent = true;
-				var = var.replace("%", "");
+				var = var.replace("%", ""); //TODO find an alternative to reassigning the parameter
 			}
 			health = Integer.parseInt(var);
 			return true;

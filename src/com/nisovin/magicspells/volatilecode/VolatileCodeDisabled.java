@@ -31,14 +31,17 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 
 	@Override
 	public void addPotionGraphicalEffect(LivingEntity entity, int color, int duration) {
+		//need the volatile code for this
 	}
 
 	@Override
 	public void entityPathTo(LivingEntity entity, LivingEntity target) {
+		//need the volatile code for this
 	}
 
 	@Override
 	public void sendFakeSlotUpdate(Player player, int slot, ItemStack item) {
+		//need the volatile code for this
 	}
 	
 	@Override
@@ -78,6 +81,7 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 
 	@Override
 	public void setExperienceBar(Player player, int level, float percent) {
+		//need the volatile code for this
 	}
 
 	@Override
@@ -94,6 +98,7 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 
 	@Override
 	public void playSound(Location location, String sound, float volume, float pitch) {
+		//need the volatile code for this
 	}
 
 	@Override
@@ -108,6 +113,7 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 
 	@Override
 	public void setFallingBlockHurtEntities(FallingBlock block, float damage, int max) {
+		//need the volatile code for this
 	}
 	
 	@Override
@@ -156,16 +162,17 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 	
 	@Override
 	public void playParticleEffect(Location location, String name, float spreadHoriz, float spreadVert, float speed, int count, int radius, float yOffset) {
+		//can't do this without the volatile code
 	}
 	
 	@Override
 	public void playDragonDeathEffect(Location location) {
-		
+		//can't do this without the volatile code
 	}
 	
 	@Override
 	public void setKiller(LivingEntity entity, Player killer) {
-		
+		//can't do this without the volatile code
 	}
 
 	@Override
@@ -180,34 +187,42 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 
 	@Override
 	public void removeAI(LivingEntity entity) {
+		//need the volatile code for this
 	}
 
 	@Override
 	public void addEntityAttribute(LivingEntity entity, String attribute, double amount, int operation) {
+		//need the volatile code for this
 	}
 
 	@Override
 	public void resetEntityAttributes(LivingEntity entity) {
+		//need the volatile code for this
 	}
 
 	@Override
 	public void addAILookAtPlayer(LivingEntity entity, int range) {
+		//need the volatile code for this
 	}
 	
 	@Override
-	public void setBossBar(Player player, String title, double percent) {		
+	public void setBossBar(Player player, String title, double percent) {
+		//need the volatile code for this
 	}
 	
 	@Override
-	public void updateBossBar(Player player, String title, double percent) {		
+	public void updateBossBar(Player player, String title, double percent) {
+		//need the volatile code for this
 	}
 	
 	@Override
-	public void removeBossBar(Player player) {		
+	public void removeBossBar(Player player) {
+		//need the volatile code for this
 	}
 	
 	@Override
-	public void saveSkinData(Player player, String name) {		
+	public void saveSkinData(Player player, String name) {
+		//need the volatile code for this
 	}
 
 	@Override
@@ -217,18 +232,22 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 
 	@Override
 	public void setArrowsStuck(LivingEntity entity, int count) {
+		//need the volatile code for this
 	}
 
 	@Override
 	public void sendTitleToPlayer(Player player, String title, String subtitle, int fadeIn, int stay, int fadeOut) {
+		//need the volatile code for this
 	}
 
 	@Override
 	public void sendActionBarMessage(Player player, String message) {
+		//need the volatile code for this
 	}
 
 	@Override
 	public void setTabMenuHeaderFooter(Player player, String header, String footer) {
+		//need the volatile code for this
 	}
 	
 	@Override

@@ -16,12 +16,16 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.spells.BuffSpell;
+import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
 
 public class InvisibilitySpell extends BuffSpell {
 
+	@ConfigData(field="prevent-pickups", dataType="boolean", defaultValue="true")
 	private boolean preventPickups;
+	
+	@ConfigData(field="cancel-on-spell-cast", dataType="boolean", defaultValue="false")
 	private boolean cancelOnSpellCast;
 	
 	private HashMap<String,CostCharger> invisibles = new HashMap<String, InvisibilitySpell.CostCharger>();
@@ -148,6 +152,7 @@ public class InvisibilitySpell extends BuffSpell {
 			}
 		}
 		
+		@Override
 		public void run() {
 			addUseAndChargeCost(player);
 		}
