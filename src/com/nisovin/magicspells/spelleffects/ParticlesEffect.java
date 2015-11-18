@@ -2,11 +2,15 @@ package com.nisovin.magicspells.spelleffects;
 
 import org.bukkit.Color;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 
 import com.nisovin.magicspells.util.ColorUtil;
 
 import de.slikey.effectlib.util.ParticleEffect;
+import de.slikey.effectlib.util.ParticleEffect.BlockData;
+import de.slikey.effectlib.util.ParticleEffect.ItemData;
+import de.slikey.effectlib.util.ParticleEffect.ParticleData;
 
 public class ParticlesEffect extends SpellEffect {
 	
@@ -19,6 +23,7 @@ public class ParticlesEffect extends SpellEffect {
 	float yOffset = 0F;
 	int renderDistance = 32;
 	Color color = null;
+	ParticleData data = null;
 
 	@Override
 	public void loadFromString(String string) {
@@ -64,7 +69,21 @@ public class ParticlesEffect extends SpellEffect {
 	}
 	
 	protected void findEffect() {
-		effect = ParticleEffect.fromName(name);
+		String[] splits = name.split("_");
+		effect = ParticleEffect.fromName(splits[0]);
+		
+		if (splits.length > 1) {
+			Material mat = Material.getMaterial(Integer.parseInt(splits[1]));
+			int materialData = 0;
+			if (splits.length > 2) {
+				materialData = Integer.parseInt(splits[2]);
+			}
+			if (mat.isBlock()) {
+			data = new BlockData(mat, (byte) materialData);
+			} else {
+				data = new ItemData(mat, (byte) materialData);
+			}
+		}
 		if (effect == null) {
 			throw new NullPointerException("No particle could be found from: \"" + name + "\"");
 		}
@@ -73,7 +92,7 @@ public class ParticlesEffect extends SpellEffect {
 	@Override
 	public void playEffectLocation(Location location) {
 		//ParticleData data, Location center, Color color, double range, float offsetX, float offsetY, float offsetZ, float speed, int amount
-		effect.display(null, location.add(0, yOffset, 0), color, renderDistance, horizSpread, vertSpread, horizSpread, speed, count);
+		effect.display(data, location.add(0, yOffset, 0), color, renderDistance, horizSpread, vertSpread, horizSpread, speed, count);
 	}
 	
 }
