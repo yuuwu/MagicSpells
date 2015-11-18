@@ -53,7 +53,7 @@ import org.bukkit.util.Vector;
 
 public abstract class LivingEntityCaster {
 
-	private LivingEntity entity;
+/*	private LivingEntity entity;
 	
 	private boolean allowFlight = false;
 
@@ -1428,5 +1428,5 @@ public abstract class LivingEntityCaster {
 	public void sendPluginMessage(Plugin arg0, String arg1, byte[] arg2) {
 		// TODO Auto-generated method stub
 	}
-	
+	*/
 }
