@@ -12,7 +12,7 @@ import com.nisovin.magicspells.util.ConfigData;
 
 public class SmokeSwirlEffect extends SpellEffect {
 
-	@ConfigData
+	@ConfigData(field="duration", dataType="int", defaultValue="20")
 	int duration = 20;
 	
 	@Override
@@ -28,6 +28,7 @@ public class SmokeSwirlEffect extends SpellEffect {
 
 	@Override
 	public void loadFromConfig(ConfigurationSection config) {
+		duration = config.getInt("duration", duration);
 		//TODO make a config load form
 	}
 
