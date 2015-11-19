@@ -110,7 +110,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	@ConfigData(field="bindable", dataType="boolean", defaultValue="true")
 	protected boolean bindable;
 	
-	@ConfigData
+	@ConfigData(field="bindable-items", dataType="String[]", defaultValue="null")
 	protected HashSet<CastItem> bindableItems;
 	
 	@ConfigData
