@@ -9,6 +9,7 @@ import org.bukkit.util.Vector;
 
 import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.util.ConfigData;
 
 /**
  * 
@@ -33,24 +34,41 @@ import com.nisovin.magicspells.MagicSpells;
 public abstract class SpellEffect {
 	
 	// for normal/line
+	@ConfigData(field="height-offset", dataType="double", defaultValue="0")
 	double heightOffset = 0;
+	
+	@ConfigData(field="forward-offset", dataType="double", defaultValue="0")
 	double forwardOffset = 0;
+	
+	@ConfigData(field="delay", dataType="int", defaultValue="0")
 	int delay = 0;
 	
 	// for line
+	@ConfigData(field="distance-between", dataType="double", defaultValue="1")
 	double distanceBetween = 1;
 	
 	// for buff
+	@ConfigData(field="effect-interval", dataType="int", defaultValue="20")
 	int effectInterval = 20;
 
 	// for orbit
+	@ConfigData(field="orbit-radius", dataType="double", defaultValue="1")
 	float orbitRadius = 1;
+	
+	@ConfigData(field="orbit-seconds-per-revolution", dataType="double", defaultValue="3")
 	float secondsPerRevolution = 3;
+	
+	@ConfigData(field="orbit-counter-clockwise", dataType="boolean", defaultValue="false")
 	boolean counterClockwise = false;
+	
+	@ConfigData(field="orbit-tick-interval", dataType="int", defaultValue="2")
 	int tickInterval = 2;
+	
 	float ticksPerSecond;
 	float distancePerTick;
 	int ticksPerRevolution;
+	
+	@ConfigData(field="orbit-y-offset", dataType="double", defaultValue="0")
 	float orbitYOffset = 0;
 	
 	int taskId = -1;

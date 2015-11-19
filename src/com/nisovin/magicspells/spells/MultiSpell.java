@@ -12,17 +12,27 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spell;
 import com.nisovin.magicspells.Subspell;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
+import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
 
 public final class MultiSpell extends InstantSpell {
 
+	@ConfigData(field="can-cast-with-item", dataType="boolean", defaultValue="true")
 	private boolean castWithItem;
+	
+	@ConfigData(field="can-cast-with-command", dataType="boolean", defaultValue="true")
 	private boolean castByCommand;
+	
+	@ConfigData(field="check-individual-cooldowns", dataType="boolean", defaultValue="false")
 	private boolean checkIndividualCooldowns;
+	
+	@ConfigData(field="cast-random-spell-instead", dataType="boolean", defaultValue="false")
 	private boolean castRandomSpellInstead;
 	
+	@ConfigData(field="spells", dataType="String[]", defaultValue="null")
 	private List<String> spellList;
+	
 	private ArrayList<Action> actions;
 	private Random random = new Random();
 	

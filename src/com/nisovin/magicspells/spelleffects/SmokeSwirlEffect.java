@@ -29,7 +29,6 @@ public class SmokeSwirlEffect extends SpellEffect {
 	@Override
 	public void loadFromConfig(ConfigurationSection config) {
 		duration = config.getInt("duration", duration);
-		//TODO make a config load form
 	}
 
 	int[] x = {1,1,0,-1,-1,-1,0,1};

@@ -15,19 +15,33 @@ import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Subspell;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
+import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
 
 public final class TargetedMultiSpell extends TargetedSpell implements TargetedEntitySpell, TargetedLocationSpell {
 
+	@ConfigData(field="check-individual-cooldowns", dataType="boolean", defaultValue="false")
 	private boolean checkIndividualCooldowns;
+	
+	@ConfigData(field="require-entity-target", dataType="boolean", defaultValue="false")
 	private boolean requireEntityTarget;
+	
+	@ConfigData(field="point-blank", dataType="boolean", defaultValue="false")
 	private boolean pointBlank;
+	
+	@ConfigData(field="y-offset", dataType="int", defaultValue="0")
 	private int yOffset;
+	
+	@ConfigData(field="cast-random-spell-instead", dataType="boolean", defaultValue="false")
 	private boolean castRandomSpellInstead;
+	
+	@ConfigData(field="stop-on-fail", dataType="boolean", defaultValue="true")
 	boolean stopOnFail;
 	
+	@ConfigData(field="spells", dataType="String[]", defaultValue="null")
 	private List<String> spellList;
+	
 	private ArrayList<Action> actions;
 	private Random random = new Random();
 	

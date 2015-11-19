@@ -26,6 +26,7 @@ import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.Subspell;
 import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.events.SpellTargetEvent;
+import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellReagents;
 
@@ -33,11 +34,19 @@ public class ArrowSpell extends Spell {
 
 	private static ArrowSpellHandler handler;
 	
+	@ConfigData(field="bow-name", dataType="String", defaultValue="null")
 	String bowName;
+	
+	@ConfigData(field="spell-on-hit-entity", dataType="String", defaultValue="null")
 	String spellNameOnHitEntity;
+	
+	@ConfigData(field="spell-on-hit-ground", dataType="String", defaultValue="null")
 	String spellNameOnHitGround;
+	
 	Subspell spellOnHitEntity;
 	Subspell spellOnHitGround;
+	
+	@ConfigData(field="use-bow-force", dataType="boolean", defaultValue="true")
 	boolean useBowForce;
 	
 	public ArrowSpell(MagicConfig config, String spellName) {

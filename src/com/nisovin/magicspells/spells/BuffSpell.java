@@ -23,6 +23,7 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spelleffects.SpellEffect;
+import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
 import com.nisovin.magicspells.util.SpellReagents;
@@ -32,17 +33,31 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 	
 	BuffSpell thisSpell;
 	
+	@ConfigData(field="targeted", dataType="boolean", defaultValue="false")
 	protected boolean targeted;
+	
+	@ConfigData(field="toggle", dataType="boolean", defaultValue="true")
 	protected boolean toggle;
+	
 	protected int healthCost = 0;
 	protected int manaCost = 0;
 	protected int hungerCost = 0;
 	protected int experienceCost = 0;
 	protected int levelsCost = 0;
+	
+	@ConfigData(field="use-cost", dataType="Reagents")
 	protected SpellReagents reagents;
+	
+	@ConfigData(field="use-cost-interval", dataType="int", defaultValue="0")
 	protected int useCostInterval;
+	
+	@ConfigData(field="num-uses", dataType="int", defaultValue="0")
 	protected int numUses;
+	
+	@ConfigData(field="duration", dataType="float", defaultValue="0")
 	protected float duration;
+	
+	@ConfigData(field="power-affects-duration", dataType="boolean", defaultValue="true")
 	protected boolean powerAffectsDuration;
 	protected boolean cancelOnGiveDamage;
 	protected boolean cancelOnTakeDamage;

@@ -24,6 +24,7 @@ public class EffectLibEffect extends SpellEffect {
 		className = effectLibSection.getString("class");
 	}
 
+	@Override
 	protected void playEffectLocation(Location location) {
 		manager.start(className, effectLibSection, location);
 	}

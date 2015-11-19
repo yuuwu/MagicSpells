@@ -20,6 +20,7 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.passive.PassiveManager;
 import com.nisovin.magicspells.spells.passive.PassiveTrigger;
 import com.nisovin.magicspells.util.CastItem;
+import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.Util;
 
@@ -30,15 +31,30 @@ public class PassiveSpell extends Spell {
 	private Random random = new Random();
 	private boolean disabled = false;
 	
+	@ConfigData(field="triggers", dataType="String[]", defaultValue="null")
 	private List<String> triggers;
+	
+	@ConfigData(field="chance", dataType="float", defaultValue="100")
 	private float chance;
+	
+	@ConfigData(field="cast-without-target", dataType="boolean", defaultValue="false")
 	private boolean castWithoutTarget;
+	
+	@ConfigData(field="delay", dataType="int", defaultValue="-1")
 	private int delay;
+	
+	@ConfigData(field="cancel-default-action", dataType="boolean", defaultValue="false")
 	private boolean cancelDefaultAction;
+	
+	@ConfigData(field="ignore-cancelled", dataType="boolean", defaultValue="true")
 	private boolean ignoreCancelled;
+	
+	@ConfigData(field="send-failure-messages", dataType="boolean", defaultValue="false")
 	private boolean sendFailureMessages;
 	
+	@ConfigData(field="spells", dataType="String[]", defaultValue="null")
 	private List<String> spellNames;
+	
 	private List<Subspell> spells;
 	
 	public PassiveSpell(MagicConfig config, String spellName) {

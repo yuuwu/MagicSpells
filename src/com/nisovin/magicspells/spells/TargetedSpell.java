@@ -10,18 +10,31 @@ import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Subspell;
+import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
 import com.nisovin.magicspells.util.Util;
 
 public abstract class TargetedSpell extends InstantSpell {
 
+	@ConfigData(field="always-activate", dataType="boolean", defaultValue="false")
 	protected boolean alwaysActivate;
+	
+	@ConfigData(field="play-fizzle-sound", dataType="boolean", defaultValue="false")
 	protected boolean playFizzleSound;
+	
+	@ConfigData(field="target-self", dataType="boolean", defaultValue="false")
 	protected boolean targetSelf;
+	
+	@ConfigData(field="spell-on-fail", dataType="String", defaultValue="null")
 	protected String spellNameOnFail;
+	
 	protected Subspell spellOnFail;
+	
+	@ConfigData(field="str-cast-target", dataType="String", defaultValue="null")
 	protected String strCastTarget;
+	
+	@ConfigData(field="str-no-target", dataType="String", defaultValue="null")
 	protected String strNoTarget;
 
 	public TargetedSpell(MagicConfig config, String spellName) {
