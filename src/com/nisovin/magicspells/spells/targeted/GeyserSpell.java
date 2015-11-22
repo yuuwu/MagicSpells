@@ -24,9 +24,11 @@ import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellAnimation;
+import com.nisovin.magicspells.util.SpellType;
+import com.nisovin.magicspells.util.SpellTypes;
 import com.nisovin.magicspells.util.TargetInfo;
 import com.nisovin.magicspells.util.Util;
-
+@SpellType(types={SpellTypes.TARGETED_ENTITY_SPELL})
 public class GeyserSpell extends TargetedSpell implements TargetedEntitySpell {
 	
 	private double damage;

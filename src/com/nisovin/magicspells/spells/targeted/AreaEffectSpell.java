@@ -24,7 +24,9 @@ import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.BoundingBox;
 import com.nisovin.magicspells.util.MagicConfig;
-
+import com.nisovin.magicspells.util.SpellType;
+import com.nisovin.magicspells.util.SpellTypes;
+@SpellType(types={SpellTypes.TARGETED_LOCATION_SPELL})
 public class AreaEffectSpell extends TargetedSpell implements TargetedLocationSpell {
 
 	private int radius;
@@ -180,9 +182,9 @@ public class AreaEffectSpell extends TargetedSpell implements TargetedLocationSp
 					}
 					playSpellEffects(EffectPosition.TARGET, target);
 					if (spellSourceInCenter) {
-						playSpellEffectsTrail(location, target.getLocation());
+						playSpellEffectsTrail(location, target.getLocation(), true);
 					} else if (player != null) {
-						playSpellEffectsTrail(player.getLocation(), target.getLocation());
+						playSpellEffectsTrail(player.getLocation(), target.getLocation(), true);
 					}
 					count++;
 					if (maxTargets > 0 && count >= maxTargets) {

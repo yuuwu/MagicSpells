@@ -30,8 +30,11 @@ import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.util.BlockUtils;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.SpellType;
+import com.nisovin.magicspells.util.SpellTypes;
 import com.nisovin.magicspells.util.Util;
 
+@SpellType(types={SpellTypes.TARGETED_LOCATION_SPELL})
 public class ThrowBlockSpell extends InstantSpell implements TargetedLocationSpell {
 
 	MagicMaterial material;

@@ -16,6 +16,7 @@ import com.nisovin.magicspells.Spell.PostCastAction;
 import com.nisovin.magicspells.Spell.SpellCastResult;
 import com.nisovin.magicspells.Spell.SpellCastState;
 import com.nisovin.magicspells.util.CastItem;
+import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
 import com.nisovin.magicspells.util.Util;
@@ -24,24 +25,37 @@ public class DanceCastListener implements Listener {
 
 	MagicSpells plugin;
 	
+	@ConfigData(field="general.dance-cast-item", dataType="String")
 	CastItem danceCastWand;
+	
+	@ConfigData(field="general.dance-cast-duration", dataType="int")
 	int duration;
+	
 	Map<String, Spell> spells = new HashMap<String, Spell>();
 	
 	Map<String, String> playerCasts = new HashMap<String, String>();
 	Map<String, Location> playerLocations = new HashMap<String, Location>();
 	Map<String, Integer> playerTasks = new HashMap<String, Integer>();
 	
+	@ConfigData(field="general.dance-cast-dynamic", dataType="boolean", defaultValue="false")
 	boolean dynamicCasting = false;
+	
 	boolean enableDoubleJump = false;
+	
 	boolean enableMovement = false;
 	
+	@ConfigData(field="general.dance-cast-start-sound", dataType="String", defaultValue="null")
 	String startSound = null;
 	float startSoundVolume = 1;
 	float startSoundPitch = 1;
 	
+	@ConfigData(field="general.str-dance-start", dataType="String")
 	String strDanceStart;
+	
+	@ConfigData(field="general.str-dance-complete", dataType="String")
 	String strDanceComplete;
+	
+	@ConfigData(field="general.str-dance-fail", dataType="String")
 	String strDanceFail;
 	
 	public DanceCastListener(MagicSpells plugin, MagicConfig config) {

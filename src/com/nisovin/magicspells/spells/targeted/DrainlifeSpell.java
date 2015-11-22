@@ -19,6 +19,8 @@ import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.ExperienceUtils;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellAnimation;
+import com.nisovin.magicspells.util.SpellType;
+import com.nisovin.magicspells.util.SpellTypes;
 import com.nisovin.magicspells.util.TargetInfo;
 
 /**
@@ -37,6 +39,7 @@ import com.nisovin.magicspells.util.TargetInfo;
  * <li>check-plugins: true</li>
  * </ul>
  */
+@SpellType(types={SpellTypes.TARGETED_ENTITY_SPELL, SpellTypes.SPELL_DAMAGE_SPELL})
 public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell, SpellDamageSpell {
 	
 	private String takeType;

@@ -2,6 +2,7 @@ package com.nisovin.magicspells.spelleffects;
 
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Entity;
 
 import com.nisovin.magicspells.MagicSpells;
 
@@ -27,6 +28,11 @@ public class EffectLibEffect extends SpellEffect {
 	@Override
 	protected void playEffectLocation(Location location) {
 		manager.start(className, effectLibSection, location);
+	}
+	
+	@Override
+	public void playAsIntelligentLine(Location origin, Location target, Entity originEntity, Entity targetEntity) {
+		manager.start(className, effectLibSection, origin, target, originEntity, targetEntity, null);
 	}
 
 }

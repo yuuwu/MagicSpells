@@ -21,7 +21,9 @@ import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.BlockUtils;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
-
+import com.nisovin.magicspells.util.SpellType;
+import com.nisovin.magicspells.util.SpellTypes;
+@SpellType(types={SpellTypes.TARGETED_ENTITY_SPELL, SpellTypes.TARGETED_ENTITY_FROM_LOCATION_SPELL})
 public class SummonSpell extends TargetedSpell implements TargetedEntitySpell, TargetedEntityFromLocationSpell {
 
 	private boolean requireExactName;

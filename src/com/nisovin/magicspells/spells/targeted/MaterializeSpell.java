@@ -20,7 +20,9 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
-
+import com.nisovin.magicspells.util.SpellType;
+import com.nisovin.magicspells.util.SpellTypes;
+@SpellType(types={SpellTypes.TARGETED_LOCATION_SPELL})
 public class MaterializeSpell extends TargetedSpell implements TargetedLocationSpell {
 
 	MagicMaterial material;
@@ -99,7 +101,7 @@ public class MaterializeSpell extends TargetedSpell implements TargetedLocationS
 		if (player != null) {
 			playSpellEffects(EffectPosition.CASTER, player);
 			playSpellEffects(EffectPosition.TARGET, block.getLocation());
-			playSpellEffectsTrail(player.getLocation(), block.getLocation());
+			playSpellEffectsTrail(player.getLocation(), block.getLocation(), true);
 		}
 		if (playBreakEffect) {
 			block.getWorld().playEffect(block.getLocation(), Effect.STEP_SOUND, block.getType());

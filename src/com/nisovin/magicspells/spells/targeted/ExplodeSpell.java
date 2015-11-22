@@ -20,7 +20,9 @@ import com.nisovin.magicspells.events.SpellTargetLocationEvent;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
-
+import com.nisovin.magicspells.util.SpellType;
+import com.nisovin.magicspells.util.SpellTypes;
+@SpellType(types={SpellTypes.TARGETED_LOCATION_SPELL})
 public class ExplodeSpell extends TargetedSpell implements TargetedLocationSpell {
 	
 	private int explosionSize;

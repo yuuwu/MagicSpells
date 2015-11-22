@@ -13,6 +13,8 @@ import com.nisovin.magicspells.spells.SpellDamageSpell;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.SpellType;
+import com.nisovin.magicspells.util.SpellTypes;
 import com.nisovin.magicspells.util.TargetInfo;
 
 /**
@@ -26,6 +28,7 @@ import com.nisovin.magicspells.util.TargetInfo;
  * <li>damage-type: "ENTITY_ATTACK"</li>
  * </ul>
  */
+@SpellType(types={SpellTypes.TARGETED_ENTITY_SPELL, SpellTypes.SPELL_DAMAGE_SPELL})
 public class PainSpell extends TargetedSpell implements TargetedEntitySpell, SpellDamageSpell {
 
 	private double damage;

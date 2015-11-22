@@ -22,6 +22,7 @@ import com.nisovin.magicspells.spells.passive.PassiveTrigger;
 import com.nisovin.magicspells.util.CastItem;
 import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.SpellTypesAllowed;
 import com.nisovin.magicspells.util.Util;
 
 public class PassiveSpell extends Spell {
@@ -52,6 +53,7 @@ public class PassiveSpell extends Spell {
 	@ConfigData(field="send-failure-messages", dataType="boolean", defaultValue="false")
 	private boolean sendFailureMessages;
 	
+	@SpellTypesAllowed
 	@ConfigData(field="spells", dataType="String[]", defaultValue="null")
 	private List<String> spellNames;
 	

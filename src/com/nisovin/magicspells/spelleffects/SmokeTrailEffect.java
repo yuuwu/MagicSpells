@@ -80,6 +80,7 @@ public class SmokeTrailEffect extends SpellEffect {
 			}
 		}
 		
+		@Override
 		public void run() {
 			if (i > locationsForProjection.size()-1) {
 				MagicSpells.cancelTask(id);

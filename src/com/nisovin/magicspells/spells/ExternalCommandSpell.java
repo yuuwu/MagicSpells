@@ -18,9 +18,12 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.MessageBlocker;
+import com.nisovin.magicspells.util.SpellType;
+import com.nisovin.magicspells.util.SpellTypes;
 import com.nisovin.magicspells.util.TargetInfo;
 import com.nisovin.magicspells.util.ValidTargetList;
 
+@SpellType(types={SpellTypes.TARGETED_ENTITY_SPELL})
 public class ExternalCommandSpell extends TargetedSpell implements TargetedEntitySpell {
 	
 	static MessageBlocker messageBlocker;

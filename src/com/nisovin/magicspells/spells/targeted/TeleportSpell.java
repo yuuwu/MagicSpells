@@ -8,8 +8,10 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.SpellType;
+import com.nisovin.magicspells.util.SpellTypes;
 import com.nisovin.magicspells.util.TargetInfo;
-
+@SpellType(types={SpellTypes.TARGETED_ENTITY_SPELL})
 public class TeleportSpell extends TargetedSpell implements TargetedEntitySpell {
 
 	public TeleportSpell(MagicConfig config, String spellName) {
@@ -39,7 +41,7 @@ public class TeleportSpell extends TargetedSpell implements TargetedEntitySpell 
 		if (ok) {
 			playSpellEffects(EffectPosition.CASTER, casterLoc);
 			playSpellEffects(EffectPosition.TARGET, target.getLocation());
-			playSpellEffectsTrail(casterLoc, target.getLocation());
+			playSpellEffectsTrail(casterLoc, target.getLocation(), true);
 		}
 		return ok;
 	}

@@ -19,7 +19,9 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
-
+import com.nisovin.magicspells.util.SpellType;
+import com.nisovin.magicspells.util.SpellTypes;
+@SpellType(types={SpellTypes.TARGETED_LOCATION_SPELL})
 public class BuildSpell extends TargetedSpell implements TargetedLocationSpell {
 	
 	private int slot;
@@ -101,7 +103,7 @@ public class BuildSpell extends TargetedSpell implements TargetedLocationSpell {
 		}
 		playSpellEffects(EffectPosition.CASTER, player);
 		playSpellEffects(EffectPosition.TARGET, block.getLocation());
-		playSpellEffectsTrail(player.getLocation(), block.getLocation());
+		playSpellEffectsTrail(player.getLocation(), block.getLocation(), true);
 		if (consumeBlock) {
 			int amt = item.getAmount()-1;
 			if (amt > 0) {

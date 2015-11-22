@@ -15,7 +15,9 @@ import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.BlockUtils;
 import com.nisovin.magicspells.util.MagicConfig;
-
+import com.nisovin.magicspells.util.SpellType;
+import com.nisovin.magicspells.util.SpellTypes;
+@SpellType(types={SpellTypes.TARGETED_LOCATION_SPELL})
 public class BlinkSpell extends TargetedSpell implements TargetedLocationSpell {
 	
 	private boolean passThroughCeiling;
@@ -98,7 +100,7 @@ public class BlinkSpell extends TargetedSpell implements TargetedLocationSpell {
 					playSpellEffects(EffectPosition.CASTER, origLoc);
 					teleport(player, loc, smokes);
 					playSpellEffects(EffectPosition.TARGET, loc);
-					playSpellEffectsTrail(origLoc, loc);
+					playSpellEffectsTrail(origLoc, loc, true);
 				} else {
 					return noTarget(player, strCantBlink);
 				}

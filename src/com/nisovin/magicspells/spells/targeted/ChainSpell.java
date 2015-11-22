@@ -17,8 +17,10 @@ import com.nisovin.magicspells.spells.TargetedEntityFromLocationSpell;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.SpellType;
+import com.nisovin.magicspells.util.SpellTypes;
 import com.nisovin.magicspells.util.TargetInfo;
-
+@SpellType(types={SpellTypes.TARGETED_ENTITY_SPELL, SpellTypes.TARGETED_ENTITY_FROM_LOCATION_SPELL})
 public class ChainSpell extends TargetedSpell implements TargetedEntitySpell, TargetedEntityFromLocationSpell {
 
 	String spellNameToCast;
@@ -130,9 +132,9 @@ public class ChainSpell extends TargetedSpell implements TargetedEntitySpell, Ta
 				}
 				castSpellAt(player, from, targets.get(i), targetPowers.get(i));
 				if (i > 0) {
-					playSpellEffectsTrail(targets.get(i-1).getLocation(), targets.get(i).getLocation());
+					playSpellEffectsTrail(targets.get(i-1).getLocation(), targets.get(i).getLocation(), true);
 				} else if (i == 0 && player != null) {
-					playSpellEffectsTrail(player.getLocation(), targets.get(i).getLocation());
+					playSpellEffectsTrail(player.getLocation(), targets.get(i).getLocation(), true);
 				}
 				playSpellEffects(EffectPosition.TARGET, targets.get(i));
 			}
@@ -202,9 +204,9 @@ public class ChainSpell extends TargetedSpell implements TargetedEntitySpell, Ta
 			}
 			castSpellAt(caster, from, targets.get(current), power);
 			if (current > 0) {
-				playSpellEffectsTrail(targets.get(current-1).getLocation().add(0, .5, 0), targets.get(current).getLocation().add(0, .5, 0));
+				playSpellEffectsTrail(targets.get(current-1).getLocation().add(0, .5, 0), targets.get(current).getLocation().add(0, .5, 0), true);
 			} else if (current == 0 && caster != null) {
-				playSpellEffectsTrail(caster.getLocation().add(0, .5, 0), targets.get(current).getLocation().add(0, .5, 0));
+				playSpellEffectsTrail(caster.getLocation().add(0, .5, 0), targets.get(current).getLocation().add(0, .5, 0), true);
 			}
 			playSpellEffects(EffectPosition.TARGET, targets.get(current));
 			current++;

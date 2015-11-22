@@ -110,6 +110,7 @@ public class ItemSprayEffect extends SpellEffect {
 		
 		// schedule item deletion
 		MagicSpells.scheduleDelayedTask(new Runnable() {
+			@Override
 			public void run() {
 				for (int i = 0; i < items.length; i++) {
 					items[i].remove();

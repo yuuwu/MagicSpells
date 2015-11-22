@@ -17,9 +17,11 @@ import com.nisovin.magicspells.spells.TargetedEntitySpell;
 
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.SpellType;
+import com.nisovin.magicspells.util.SpellTypes;
 import com.nisovin.magicspells.util.TargetInfo;
 import com.nisovin.magicspells.util.Util;
-
+@SpellType(types={SpellTypes.TARGETED_ENTITY_SPELL})
 public class CleanseSpell extends TargetedSpell implements TargetedEntitySpell {
 
 	boolean targetPlayers;

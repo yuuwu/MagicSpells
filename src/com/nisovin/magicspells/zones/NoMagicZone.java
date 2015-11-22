@@ -7,15 +7,28 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.Spell;
+import com.nisovin.magicspells.util.ConfigData;
 
 public abstract class NoMagicZone implements Comparable<NoMagicZone> {
 
 	private String id;
+	
+	@ConfigData(field="priority", dataType="int", defaultValue="0")
 	private int priority;
+	
+	@ConfigData(field="message", dataType="String", defaultValue="You are in a no-magic zone.")
 	private String message;
+	
+	@ConfigData(field="allowed-spells", dataType="String[]")
 	private List<String> allowedSpells;
+	
+	@ConfigData(field="disallowed-spells", dataType="String[]")
 	private List<String> disallowedSpells;
+	
+	@ConfigData(field="allow-all", dataType="boolean", defaultValue="false")
 	private boolean allowAll;
+	
+	@ConfigData(field="disallow-all", dataType="boolean", defaultValue="true")
 	private boolean disallowAll;
 	
 	public final void create(String id, ConfigurationSection config) {

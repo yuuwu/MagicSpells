@@ -21,6 +21,7 @@ import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.events.SpellCastedEvent;
 import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.SpellTypesAllowed;
 
 public class BowSpell extends Spell {
 
@@ -31,8 +32,10 @@ public class BowSpell extends Spell {
 	@ConfigData(field="bow-name", dataType="String", defaultValue="null")
 	String bowName;
 	
+	@SpellTypesAllowed
 	@ConfigData(field="spell", dataType="String", defaultValue="null")
 	String spellNameOnShoot;
+	
 	
 	Subspell spellOnShoot;
 	

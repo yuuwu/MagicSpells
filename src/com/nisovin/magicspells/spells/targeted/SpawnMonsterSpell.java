@@ -27,9 +27,11 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.BlockUtils;
+import com.nisovin.magicspells.util.SpellType;
+import com.nisovin.magicspells.util.SpellTypes;
 import com.nisovin.magicspells.util.Util;
 import com.nisovin.magicspells.util.MagicConfig;
-
+@SpellType(types={SpellTypes.TARGETED_LOCATION_SPELL})
 public class SpawnMonsterSpell extends TargetedSpell implements TargetedLocationSpell {
 
 	private String location;

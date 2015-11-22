@@ -10,8 +10,10 @@ import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.BlockUtils;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.SpellType;
+import com.nisovin.magicspells.util.SpellTypes;
 import com.nisovin.magicspells.util.TargetInfo;
-
+@SpellType(types={SpellTypes.TARGETED_ENTITY_SPELL, SpellTypes.TARGETED_ENTITY_FROM_LOCATION_SPELL})
 public class GripSpell extends TargetedSpell implements TargetedEntitySpell, TargetedEntityFromLocationSpell {
 
 	float locationOffset;
@@ -90,7 +92,7 @@ public class GripSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 			Location start = target.getLocation().clone();
 			playSpellEffects(EffectPosition.TARGET, target);
 			target.teleport(loc);
-			playSpellEffectsTrail(start, loc);
+			playSpellEffectsTrail(start, loc, true);
 			return true;
 		} else {
 			return false;

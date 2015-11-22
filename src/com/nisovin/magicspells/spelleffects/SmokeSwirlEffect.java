@@ -71,6 +71,7 @@ public class SmokeSwirlEffect extends SpellEffect {
 			this.taskId = MagicSpells.scheduleRepeatingTask(this, 0, interval);
 		}
 		
+		@Override
 		public void run() {
 			if (iteration * interval > duration) {
 				Bukkit.getScheduler().cancelTask(taskId);

@@ -24,10 +24,14 @@ import com.nisovin.magicspells.util.BlockUtils;
 import com.nisovin.magicspells.util.BoundingBox;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.ParticleNameUtil;
+import com.nisovin.magicspells.util.SpellType;
+import com.nisovin.magicspells.util.SpellTypes;
+import com.nisovin.magicspells.util.SpellTypesAllowed;
 import com.nisovin.magicspells.util.Util;
 
 import de.slikey.effectlib.util.ParticleEffect;
 
+@SpellType(types={SpellTypes.TARGETED_LOCATION_SPELL})
 public class ParticleProjectileSpell extends InstantSpell implements TargetedLocationSpell {
 
 	float startYOffset;
@@ -70,6 +74,7 @@ public class ParticleProjectileSpell extends InstantSpell implements TargetedLoc
 	boolean stopOnHitEntity;
 	boolean stopOnHitGround;
 	
+	@SpellTypesAllowed
 	String landSpellName;
 	Subspell spell;
 	

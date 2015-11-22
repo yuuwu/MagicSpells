@@ -27,8 +27,11 @@ import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
 import com.nisovin.magicspells.util.SpellReagents;
+import com.nisovin.magicspells.util.SpellType;
+import com.nisovin.magicspells.util.SpellTypes;
 import com.nisovin.magicspells.util.TargetInfo;
 
+@SpellType(types={SpellTypes.TARGETED_ENTITY_SPELL})
 public abstract class BuffSpell extends TargetedSpell implements TargetedEntitySpell {
 	
 	BuffSpell thisSpell;

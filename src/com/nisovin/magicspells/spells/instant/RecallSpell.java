@@ -14,7 +14,10 @@ import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.MagicLocation;
 import com.nisovin.magicspells.util.PlayerNameUtils;
+import com.nisovin.magicspells.util.SpellType;
+import com.nisovin.magicspells.util.SpellTypes;
 
+@SpellType(types={SpellTypes.TARGETED_ENTITY_SPELL})
 public class RecallSpell extends InstantSpell implements TargetedEntitySpell {
 	
 	private String markSpellName;

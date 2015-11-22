@@ -29,6 +29,8 @@ import com.nisovin.magicspells.events.SpellTargetEvent;
 import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellReagents;
+import com.nisovin.magicspells.util.SpellTypes;
+import com.nisovin.magicspells.util.SpellTypesAllowed;
 
 public class ArrowSpell extends Spell {
 
@@ -37,9 +39,11 @@ public class ArrowSpell extends Spell {
 	@ConfigData(field="bow-name", dataType="String", defaultValue="null")
 	String bowName;
 	
+	@SpellTypesAllowed({SpellTypes.TARGETED_ENTITY_SPELL})
 	@ConfigData(field="spell-on-hit-entity", dataType="String", defaultValue="null")
 	String spellNameOnHitEntity;
 	
+	@SpellTypesAllowed({SpellTypes.TARGETED_LOCATION_SPELL})
 	@ConfigData(field="spell-on-hit-ground", dataType="String", defaultValue="null")
 	String spellNameOnHitGround;
 	

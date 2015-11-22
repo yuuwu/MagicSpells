@@ -15,6 +15,7 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
+import com.nisovin.magicspells.util.SpellTypesAllowed;
 
 public final class MultiSpell extends InstantSpell {
 
@@ -30,6 +31,7 @@ public final class MultiSpell extends InstantSpell {
 	@ConfigData(field="cast-random-spell-instead", dataType="boolean", defaultValue="false")
 	private boolean castRandomSpellInstead;
 	
+	@SpellTypesAllowed
 	@ConfigData(field="spells", dataType="String[]", defaultValue="null")
 	private List<String> spellList;
 	

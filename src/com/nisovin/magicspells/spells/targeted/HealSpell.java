@@ -10,8 +10,10 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.SpellType;
+import com.nisovin.magicspells.util.SpellTypes;
 import com.nisovin.magicspells.util.TargetInfo;
-
+@SpellType(types={SpellTypes.TARGETED_ENTITY_SPELL})
 public class HealSpell extends TargetedSpell implements TargetedEntitySpell {
 	
 	private double healAmount;
@@ -76,7 +78,7 @@ public class HealSpell extends TargetedSpell implements TargetedEntitySpell {
 		playSpellEffects(EffectPosition.TARGET, target);
 		if (player != null) {
 			playSpellEffects(EffectPosition.CASTER, player);
-			playSpellEffectsTrail(player.getLocation(), target.getLocation());			
+			playSpellEffectsTrail(player.getLocation(), target.getLocation(), true);			
 		}
 		
 		return true;

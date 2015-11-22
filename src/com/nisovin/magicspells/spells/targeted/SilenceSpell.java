@@ -22,9 +22,11 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.SpellType;
+import com.nisovin.magicspells.util.SpellTypes;
 import com.nisovin.magicspells.util.TargetInfo;
 import com.nisovin.magicspells.util.ValidTargetList;
-
+@SpellType(types={SpellTypes.TARGETED_ENTITY_SPELL})
 public class SilenceSpell extends TargetedSpell implements TargetedEntitySpell {
 
 	private boolean preventCast;

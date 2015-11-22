@@ -11,17 +11,30 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spell;
 import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.spells.CommandSpell;
+import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
 
 public class SublistSpell extends CommandSpell {
 	
 	private int lineLength = 60;
+	
+	@ConfigData(field="only-show-castable-spells", dataType="boolean", defaultValue="false")
 	private boolean onlyShowCastableSpells;
+	
+	@ConfigData(field="reload-granted-spells", defaultValue="true")
 	private boolean reloadGrantedSpells;
+	
+	@ConfigData(field="spells-to-hide", dataType="String[]", defaultValue="null")
 	private List<String> spellsToHide;
+	
+	@ConfigData(field="spells-to-show", dataType="String[]", defaultValue="null")
 	private List<String> spellsToShow;
+	
+	@ConfigData(field="str-no-spells", dataType="String", defaultValue="You do not know any spells.")
 	private String strNoSpells;
+	
+	@ConfigData(field="str-prefix", dataType="String", defaultValue="Known spells:")
 	private String strPrefix;
 
 	public SublistSpell(MagicConfig config, String spellName) {

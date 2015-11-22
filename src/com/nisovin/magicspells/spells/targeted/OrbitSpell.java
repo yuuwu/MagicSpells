@@ -12,10 +12,12 @@ import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.ParticleNameUtil;
+import com.nisovin.magicspells.util.SpellType;
+import com.nisovin.magicspells.util.SpellTypes;
 import com.nisovin.magicspells.util.TargetInfo;
 
 import de.slikey.effectlib.util.ParticleEffect;
-
+@SpellType(types={SpellTypes.TARGETED_ENTITY_SPELL})
 public class OrbitSpell extends TargetedSpell implements TargetedEntitySpell {
 
 	float orbitRadius;
