@@ -3,7 +3,7 @@ package com.nisovin.magicspells.util;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.SOURCE)
 public @interface ConfigData {
 	String field() default "";
 	String dataType() default "";
