@@ -1,6 +1,7 @@
 package com.nisovin.magicspells;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -123,7 +124,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	protected int experience;
 	
 	@ConfigData
-	protected HashMap<EffectPosition, List<SpellEffect>> effects;
+	protected EnumMap<EffectPosition, List<SpellEffect>> effects;
 	
 	@ConfigData
 	protected int minRange;
@@ -435,7 +436,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		
 		// graphical effects
 		if (config.contains(section + "." + spellName + ".effects")) {
-			this.effects = new HashMap<EffectPosition, List<SpellEffect>>();
+			this.effects = new EnumMap<EffectPosition, List<SpellEffect>>(EffectPosition.class);
 			if (config.isList(section + "." + spellName + ".effects")) {
 				List<String> effectsList = config.getStringList(section + "." + spellName + ".effects", null);
 				if (effectsList != null) {
@@ -478,6 +479,8 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 				}
 			}
 		}
+		
+		//TODO load the fast mapping for effects here
 		
 		// cost
 		reagents = getConfigReagents("cost");
