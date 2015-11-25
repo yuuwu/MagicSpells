@@ -78,7 +78,7 @@ public class HealSpell extends TargetedSpell implements TargetedEntitySpell {
 		playSpellEffects(EffectPosition.TARGET, target);
 		if (player != null) {
 			playSpellEffects(EffectPosition.CASTER, player);
-			playSpellEffectsTrail(player.getLocation(), target.getLocation(), true);			
+			playSpellEffectsTrail(player.getLocation(), target.getLocation());			
 		}
 		
 		return true;

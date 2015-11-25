@@ -92,7 +92,7 @@ public class GripSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 			Location start = target.getLocation().clone();
 			playSpellEffects(EffectPosition.TARGET, target);
 			target.teleport(loc);
-			playSpellEffectsTrail(start, loc, true);
+			playSpellEffectsTrail(start, loc);
 			return true;
 		} else {
 			return false;

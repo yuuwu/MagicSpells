@@ -10,8 +10,7 @@ public enum EffectPosition {
 	DELAYED(5),
 	SPECIAL(6),
 	BUFF(7),
-	ORBIT(8),
-	INTELLIGENT_LINE(9);
+	ORBIT(8);
 	
 	private int id;
 	private EffectPosition(int num) {

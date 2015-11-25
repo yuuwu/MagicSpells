@@ -157,10 +157,6 @@ public abstract class SpellEffect {
 		//expect to be overridden
 	}
 	
-	public void playAsIntelligentLine(Location origin, Location target, Entity originEntity, Entity targetEntity) {
-		
-	}
-	
 	/**
 	 * Plays an effect between two locations (such as a smoke trail type effect).
 	 * @param location1 the starting location

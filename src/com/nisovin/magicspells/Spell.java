@@ -615,8 +615,6 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 			return EffectPosition.BUFF;
 		} else if (spos.equalsIgnoreCase("orbit")) {
 			return EffectPosition.ORBIT;
-		} else if (spos.equalsIgnoreCase("intelligentline") || spos.equalsIgnoreCase("iline") || spos.equalsIgnoreCase("intelligenttrail") || spos.equalsIgnoreCase("itrail")) {
-			return EffectPosition.INTELLIGENT_LINE;
 		}
 		return null;
 	}
@@ -1548,40 +1546,25 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	protected void playSpellEffects(Entity pos1, Entity pos2) {
 		playSpellEffects(EffectPosition.CASTER, pos1);
 		playSpellEffects(EffectPosition.TARGET, pos2);
-		playSpellEffectsTrail(pos1.getLocation(), pos2.getLocation(), false);
-		playSpellEffectsIntelligentLine(null, null, pos1, pos2);
+		playSpellEffectsTrail(pos1.getLocation(), pos2.getLocation());
 	}
 	
 	protected void playSpellEffects(Entity pos1, Location pos2) {
 		playSpellEffects(EffectPosition.CASTER, pos1);
 		playSpellEffects(EffectPosition.TARGET, pos2);
-		playSpellEffectsTrail(pos1.getLocation(), pos2, false);
-		playSpellEffectsIntelligentLine(null, pos2, pos1, null);
+		playSpellEffectsTrail(pos1.getLocation(), pos2);
 	}
 	
 	protected void playSpellEffects(Location pos1, Entity pos2) {
 		playSpellEffects(EffectPosition.CASTER, pos1);
 		playSpellEffects(EffectPosition.TARGET, pos2);
-		playSpellEffectsTrail(pos1, pos2.getLocation(), false);
-		playSpellEffectsIntelligentLine(pos1, null, null, pos2);
+		playSpellEffectsTrail(pos1, pos2.getLocation());
 	}
 	
 	protected void playSpellEffects(Location pos1, Location pos2) {
 		playSpellEffects(EffectPosition.CASTER, pos1);
 		playSpellEffects(EffectPosition.TARGET, pos2);
-		playSpellEffectsTrail(pos1, pos2, false);
-		playSpellEffectsIntelligentLine(pos1, pos2, null, null);
-	}
-	
-	protected void playSpellEffectsIntelligentLine(Location origin, Location target, Entity originEntity, Entity targetEntity) {
-		if (effects != null) {
-			List<SpellEffect> effectsList = effects.get(EffectPosition.INTELLIGENT_LINE);
-			if (effectsList != null) {
-				for (SpellEffect e: effectsList) {
-					e.playAsIntelligentLine(origin, target, originEntity, targetEntity);
-				}
-			}
-		}
+		playSpellEffectsTrail(pos1, pos2);
 	}
 	
 	protected void playSpellEffects(EffectPosition pos, Entity entity) {
@@ -1606,14 +1589,6 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		}
 	}
 	
-	protected void playSpellEffectsTrail(Location loc1, Location loc2, boolean addIntelligent) {
-		if (addIntelligent) {
-			playSpellEffectsIntelligentLine(loc1, loc2, null, null);
-		}
-		playSpellEffectsTrail(loc1, loc2);
-	}
-	
-	@Deprecated
 	protected void playSpellEffectsTrail(Location loc1, Location loc2) {
 		if (effects != null) {
 			List<SpellEffect> effectsList = effects.get(EffectPosition.TRAIL);

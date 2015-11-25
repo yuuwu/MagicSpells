@@ -132,9 +132,9 @@ public class ChainSpell extends TargetedSpell implements TargetedEntitySpell, Ta
 				}
 				castSpellAt(player, from, targets.get(i), targetPowers.get(i));
 				if (i > 0) {
-					playSpellEffectsTrail(targets.get(i-1).getLocation(), targets.get(i).getLocation(), true);
+					playSpellEffectsTrail(targets.get(i-1).getLocation(), targets.get(i).getLocation());
 				} else if (i == 0 && player != null) {
-					playSpellEffectsTrail(player.getLocation(), targets.get(i).getLocation(), true);
+					playSpellEffectsTrail(player.getLocation(), targets.get(i).getLocation());
 				}
 				playSpellEffects(EffectPosition.TARGET, targets.get(i));
 			}
@@ -204,9 +204,9 @@ public class ChainSpell extends TargetedSpell implements TargetedEntitySpell, Ta
 			}
 			castSpellAt(caster, from, targets.get(current), power);
 			if (current > 0) {
-				playSpellEffectsTrail(targets.get(current-1).getLocation().add(0, .5, 0), targets.get(current).getLocation().add(0, .5, 0), true);
+				playSpellEffectsTrail(targets.get(current-1).getLocation().add(0, .5, 0), targets.get(current).getLocation().add(0, .5, 0));
 			} else if (current == 0 && caster != null) {
-				playSpellEffectsTrail(caster.getLocation().add(0, .5, 0), targets.get(current).getLocation().add(0, .5, 0), true);
+				playSpellEffectsTrail(caster.getLocation().add(0, .5, 0), targets.get(current).getLocation().add(0, .5, 0));
 			}
 			playSpellEffects(EffectPosition.TARGET, targets.get(current));
 			current++;

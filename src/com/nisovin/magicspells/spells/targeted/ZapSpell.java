@@ -136,7 +136,7 @@ public class ZapSpell extends TargetedSpell implements TargetedLocationSpell {
 		}
 		playSpellEffects(EffectPosition.TARGET, target.getLocation());
 		if (player != null) {
-			playSpellEffectsTrail(player.getLocation(), target.getLocation(), true);
+			playSpellEffectsTrail(player.getLocation(), target.getLocation());
 		}
 		
 		// remove block

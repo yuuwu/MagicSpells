@@ -103,7 +103,7 @@ public class BuildSpell extends TargetedSpell implements TargetedLocationSpell {
 		}
 		playSpellEffects(EffectPosition.CASTER, player);
 		playSpellEffects(EffectPosition.TARGET, block.getLocation());
-		playSpellEffectsTrail(player.getLocation(), block.getLocation(), true);
+		playSpellEffectsTrail(player.getLocation(), block.getLocation());
 		if (consumeBlock) {
 			int amt = item.getAmount()-1;
 			if (amt > 0) {

@@ -29,10 +29,4 @@ public class EffectLibEffect extends SpellEffect {
 	protected void playEffectLocation(Location location) {
 		manager.start(className, effectLibSection, location);
 	}
-	
-	@Override
-	public void playAsIntelligentLine(Location origin, Location target, Entity originEntity, Entity targetEntity) {
-		manager.start(className, effectLibSection, origin, target, originEntity, targetEntity, null);
-	}
-
 }
