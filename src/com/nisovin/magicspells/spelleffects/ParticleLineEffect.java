@@ -3,6 +3,7 @@ package com.nisovin.magicspells.spelleffects;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.util.ColorUtil;
 
 public class ParticleLineEffect extends ParticlesEffect {
@@ -46,14 +47,15 @@ public class ParticleLineEffect extends ParticlesEffect {
 		if (c <= 0) return;
 		Vector v = location2.toVector().subtract(location1.toVector()).normalize().multiply(distanceBetween);
 		Location l = location1.clone();
-		
+		l = l.add(0, yOffset, 0);
 		for (int i = 0; i < c; i++) {
+			
 			l.add(v);
 			
 			//MagicSpells.getVolatileCodeHandler().playParticleEffect(l, name, horizSpread, vertSpread, speed, count, 15, yOffset);
 			//Location location, String name, float spreadHoriz, float spreadVert, float speed, int count, int radius, float yOffset
-			
-			effect.display(null, l.add(0,yOffset,0), color, renderDistance, horizSpread, vertSpread, horizSpread, speed, count);
+			DebugHandler.debugEffectInfo("Playing particle line effect: location = " + l.toString());
+			effect.display(null, l, color, renderDistance, horizSpread, vertSpread, horizSpread, speed, count);
 			//ParticleData data, Location center, Color color, double range, float offsetX, float offsetY, float offsetZ, float speed, int amount
 		}
 	}

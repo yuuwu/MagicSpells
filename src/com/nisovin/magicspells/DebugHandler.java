@@ -4,6 +4,12 @@ import java.util.logging.Level;
 
 public class DebugHandler {
 	
+	public static void debugEffectInfo(String s) {
+		if (MagicSpells.plugin.debug) {
+		MagicSpells.plugin.getLogger().log(Level.INFO, s);
+		}
+	}
+	
 	public static void debugNull(Throwable t) {
 		if (MagicSpells.plugin.debugNull) {
 			MagicSpells.plugin.getLogger().log(Level.WARNING, t.toString() + "\n" + throwableToString(t));

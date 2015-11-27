@@ -314,6 +314,7 @@ public abstract class SpellEffect {
 		effects.put("title", TitleEffect.class);
 		effects.put("effectlib", EffectLibEffect.class);
 		effects.put("effectlibparticles", EffectLibParticlesEffect.class);
+		effects.put("effectlibline", EffectLibLineEffect.class);
 	}
 	
 }
