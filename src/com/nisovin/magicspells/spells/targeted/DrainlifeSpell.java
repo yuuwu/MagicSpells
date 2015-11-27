@@ -42,6 +42,11 @@ import com.nisovin.magicspells.util.TargetInfo;
 @SpellType(types={SpellTypes.TARGETED_ENTITY_SPELL, SpellTypes.SPELL_DAMAGE_SPELL})
 public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell, SpellDamageSpell {
 	
+	public static final int MAX_FOOD_LEVEL = 20;
+	public static final int MIN_FOOD_LEVEL = 0;
+	
+	public static final double MIN_HEALTH = 0d;
+	
 	private String takeType;
 	private double takeAmt;
 	private String giveType;
@@ -112,9 +117,9 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 				double health = target.getHealth();
 				if (health > target.getMaxHealth()) health = target.getMaxHealth();
 				health -= take;
-				if (health < 0) health = 0;
+				if (health < MIN_HEALTH) health = MIN_HEALTH;
 				if (health > target.getMaxHealth()) health = target.getMaxHealth();
-				if (health == 0 && player != null) {
+				if (health == MIN_HEALTH && player != null) {
 					MagicSpells.getVolatileCodeHandler().setKiller(target, player);
 					//TODO use a non volatile handler for this
 				}
@@ -136,7 +141,7 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 				int food = p.getFoodLevel();
 				if (give > food) give = food;
 				food -= take;
-				if (food < 0) food = 0;
+				if (food < MIN_FOOD_LEVEL) food = MIN_FOOD_LEVEL;
 				p.setFoodLevel(food);
 			}
 		} else if (takeType.equals("experience")) {
@@ -174,7 +179,7 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 		} else if (giveType.equals("hunger")) {
 			int food = player.getFoodLevel();
 			food += give;
-			if (food > 20) food = 20;
+			if (food > MAX_FOOD_LEVEL) food = MAX_FOOD_LEVEL;
 			player.setFoodLevel(food);
 		} else if (giveType.equals("experience")) {
 			ExperienceUtils.changeExp(player, (int)give);
