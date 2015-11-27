@@ -10,6 +10,7 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
+import com.nisovin.magicspells.util.EffectPackage;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.ParticleNameUtil;
 import com.nisovin.magicspells.util.SpellType;
@@ -17,6 +18,7 @@ import com.nisovin.magicspells.util.SpellTypes;
 import com.nisovin.magicspells.util.TargetInfo;
 
 import de.slikey.effectlib.util.ParticleEffect;
+import de.slikey.effectlib.util.ParticleEffect.ParticleData;
 @SpellType(types={SpellTypes.TARGETED_ENTITY_SPELL})
 public class OrbitSpell extends TargetedSpell implements TargetedEntitySpell {
 
@@ -43,6 +45,7 @@ public class OrbitSpell extends TargetedSpell implements TargetedEntitySpell {
 	
 	Color particleColor = null;
 	ParticleEffect effect;
+	ParticleData data;
 	
 	public OrbitSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -68,7 +71,9 @@ public class OrbitSpell extends TargetedSpell implements TargetedEntitySpell {
 		targetPlayers = getConfigBoolean("target-players", true);
 		targetNonPlayers = getConfigBoolean("target-non-players", false);
 		//TODO add color config
-		effect = ParticleNameUtil.findEffect(particleName);
+		EffectPackage pkg = ParticleNameUtil.findEffectPackage(particleName);
+		effect = pkg.effect;
+		data = pkg.data;
 	}
 
 	@Override
@@ -138,7 +143,7 @@ public class OrbitSpell extends TargetedSpell implements TargetedEntitySpell {
 			// show particle
 			//MagicSpells.getVolatileCodeHandler().playParticleEffect(loc, particleName, particleHorizontalSpread, particleVerticalSpread, particleSpeed, particleCount, renderDistance, 0F);
 			
-			effect.display(null, loc, particleColor, renderDistance, particleHorizontalSpread, particleVerticalSpread, particleHorizontalSpread, particleSpeed, particleCount);
+			effect.display(data, loc, particleColor, renderDistance, particleHorizontalSpread, particleVerticalSpread, particleHorizontalSpread, particleSpeed, particleCount);
 			//ParticleData data, Location center, Color color, double range, float offsetX, float offsetY, float offsetZ, float speed, int amount
 			
 		}
