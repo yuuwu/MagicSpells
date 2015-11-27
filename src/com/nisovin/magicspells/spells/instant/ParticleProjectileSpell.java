@@ -22,6 +22,7 @@ import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.util.BlockUtils;
 import com.nisovin.magicspells.util.BoundingBox;
+import com.nisovin.magicspells.util.EffectPackage;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.ParticleNameUtil;
 import com.nisovin.magicspells.util.SpellType;
@@ -30,6 +31,7 @@ import com.nisovin.magicspells.util.SpellTypesAllowed;
 import com.nisovin.magicspells.util.Util;
 
 import de.slikey.effectlib.util.ParticleEffect;
+import de.slikey.effectlib.util.ParticleEffect.ParticleData;
 
 @SpellType(types={SpellTypes.TARGETED_LOCATION_SPELL})
 public class ParticleProjectileSpell extends InstantSpell implements TargetedLocationSpell {
@@ -82,6 +84,7 @@ public class ParticleProjectileSpell extends InstantSpell implements TargetedLoc
 	Random rand = new Random();
 	
 	ParticleEffect effect;
+	ParticleData data;
 
 	public ParticleProjectileSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -134,7 +137,10 @@ public class ParticleProjectileSpell extends InstantSpell implements TargetedLoc
 		
 		landSpellName = getConfigString("spell", "explode");
 		
-		effect = ParticleNameUtil.findEffect(particleName);
+		
+		EffectPackage pkg = ParticleNameUtil.findEffectPackage(particleName);
+		effect = pkg.effect;
+		data = pkg.data;
 	}
 	
 	@Override
@@ -294,7 +300,7 @@ public class ParticleProjectileSpell extends InstantSpell implements TargetedLoc
 			
 			// show particle
 			//MagicSpells.getVolatileCodeHandler().playParticleEffect(currentLocation, particleName, particleHorizontalSpread, particleVerticalSpread, particleSpeed, particleCount, renderDistance, 0F);
-			effect.display(null, currentLocation, null, renderDistance, particleHorizontalSpread, particleVerticalSpread, particleHorizontalSpread, particleSpeed, particleCount);
+			effect.display(data, currentLocation, null, renderDistance, particleHorizontalSpread, particleVerticalSpread, particleHorizontalSpread, particleSpeed, particleCount);
 			//ParticleData data, Location center, Color color, double range, float offsetX, float offsetY, float offsetZ, float speed, int amount
 						
 			// play effects

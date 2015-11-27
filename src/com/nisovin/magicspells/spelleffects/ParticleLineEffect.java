@@ -55,7 +55,7 @@ public class ParticleLineEffect extends ParticlesEffect {
 			//MagicSpells.getVolatileCodeHandler().playParticleEffect(l, name, horizSpread, vertSpread, speed, count, 15, yOffset);
 			//Location location, String name, float spreadHoriz, float spreadVert, float speed, int count, int radius, float yOffset
 			DebugHandler.debugEffectInfo("Playing particle line effect: location = " + l.toString());
-			effect.display(null, l, color, renderDistance, horizSpread, vertSpread, horizSpread, speed, count);
+			effect.display(data, l, color, renderDistance, horizSpread, vertSpread, horizSpread, speed, count);
 			//ParticleData data, Location center, Color color, double range, float offsetX, float offsetY, float offsetZ, float speed, int amount
 		}
 	}

@@ -6,6 +6,9 @@ import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 
 import com.nisovin.magicspells.util.ColorUtil;
+import com.nisovin.magicspells.util.ConfigData;
+import com.nisovin.magicspells.util.EffectPackage;
+import com.nisovin.magicspells.util.ParticleNameUtil;
 
 import de.slikey.effectlib.util.ParticleEffect;
 import de.slikey.effectlib.util.ParticleEffect.BlockData;
@@ -21,6 +24,11 @@ public class ParticlesEffect extends SpellEffect {
 	float speed = 0.2F;
 	int count = 5;
 	float yOffset = 0F;
+	
+	@ConfigData(field="render-distance",
+			dataType="int",
+			defaultValue="32",
+			description="Set to something like 625 for long range rendering.")
 	int renderDistance = 32;
 	Color color = null;
 	ParticleData data = null;
@@ -52,7 +60,9 @@ public class ParticlesEffect extends SpellEffect {
 				color = ColorUtil.getColorFromHexString(data[6]);
 			}
 		}
-		findEffect();
+		EffectPackage pkg = ParticleNameUtil.findEffectPackage(name);
+		this.data = pkg.data;
+		this.effect = pkg.effect;
 	}
 
 	@Override
