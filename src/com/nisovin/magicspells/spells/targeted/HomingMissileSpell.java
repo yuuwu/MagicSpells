@@ -14,6 +14,7 @@ import com.nisovin.magicspells.spells.TargetedEntityFromLocationSpell;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.BoundingBox;
+import com.nisovin.magicspells.util.EffectPackage;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.ParticleNameUtil;
 import com.nisovin.magicspells.util.SpellType;
@@ -21,6 +22,7 @@ import com.nisovin.magicspells.util.SpellTypes;
 import com.nisovin.magicspells.util.TargetInfo;
 
 import de.slikey.effectlib.util.ParticleEffect;
+import de.slikey.effectlib.util.ParticleEffect.ParticleData;
 @SpellType(types={SpellTypes.TARGETED_ENTITY_SPELL, SpellTypes.TARGETED_ENTITY_FROM_LOCATION_SPELL})
 public class HomingMissileSpell extends TargetedSpell implements TargetedEntitySpell, TargetedEntityFromLocationSpell {
 
@@ -50,6 +52,7 @@ public class HomingMissileSpell extends TargetedSpell implements TargetedEntityS
 	HomingMissileSpell thisSpell;
 
 	ParticleEffect effect;
+	ParticleData data;
 	
 	boolean useParticles = false;
 
@@ -76,7 +79,9 @@ public class HomingMissileSpell extends TargetedSpell implements TargetedEntityS
 		useParticles = getConfigBoolean("use-particles", false);
 		changeCasterOnReflect = getConfigBoolean("change-caster-on-reflect", true);
 		
-		effect = ParticleNameUtil.findEffect(particleName);
+		EffectPackage pkg = ParticleNameUtil.findEffectPackage(particleName);
+		effect = pkg.effect;
+		data = pkg.data;
 	}
 
 	@Override
@@ -215,7 +220,7 @@ public class HomingMissileSpell extends TargetedSpell implements TargetedEntityS
 			if (useParticles) {
 				//MagicSpells.getVolatileCodeHandler().playParticleEffect(currentLocation, particleName, particleHorizontalSpread, particleVerticalSpread, particleSpeed, particleCount, renderDistance, 0F);
 				
-				effect.display(null, currentLocation, null, renderDistance, particleHorizontalSpread, particleVerticalSpread, particleHorizontalSpread, particleSpeed, particleCount);
+				effect.display(data, currentLocation, null, renderDistance, particleHorizontalSpread, particleVerticalSpread, particleHorizontalSpread, particleSpeed, particleCount);
 				//ParticleData data, Location center, Color color, double range, float offsetX, float offsetY, float offsetZ, float speed, int amount
 			} else {
 				playSpellEffects(EffectPosition.SPECIAL, currentLocation);
