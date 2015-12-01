@@ -42,6 +42,7 @@ public class ThrowBlockSpell extends InstantSpell implements TargetedLocationSpe
 	float velocity;
 	boolean applySpellPowerToVelocity;
 	float verticalAdjustment;
+	float yOffset;
 	int rotationOffset;
 	float fallDamage;
 	int fallDamageMax;
@@ -73,6 +74,7 @@ public class ThrowBlockSpell extends InstantSpell implements TargetedLocationSpe
 		velocity = getConfigFloat("velocity", 1);
 		applySpellPowerToVelocity = getConfigBoolean("apply-spell-power-to-velocity", false);
 		verticalAdjustment = getConfigFloat("vertical-adjustment", 0.5F);
+		yOffset = getConfigFloat("y-offset", 0F);
 		rotationOffset = getConfigInt("rotation-offset", 0);
 		fallDamage = getConfigFloat("fall-damage", 2.0F);
 		fallDamageMax = getConfigInt("fall-damage-max", 20);
@@ -114,7 +116,9 @@ public class ThrowBlockSpell extends InstantSpell implements TargetedLocationSpe
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			Vector v = getVector(player.getLocation(), power);
-			spawnFallingBlock(player, power, player.getEyeLocation().add(v), v);
+			Location l = player.getEyeLocation().add(v);
+			l.add(0, yOffset, 0);
+			spawnFallingBlock(player, power, l, v);
 			playSpellEffects(EffectPosition.CASTER, player);
 		}
 		return PostCastAction.HANDLE_NORMALLY;
@@ -365,7 +369,7 @@ public class ThrowBlockSpell extends InstantSpell implements TargetedLocationSpe
 	@Override
 	public boolean castAtLocation(Player caster, Location target, float power) {
 		Vector v = getVector(target, power);
-		spawnFallingBlock(caster, power, target, v);
+		spawnFallingBlock(caster, power, target.clone().add(0, yOffset, 0), v);
 		playSpellEffects(EffectPosition.CASTER, target);
 		return true;
 	}
@@ -373,7 +377,7 @@ public class ThrowBlockSpell extends InstantSpell implements TargetedLocationSpe
 	@Override
 	public boolean castAtLocation(Location target, float power) {
 		Vector v = getVector(target, power);
-		spawnFallingBlock(null, power, target, v);
+		spawnFallingBlock(null, power, target.clone().add(0, yOffset, 0), v);
 		playSpellEffects(EffectPosition.CASTER, target);
 		return true;
 	}

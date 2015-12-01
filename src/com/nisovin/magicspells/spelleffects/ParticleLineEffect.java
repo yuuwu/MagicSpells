@@ -19,10 +19,11 @@ public class ParticleLineEffect extends ParticlesEffect {
 				name = data[1];
 			}
 			if (data.length >= 3) {
-				horizSpread = Float.parseFloat(data[2]);
+				xSpread = Float.parseFloat(data[2]);
+				zSpread = xSpread;
 			}
 			if (data.length >= 4) {
-				vertSpread = Float.parseFloat(data[3]);
+				ySpread = Float.parseFloat(data[3]);
 			}
 			if (data.length >= 5) {
 				speed = Float.parseFloat(data[4]);
@@ -55,8 +56,9 @@ public class ParticleLineEffect extends ParticlesEffect {
 			//MagicSpells.getVolatileCodeHandler().playParticleEffect(l, name, horizSpread, vertSpread, speed, count, 15, yOffset);
 			//Location location, String name, float spreadHoriz, float spreadVert, float speed, int count, int radius, float yOffset
 			DebugHandler.debugEffectInfo("Playing particle line effect: location = " + l.toString());
-			effect.display(data, l, color, renderDistance, horizSpread, vertSpread, horizSpread, speed, count);
+			effect.display(data, l, color, renderDistance, xSpread, ySpread, zSpread, speed, count);
 			//ParticleData data, Location center, Color color, double range, float offsetX, float offsetY, float offsetZ, float speed, int amount
+			//MagicSpells.getVolatileCodeHandler().playParticleEffect(l, name, xSpread, ySpread, zSpread, speed, count, 15, yOffset);
 		}
 	}
 

@@ -13,6 +13,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.material.NetherWarts;
 
 import com.nisovin.magicspells.DebugHandler;
+import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spell;
 
 public class BlockUtils {
@@ -38,7 +39,11 @@ public class BlockUtils {
 	
 	public static Block getTargetBlock(Spell spell, LivingEntity entity, int range) {
 		try {
-			return entity.getTargetBlock(spell.getLosTransparentBlocks(), range);
+			if (spell != null) {
+				return entity.getTargetBlock(spell.getLosTransparentBlocks(), range);
+			} else {
+				return entity.getTargetBlock(MagicSpells.getTransparentBlocks(), range);				
+			}
 		} catch (IllegalStateException e) {
 			DebugHandler.debugIllegalState(e);
 			return null;

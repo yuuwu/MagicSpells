@@ -227,8 +227,9 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	@ConfigData
 	protected Map<String, Double> variableModsTarget;
 	
+	protected String soundOnCooldown;
+	protected String soundMissingReagents;
 	
-	@ConfigData
 	protected String strCost;
 	
 	@ConfigData
@@ -574,7 +575,15 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 				}
 			}
 		}
-		
+
+		this.soundOnCooldown = config.getString(section + "." + spellName + ".sound-on-cooldown", MagicSpells.plugin.soundFailOnCooldown);
+		if (this.soundOnCooldown != null && this.soundOnCooldown.isEmpty()) {
+			this.soundOnCooldown = null;
+		}
+		this.soundMissingReagents = config.getString(section + "." + spellName + ".sound-missing-reagents", MagicSpells.plugin.soundFailMissingReagents);
+		if (this.soundMissingReagents != null && this.soundMissingReagents.isEmpty()) {
+			this.soundMissingReagents = null;
+		}
 		
 		// strings
 		this.strCost = config.getString(section + "." + spellName + ".str-cost", null);
@@ -947,10 +956,16 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 				}
 			} else if (state == SpellCastState.ON_COOLDOWN) {
 				MagicSpells.sendMessage(player, formatMessage(strOnCooldown, "%c", Math.round(getCooldown(player))+""));
+				if (soundOnCooldown != null) {
+					MagicSpells.getVolatileCodeHandler().playSound(player, soundOnCooldown, 1f, 1f);
+				}
 			} else if (state == SpellCastState.MISSING_REAGENTS) {
 				MagicSpells.sendMessage(player, strMissingReagents);
 				if (MagicSpells.plugin.showStrCostOnMissingReagents && strCost != null && !strCost.isEmpty()) {
 					MagicSpells.sendMessage(player, "    (" + strCost + ")");
+				}
+				if (soundMissingReagents != null) {
+					MagicSpells.getVolatileCodeHandler().playSound(player, soundMissingReagents, 1f, 1f);
 				}
 			} else if (state == SpellCastState.CANT_CAST) {
 				MagicSpells.sendMessage(player, strCantCast);
@@ -1092,6 +1107,10 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 			}
 		}
 		return false;
+	}
+	
+	public float getCooldown() {
+		return cooldown;
 	}
 	
 	/**
@@ -1541,6 +1560,10 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	
 	public HashSet<Byte> getLosTransparentBlocks() {
 		return losTransparentBlocks;
+	}
+	
+	public boolean isTransparent(Block block) {
+		return losTransparentBlocks.contains((byte)block.getTypeId());
 	}
 	
 	protected void playSpellEffects(Entity pos1, Entity pos2) {

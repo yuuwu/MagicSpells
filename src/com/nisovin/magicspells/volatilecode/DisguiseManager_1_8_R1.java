@@ -8,6 +8,7 @@ import net.minecraft.server.v1_8_R1.*;
 
 import org.bukkit.Bukkit;
 import org.bukkit.EntityEffect;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R1.CraftWorld;
@@ -77,9 +78,6 @@ public class DisguiseManager_1_8_R1 extends DisguiseManager {
 					uuid = UUID.fromString(data.uuid);
 				}
 			} catch (Exception e) {
-			}
-			if (uuid == null) {
-				uuid = UUID.randomUUID();
 			}
 			
 			GameProfile profile = new GameProfile(uuid, name);
@@ -329,12 +327,12 @@ public class DisguiseManager_1_8_R1 extends DisguiseManager {
 				dw.a(0, Byte.valueOf((byte) 0));
 				dw.a(1, Short.valueOf((short) 300));
 				dw.a(16, Byte.valueOf((byte)1));
-				broadcastPacket(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
+				broadcastPacketDisguised(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
 				Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
 					@Override
 					public void run() {
 						dw.watch(16, Byte.valueOf((byte)0));
-						broadcastPacket(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
+						broadcastPacketDisguised(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
 					}
 				}, 10);
 			} else if (entityType == EntityType.WITCH) {
@@ -342,12 +340,12 @@ public class DisguiseManager_1_8_R1 extends DisguiseManager {
 				dw.a(0, Byte.valueOf((byte) 0));
 				dw.a(1, Short.valueOf((short) 300));
 				dw.a(21, Byte.valueOf((byte)1));
-				broadcastPacket(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
+				broadcastPacketDisguised(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
 				Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
 					@Override
 					public void run() {
 						dw.watch(21, Byte.valueOf((byte)0));
-						broadcastPacket(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
+						broadcastPacketDisguised(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
 					}
 				}, 10);
 			/*} else if (entityType == EntityType.CREEPER && !disguise.getFlag()) {
@@ -355,11 +353,11 @@ public class DisguiseManager_1_8_R1 extends DisguiseManager {
 				dw.a(0, Byte.valueOf((byte) 0));
 				dw.a(1, Short.valueOf((short) 300));
 				dw.a(17, Byte.valueOf((byte)1));
-				broadcastPacket(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
+				broadcastPacketDisguised(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
 				Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
 					public void run() {
 						dw.watch(17, Byte.valueOf((byte)0));
-						broadcastPacket(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
+						broadcastPacketDisguised(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
 					}
 				}, 10);*/
 			} else if (entityType == EntityType.WOLF) {
@@ -367,12 +365,12 @@ public class DisguiseManager_1_8_R1 extends DisguiseManager {
 				dw.a(0, Byte.valueOf((byte) 0));
 				dw.a(1, Short.valueOf((short) 300));
 				dw.a(16, Byte.valueOf((byte)(p.isSneaking() ? 3 : 2)));
-				broadcastPacket(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
+				broadcastPacketDisguised(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
 				Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
 					@Override
 					public void run() {
 						dw.watch(16, Byte.valueOf((byte)(p.isSneaking() ? 1 : 0)));
-						broadcastPacket(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
+						broadcastPacketDisguised(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
 					}
 				}, 10);
 			} else if (entityType == EntityType.SLIME || entityType == EntityType.MAGMA_CUBE) {
@@ -380,12 +378,12 @@ public class DisguiseManager_1_8_R1 extends DisguiseManager {
 				dw.a(0, Byte.valueOf((byte) 0));
 				dw.a(1, Short.valueOf((short) 300));
 				dw.a(16, Byte.valueOf((byte)(p.isSneaking() ? 2 : 3)));
-				broadcastPacket(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
+				broadcastPacketDisguised(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
 				Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
 					@Override
 					public void run() {
 						dw.watch(16, Byte.valueOf((byte)(p.isSneaking() ? 1 : 2)));
-						broadcastPacket(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
+						broadcastPacketDisguised(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
 					}
 				}, 10);
 			}
@@ -406,13 +404,13 @@ public class DisguiseManager_1_8_R1 extends DisguiseManager {
 				dw.a(0, Byte.valueOf((byte) 0));
 				dw.a(1, Short.valueOf((short) 300));
 				dw.a(16, Byte.valueOf((byte)1));
-				broadcastPacket(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
+				broadcastPacketDisguised(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
 			} else {
 				final DataWatcher dw = new DataWatcher(entityPlayer);
 				dw.a(0, Byte.valueOf((byte) 0));
 				dw.a(1, Short.valueOf((short) 300));
 				dw.a(16, Byte.valueOf((byte)0));
-				broadcastPacket(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
+				broadcastPacketDisguised(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
 			}
 		} else if (entityType == EntityType.ENDERMAN) {
 			if (event.isSneaking()) {
@@ -420,13 +418,13 @@ public class DisguiseManager_1_8_R1 extends DisguiseManager {
 				dw.a(0, Byte.valueOf((byte) 0));
 				dw.a(1, Short.valueOf((short) 300));
 				dw.a(18, Byte.valueOf((byte)1));
-				broadcastPacket(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
+				broadcastPacketDisguised(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
 			} else {
 				final DataWatcher dw = new DataWatcher(entityPlayer);
 				dw.a(0, Byte.valueOf((byte) 0));
 				dw.a(1, Short.valueOf((short) 300));
 				dw.a(18, Byte.valueOf((byte)0));
-				broadcastPacket(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
+				broadcastPacketDisguised(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
 			}
 		} else if (entityType == EntityType.SLIME || entityType == EntityType.MAGMA_CUBE) {
 			if (event.isSneaking()) {
@@ -434,13 +432,13 @@ public class DisguiseManager_1_8_R1 extends DisguiseManager {
 				dw.a(0, Byte.valueOf((byte) 0));
 				dw.a(1, Short.valueOf((short) 300));
 				dw.a(16, Byte.valueOf((byte)1));
-				broadcastPacket(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
+				broadcastPacketDisguised(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
 			} else {
 				final DataWatcher dw = new DataWatcher(entityPlayer);
 				dw.a(0, Byte.valueOf((byte) 0));
 				dw.a(1, Short.valueOf((short) 300));
 				dw.a(16, Byte.valueOf((byte)2));
-				broadcastPacket(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
+				broadcastPacketDisguised(p, PacketType.Play.Server.ENTITY_METADATA, new PacketPlayOutEntityMetadata(entityId, dw, true));
 			}
 		} else if (entityType == EntityType.SHEEP && event.isSneaking()) {
 			p.playEffect(EntityEffect.SHEEP_EAT);
@@ -573,12 +571,24 @@ public class DisguiseManager_1_8_R1 extends DisguiseManager {
 	
 	@Override
 	protected void sendDestroyEntityPackets(Player disguised, int entityId) {
+		DisguiseSpell.Disguise disguise = getDisguise(disguised);
+		if (disguise != null && disguise.getEntityType() == EntityType.PLAYER) {
+			Entity entity = getEntity(disguised, disguise);
+			if (Bukkit.getPlayer(entity.getUniqueID()) == null) {
+				PacketPlayOutPlayerInfo packetinfo = new PacketPlayOutPlayerInfo();
+				refPacketPlayerInfo.set(packetinfo, "a", EnumPlayerInfoAction.REMOVE_PLAYER);
+				List<PlayerInfoData> list = new ArrayList<PlayerInfoData>();
+				list.add(new PlayerInfoData(packetinfo, ((EntityHuman)entity).getProfile(), 0, EnumGamemode.SURVIVAL, new ChatComponentText(((EntityHuman)entity).getName())));
+				refPacketPlayerInfo.set(packetinfo, "b", list);
+				broadcastPacketGlobal(PacketType.Play.Server.PLAYER_INFO, packetinfo);
+			}
+		}
 		PacketPlayOutEntityDestroy packet29 = new PacketPlayOutEntityDestroy(entityId);
 		final EntityTracker tracker = ((CraftWorld)disguised.getWorld()).getHandle().tracker;
 		tracker.a(((CraftPlayer)disguised).getHandle(), packet29);
 	}
 	
-	private void broadcastPacket(Player disguised, PacketType packetId, Packet packet) {
+	private void broadcastPacketDisguised(Player disguised, PacketType packetId, Packet packet) {
 		PacketContainer con = new PacketContainer(packetId, packet);
 		for (Player player : protocolManager.getEntityTrackers(disguised)) {
 			if (player.isValid()) {
@@ -587,6 +597,17 @@ public class DisguiseManager_1_8_R1 extends DisguiseManager {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+			}
+		}
+	}
+
+	private void broadcastPacketGlobal(PacketType packetId, Packet packet) {
+		PacketContainer con = new PacketContainer(packetId, packet);
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			try {
+				protocolManager.sendServerPacket(player, con, false);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 	}
@@ -617,7 +638,7 @@ public class DisguiseManager_1_8_R1 extends DisguiseManager {
 	}
 	
 	@Override
-	protected void sendDisguisedSpawnPackets(Player disguised, DisguiseSpell.Disguise disguise) {
+	protected void sendDisguisedSpawnPackets(final Player disguised, DisguiseSpell.Disguise disguise) {
 		Entity entity = getEntity(disguised, disguise);
 		if (entity != null) {
 			List<Packet> packets = getPacketsToSend(disguised, disguise, entity);
@@ -625,17 +646,52 @@ public class DisguiseManager_1_8_R1 extends DisguiseManager {
 				final EntityTracker tracker = ((CraftWorld)disguised.getWorld()).getHandle().tracker;
 				for (Packet packet : packets) {
 					if (packet instanceof PacketPlayOutEntityMetadata) {
-						broadcastPacket(disguised, PacketType.Play.Server.ENTITY_METADATA, packet);
+						broadcastPacketDisguised(disguised, PacketType.Play.Server.ENTITY_METADATA, packet);
 					} else if (packet instanceof PacketPlayOutNamedEntitySpawn) {
-						broadcastPacket(disguised, PacketType.Play.Server.NAMED_ENTITY_SPAWN, packet);
+						broadcastPacketDisguised(disguised, PacketType.Play.Server.NAMED_ENTITY_SPAWN, packet);
 					} else if (packet instanceof PacketPlayOutPlayerInfo) {
-						broadcastPacket(disguised, PacketType.Play.Server.PLAYER_INFO, packet);
+						broadcastPacketGlobal(PacketType.Play.Server.PLAYER_INFO, packet);
 					} else if (packet instanceof PacketPlayOutSpawnEntityLiving) {
-						broadcastPacket(disguised, PacketType.Play.Server.SPAWN_ENTITY_LIVING, packet);
+						broadcastPacketDisguised(disguised, PacketType.Play.Server.SPAWN_ENTITY_LIVING, packet);
 					} else {
 						tracker.a(((CraftPlayer)disguised).getHandle(), packet);
 					}
 				}
+			}
+			PlayerDisguiseData data = disguise.getPlayerDisguiseData();
+			if (disguise.disguiseSelf() && data != null && data.skin != null && data.sig != null) {
+				data = data.clone();
+				data.uuid = disguised.getUniqueId().toString();
+				GameProfile profile = getGameProfile(disguised.getName(), data);
+				PacketPlayOutPlayerInfo packetinfo = new PacketPlayOutPlayerInfo();
+				refPacketPlayerInfo.set(packetinfo, "a", EnumPlayerInfoAction.ADD_PLAYER);
+				List<PlayerInfoData> list = new ArrayList<PlayerInfoData>();
+				list.add(new PlayerInfoData(packetinfo, profile, 0, EnumGamemode.SURVIVAL, new ChatComponentText(disguised.getName())));
+				refPacketPlayerInfo.set(packetinfo, "b", list);
+				PacketPlayOutRespawn packetrespawn = new PacketPlayOutRespawn(0, EnumDifficulty.HARD, WorldType.NORMAL, EnumGamemode.getById(disguised.getGameMode().getValue()));
+				List<AttributeInstance> l = new ArrayList<AttributeInstance>();
+				AttributeInstance a = ((CraftPlayer)disguised).getHandle().getAttributeInstance(GenericAttributes.maxHealth);
+				if (a != null) {
+					l.add(a);
+				}
+				PacketPlayOutUpdateAttributes packetattr = new PacketPlayOutUpdateAttributes(disguised.getEntityId(), l);
+				PacketPlayOutUpdateHealth packethealth = new PacketPlayOutUpdateHealth((float)disguised.getHealth(), disguised.getFoodLevel(), disguised.getSaturation());
+				try {
+					protocolManager.sendServerPacket(disguised, new PacketContainer(PacketType.Play.Server.PLAYER_INFO, packetinfo), false);
+					protocolManager.sendServerPacket(disguised, new PacketContainer(PacketType.Play.Server.RESPAWN, packetrespawn), false);
+					if (l.size() > 0) {
+						protocolManager.sendServerPacket(disguised, new PacketContainer(PacketType.Play.Server.UPDATE_ATTRIBUTES, packetattr), false);
+					}
+					protocolManager.sendServerPacket(disguised, new PacketContainer(PacketType.Play.Server.UPDATE_HEALTH, packethealth), false);
+					disguised.updateInventory();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				MagicSpells.scheduleDelayedTask(new Runnable() {
+					public void run() {
+						//disguised.updateInventory();
+					}
+				}, 20);
 			}
 		}
 	}

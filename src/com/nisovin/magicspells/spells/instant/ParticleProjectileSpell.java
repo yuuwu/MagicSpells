@@ -54,8 +54,9 @@ public class ParticleProjectileSpell extends InstantSpell implements TargetedLoc
 	String particleName;
 	float particleSpeed;
 	int particleCount;
-	float particleHorizontalSpread;
-	float particleVerticalSpread;
+	float particleXSpread;
+	float particleYSpread;
+	float particleZSpread;
 	
 	int maxDistanceSquared;
 	int maxDuration;
@@ -108,8 +109,12 @@ public class ParticleProjectileSpell extends InstantSpell implements TargetedLoc
 		particleName = getConfigString("particle-name", "reddust");
 		particleSpeed = getConfigFloat("particle-speed", 0.3F);
 		particleCount = getConfigInt("particle-count", 15);
-		particleHorizontalSpread = getConfigFloat("particle-horizontal-spread", 0.3F);
-		particleVerticalSpread = getConfigFloat("particle-vertical-spread", 0.3F);
+		particleXSpread = getConfigFloat("particle-horizontal-spread", 0.3F);
+		particleYSpread = getConfigFloat("particle-vertical-spread", 0.3F);
+		particleZSpread = particleXSpread;
+		particleXSpread = getConfigFloat("particle-red", particleXSpread);
+		particleYSpread = getConfigFloat("particle-green", particleYSpread);
+		particleZSpread = getConfigFloat("particle-blue", particleZSpread);
 		
 		maxDistanceSquared = getConfigInt("max-distance", 15);
 		maxDistanceSquared *= maxDistanceSquared;
@@ -299,10 +304,13 @@ public class ParticleProjectileSpell extends InstantSpell implements TargetedLoc
 			}
 			
 			// show particle
+			
 			//MagicSpells.getVolatileCodeHandler().playParticleEffect(currentLocation, particleName, particleHorizontalSpread, particleVerticalSpread, particleSpeed, particleCount, renderDistance, 0F);
-			effect.display(data, currentLocation, null, renderDistance, particleHorizontalSpread, particleVerticalSpread, particleHorizontalSpread, particleSpeed, particleCount);
+			effect.display(data, currentLocation, null, renderDistance, particleXSpread, particleYSpread, particleZSpread, particleSpeed, particleCount);
 			//ParticleData data, Location center, Color color, double range, float offsetX, float offsetY, float offsetZ, float speed, int amount
-						
+			
+			//MagicSpells.getVolatileCodeHandler().playParticleEffect(currentLocation, particleName, particleXSpread, particleYSpread, particleZSpread, particleSpeed, particleCount, renderDistance, 0F);
+			
 			// play effects
 			if (specialEffectInterval > 0 && counter % specialEffectInterval == 0) {
 				playSpellEffects(EffectPosition.SPECIAL, currentLocation);

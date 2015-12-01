@@ -107,6 +107,7 @@ public class ForcebombSpell extends TargetedSpell implements TargetedLocationSpe
 				playSpellEffects(EffectPosition.TARGET, entity);
 			}
 	    }
+		playSpellEffects(EffectPosition.SPECIAL, location);
 		if (player != null) {
 			playSpellEffects(EffectPosition.CASTER, player);
 		} else {
