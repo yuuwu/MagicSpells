@@ -10,6 +10,7 @@ import com.nisovin.magicspells.events.SpellTargetEvent;
 class MagicSpellListener implements Listener {
 		
 	public MagicSpellListener(MagicSpells plugin) {
+		//no op
 	}
 
 	@EventHandler

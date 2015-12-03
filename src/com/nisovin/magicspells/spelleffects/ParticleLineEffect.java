@@ -5,6 +5,8 @@ import org.bukkit.util.Vector;
 
 import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.util.ColorUtil;
+import com.nisovin.magicspells.util.EffectPackage;
+import com.nisovin.magicspells.util.ParticleNameUtil;
 
 public class ParticleLineEffect extends ParticlesEffect {
 		
@@ -38,7 +40,9 @@ public class ParticleLineEffect extends ParticlesEffect {
 				color = ColorUtil.getColorFromHexString(data[7]);
 			}
 		}
-		super.findEffect();
+		EffectPackage pkg = ParticleNameUtil.findEffectPackage(name);
+		data = pkg.data;
+		effect = pkg.effect;
 	}
 	
 	@Override

@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 public class ItemReagent extends Reagent {
 
 	public ItemReagent() {
-		
+		//no op
 	}
 	
 	@Override

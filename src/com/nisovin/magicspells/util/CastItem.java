@@ -18,6 +18,7 @@ public class CastItem {
 	private int[][] enchants = null;
 	
 	public CastItem() {
+		//no op
 	}
 	
 	public CastItem(int type) {

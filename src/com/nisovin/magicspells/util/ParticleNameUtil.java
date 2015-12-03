@@ -30,13 +30,13 @@ public class ParticleNameUtil {
 				materialData = Integer.parseInt(splits[2]);
 			}
 			if (mat.isBlock()) {
-			data = new BlockData(mat, (byte) materialData);
+				data = new BlockData(mat, (byte) materialData);
 			} else {
 				data = new ItemData(mat, (byte) materialData);
 			}
 		}
 		if (effect == null) {
-			throw new NullPointerException("No particle could be found from: \"" + name + "\"");
+			throw new NullPointerException("No particle could be found from: \"" + splits[0] + "\" + from \"" + name + "\"");
 		}
 		
 		return new EffectPackage(effect, data);

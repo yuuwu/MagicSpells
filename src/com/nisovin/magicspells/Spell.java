@@ -1856,6 +1856,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	 * This method is called when the plugin is being disabled, for any reason.
 	 */
 	protected void turnOff() {
+		//no op
 	}
 	
 	@Override

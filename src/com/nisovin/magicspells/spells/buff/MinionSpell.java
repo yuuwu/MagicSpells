@@ -55,6 +55,7 @@ public class MinionSpell extends BuffSpell {
 				try {
 					chance = Integer.parseInt(data[1]);
 				} catch (NumberFormatException e) {
+					//no op
 				}
 			}
 			creatureTypes[i] = creatureType;

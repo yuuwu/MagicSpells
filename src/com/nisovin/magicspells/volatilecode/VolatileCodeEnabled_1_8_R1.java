@@ -55,6 +55,7 @@ public class VolatileCodeEnabled_1_8_R1 implements VolatileCodeHandle {
 				field.setAccessible(true);
 				return ((net.minecraft.server.v1_8_R1.ItemStack)field.get(item)).getTag();
 			} catch (Exception e) {
+				//no op
 			}
 		}
 		return null;
@@ -74,6 +75,7 @@ public class VolatileCodeEnabled_1_8_R1 implements VolatileCodeHandle {
 			field.setAccessible(true);
 			nmsItem = ((net.minecraft.server.v1_8_R1.ItemStack)field.get(item));
 		} catch (Exception e) {
+			//no op
 		}
 		if (nmsItem == null) {
 			nmsItem = CraftItemStack.asNMSCopy(craftItem);
@@ -86,6 +88,7 @@ public class VolatileCodeEnabled_1_8_R1 implements VolatileCodeHandle {
 				field.setAccessible(true);
 				field.set(craftItem, nmsItem);
 			} catch (Exception e) {
+				//no op
 			}
 		}
 		
@@ -403,6 +406,7 @@ public class VolatileCodeEnabled_1_8_R1 implements VolatileCodeHandle {
 				if (player.getLocation().distanceSquared(location) <= rSq) {
 					((CraftPlayer)player).getHandle().playerConnection.sendPacket(packet);
 				} else {
+					//TODO
 				}
 			}
 		} catch (Exception e) {

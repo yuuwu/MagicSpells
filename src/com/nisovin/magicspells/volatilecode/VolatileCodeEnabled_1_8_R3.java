@@ -407,6 +407,7 @@ public class VolatileCodeEnabled_1_8_R3 implements VolatileCodeHandle {
 				if (player.getLocation().distanceSquared(location) <= rSq) {
 					((CraftPlayer)player).getHandle().playerConnection.sendPacket(packet);
 				} else {
+					//TODO
 				}
 			}
 		} catch (Exception e) {

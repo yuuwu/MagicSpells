@@ -36,6 +36,7 @@ public class TicksListener extends PassiveListener {
 			}
 			ticker.add(spell);
 		} catch (NumberFormatException e) {
+			//no op
 		}
 	}
 	

@@ -80,6 +80,7 @@ public class DisguiseManager_1_8_R3 extends DisguiseManager {
 					uuid = UUID.fromString(data.uuid);
 				}
 			} catch (Exception e) {
+				//no op
 			}
 			
 			GameProfile profile = new GameProfile(uuid, name);
@@ -486,6 +487,7 @@ public class DisguiseManager_1_8_R3 extends DisguiseManager {
 					event.setCancelled(true);
 				}
 			} else if (packet instanceof PacketPlayOutPlayerInfo) {
+				//no op
 			} else if (hideArmor && packet instanceof PacketPlayOutEntityEquipment) {
 				if (refPacketEntityEquipment.getInt(packet, "b") > 0 && disguisedEntityIds.containsKey(refPacketEntityEquipment.getInt(packet, "a"))) {
 					event.setCancelled(true);

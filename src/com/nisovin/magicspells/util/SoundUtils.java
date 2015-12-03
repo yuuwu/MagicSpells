@@ -69,6 +69,7 @@ public class SoundUtils {
 		} catch (IllegalArgumentException e) {
 			DebugHandler.debugIllegalArgumentException(e);
 		} catch (InstantiationException e) {
+			//TODO handle this
 		} catch (IllegalAccessException e) {
 			DebugHandler.debugIllegalAccessException(e);
 		} catch (InvocationTargetException e) {

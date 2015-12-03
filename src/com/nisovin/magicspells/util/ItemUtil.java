@@ -61,6 +61,7 @@ public class ItemUtil {
 			try {
 				craftItem = CraftItemStackWrapper.asCraftCopyMethod.invoke(null, item);
 			} catch (Exception e) {
+				//no op
 			}
 		}
 		

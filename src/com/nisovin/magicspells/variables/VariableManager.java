@@ -273,7 +273,9 @@ public class VariableManager implements Listener {
 				if (writer != null) {
 					try {
 						writer.close();
-					} catch (Exception e) {}
+					} catch (Exception e) {
+						//no op
+					}
 				}
 			}
 		}

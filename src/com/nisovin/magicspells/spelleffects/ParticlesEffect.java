@@ -81,30 +81,11 @@ public class ParticlesEffect extends SpellEffect {
 		yOffset = (float)config.getDouble("y-offset", yOffset);
 		renderDistance = config.getInt("render-distance", renderDistance);
 		color = ColorUtil.getColorFromHexString(config.getString("color", null));
-		findEffect();
+		EffectPackage pkg = ParticleNameUtil.findEffectPackage(name);
+		data = pkg.data;
+		effect = pkg.effect;
 	}
 	
-	protected void findEffect() {
-		String[] splits = name.split("_");
-		effect = ParticleEffect.fromName(splits[0]);
-		
-		if (splits.length > 1) {
-			Material mat = Material.getMaterial(Integer.parseInt(splits[1]));
-			int materialData = 0;
-			if (splits.length > 2) {
-				materialData = Integer.parseInt(splits[2]);
-			}
-			if (mat.isBlock()) {
-			data = new BlockData(mat, (byte) materialData);
-			} else {
-				data = new ItemData(mat, (byte) materialData);
-			}
-		}
-		if (effect == null) {
-			throw new NullPointerException("No particle could be found from: \"" + name + "\"");
-		}
-	}
-
 	@Override
 	public void playEffectLocation(Location location) {
 		//ParticleData data, Location center, Color color, double range, float offsetX, float offsetY, float offsetZ, float speed, int amount

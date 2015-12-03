@@ -9,11 +9,11 @@ public abstract class PassiveListener implements Listener {
 	public abstract void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var);
 	
 	public void initialize() {
-		
+		//no op
 	}
 	
 	public void turnOff() {
-		
+		//no op
 	}
 	
 }

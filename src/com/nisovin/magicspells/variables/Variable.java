@@ -14,6 +14,7 @@ public abstract class Variable {
 	protected boolean expBar;
 	
 	public Variable() {
+		//no op
 	}
 	
 	public final void init(double defaultValue, double minValue, double maxValue, boolean permanent, Objective objective, String bossBar, boolean expBar) {
@@ -27,7 +28,9 @@ public abstract class Variable {
 		init();
 	}
 	
-	protected void init() {}
+	protected void init() {
+		//no op
+	}
 	
 	public final boolean modify(Player player, double amount) {
 		return modify(player.getName(), amount);

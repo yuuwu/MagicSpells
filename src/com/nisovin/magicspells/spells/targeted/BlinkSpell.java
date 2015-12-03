@@ -69,6 +69,7 @@ public class BlinkSpell extends TargetedSpell implements TargetedLocationSpell {
 			if (found != null) {
 				Location loc = null;
 				if (range > 0 && !inRange(found.getLocation(), player.getLocation(), range)) {
+					//no op
 				} else if (!passThroughCeiling && found.getRelative(0,-1,0).equals(prev)) {
 					// trying to move upward
 					if (BlockUtils.isPathable(prev) && BlockUtils.isPathable(prev.getRelative(0,-1,0))) { //TODO check null access here
