@@ -2,6 +2,7 @@ package com.nisovin.magicspells.spells.command;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -23,6 +24,8 @@ public class BindSpell extends CommandSpell {
 	private String strNoSpell;
 	private String strCantBindSpell;
 	private String strCantBindItem;
+	private String strSpellCantBind;
+	private Set<Spell> allowedSpells = null;
 
 	public BindSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -39,6 +42,19 @@ public class BindSpell extends CommandSpell {
 		strNoSpell = getConfigString("str-no-spell", "You do not know a spell by that name.");
 		strCantBindSpell = getConfigString("str-cant-bind-spell", "That spell cannot be bound to an item.");
 		strCantBindItem = getConfigString("str-cant-bind-item", "That spell cannot be bound to that item.");
+		strSpellCantBind = getConfigString("str-spell-cant-bind", "That spell cannot be bound like this.");
+		List<String> allowedSpellNames = getConfigStringList("allowed-spells", null);
+		if (allowedSpellNames != null && !allowedSpellNames.isEmpty()) {
+			allowedSpells = new HashSet<Spell>();
+			for (String name: allowedSpellNames) {
+				Spell s = MagicSpells.getSpellByInternalName(name);
+				if (s != null) {
+					allowedSpells.add(s);
+				} else {
+					MagicSpells.plugin.getLogger().warning("Invalid spell listed: " + name);
+				}
+			}
+		}
 	}
 
 	@Override
@@ -61,6 +77,10 @@ public class BindSpell extends CommandSpell {
 				} else if (!spell.canCastWithItem()) {
 					// fail - spell can't be bound
 					sendMessage(player, strCantBindSpell);
+					return PostCastAction.ALREADY_HANDLED;
+				} else if (allowedSpells != null && !allowedSpells.contains(spell)) {
+					// fail - spell isn't allowed to be bound by this bind spell
+					sendMessage(player, strSpellCantBind);
 					return PostCastAction.ALREADY_HANDLED;
 				} else {
 					CastItem castItem = new CastItem(player.getItemInHand());
