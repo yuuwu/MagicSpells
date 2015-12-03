@@ -1,10 +1,13 @@
 package com.nisovin.magicspells.spells.command;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spell;
 import com.nisovin.magicspells.Spellbook;
@@ -20,6 +23,9 @@ public class UnbindSpell extends CommandSpell {
 	private String strNoSpell;
 	private String strCantBindSpell;
 	private String strNotBound;
+	private List<String> allowedSpellsNames = null;
+	private Set<Spell> allowedSpells = null;
+	private String strCantUnbind;
 
 	public UnbindSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -28,6 +34,19 @@ public class UnbindSpell extends CommandSpell {
 		strNoSpell = getConfigString("str-no-spell", "You do not know a spell by that name.");
 		strCantBindSpell = getConfigString("str-cant-bind-spell", "That spell cannot be bound to an item.");
 		strNotBound = getConfigString("str-not-bound", "That spell is not bound to that item.");
+		strCantUnbind = getConfigString("str-cant-unbind", "You cannot unbind this spell");
+		allowedSpellsNames = getConfigStringList("allowed-spells", null);
+		if (allowedSpellsNames != null && !allowedSpellsNames.isEmpty()) {
+			allowedSpells = new HashSet<Spell>();
+			for (String n: allowedSpellsNames) {
+				Spell s = MagicSpells.getSpellByInternalName(n);
+				if (s != null) {
+					allowedSpells.add(s);
+				} else {
+					MagicSpells.plugin.getLogger().warning("Invalid spell defined: " + n);
+				}
+			}
+		}
 	}
 
 	@Override
@@ -52,6 +71,10 @@ public class UnbindSpell extends CommandSpell {
 					sendMessage(player, strCantBindSpell);
 					return PostCastAction.ALREADY_HANDLED;
 				} else {
+					if (allowedSpells != null && !allowedSpells.contains(spell)) {
+						sendMessage(player, strCantUnbind);
+						return PostCastAction.ALREADY_HANDLED;
+					}
 					CastItem item = new CastItem(player.getItemInHand());
 					boolean removed = spellbook.removeCastItem(spell, item);
 					if (!removed) {
