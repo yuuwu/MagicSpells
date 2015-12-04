@@ -36,6 +36,7 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 	public boolean onCommand(CommandSender sender, Command command, String label, String [] args) {
 		try {
 			if (command.getName().equalsIgnoreCase("magicspellcast")) {
+				// /magicspellcast /c
 				args = Util.splitParams(args); //TODO find an alternative to reassigning the parameter
 				if (args == null || args.length == 0) {
 					if (sender instanceof Player) {
@@ -44,6 +45,7 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 						sender.sendMessage(plugin.textColor + plugin.strCastUsage);
 					}
 				} else if (sender.isOp() && args[0].equals("forcecast") && args.length >= 3) {
+					// /c forcecast command
 					Player target = PlayerNameUtils.getPlayer(args[1]);
 					if (target == null) {
 						sender.sendMessage(plugin.textColor + "No matching player found");
@@ -60,7 +62,10 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 					}
 					spell.cast(target, spellArgs);
 					sender.sendMessage(plugin.textColor + "Player " + target.getName() + " forced to cast " + spell.getName());
+					// end forcecast command handling
+					
 				} else if (sender.isOp() && args[0].equals("reload")) {
+					// /c reload
 					if (args.length == 1) {
 						plugin.unload();
 						plugin.load();
@@ -75,7 +80,10 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 							sender.sendMessage(plugin.textColor + player.getName() + "'s spellbook reloaded.");
 						}
 					}
+					// end /c reload handling
+					
 				} else if (sender.isOp() && args[0].equals("resetcd")) {
+					// /c resetcd
 					Player p = null;
 					if (args.length > 1) {
 						p = PlayerNameUtils.getPlayer(args[1]);
@@ -92,13 +100,19 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 						}
 					}
 					sender.sendMessage(plugin.textColor + "Cooldowns reset" + (p != null ? " for " + p.getName() : ""));
+					// end /c resetcd handling
+					
 				} else if (sender.isOp() && args[0].equals("resetmana") && args.length > 1 && plugin.mana != null) {
+					// /c resetmana
 					Player p = PlayerNameUtils.getPlayer(args[1]);
 					if (p != null) {
 						plugin.mana.createManaBar(p);
 						sender.sendMessage(plugin.textColor + p.getName() + "'s mana reset.");
 					}
+					// end /c resetmana handling
+					
 				} else if (sender.isOp() && args[0].equals("updatemanarank") && args.length > 1 && plugin.mana != null) {
+					// /c updatemanarank
 					Player p = PlayerNameUtils.getPlayer(args[1]);
 					if (p != null) {
 						boolean updated = plugin.mana.updateManaRankIfNecessary(p);
@@ -109,28 +123,40 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 							sender.sendMessage(plugin.textColor + p.getName() + "'s mana rank already correct.");
 						}
 					}
+					// end /c updatemanarank handling
+					
 				} else if (sender.isOp() && args[0].equalsIgnoreCase("setmaxmana") && args.length == 3 && plugin.mana != null) {
+					// /c setmaxmana
 					Player p = PlayerNameUtils.getPlayer(args[1]);
 					if (p != null) {
 						int amt = Integer.parseInt(args[2]);
 						plugin.mana.setMaxMana(p, amt);
 						sender.sendMessage(plugin.textColor + p.getName() + "'s max mana set to " + amt + ".");
-					}					
+					}
+					// end /c setmaxmana handling
+					
 				} else if (sender.isOp() && args[0].equalsIgnoreCase("modifymana") && args.length == 3 && plugin.mana != null) {
+					// /c modifymana
 					Player p = PlayerNameUtils.getPlayer(args[1]);
 					if (p != null) {
 						int amt = Integer.parseInt(args[2]);
 						plugin.mana.addMana(p, amt, ManaChangeReason.OTHER);
 						sender.sendMessage(plugin.textColor + p.getName() + "'s mana modified by " + amt + ".");
-					}					
+					}
+					// end /c modifymana handling
+					
 				} else if (sender.isOp() && args[0].equalsIgnoreCase("setmana") && args.length == 3 && plugin.mana != null) {
+					// /c setmana
 					Player p = PlayerNameUtils.getPlayer(args[1]);
 					if (p != null) {
 						int amt = Integer.parseInt(args[2]);
 						plugin.mana.setMana(p, amt, ManaChangeReason.OTHER);
 						sender.sendMessage(plugin.textColor + p.getName() + "'s mana set to " + amt + ".");
-					}					
+					}
+					// end /c setmana handling
+					
 				} else if (sender.isOp() && args[0].equals("modifyvariable") && args.length == 4) {
+					// /c modifyvariable
 					String var = args[1];
 					String player = args[2];
 					boolean set = false;
@@ -146,7 +172,10 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 					} else {
 						MagicSpells.getVariableManager().modify(var, player, num);
 					}
+					// end /c modifyvariable handling
+					
 				} else if (sender.isOp() && args[0].equals("magicitem") && args.length > 1 && sender instanceof Player) {
+					// /c magicitem
 					ItemStack item = Util.getItemStackFromString(args[1]);
 					if (item != null) {
 						if (args.length > 2 && args[2].matches("^[0-9]+$")) {
@@ -154,7 +183,10 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 						}
 						((Player)sender).getInventory().addItem(item);
 					}
+					// end /c magicitem handling
+					
 				} else if (sender.isOp() && args[0].equals("download") && args.length == 3) {
+					// /c download
 					File file = new File(plugin.getDataFolder(), "spells-" + args[1] + ".yml");
 					if (file.exists()) {
 						sender.sendMessage(plugin.textColor + "ERROR: The file spells-" + args[1] + ".yml already exists!");
@@ -166,8 +198,10 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 							sender.sendMessage(plugin.textColor + "ERROR: The file could not be downloaded.");
 						}
 					}
+					// end /c download handling
+					
 				} else if (sender.isOp() && args[0].equals("update") && args.length == 3) {
-					//TODO update the specified file AND TEST THIS FEATURE
+					// /c update
 					File file = new File(plugin.getDataFolder(), "update-" + args[1] + ".yml");
 					boolean downloaded = Util.downloadFile(args[2], file);
 					boolean abort = false;
@@ -201,18 +235,29 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 					} else {
 						sender.sendMessage(plugin.textColor + "Update file failed to download.");
 					}
+					// end /c update handling
+					
 				} else if (sender.isOp() && args[0].equals("saveskin") && args.length == 3) {
+					// /c saveskin
 					Player player = PlayerNameUtils.getPlayerExact(args[1]);
 					if (player != null) {
 						MagicSpells.getVolatileCodeHandler().saveSkinData(player, args[2]);
 						sender.sendMessage("Skin data for player " + player.getName() + " saved as " + args[2]);
 					}
+					// end /c saveskin handling
+					
 				} else if (sender.isOp() && args[0].equals("profilereport")) {
+					// /c profilereport
 					sender.sendMessage(plugin.textColor + "Creating profiling report");
 					MagicSpells.profilingReport();
+					// end /c profilereport handling
+					
 				} else if (sender.isOp() && args[0].equals("debug")) {
+					// /c debug
 					plugin.debug = !plugin.debug;
 					sender.sendMessage("MagicSpells: debug mode " + (plugin.debug?"enabled":"disabled"));
+					// end /c debug handling
+					
 				} else if (sender instanceof Player) {
 					Player player = (Player)sender;
 					Spellbook spellbook = MagicSpells.getSpellbook(player);
@@ -312,13 +357,19 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 					}
 				}
 				return true;
+				// end /magicspellcast /c handling
+				
 			} else if (command.getName().equalsIgnoreCase("magicspellmana")) {
+				// /magicspellmana
 				if (plugin.enableManaBars && sender instanceof Player) {
 					Player player = (Player)sender;
 					plugin.mana.showMana(player, true);
 				}
 				return true;
+				// end /magicspellmana handling
+				
 			} else if (command.getName().equalsIgnoreCase("magicspellxp")) {
+				// /magicspellxp
 				if (sender instanceof Player) {
 					MagicXpHandler xpHandler = plugin.magicXpHandler;
 					if (xpHandler != null) {
@@ -326,6 +377,8 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 					}
 				}
 				return true;
+				// end /magicspellxp handling
+				
 			}
 			return false;
 		} catch (Exception ex) {
