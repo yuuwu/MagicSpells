@@ -60,12 +60,17 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 	private boolean ignoreArmor;
 	private boolean checkPlugins;
 	
+	private static final String STR_GIVE_TAKE_TYPE_HEALTH = "health";
+	private static final String STR_GIVE_TAKE_TYPE_MANA = "mana";
+	private static final String STR_GIVE_TAKE_TYPE_HUNGER = "hunger";
+	private static final String STR_GIVE_TAKE_TYPE_EXPERIENCE = "experience";
+	
 	public DrainlifeSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		takeType = getConfigString("take-type", "health");
+		takeType = getConfigString("take-type", STR_GIVE_TAKE_TYPE_HEALTH);
 		takeAmt = getConfigFloat("take-amt", 2);
-		giveType = getConfigString("give-type", "health");
+		giveType = getConfigString("give-type", STR_GIVE_TAKE_TYPE_HEALTH);
 		giveAmt = getConfigFloat("give-amt", 2);
 		spellDamageType = getConfigString("spell-damage-type", "");
 		showSpellEffect = getConfigBoolean("show-spell-effect", true);
@@ -106,7 +111,7 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 		double give = giveAmt * power;
 		
 		// drain from target
-		if (takeType.equals("health")) {
+		if (takeType.equals(STR_GIVE_TAKE_TYPE_HEALTH)) {
 			if (target instanceof Player && checkPlugins) {
 				EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(player, target, DamageCause.ENTITY_ATTACK, take);
 				Bukkit.getServer().getPluginManager().callEvent(event);
@@ -132,14 +137,14 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 			} else {
 				target.damage(take, player);
 			}
-		} else if (takeType.equals("mana")) {
+		} else if (takeType.equals(STR_GIVE_TAKE_TYPE_MANA)) {
 			if (target instanceof Player) {
 				boolean removed = MagicSpells.getManaHandler().removeMana((Player)target, (int)Math.round(take), ManaChangeReason.OTHER);
 				if (!removed) {
 					give = 0;
 				}
 			}
-		} else if (takeType.equals("hunger")) {
+		} else if (takeType.equals(STR_GIVE_TAKE_TYPE_HUNGER)) {
 			if (target instanceof Player) {
 				Player p = (Player)target;
 				int food = p.getFoodLevel();
@@ -148,7 +153,7 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 				if (food < MIN_FOOD_LEVEL) food = MIN_FOOD_LEVEL;
 				p.setFoodLevel(food);
 			}
-		} else if (takeType.equals("experience")) {
+		} else if (takeType.equals(STR_GIVE_TAKE_TYPE_EXPERIENCE)) {
 			if (target instanceof Player) {
 				Player p = (Player)target;
 				int exp = ExperienceUtils.getCurrentExp(p);
@@ -174,18 +179,18 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 	}
 	
 	void giveToCaster(Player player, double give) {
-		if (giveType.equals("health")) {
+		if (giveType.equals(STR_GIVE_TAKE_TYPE_HEALTH)) {
 			double h = player.getHealth() + give;
 			if (h > player.getMaxHealth()) h = player.getMaxHealth();
 			player.setHealth(h);
-		} else if (giveType.equals("mana")) {
+		} else if (giveType.equals(STR_GIVE_TAKE_TYPE_MANA)) {
 			MagicSpells.getManaHandler().addMana(player, (int)give, ManaChangeReason.OTHER);
-		} else if (giveType.equals("hunger")) {
+		} else if (giveType.equals(STR_GIVE_TAKE_TYPE_HUNGER)) {
 			int food = player.getFoodLevel();
 			food += give;
 			if (food > MAX_FOOD_LEVEL) food = MAX_FOOD_LEVEL;
 			player.setFoodLevel(food);
-		} else if (giveType.equals("experience")) {
+		} else if (giveType.equals(STR_GIVE_TAKE_TYPE_EXPERIENCE)) {
 			ExperienceUtils.changeExp(player, (int)give);
 		}
 	}
