@@ -100,6 +100,7 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 		return spellDamageType;
 	}
 	
+	@SuppressWarnings("deprecation")
 	private boolean drain(Player player, LivingEntity target, float power) {
 		double take = takeAmt * power;
 		double give = giveAmt * power;

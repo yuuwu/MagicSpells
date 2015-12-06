@@ -87,13 +87,13 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	@ConfigData(field="description", dataType="String", defaultValue="null")
 	protected String description;
 	
-	@ConfigData
+	@ConfigData(field="cast-item|cast-items")
 	protected CastItem[] castItems;
 	
-	@ConfigData
+	@ConfigData(field="right-click-cast-item|right-click-cast-items")
 	protected CastItem[] rightClickCastItems;
 	
-	@ConfigData
+	@ConfigData(field="consume-cast-item|consume-cast-items")
 	protected CastItem[] consumeCastItems;
 	
 	@ConfigData(field="left-click-cast-item", dataType="boolean")
@@ -120,16 +120,16 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	@ConfigData
 	protected int broadcastRange;
 	
-	@ConfigData
+	@ConfigData(field="experience")
 	protected int experience;
 	
 	@ConfigData
 	protected EnumMap<EffectPosition, List<SpellEffect>> effects;
 	
-	@ConfigData
+	@ConfigData(field="min-range")
 	protected int minRange;
 	
-	@ConfigData
+	@ConfigData(field="range")
 	protected int range;
 	
 	@ConfigData
@@ -144,7 +144,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	@ConfigData(field="beneficial", dataType="boolean", defaultValue="false")
 	protected boolean beneficial;
 	
-	@ConfigData
+	@ConfigData(field="target-damage-cause")
 	private DamageCause targetDamageCause;
 	
 	private double targetDamageAmount;

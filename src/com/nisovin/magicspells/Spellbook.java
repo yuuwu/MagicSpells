@@ -172,12 +172,19 @@ public class Spellbook {
 	}
 	
 	public boolean canLearn(Spell spell) {
-		if (spell.isHelperSpell()) return false;
-		if (cantLearn.contains(spell.getInternalName().toLowerCase())) return false;
+		if (spell.isHelperSpell()) {
+			MagicSpells.debug("Cannot learn " + spell.getName() + " because it is a helper spell");
+			return false;
+		}
+		if (cantLearn.contains(spell.getInternalName().toLowerCase())) {
+			MagicSpells.debug("Cannot learn " + spell.getName() + " because another spell precludes it.");
+			return false;
+		}
 		if (spell.prerequisites != null) {
 			for (String spellName : spell.prerequisites) {
 				Spell sp = MagicSpells.getSpellByInternalName(spellName);
 				if (sp == null || !hasSpell(sp)) {
+					MagicSpells.debug("Cannot learn " + spell.getName() + " because the prerequisite of " + spellName + " has not been satisfied");
 					return false;
 				}
 			}
@@ -187,6 +194,7 @@ public class Spellbook {
 			if (handler != null) {
 				for (String school : spell.xpRequired.keySet()) {
 					if (handler.getXp(player, school) < spell.xpRequired.get(school)) {
+						MagicSpells.debug("Cannot learn " + spell.getName() + " because the target does not have enough magic xp");
 						return false;
 					}
 				}
