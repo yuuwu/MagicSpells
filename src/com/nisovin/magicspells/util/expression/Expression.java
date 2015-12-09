@@ -15,6 +15,11 @@ public class Expression {
 
 	enum OperationType {
 		ADD, SUBTRACT, MULTIPLY, DIVIDE, POWER, MINIMUM, MAXIMUM, ABSOLUTE_VALUE, MODULUS, AVERAGE
+		//TODO add greatest common divisor
+		//TODO add the least common multiple
+		//TODO add the floor function
+		//TODO add the ceiling function
+		//TODO add a rounding function
 	}
 	
 	private static Map<String, OperationType> opKeys = new HashMap<String, OperationType>();
@@ -50,6 +55,7 @@ public class Expression {
 		//fire ticks
 		//player time
 		//remaining air
+		//TODO add the golden ratio
 	}
 	
 	private static Map<String, UnparameterizedValueResolverType> upValueResolverKeys = new HashMap<String, Expression.UnparameterizedValueResolverType>();
