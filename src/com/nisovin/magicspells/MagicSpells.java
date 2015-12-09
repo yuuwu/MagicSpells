@@ -67,7 +67,10 @@ import de.slikey.effectlib.EffectManager;
 public class MagicSpells extends JavaPlugin {
 
 	public static MagicSpells plugin;
-
+	
+	//change this when you want to start tweaking the source and fixing bugs
+	public static Level DEVELOPER_DEBUG_LEVEL = Level.OFF;
+	
 	VolatileCodeHandle volatileCodeHandle;
 	
 	boolean debug;

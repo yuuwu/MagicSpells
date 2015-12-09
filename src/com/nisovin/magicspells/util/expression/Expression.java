@@ -2,7 +2,6 @@ package com.nisovin.magicspells.util.expression;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,7 +14,7 @@ import com.nisovin.magicspells.variables.Variable;
 public class Expression {
 
 	enum OperationType {
-		ADD, SUBTRACT, MULTIPLY, DIVIDE, POWER, MINIMUM, MAXIMUM, ABSOLUTE_VALUE, MODULUS
+		ADD, SUBTRACT, MULTIPLY, DIVIDE, POWER, MINIMUM, MAXIMUM, ABSOLUTE_VALUE, MODULUS, AVERAGE
 	}
 	
 	private static Map<String, OperationType> opKeys = new HashMap<String, OperationType>();
@@ -29,11 +28,12 @@ public class Expression {
 		opKeys.put("maximum", OperationType.MAXIMUM);
 		opKeys.put("abs", OperationType.ABSOLUTE_VALUE);
 		opKeys.put("%", OperationType.MODULUS);
+		opKeys.put("average", OperationType.AVERAGE);
 	}
 	
 	enum UnparameterizedValueResolverType {
 		PI, RANDOM_SIGN, RANDOM_VALUE, E, RANDOM_COLOR_DECIMAL, FOOD_LEVEL,
-		PLAYER_LOCATION_X, PLAYER_LOCATION_Y, PLAYER_LOCATION_Z, SATURATION_LEVEL, NULL
+		PLAYER_LOCATION_X, PLAYER_LOCATION_Y, PLAYER_LOCATION_Z, SATURATION_LEVEL
 		//add xp level
 		//add exp points
 		//add health points left
@@ -124,6 +124,8 @@ public class Expression {
 			return new AbsoluteValueOperation();
 		case MODULUS:
 			return new ModulusOperation();
+		case AVERAGE:
+			new AverageOperation();
 		default:
 			return null;
 		}
@@ -156,16 +158,17 @@ public class Expression {
 			loadField(split);
 		}		
 		if (operator == null) {
-			MagicSpells.log(Level.WARNING, "Operator was null");
+			MagicSpells.log(MagicSpells.DEVELOPER_DEBUG_LEVEL, "Operator was null");
+			
 			operator = new AdditionOperation();
 		}
 		if (term1Resolver == null) {
-			MagicSpells.log(Level.WARNING, "Term1 was null");
+			MagicSpells.log(MagicSpells.DEVELOPER_DEBUG_LEVEL, "Term1 was null");
 			term1Resolver = new ConstantResolver(0);
 		}
 		
 		if (term2Resolver == null) {
-			MagicSpells.log(Level.WARNING, "Term2 was null");
+			MagicSpells.log(MagicSpells.DEVELOPER_DEBUG_LEVEL, "Term2 was null");
 			term2Resolver = new ConstantResolver(0);
 		}
 		
@@ -216,10 +219,10 @@ public class Expression {
 		//try to resolve as a constant value resolver
 		ConstantResolver cr = isConstantValue(s);
 		if (cr != null) {
-			MagicSpells.log(Level.INFO, "Returning constant resolver from resolveValueResolver");
+			MagicSpells.log(MagicSpells.DEVELOPER_DEBUG_LEVEL, "Returning constant resolver from resolveValueResolver");
 			return cr;
 		}
-		MagicSpells.log(Level.INFO, "Constant resolver returned null");
+		MagicSpells.log(MagicSpells.DEVELOPER_DEBUG_LEVEL, "Constant resolver returned null");
 		
 		//try resolving the unparameterized resolvers
 		ValueResolver upVR = getUnparameterizedResolver(s);
@@ -242,11 +245,11 @@ public class Expression {
 	}
 	
 	private ConstantResolver isConstantValue(String input) {
-		MagicSpells.log(Level.INFO, "Trying to resolve \"" + input + "\" as a constant");
+		MagicSpells.log(MagicSpells.DEVELOPER_DEBUG_LEVEL, "Trying to resolve \"" + input + "\" as a constant");
 		Matcher matcher = constantValueMatchPattern.matcher(input);
 		if (matcher.find()) {
 			String matchText = matcher.group();
-			MagicSpells.log(Level.INFO, "Creating constant resolver with text of \"" + matchText + "\"");
+			MagicSpells.log(MagicSpells.DEVELOPER_DEBUG_LEVEL, "Creating constant resolver with text of \"" + matchText + "\"");
 			return new ConstantResolver(Double.parseDouble(matchText));
 		}
 		return null;
@@ -265,11 +268,4 @@ public class Expression {
 		}
 		return string;
 	} */
-	class NullResolver extends ConstantResolver {
-
-		public NullResolver() {
-			super(0);
-		}
-		
-	}
 }
