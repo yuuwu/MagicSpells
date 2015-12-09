@@ -1,5 +1,7 @@
 package com.nisovin.magicspells.spells.targeted;
 
+import java.util.logging.Level;
+
 import org.bukkit.Bukkit;
 import org.bukkit.EntityEffect;
 import org.bukkit.entity.LivingEntity;
@@ -17,6 +19,7 @@ import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellType;
 import com.nisovin.magicspells.util.SpellTypes;
 import com.nisovin.magicspells.util.TargetInfo;
+import com.nisovin.magicspells.util.expression.Expression;
 
 /**
  * public class PainSpell extends {@link TargetedSpell} implements {@link TargetedEntitySpell}, {@link SpellDamageSpell}
@@ -32,6 +35,7 @@ import com.nisovin.magicspells.util.TargetInfo;
 @SpellType(types={SpellTypes.TARGETED_ENTITY_SPELL, SpellTypes.SPELL_DAMAGE_SPELL})
 public class PainSpell extends TargetedSpell implements TargetedEntitySpell, SpellDamageSpell {
 
+	private Expression damageExpression;
 	private double damage;
 	private String spellDamageType;
 	private boolean ignoreArmor;
@@ -42,6 +46,14 @@ public class PainSpell extends TargetedSpell implements TargetedEntitySpell, Spe
 		super(config, spellName);
 		
 		damage = getConfigFloat("damage", 4);
+		
+		String damageExpressionString = getConfigString("damage-expression", null);
+		if (damageExpressionString == null) {
+			damageExpression = new Expression("0 + " + damage);
+		} else {
+			damageExpression = new Expression(damageExpressionString);
+		}
+		
 		spellDamageType = getConfigString("spell-damage-type", "");
 		ignoreArmor = getConfigBoolean("ignore-armor", false);
 		checkPlugins = getConfigBoolean("check-plugins", true);
@@ -85,22 +97,25 @@ public class PainSpell extends TargetedSpell implements TargetedEntitySpell, Spe
 	
 	private boolean causePain(Player player, LivingEntity target, float power) {
 		if (target.isDead()) return false;
-		double dam = damage * power;
+		double resolvedValue = damageExpression.resolveValue(null, player).doubleValue();
+		MagicSpells.log(Level.INFO, "Damage resolver resolved value of " + resolvedValue);
+		double localDamage = resolvedValue * power;
+		//double dam = damage * power;
 		if (target instanceof Player && checkPlugins && player != null) {
 			// handle the event myself so I can detect cancellation properly
-			EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(player, target, damageType, dam);
+			EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(player, target, damageType, localDamage);
 			Bukkit.getServer().getPluginManager().callEvent(event);
 			if (event.isCancelled()) {
 				return false;
 			}
-			dam = event.getDamage();
+			localDamage = event.getDamage();
 			target.setLastDamageCause(event);
 		}
-		Bukkit.getPluginManager().callEvent(new SpellApplyDamageEvent(this, player, target, dam, DamageCause.MAGIC));
+		Bukkit.getPluginManager().callEvent(new SpellApplyDamageEvent(this, player, target, localDamage, DamageCause.MAGIC));
 		if (ignoreArmor) {
 			double health = target.getHealth();
 			if (health > target.getMaxHealth()) health = target.getMaxHealth();
-			health = health - dam;
+			health = health - localDamage;
 			if (health < 0) health = 0;
 			if (health > target.getMaxHealth()) health = target.getMaxHealth();
 			if (health == 0 && player != null) {
@@ -110,7 +125,7 @@ public class PainSpell extends TargetedSpell implements TargetedEntitySpell, Spe
 			target.setHealth(health);
 			target.playEffect(EntityEffect.HURT);
 		} else {
-			target.damage(dam, player);
+			target.damage(localDamage, player);
 		}
 		if (player != null) {
 			playSpellEffects(player, target);

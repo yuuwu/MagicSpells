@@ -169,6 +169,10 @@ public class VariableManager implements Listener {
 		}
 	}
 	
+	public Variable getVariable(String name) {
+		return variables.get(name);
+	}
+	
 	public void reset(String variable, Player player) {
 		Variable var = variables.get(variable);
 		if (var != null) {
