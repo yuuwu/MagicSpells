@@ -1,5 +1,6 @@
 package com.nisovin.magicspells.util.expression;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.MagicSpells;
@@ -14,7 +15,7 @@ public class ConstantResolver extends ValueResolver {
 	}
 	
 	@Override
-	public Number resolveValue(String playerName, Player player) {
+	public Number resolveValue(String playerName, Player player, Location loc1, Location loc2) {
 		return value;
 	}
 

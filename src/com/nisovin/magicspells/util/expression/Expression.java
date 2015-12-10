@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.MagicSpells;
@@ -208,8 +209,12 @@ public class Expression {
 	}
 	
 	public Number resolveValue(String playername, Player player) {
-		Number ret = operator.evaluate(term1Resolver, term2Resolver, playername, player);
+		Number ret = operator.evaluate(term1Resolver, term2Resolver, playername, player, null, null);
 		return ret;
+	}
+	
+	public Number resolveValue(String playername, Player player, Location loc1, Location loc2) {
+		return operator.evaluate(term1Resolver, term2Resolver, playername, player, loc1, loc2);
 	}
 	
 	private ValueResolver resolveValueResolver(String s) {
