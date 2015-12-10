@@ -624,6 +624,8 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 			return EffectPosition.BUFF;
 		} else if (spos.equalsIgnoreCase("orbit")) {
 			return EffectPosition.ORBIT;
+		} else if (spos.equalsIgnoreCase("reverse_line") || spos.equalsIgnoreCase("reverseline") || spos.equalsIgnoreCase("rline")) {
+			return EffectPosition.REVERSE_LINE;
 		}
 		return null;
 	}
@@ -1618,6 +1620,13 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 			if (effectsList != null) {
 				for (SpellEffect effect : effectsList) {
 					effect.playEffect(loc1, loc2);
+				}
+			}
+			
+			List<SpellEffect> rTrailEffects = effects.get(EffectPosition.REVERSE_LINE);
+			if (rTrailEffects != null) {
+				for (SpellEffect effect: rTrailEffects) {
+					effect.playEffect(loc2, loc1);
 				}
 			}
 		}

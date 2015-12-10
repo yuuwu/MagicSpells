@@ -10,6 +10,7 @@ import org.bukkit.util.Vector;
 import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.util.ConfigData;
+import com.nisovin.magicspells.util.expression.Expression;
 
 /**
  * 
@@ -28,8 +29,6 @@ import com.nisovin.magicspells.util.ConfigData;
  * <li>orbit-tick-interval</li>
  * <li>orbit-y-offset</li>
  * </ul>
- * 
- *
  */
 public abstract class SpellEffect {
 	
@@ -37,8 +36,12 @@ public abstract class SpellEffect {
 	@ConfigData(field="height-offset", dataType="double", defaultValue="0")
 	double heightOffset = 0;
 	
+	Expression heightOffsetExpression = null;
+	
 	@ConfigData(field="forward-offset", dataType="double", defaultValue="0")
 	double forwardOffset = 0;
+	
+	Expression forwardOffsetExpression = null;
 	
 	@ConfigData(field="delay", dataType="int", defaultValue="0")
 	int delay = 0;
@@ -77,11 +80,23 @@ public abstract class SpellEffect {
 	
 	public final void loadFromConfiguration(ConfigurationSection config) {
 		heightOffset = config.getDouble("height-offset", heightOffset);
+		String heightOffsetExpressionString = config.getString("height-offset-expression", null);
+		if (heightOffsetExpressionString == null) {
+			heightOffsetExpression = new Expression("0 + " + heightOffset);
+		} else {
+			heightOffsetExpression = new Expression(heightOffsetExpressionString);
+		}
+		
 		forwardOffset = config.getDouble("forward-offset", forwardOffset);
+		String forwardOffsetExpressionString = config.getString("forward-offset-expression", null);
+		if (forwardOffsetExpressionString == null) {
+			forwardOffsetExpression = new Expression("0 + " + forwardOffset);
+		} else {
+			forwardOffsetExpression = new Expression(forwardOffsetExpressionString);
+		}
 		delay = config.getInt("delay", delay);
 		
 		distanceBetween = config.getDouble("distance-between", distanceBetween);
-		
 		effectInterval = config.getInt("effect-interval", effectInterval);
 
 		orbitRadius = (float)config.getDouble("orbit-radius", orbitRadius);
@@ -139,13 +154,15 @@ public abstract class SpellEffect {
 	}
 	
 	void playEffectLocationReal(Location location) {
-		if (heightOffset != 0 || forwardOffset != 0) {
+		double heightOffsetLocal = heightOffsetExpression.resolveValue(null, null, location, null).doubleValue();
+		double forwardOffsetLocal = forwardOffsetExpression.resolveValue(null, null, location, null).doubleValue();
+		if (heightOffsetLocal != 0 || forwardOffsetLocal != 0) {
 			Location loc = location.clone();
-			if (heightOffset != 0) {
-				loc.setY(loc.getY() + heightOffset);
+			if (heightOffsetLocal != 0) {
+				loc.setY(loc.getY() + heightOffsetLocal);
 			}
-			if (forwardOffset != 0) {
-				loc.add(loc.getDirection().setY(0).normalize().multiply(forwardOffset));
+			if (forwardOffsetLocal != 0) {
+				loc.add(loc.getDirection().setY(0).normalize().multiply(forwardOffsetLocal));
 			}
 			playEffectLocation(loc);
 		} else {
@@ -164,12 +181,14 @@ public abstract class SpellEffect {
 	 * @param param the parameter specified in the spell config (can be ignored)
 	 */
 	public void playEffect(Location location1, Location location2) {
+		double localHeightOffset = heightOffsetExpression.resolveValue(null, null, location1, location2).doubleValue();
+		double localForwardOffset = forwardOffsetExpression.resolveValue(null, null, location1, location2).doubleValue();
 		int c = (int)Math.ceil(location1.distance(location2) / distanceBetween) - 1;
 		if (c <= 0) return;
 		Vector v = location2.toVector().subtract(location1.toVector()).normalize().multiply(distanceBetween);
 		Location l = location1.clone();
-		if (heightOffset != 0) {
-			l.setY(l.getY() + heightOffset);
+		if (localHeightOffset != 0) {
+			l.setY(l.getY() + localHeightOffset);
 		}
 		
 		for (int i = 0; i < c; i++) {
