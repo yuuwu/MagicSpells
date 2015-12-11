@@ -16,6 +16,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import com.nisovin.magicspells.Spell.PostCastAction;
 import com.nisovin.magicspells.mana.ManaChangeReason;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
@@ -258,6 +259,34 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 					sender.sendMessage("MagicSpells: debug mode " + (plugin.debug?"enabled":"disabled"));
 					// end /c debug handling
 					
+				} else if (sender.isOp() && args[0].equals("castat")) {
+					// begin /c castat handling
+					
+					if (args.length == 3 || args.length == 4) {
+						// /c castat [spell] [player name] [power]
+						Spell spell = MagicSpells.getSpellByInGameName(args[1]);
+						Player target = Bukkit.getServer().getPlayer(args[2]);
+						TargetedEntitySpell tes = null;
+						if (spell instanceof TargetedEntitySpell) {
+							tes = (TargetedEntitySpell)spell;
+						} else  {
+							sender.sendMessage("You did not specify a targeted entity spell");
+							return true;
+						}
+						if (target == null) {
+							sender.sendMessage("Could not find player:" + args[2]);
+							return true;
+						} else {
+							float cPower = 1;
+							if (args.length == 4) {
+								cPower = Float.parseFloat(args[3]);
+							}
+							tes.castAtEntity(target, cPower);
+							return true;
+						}
+					}
+					
+					// end /c castat handling
 				} else if (sender instanceof Player) {
 					Player player = (Player)sender;
 					Spellbook spellbook = MagicSpells.getSpellbook(player);
