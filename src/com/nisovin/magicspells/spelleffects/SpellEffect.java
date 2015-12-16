@@ -154,19 +154,19 @@ public abstract class SpellEffect {
 	}
 	
 	void playEffectLocationReal(Location location) {
-		double heightOffsetLocal = heightOffsetExpression.resolveValue(null, null, location, null).doubleValue();
-		double forwardOffsetLocal = forwardOffsetExpression.resolveValue(null, null, location, null).doubleValue();
-		if (heightOffsetLocal != 0 || forwardOffsetLocal != 0) {
+		//double heightOffsetLocal = heightOffsetExpression.resolveValue(null, null, location, null).doubleValue();
+		//double forwardOffsetLocal = forwardOffsetExpression.resolveValue(null, null, location, null).doubleValue();
+		if (heightOffset != 0 || forwardOffset != 0) {
 			Location loc = location.clone();
-			if (heightOffsetLocal != 0) {
-				loc.setY(loc.getY() + heightOffsetLocal);
+			if (heightOffset != 0) {
+				loc.setY(loc.getY() + heightOffset);
 			}
-			if (forwardOffsetLocal != 0) {
-				loc.add(loc.getDirection().setY(0).normalize().multiply(forwardOffsetLocal));
+			if (forwardOffset != 0) {
+				loc.add(loc.getDirection().setY(0).normalize().multiply(forwardOffset));
 			}
 			playEffectLocation(loc);
 		} else {
-			playEffectLocation(location);
+			playEffectLocation(location.clone());
 		}
 	}
 	
@@ -181,14 +181,16 @@ public abstract class SpellEffect {
 	 * @param param the parameter specified in the spell config (can be ignored)
 	 */
 	public void playEffect(Location location1, Location location2) {
-		double localHeightOffset = heightOffsetExpression.resolveValue(null, null, location1, location2).doubleValue();
-		double localForwardOffset = forwardOffsetExpression.resolveValue(null, null, location1, location2).doubleValue();
-		int c = (int)Math.ceil(location1.distance(location2) / distanceBetween) - 1;
+		Location loc1 = location1.clone();
+		Location loc2 = location2.clone();
+		//double localHeightOffset = heightOffsetExpression.resolveValue(null, null, location1, location2).doubleValue();
+		//double localForwardOffset = forwardOffsetExpression.resolveValue(null, null, location1, location2).doubleValue();
+		int c = (int)Math.ceil(loc1.distance(loc2) / distanceBetween) - 1;
 		if (c <= 0) return;
-		Vector v = location2.toVector().subtract(location1.toVector()).normalize().multiply(distanceBetween);
-		Location l = location1.clone();
-		if (localHeightOffset != 0) {
-			l.setY(l.getY() + localHeightOffset);
+		Vector v = loc2.toVector().subtract(loc1.toVector()).normalize().multiply(distanceBetween);
+		Location l = loc1.clone();
+		if (heightOffset != 0) {
+			l.setY(l.getY() + heightOffset);
 		}
 		
 		for (int i = 0; i < c; i++) {

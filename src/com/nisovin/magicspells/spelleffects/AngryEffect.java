@@ -47,7 +47,7 @@ public class AngryEffect extends SpellEffect {
 		//Location location, String name, float spreadHoriz, float spreadVert, float speed, int count, int radius, float yOffset
 		
 		//ParticleData data, Location center, Color color, double range, float offsetX, float offsetY, float offsetZ, float speed, int amount
-		effect.display(null, location.add(xOffset, yOffset, zOffset), null, range, offsetX, offsetY, offsetZ, speed, count);
+		effect.display(null, location.clone().add(xOffset, yOffset, zOffset), null, range, offsetX, offsetY, offsetZ, speed, count);
 		
 		
 	}

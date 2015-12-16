@@ -32,6 +32,7 @@ public class Subspell {
 	private boolean isTargetedLocation = false;
 	private boolean isTargetedEntityFromLocation = false;
 	
+	// spell-name (mode=hard|full|partial|direct,power=[subpower],delay=[delay],chance=[chance])|(hard)|(full)|(partial)|(direct)
 	public Subspell(String data) {
 		String[] split = data.split("\\(", 2);
 		
@@ -81,9 +82,9 @@ public class Subspell {
 					mode = CastMode.PARTIAL;
 				} else if (arg.equalsIgnoreCase("direct")) {
 					mode = CastMode.DIRECT;
-				} else if (arg.matches("^[0-9]+$")) {
+				} else if (arg.matches("^[0-9]+$")) {  //TODO include this part in the comments
 					delay = Integer.parseInt(arg);
-				} else if (arg.matches("^[0-9]+\\.[0-9]+$")) {
+				} else if (arg.matches("^[0-9]+\\.[0-9]+$")) { //TODO include this part in the comments
 					subPower = Float.parseFloat(arg);
 				}
 			}			

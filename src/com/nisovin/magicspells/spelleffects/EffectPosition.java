@@ -30,7 +30,12 @@ public enum EffectPosition {
 	ORBIT(8),
 	
 	/** Can be referenced as: reverse_line, reverseline, rline **/
-	REVERSE_LINE(9);
+	REVERSE_LINE(9),
+	
+	
+	/** May be referenced as: projectile
+	 * Some spells may use this to play an effect on projectile entities **/
+	PROJECTILE(10);
 	
 	private int id;
 	private EffectPosition(int num) {

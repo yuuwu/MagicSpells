@@ -26,6 +26,7 @@ import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.Subspell;
 import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.events.SpellTargetEvent;
+import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellReagents;
@@ -137,6 +138,7 @@ public class ArrowSpell extends Spell {
 					Bukkit.getPluginManager().callEvent(castEvent);
 					if (!castEvent.isCancelled()) {
 						event.getProjectile().setMetadata("MSArrowSpell", new FixedMetadataValue(MagicSpells.plugin, new ArrowSpellData(spell, castEvent.getPower(), castEvent.getReagents())));
+						playSpellEffects(EffectPosition.PROJECTILE, event.getProjectile());
 					} else {
 						event.setCancelled(true);
 						event.getProjectile().remove();

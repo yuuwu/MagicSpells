@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
+import com.nisovin.magicspells.spells.TargetedLocationSpell;
 
 public class CastAtSubCommand {
 
@@ -18,10 +19,13 @@ public class CastAtSubCommand {
 			Spell spell = MagicSpells.getSpellByInGameName(args[1]);
 			Player target = Bukkit.getServer().getPlayer(args[2]);
 			TargetedEntitySpell tes = null;
+			TargetedLocationSpell tls = null;
 			if (spell instanceof TargetedEntitySpell) {
 				tes = (TargetedEntitySpell)spell;
+			} else if (spell instanceof TargetedLocationSpell) {
+				tls = (TargetedLocationSpell)spell;
 			} else  {
-				sender.sendMessage("You did not specify a targeted entity spell");
+				sender.sendMessage("You did not specify a targeted entity or targeted location spell");
 				return true;
 			}
 			if (target == null) {
@@ -32,7 +36,11 @@ public class CastAtSubCommand {
 				if (args.length == 4) {
 					cPower = Float.parseFloat(args[3]);
 				}
-				tes.castAtEntity(target, cPower);
+				if (tes != null) {
+					tes.castAtEntity(target, cPower);
+				} else {
+					tls.castAtLocation(target.getLocation(), cPower);
+				}
 				return true;
 			}
 		}

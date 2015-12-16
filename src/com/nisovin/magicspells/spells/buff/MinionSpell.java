@@ -38,6 +38,7 @@ public class MinionSpell extends BuffSpell {
 	public MinionSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
+		// formatted as <entity type> <chance>
 		List<String> c = getConfigStringList("mob-chances", null);
 		if (c == null) {
 			c = new ArrayList<String>();

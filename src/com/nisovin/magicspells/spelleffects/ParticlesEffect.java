@@ -38,7 +38,6 @@ public class ParticlesEffect extends SpellEffect {
 	public void loadFromString(String string) {
 		if (string != null && !string.isEmpty()) {
 			String[] data = string.split(" ");
-			
 			if (data.length >= 1) {
 				name = data[0];
 			}
@@ -89,7 +88,7 @@ public class ParticlesEffect extends SpellEffect {
 	@Override
 	public void playEffectLocation(Location location) {
 		//ParticleData data, Location center, Color color, double range, float offsetX, float offsetY, float offsetZ, float speed, int amount
-		effect.display(data, location.add(0, yOffset, 0), color, renderDistance, xSpread, ySpread, zSpread, speed, count);
+		effect.display(data, location.clone().add(0, yOffset, 0), color, renderDistance, xSpread, ySpread, zSpread, speed, count);
 		//MagicSpells.getVolatileCodeHandler().playParticleEffect(location, name, xSpread, ySpread, zSpread, speed, count, renderDistance, yOffset);
 	}
 	

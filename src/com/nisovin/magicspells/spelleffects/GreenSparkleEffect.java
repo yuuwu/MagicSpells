@@ -35,7 +35,7 @@ public class GreenSparkleEffect extends SpellEffect {
 		//MagicSpells.getVolatileCodeHandler().playParticleEffect(location, "happyVillager", .3F, .3F, .5F, 4, 32, 2F);
 		//Location location, String name, float spreadHoriz, float spreadVert, float speed, int count, int radius, float yOffset
 		
-		effect.display(null, location.add(xOffset, yOffset, zOffset), null, range, spreadHoriz, spreadVert, spreadHoriz, speed, count);
+		effect.display(null, location.clone().add(xOffset, yOffset, zOffset), null, range, spreadHoriz, spreadVert, spreadHoriz, speed, count);
 		//ParticleData data, Location center, Color color, double range, float offsetX, float offsetY, float offsetZ, float speed, int amount
 	}
 	

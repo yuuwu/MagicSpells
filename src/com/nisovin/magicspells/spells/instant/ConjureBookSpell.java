@@ -5,16 +5,20 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
+import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellType;
 import com.nisovin.magicspells.util.SpellTypes;
 import com.nisovin.magicspells.util.Util;
+
+// the special position plays on the dropped items
 @SpellType(types={SpellTypes.TARGETED_LOCATION_SPELL})
 public class ConjureBookSpell extends InstantSpell implements TargetedLocationSpell {
 
@@ -109,7 +113,10 @@ public class ConjureBookSpell extends InstantSpell implements TargetedLocationSp
 				}
 			}
 			if (!added) {
-				player.getWorld().dropItem(player.getLocation(), item).setItemStack(item);
+				Item dropped = player.getWorld().dropItem(player.getLocation(), item);
+				dropped.setItemStack(item);
+				playSpellEffects(EffectPosition.SPECIAL, dropped);
+				//player.getWorld().dropItem(player.getLocation(), item).setItemStack(item);
 			}
 		}
 		return PostCastAction.HANDLE_NORMALLY;
@@ -123,7 +130,10 @@ public class ConjureBookSpell extends InstantSpell implements TargetedLocationSp
 	@Override
 	public boolean castAtLocation(Location target, float power) {
 		ItemStack item = book.clone();
-		target.getWorld().dropItem(target, item).setItemStack(item);
+		Item dropped = target.getWorld().dropItem(target, item);
+		dropped.setItemStack(item);
+		playSpellEffects(EffectPosition.SPECIAL, dropped);
+		//target.getWorld().dropItem(target, item).setItemStack(item);
 		return true;
 	}
 	

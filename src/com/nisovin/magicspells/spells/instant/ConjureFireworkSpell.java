@@ -5,9 +5,10 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
+import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.FireworkEffect.Type;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
@@ -19,6 +20,8 @@ import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellType;
 import com.nisovin.magicspells.util.SpellTypes;
 import com.nisovin.magicspells.util.Util;
+
+// the special position plays on the dropped items
 @SpellType(types={SpellTypes.TARGETED_LOCATION_SPELL})
 public class ConjureFireworkSpell extends InstantSpell implements TargetedLocationSpell {
 
@@ -109,7 +112,10 @@ public class ConjureFireworkSpell extends InstantSpell implements TargetedLocati
 				added = Util.addToInventory(player.getInventory(), item, true, false);
 			}
 			if (!added) {
-				player.getWorld().dropItem(player.getLocation(), item).setItemStack(item);
+				Item dropped = player.getWorld().dropItem(player.getLocation(), item);
+				dropped.setItemStack(item);
+				playSpellEffects(EffectPosition.SPECIAL, dropped);
+				//player.getWorld().dropItem(player.getLocation(), item).setItemStack(item);
 			}
 			playSpellEffects(EffectPosition.CASTER, player);
 		}
@@ -125,7 +131,10 @@ public class ConjureFireworkSpell extends InstantSpell implements TargetedLocati
 	@Override
 	public boolean castAtLocation(Location target, float power) {
 		ItemStack item = firework.clone();
-		target.getWorld().dropItem(target, item).setItemStack(item);
+		Item dropped = target.getWorld().dropItem(target, item);
+		dropped.setItemStack(item);
+		playSpellEffects(EffectPosition.SPECIAL, dropped);
+		//target.getWorld().dropItem(target, item).setItemStack(item);
 		return true;
 	}
 

@@ -38,6 +38,7 @@ import com.nisovin.magicspells.util.SpellType;
 import com.nisovin.magicspells.util.SpellTypes;
 import com.nisovin.magicspells.util.Util;
 
+// Special position will play around the items that get dropped, if they do get dropped
 @SpellType(types={SpellTypes.TARGETED_ENTITY_SPELL, SpellTypes.TARGETED_LOCATION_SPELL})
 public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, TargetedLocationSpell {
 
@@ -217,7 +218,10 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 					}
 				}
 				if (!added && (dropIfInventoryFull || !addToInventory)) {
-					player.getWorld().dropItem(loc, item).setItemStack(item);
+					Item i = player.getWorld().dropItem(loc, item);
+					i.setItemStack(item);
+					playSpellEffects(EffectPosition.SPECIAL, i);
+					//player.getWorld().dropItem(loc, item).setItemStack(item);
 				}
 			} else {
 				updateInv = true;
@@ -299,6 +303,7 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 				v.normalize().multiply(randomVelocity);
 				dropped.setVelocity(v);
 			}
+			playSpellEffects(EffectPosition.SPECIAL, dropped);
 		}
 		return true;
 	}

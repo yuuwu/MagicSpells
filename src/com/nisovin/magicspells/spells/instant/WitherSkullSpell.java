@@ -31,6 +31,7 @@ public class WitherSkullSpell extends InstantSpell implements TargetedEntityFrom
 		if (state == SpellCastState.NORMAL) {
 			WitherSkull skull = player.launchProjectile(WitherSkull.class, player.getLocation().getDirection().multiply(velocity * power));
 			skull.setCharged(charged);
+			playSpellEffects(EffectPosition.PROJECTILE, skull);
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}
@@ -43,12 +44,12 @@ public class WitherSkullSpell extends InstantSpell implements TargetedEntityFrom
 		skull.setCharged(charged);
 		skull.setVelocity(v);
 		skull.setDirection(v);
-		
 		if (caster != null) {
 			playSpellEffects(EffectPosition.CASTER, caster);
 		} else {
 			playSpellEffects(EffectPosition.CASTER, from);
 		}
+		playSpellEffects(EffectPosition.PROJECTILE, skull);
 		
 		return true;
 	}

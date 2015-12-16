@@ -626,6 +626,8 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 			return EffectPosition.ORBIT;
 		} else if (spos.equalsIgnoreCase("reverse_line") || spos.equalsIgnoreCase("reverseline") || spos.equalsIgnoreCase("rline")) {
 			return EffectPosition.REVERSE_LINE;
+		} else if (spos.equalsIgnoreCase("projectile")) {
+			return EffectPosition.PROJECTILE;
 		}
 		return null;
 	}
