@@ -37,7 +37,7 @@ public class ActionBarTextEffect extends SpellEffect {
 	}
 	
 	@Override
-	protected void playEffectEntity(Entity entity) {
+	protected Runnable playEffectEntity(Entity entity) {
 		if (broadcast) {
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				MagicSpells.getVolatileCodeHandler().sendActionBarMessage(player, message);
@@ -47,6 +47,7 @@ public class ActionBarTextEffect extends SpellEffect {
 			MagicSpells.getVolatileCodeHandler().sendActionBarMessage((Player)entity, message);
 			//TODO use a non volatile handler for this
 		}
+		return null;
 	}
 	
 }

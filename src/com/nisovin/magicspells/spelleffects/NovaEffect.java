@@ -91,8 +91,8 @@ public class NovaEffect extends SpellEffect {
 	}
 
 	@Override
-	public void playEffectLocation(Location location) {
-		if (mat == null) return;
+	public Runnable playEffectLocation(Location location) {
+		if (mat == null) return null;
 		
 		// get nearby players
 		Item item = location.getWorld().dropItem(location, new ItemStack(Material.STONE, 0));
@@ -111,6 +111,7 @@ public class NovaEffect extends SpellEffect {
 			b = b.getRelative(BlockFace.UP);
 		}
 		new NovaAnimation(nearby, location.getBlock(), mat, radius, novaTickInterval);
+		return null;
 	}
 	
 

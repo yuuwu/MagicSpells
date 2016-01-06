@@ -36,13 +36,15 @@ public class SmokeSwirlEffect extends SpellEffect {
 	int[] v = {7,6,3,0,1,2,5,8};
 	
 	@Override
-	public void playEffectLocation(Location location) {		
+	public Runnable playEffectLocation(Location location) {		
 		new Animator(location, 1, duration);
+		return null;
 	}
 	
 	@Override
-	public void playEffectEntity(Entity entity) {
+	public Runnable playEffectEntity(Entity entity) {
 		new Animator(entity, 1, duration);
+		return null;
 	}
 	
 	private class Animator implements Runnable {

@@ -31,21 +31,23 @@ public class HeartsEffect extends SpellEffect {
 	}
 	
 	@Override
-	public void playEffectEntity(Entity entity) {
+	public Runnable playEffectEntity(Entity entity) {
 		if (entity instanceof Tameable) {
 			entity.playEffect(EntityEffect.WOLF_HEARTS);
 		} else {
 			playEffect(entity.getLocation());
 		}
+		return null;
 	}
 	
 	@Override
-	public void playEffectLocation(Location location) {
+	public Runnable playEffectLocation(Location location) {
 		//MagicSpells.getVolatileCodeHandler().playParticleEffect(location, "heart", .3F, .2F, .2F, 4, 32, 2F);
 		//Location location, String name, float spreadHoriz, float spreadVert, float speed, int count, int radius, float yOffset
 		
 		effect.display(null, location.clone().add(0, yOffset, 0), null, range, spreadHoriz, spreadVert, spreadHoriz, speed, count);
 		//ParticleData data, Location center, Color color, double range, float offsetX, float offsetY, float offsetZ, float speed, int amount
+		return null;
 	}
 	
 }

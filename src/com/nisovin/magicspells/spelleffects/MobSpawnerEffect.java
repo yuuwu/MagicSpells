@@ -17,8 +17,9 @@ public class MobSpawnerEffect extends SpellEffect {
 	}
 
 	@Override
-	public void playEffectLocation(Location location) {
+	public Runnable playEffectLocation(Location location) {
 		location.getWorld().playEffect(location, Effect.MOBSPAWNER_FLAMES, 0);
+		return null;
 	}
 	
 }

@@ -36,12 +36,13 @@ public class BroadcastEffect extends SpellEffect {
 	}
 
 	@Override
-	public void playEffectLocation(Location location) {
+	public Runnable playEffectLocation(Location location) {
 		broadcast(location, message);
+		return null;
 	}
 	
 	@Override
-	public void playEffectEntity(Entity entity) {
+	public Runnable playEffectEntity(Entity entity) {
 		if (targeted) {
 			if (entity instanceof Player) {
 				MagicSpells.sendMessage((Player)entity, message);
@@ -53,6 +54,7 @@ public class BroadcastEffect extends SpellEffect {
 			}
 			broadcast(entity.getLocation(), msg);
 		}
+		return null;
 	}
 	
 	private void broadcast(Location location, String message) {

@@ -57,12 +57,13 @@ public class PotionEffect extends SpellEffect {
 	}
 
 	@Override
-	public void playEffectEntity(Entity entity) {
+	public Runnable playEffectEntity(Entity entity) {
 		if (entity instanceof LivingEntity) {
 			LivingEntity le = (LivingEntity)entity;
 			MagicSpells.getVolatileCodeHandler().addPotionGraphicalEffect(le, color, duration);
 			//TODO use a non volatile handler for this
 		}
+		return null;
 	}
 	
 }

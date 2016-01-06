@@ -35,8 +35,9 @@ public class SplashPotionEffect extends SpellEffect {
 	}
 
 	@Override
-	public void playEffectLocation(Location location) {
+	public Runnable playEffectLocation(Location location) {
 		location.getWorld().playEffect(location, Effect.POTION_BREAK, pot);
+		return null;
 	}
 	
 }

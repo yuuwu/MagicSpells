@@ -16,8 +16,9 @@ public class LightningEffect extends SpellEffect {
 	}
 
 	@Override
-	public void playEffectLocation(Location location) {
+	public Runnable playEffectLocation(Location location) {
 		location.getWorld().strikeLightningEffect(location);
+		return null;
 	}
 
 }

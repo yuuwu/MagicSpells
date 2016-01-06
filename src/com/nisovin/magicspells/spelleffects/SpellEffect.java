@@ -118,9 +118,9 @@ public abstract class SpellEffect {
 	 * @param entity the entity to play the effect on
 	 * @param param the parameter specified in the spell config (can be ignored)
 	 */
-	public final void playEffect(final Entity entity) {
+	public Runnable playEffect(final Entity entity) {
 		if (delay <= 0) {
-			playEffectEntity(entity);
+			return playEffectEntity(entity);
 		} else {
 			MagicSpells.scheduleDelayedTask(new Runnable() {
 				@Override
@@ -129,10 +129,11 @@ public abstract class SpellEffect {
 				}
 			}, delay);
 		}
+		return null;
 	}
 	
-	protected void playEffectEntity(Entity entity) {
-		playEffectLocationReal(entity.getLocation());
+	protected Runnable playEffectEntity(Entity entity) {
+		return playEffectLocationReal(entity.getLocation());
 	}
 	
 	/**
@@ -140,9 +141,9 @@ public abstract class SpellEffect {
 	 * @param location location to play the effect at
 	 * @param param the parameter specified in the spell config (can be ignored)
 	 */
-	public final void playEffect(final Location location) {
+	public final Runnable playEffect(final Location location) {
 		if (delay <= 0) {
-			playEffectLocationReal(location);
+			return playEffectLocationReal(location);
 		} else {
 			MagicSpells.scheduleDelayedTask(new Runnable() {
 				@Override
@@ -151,9 +152,10 @@ public abstract class SpellEffect {
 				}
 			}, delay);
 		}
+		return null;
 	}
 	
-	void playEffectLocationReal(Location location) {
+	Runnable playEffectLocationReal(Location location) {
 		//double heightOffsetLocal = heightOffsetExpression.resolveValue(null, null, location, null).doubleValue();
 		//double forwardOffsetLocal = forwardOffsetExpression.resolveValue(null, null, location, null).doubleValue();
 		if (heightOffset != 0 || forwardOffset != 0) {
@@ -164,14 +166,15 @@ public abstract class SpellEffect {
 			if (forwardOffset != 0) {
 				loc.add(loc.getDirection().setY(0).normalize().multiply(forwardOffset));
 			}
-			playEffectLocation(loc);
+			return playEffectLocation(loc);
 		} else {
-			playEffectLocation(location.clone());
+			return playEffectLocation(location.clone());
 		}
 	}
 	
-	protected void playEffectLocation(Location location) {
+	protected Runnable playEffectLocation(Location location) {
 		//expect to be overridden
+		return null;
 	}
 	
 	/**
@@ -180,13 +183,13 @@ public abstract class SpellEffect {
 	 * @param location2 the ending location
 	 * @param param the parameter specified in the spell config (can be ignored)
 	 */
-	public void playEffect(Location location1, Location location2) {
+	public Runnable playEffect(Location location1, Location location2) {
 		Location loc1 = location1.clone();
 		Location loc2 = location2.clone();
 		//double localHeightOffset = heightOffsetExpression.resolveValue(null, null, location1, location2).doubleValue();
 		//double localForwardOffset = forwardOffsetExpression.resolveValue(null, null, location1, location2).doubleValue();
 		int c = (int)Math.ceil(loc1.distance(loc2) / distanceBetween) - 1;
-		if (c <= 0) return;
+		if (c <= 0) return null;
 		Vector v = loc2.toVector().subtract(loc1.toVector()).normalize().multiply(distanceBetween);
 		Location l = loc1.clone();
 		if (heightOffset != 0) {
@@ -197,6 +200,7 @@ public abstract class SpellEffect {
 			l.add(v);
 			playEffect(l);
 		}
+		return null;
 	}
 	
 	public void playEffectWhileActiveOnEntity(final Entity entity, final SpellEffectActiveChecker checker) {

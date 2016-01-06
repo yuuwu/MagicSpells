@@ -43,7 +43,7 @@ public class CloudEffect extends SpellEffect {
 	}
 	
 	@Override
-	public void playEffectLocation(Location location) {		
+	public Runnable playEffectLocation(Location location) {
 		World w = location.getWorld();
 		int cx = location.getBlockX();
 		int cy = location.getBlockY();
@@ -70,6 +70,7 @@ public class CloudEffect extends SpellEffect {
 				}
 			}
 		}
+		return null;
 	}
 	
 	private void smoke(World w, Block b, int r) {

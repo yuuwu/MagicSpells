@@ -41,13 +41,14 @@ public class SmokeTrailEffect extends SpellEffect {
 	}
 
 	@Override
-	public void playEffect(Location location1, Location location2) {		
+	public Runnable playEffect(Location location1, Location location2) {		
 		SmokeStreamEffect effect = new SmokeStreamEffect(location1, location2);
 		if (interval > 0) {
 			effect.start(interval);
 		} else {
 			effect.showNoAnimation();
 		}
+		return null;
 	}
 	
 	// Thanks to DrBowe for sharing the code

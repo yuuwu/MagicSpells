@@ -56,6 +56,8 @@ import com.nisovin.magicspells.util.Util;
 import com.nisovin.magicspells.util.ValidTargetList;
 import com.nisovin.magicspells.variables.VariableManager;
 
+import de.slikey.effectlib.Effect;
+
 public abstract class Spell implements Comparable<Spell>, Listener {
 
 	private MagicConfig config;
@@ -125,6 +127,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	
 	@ConfigData
 	protected EnumMap<EffectPosition, List<SpellEffect>> effects;
+	protected Map<String, Map<EffectPosition, List<Runnable>>> callbacks;
 	
 	@ConfigData(field="min-range")
 	protected int minRange;
@@ -275,6 +278,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		this.config = config;
 		
 		this.internalName = spellName;
+		callbacks = new HashMap<String, Map<EffectPosition, List<Runnable>>>();
 		loadConfigData(config, spellName, "spells");
 		
 	}
@@ -1576,6 +1580,8 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		playSpellEffectsTrail(pos1.getLocation(), pos2.getLocation());
 	}
 	
+	
+	
 	protected void playSpellEffects(Entity pos1, Location pos2) {
 		playSpellEffects(EffectPosition.CASTER, pos1);
 		playSpellEffects(EffectPosition.TARGET, pos2);
@@ -1599,7 +1605,13 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 			List<SpellEffect> effectsList = effects.get(pos);
 			if (effectsList != null) {
 				for (SpellEffect effect : effectsList) {
-					effect.playEffect(entity);
+					Runnable canceler = effect.playEffect(entity);
+					if (canceler != null) {
+						if (entity instanceof Player) {
+							Player p = (Player)entity;
+							callbacks.get(p.getUniqueId().toString()).get(pos).add(canceler);
+						}
+					}
 				}
 			}
 		}
@@ -1631,6 +1643,47 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 					effect.playEffect(loc2, loc1);
 				}
 			}
+		}
+	}
+	
+	public void initializePlayerEffectTracker(Player p) {
+		if (callbacks != null) {
+			String key = p.getUniqueId().toString();
+			Map<EffectPosition, List<Runnable>> entry = new EnumMap<EffectPosition, List<Runnable>>(EffectPosition.class);
+			for (EffectPosition pos: EffectPosition.values()) {
+				List<Runnable> runnables = new ArrayList<Runnable>();
+				entry.put(pos, runnables);
+			}
+			callbacks.put(key, entry);
+		}
+	}
+	
+	public void unloadPlayerEffectTracker(Player p) {
+		for (EffectPosition pos: EffectPosition.values()) {
+			cancelEffects(pos, p.getUniqueId().toString());
+		}
+		callbacks.remove(p.getUniqueId().toString());
+	}
+	
+	public void cancelEffects(EffectPosition pos, String uuid) {
+		if (callbacks.get(uuid) == null) return;
+		List<Runnable> cancelers = callbacks.get(uuid).get(pos);
+		while (!cancelers.isEmpty()) {
+			Runnable c = cancelers.iterator().next();
+			if (c instanceof Effect) {
+				Effect eff = (Effect)c;
+				eff.cancel();
+				System.out.println("Disabling effect");
+			} else {
+				c.run();
+			}
+			cancelers.remove(c);
+		}
+	}
+	
+	public void cancelEffectForAllPlayers(EffectPosition pos) {
+		for (String key: callbacks.keySet()) {
+			cancelEffects(pos, key);
 		}
 	}
 	

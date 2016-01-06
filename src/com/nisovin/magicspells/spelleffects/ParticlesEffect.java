@@ -86,10 +86,11 @@ public class ParticlesEffect extends SpellEffect {
 	}
 	
 	@Override
-	public void playEffectLocation(Location location) {
+	public Runnable playEffectLocation(Location location) {
 		//ParticleData data, Location center, Color color, double range, float offsetX, float offsetY, float offsetZ, float speed, int amount
 		effect.display(data, location.clone().add(0, yOffset, 0), color, renderDistance, xSpread, ySpread, zSpread, speed, count);
 		//MagicSpells.getVolatileCodeHandler().playParticleEffect(location, name, xSpread, ySpread, zSpread, speed, count, renderDistance, yOffset);
+		return null;
 	}
 	
 }

@@ -37,8 +37,9 @@ public class SmokeEffect extends SpellEffect {
 	}
 
 	@Override
-	public void playEffectLocation(Location location) {
+	public Runnable playEffectLocation(Location location) {
 		location.getWorld().playEffect(location, Effect.SMOKE, dir);
+		return null;
 	}
 
 }

@@ -42,14 +42,13 @@ public class AngryEffect extends SpellEffect {
 	}
 
 	@Override
-	public void playEffectLocation(Location location) {
+	public Runnable playEffectLocation(Location location) {
 		//MagicSpells.getVolatileCodeHandler().playParticleEffect(location, "angryVillager", 0F, 0F, .2F, 1, 32, 2F);
 		//Location location, String name, float spreadHoriz, float spreadVert, float speed, int count, int radius, float yOffset
 		
 		//ParticleData data, Location center, Color color, double range, float offsetX, float offsetY, float offsetZ, float speed, int amount
 		effect.display(null, location.clone().add(xOffset, yOffset, zOffset), null, range, offsetX, offsetY, offsetZ, speed, count);
-		
-		
+		return null;
 	}
 	
 }

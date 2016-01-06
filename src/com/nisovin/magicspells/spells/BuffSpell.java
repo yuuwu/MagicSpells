@@ -356,6 +356,7 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 			sendMessage(player, strFade);
 			playSpellEffects(EffectPosition.DISABLED, player);
 			turnOffBuff(player);
+			cancelEffects(EffectPosition.CASTER, player.getUniqueId().toString());
 		}
 	}
 	

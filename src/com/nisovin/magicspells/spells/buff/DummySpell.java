@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.bukkit.entity.Player;
 
+import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 
@@ -34,6 +35,9 @@ public class DummySpell extends BuffSpell {
 
 	@Override
 	protected void turnOff() {
+		for (EffectPosition pos: EffectPosition.values()) {
+			cancelEffectForAllPlayers(pos);
+		}
 		players.clear();
 	}
 

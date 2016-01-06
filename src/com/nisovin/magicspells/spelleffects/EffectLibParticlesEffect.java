@@ -5,6 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 
+import de.slikey.effectlib.Effect;
 import de.slikey.effectlib.util.ParticleEffect;
 import de.slikey.effectlib.util.ParticleEffect.ItemData;
 import de.slikey.effectlib.util.ParticleEffect.ParticleData;
@@ -91,9 +92,10 @@ public class EffectLibParticlesEffect extends SpellEffect {
 	}
 
 	@Override
-	public void playEffectLocation(Location location) {
+	public Runnable playEffectLocation(Location location) {
 		//ParticleData data, Location center, Color color, double range, float offsetX, float offsetY, float offsetZ, float speed, int amount
 		effect.display(data, location, color, range, offsetX, offsetY, offsetZ, speed, amount);
+		return null;
 	}
 
 }

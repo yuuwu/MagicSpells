@@ -46,10 +46,10 @@ public class ParticleLineEffect extends ParticlesEffect {
 	}
 	
 	@Override
-	public void playEffect(Location location1, Location location2) {
+	public Runnable playEffect(Location location1, Location location2) {
 		
 		int c = (int)Math.ceil(location1.distance(location2) / distanceBetween) - 1;
-		if (c <= 0) return;
+		if (c <= 0) return null;
 		Vector v = location2.toVector().subtract(location1.toVector()).normalize().multiply(distanceBetween);
 		Location l = location1.clone();
 		l = l.add(0, yOffset, 0);
@@ -64,6 +64,7 @@ public class ParticleLineEffect extends ParticlesEffect {
 			//ParticleData data, Location center, Color color, double range, float offsetX, float offsetY, float offsetZ, float speed, int amount
 			//MagicSpells.getVolatileCodeHandler().playParticleEffect(l, name, xSpread, ySpread, zSpread, speed, count, 15, yOffset);
 		}
+		return null;
 	}
 
 }

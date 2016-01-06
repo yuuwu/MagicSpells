@@ -16,8 +16,9 @@ public class ExplosionEffect extends SpellEffect {
 	}
 
 	@Override
-	public void playEffectLocation(Location location) {
+	public Runnable playEffectLocation(Location location) {
 		location.getWorld().createExplosion(location, 0F);
+		return null;
 	}
 
 }

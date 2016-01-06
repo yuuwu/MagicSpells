@@ -95,8 +95,8 @@ public class ItemSprayEffect extends SpellEffect {
 	}
 	
 	@Override
-	public void playEffectLocation(Location location) {
-		if (mat == null) return;
+	public Runnable playEffectLocation(Location location) {
+		if (mat == null) return null;
 		
 		// spawn items
 		Random rand = new Random();
@@ -117,6 +117,7 @@ public class ItemSprayEffect extends SpellEffect {
 				}
 			}
 		}, duration);
+		return null;
 	}
 	
 }

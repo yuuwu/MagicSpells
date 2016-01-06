@@ -31,7 +31,36 @@ public class Spellbook {
 	private String playerName;
 	private String uniqueId;
 	
-	private TreeSet<Spell> allSpells = new TreeSet<Spell>();
+	private TreeSet<Spell> allSpells = new TreeSet<Spell>() {
+		
+		private static final long serialVersionUID = 1L;
+		
+		@Override
+		public boolean remove(Object o) {
+			boolean ret = super.remove(o);
+			if (o instanceof Spell) {
+				Spell s = (Spell)o;
+				s.unloadPlayerEffectTracker(player);
+			}
+			return ret;
+		}
+		
+		@Override
+		public boolean add(Spell s) {
+			boolean ret = super.add(s);
+			s.initializePlayerEffectTracker(player);
+			return ret;
+		}
+		
+		@Override
+		public void clear() {
+			for (Spell s: this) {
+				s.unloadPlayerEffectTracker(player);
+			}
+			super.clear();
+		}
+		
+	};
 	private HashMap<CastItem, ArrayList<Spell>> itemSpells = new HashMap<CastItem,ArrayList<Spell>>();
 	private HashMap<CastItem, Integer> activeSpells = new HashMap<CastItem,Integer>();
 	private HashMap<Spell, Set<CastItem>> customBindings = new HashMap<Spell,Set<CastItem>>();
