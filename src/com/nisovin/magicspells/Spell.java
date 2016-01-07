@@ -1673,7 +1673,6 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 			if (c instanceof Effect) {
 				Effect eff = (Effect)c;
 				eff.cancel();
-				System.out.println("Disabling effect");
 			} else {
 				c.run();
 			}
