@@ -38,7 +38,7 @@ public class Spellbook {
 		@Override
 		public boolean remove(Object o) {
 			boolean ret = super.remove(o);
-			if (o instanceof Spell) {
+			if (o != null && o instanceof Spell) {
 				Spell s = (Spell)o;
 				s.unloadPlayerEffectTracker(player);
 			}
