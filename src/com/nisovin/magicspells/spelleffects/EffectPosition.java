@@ -34,7 +34,12 @@ public enum EffectPosition {
 	
 	
 	/** May be referenced as: projectile
-	 * Some spells may use this to play an effect on projectile entities **/
+	 * Some spells may use this to play an effect on projectile entities.
+	 * Currently enabled in:
+	 *   - WitherSkullSpell
+	 *   - FireballSpell
+	 *   - ArrowSpell
+	 **/
 	PROJECTILE(10);
 	
 	private int id;
