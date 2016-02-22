@@ -77,6 +77,8 @@ public abstract class Condition {
 		conditions.put("onsameteam", OnSameTeamCondition.class);
 		conditions.put("healthabove", HealthAboveCondition.class);
 		conditions.put("healthbelow", HealthBelowCondition.class);
+		conditions.put("absorptionlessthan", AbsorptionLessThanCondition.class);
+		conditions.put("absorptionmorethan", AbsorptionMoreThanCondition.class);
 		conditions.put("manaabove", ManaAboveCondition.class);
 		conditions.put("manabelow", ManaBelowCondition.class);
 		conditions.put("foodabove", FoodAboveCondition.class);
@@ -114,6 +116,7 @@ public abstract class Condition {
 		conditions.put("richerthan", RicherThanCondition.class);
 		conditions.put("lookingatblock", LookingAtBlockCondition.class);
 		conditions.put("oncooldown", OnCooldownCondition.class);
+		conditions.put("hasmark", HasMarkCondition.class);
 	}
 	
 }

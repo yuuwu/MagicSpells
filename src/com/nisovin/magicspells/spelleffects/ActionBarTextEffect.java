@@ -43,7 +43,7 @@ public class ActionBarTextEffect extends SpellEffect {
 				MagicSpells.getVolatileCodeHandler().sendActionBarMessage(player, message);
 				//TODO use a non volatile handler for this
 			}
-		} else if (entity instanceof Player) {
+		} else if (entity != null && entity instanceof Player) {
 			MagicSpells.getVolatileCodeHandler().sendActionBarMessage((Player)entity, message);
 			//TODO use a non volatile handler for this
 		}

@@ -64,7 +64,7 @@ public class TitleEffect extends SpellEffect {
 				MagicSpells.getVolatileCodeHandler().sendTitleToPlayer(player, title, subtitle, fadeIn, stay, fadeOut);
 				//TODO use a non volatile handler for this
 			}
-		} else if (entity instanceof Player) {
+		} else if (entity != null && entity instanceof Player) {
 			MagicSpells.getVolatileCodeHandler().sendTitleToPlayer((Player)entity, title, subtitle, fadeIn, stay, fadeOut);
 			//TODO use a non volatile handler for this
 		}

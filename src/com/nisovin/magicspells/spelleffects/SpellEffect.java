@@ -1,16 +1,19 @@
 package com.nisovin.magicspells.spelleffects;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.expression.Expression;
+import com.nisovin.magicspells.castmodifiers.ModifierSet;
 
 /**
  * 
@@ -74,6 +77,8 @@ public abstract class SpellEffect {
 	@ConfigData(field="orbit-y-offset", dataType="double", defaultValue="0")
 	float orbitYOffset = 0;
 	
+	ModifierSet modifiers = null;
+	
 	int taskId = -1;
 	
 	public abstract void loadFromString(String string);
@@ -108,6 +113,11 @@ public abstract class SpellEffect {
 		ticksPerRevolution = Math.round(ticksPerSecond * secondsPerRevolution);
 		orbitYOffset = (float)config.getDouble("orbit-y-offset", orbitYOffset);
 		
+		List<String> list = config.getStringList("modifiers");
+		if (list != null) {
+			modifiers = new ModifierSet(list);
+		}
+		
 		loadFromConfig(config);
 	}
 	
@@ -133,7 +143,7 @@ public abstract class SpellEffect {
 	}
 	
 	protected Runnable playEffectEntity(Entity entity) {
-		return playEffectLocationReal(entity.getLocation());
+		return playEffectLocationReal(entity == null ? null : entity.getLocation());
 	}
 	
 	/**
@@ -155,10 +165,10 @@ public abstract class SpellEffect {
 		return null;
 	}
 	
-	Runnable playEffectLocationReal(Location location) {
-		//double heightOffsetLocal = heightOffsetExpression.resolveValue(null, null, location, null).doubleValue();
-		//double forwardOffsetLocal = forwardOffsetExpression.resolveValue(null, null, location, null).doubleValue();
-		if (heightOffset != 0 || forwardOffset != 0) {
+	private Runnable playEffectLocationReal(Location location) {
+		if (location == null) {
+			playEffectLocation(null);
+		} else if (heightOffset != 0 || forwardOffset != 0) {
 			Location loc = location.clone();
 			if (heightOffset != 0) {
 				loc.setY(loc.getY() + heightOffset);

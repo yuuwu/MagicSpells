@@ -19,8 +19,6 @@ import com.nisovin.magicspells.castmodifiers.ModifierSet;
 import com.nisovin.magicspells.events.SpellTargetEvent;
 import com.nisovin.magicspells.events.SpellTargetLocationEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
-import com.nisovin.magicspells.spells.TargetedEntityFromLocationSpell;
-import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.BoundingBox;
@@ -75,13 +73,13 @@ public class AreaEffectSpell extends TargetedSpell implements TargetedLocationSp
 			for (String spellName : spellNames) {
 				Subspell spell = new Subspell(spellName);
 				if (spell.process()) {
-					if (spell.getSpell() instanceof TargetedLocationSpell || spell.getSpell() instanceof TargetedEntitySpell || spell.getSpell() instanceof TargetedEntityFromLocationSpell) {
+					if (spell.isTargetedEntityFromLocationSpell() || spell.isTargetedEntitySpell() || spell.isTargetedLocationSpell()) {
 						spells.add(spell);
 					} else {
 						MagicSpells.error("AreaEffect spell '" + name + "' attempted to use non-targeted spell '" + spellName + "'");
 					}
 				} else {
-					MagicSpells.error("AreaEffect spell '" + name + "' attempted to use non-existant spell '" + spellName + "'");
+					MagicSpells.error("AreaEffect spell '" + name + "' attempted to use invalid spell '" + spellName + "'");
 				}
 			}
 			spellNames.clear();
@@ -143,8 +141,8 @@ public class AreaEffectSpell extends TargetedSpell implements TargetedLocationSp
 	private boolean doAoe(Player player, Location location, float basePower) {
 		int count = 0;
 		
-		Vector facing = player.getLocation().getDirection();
-		Vector vLoc = player.getLocation().toVector();
+		Vector facing = player != null ? player.getLocation().getDirection() : location.getDirection();
+		Vector vLoc = player != null ? player.getLocation().toVector() : location.toVector();
 		
 		BoundingBox box = new BoundingBox(location, radius, verticalRadius);
 		List<Entity> entities = new ArrayList<Entity>(location.getWorld().getEntitiesByClasses(LivingEntity.class));
@@ -172,23 +170,29 @@ public class AreaEffectSpell extends TargetedSpell implements TargetedLocationSp
 							target = event.getTarget();
 							power = event.getPower();
 						}
+					} else if (entityTargetModifiers != null) {
+						SpellTargetEvent event = new SpellTargetEvent(this, player, target, power);
+						entityTargetModifiers.apply(event);
+						if (event.isCancelled()) {
+							continue;
+						}
 					}
 					for (Subspell spell : spells) {
 						if (player != null) {
-							if (spellSourceInCenter && spell.getSpell() instanceof TargetedEntityFromLocationSpell) {
+							if (spellSourceInCenter && spell.isTargetedEntityFromLocationSpell()) {
 								spell.castAtEntityFromLocation(player, location, target, power);
-							} else if (spell.getSpell() instanceof TargetedEntitySpell) {
+							} else if (spell.isTargetedEntitySpell()) {
 								spell.castAtEntity(player, target, power);
-							} else if (spell.getSpell() instanceof TargetedLocationSpell) {
+							} else if (spell.isTargetedLocationSpell()) {
 								spell.castAtLocation(player, target.getLocation(), power);
 							}
 						} else {
-							if (spell.getSpell() instanceof TargetedEntityFromLocationSpell) {
-								spell.castAtEntityFromLocation(player, location, target, power);
-							} else if (spell.getSpell() instanceof TargetedEntitySpell) {
-								spell.castAtEntity(player, target, power);
-							} else if (spell.getSpell() instanceof TargetedLocationSpell) {
-								spell.castAtLocation(player, target.getLocation(), power);
+							if (spell.isTargetedEntityFromLocationSpell()) {
+								spell.castAtEntityFromLocation(null, location, target, power);
+							} else if (spell.isTargetedEntitySpell()) {
+								spell.castAtEntity(null, target, power);
+							} else if (spell.isTargetedLocationSpell()) {
+								spell.castAtLocation(null, target.getLocation(), power);
 							}
 						}
 					}

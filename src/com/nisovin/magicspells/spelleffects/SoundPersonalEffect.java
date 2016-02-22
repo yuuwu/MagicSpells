@@ -1,5 +1,6 @@
 package com.nisovin.magicspells.spelleffects;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -26,6 +27,7 @@ public class SoundPersonalEffect extends SpellEffect {
 	
 	@ConfigData(field="pitch", dataType="double", defaultValue="1.0")
 	float pitch = 1.0F;
+	boolean broadcast = false;
 
 	@Override
 	public void loadFromString(String string) {
@@ -51,11 +53,16 @@ public class SoundPersonalEffect extends SpellEffect {
 		sound = config.getString("sound", sound);
 		volume = (float)config.getDouble("volume", volume);
 		pitch = (float)config.getDouble("pitch", pitch);
+		broadcast = config.getBoolean("broadcast", broadcast);
 	}
 
 	@Override
 	public Runnable playEffectEntity(Entity entity) {
-		if (entity instanceof Player) {
+		if (broadcast) {
+			for (Player player : Bukkit.getOnlinePlayers()) {
+				MagicSpells.getVolatileCodeHandler().playSound(player, sound, volume, pitch);
+			}
+		} else if (entity != null && entity instanceof Player) {
 			MagicSpells.getVolatileCodeHandler().playSound((Player)entity, sound, volume, pitch);
 			//SoundUtils.playSound((Player) entity, sound, volume, pitch);
 		}
