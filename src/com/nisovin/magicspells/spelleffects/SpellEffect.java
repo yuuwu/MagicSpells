@@ -6,14 +6,13 @@ import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.castmodifiers.ModifierSet;
 import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.expression.Expression;
-import com.nisovin.magicspells.castmodifiers.ModifierSet;
 
 /**
  * 
@@ -167,7 +166,7 @@ public abstract class SpellEffect {
 	
 	private Runnable playEffectLocationReal(Location location) {
 		if (location == null) {
-			playEffectLocation(null);
+			return playEffectLocation(null);
 		} else if (heightOffset != 0 || forwardOffset != 0) {
 			Location loc = location.clone();
 			if (heightOffset != 0) {
