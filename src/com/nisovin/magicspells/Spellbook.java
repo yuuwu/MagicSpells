@@ -78,14 +78,14 @@ public class Spellbook {
 	}
 	
 	public void destroy() {
-		player = null;
-		playerName = null;
 		allSpells.clear();
 		itemSpells.clear();
 		activeSpells.clear();
 		customBindings.clear();
 		temporarySpells.clear();
 		cantLearn.clear();
+		player = null;
+		playerName = null;
 	}
 	
 	public void load() {

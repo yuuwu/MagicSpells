@@ -1677,13 +1677,15 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	}
 	
 	public void unloadPlayerEffectTracker(Player p) {
+		String uuid = p.getUniqueId().toString();
 		for (EffectPosition pos: EffectPosition.values()) {
-			cancelEffects(pos, p.getUniqueId().toString());
+			cancelEffects(pos, uuid);
 		}
-		callbacks.remove(p.getUniqueId().toString());
+		callbacks.remove(uuid);
 	}
 	
 	public void cancelEffects(EffectPosition pos, String uuid) {
+		if (callbacks == null) return;
 		if (callbacks.get(uuid) == null) return;
 		List<Runnable> cancelers = callbacks.get(uuid).get(pos);
 		while (!cancelers.isEmpty()) {
