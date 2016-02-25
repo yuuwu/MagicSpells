@@ -1650,7 +1650,6 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 			List<SpellEffect> effectsList = effects.get(EffectPosition.TRAIL);
 			if (effectsList != null) {
 				for (SpellEffect effect : effectsList) {
-					System.out.println("yes?");
 					effect.playEffect(loc1, loc2);
 				}
 			}
