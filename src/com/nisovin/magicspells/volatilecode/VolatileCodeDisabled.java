@@ -274,4 +274,14 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 	public double getAbsorptionHearts(LivingEntity entity) {
 		return 0;
 	}
+
+	@Override
+	public void setOffhand(Player player, ItemStack item) {
+	}
+
+	@Override
+	public ItemStack getOffhand(Player player) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

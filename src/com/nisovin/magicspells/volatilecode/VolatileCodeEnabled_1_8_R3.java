@@ -751,4 +751,16 @@ public class VolatileCodeEnabled_1_8_R3 implements VolatileCodeHandle {
 		return ((CraftLivingEntity)entity).getHandle().getAbsorptionHearts();
 	}
 
+	@Override
+	public void setOffhand(Player player, ItemStack item) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public ItemStack getOffhand(Player player) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
