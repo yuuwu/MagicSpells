@@ -60,6 +60,7 @@ import com.nisovin.magicspells.variables.VariableManager;
 import com.nisovin.magicspells.volatilecode.VolatileCodeDisabled;
 import com.nisovin.magicspells.volatilecode.VolatileCodeEnabled_1_8_R1;
 import com.nisovin.magicspells.volatilecode.VolatileCodeEnabled_1_8_R3;
+import com.nisovin.magicspells.volatilecode.VolatileCodeEnabled_1_9_R1;
 import com.nisovin.magicspells.volatilecode.VolatileCodeHandle;
 import com.nisovin.magicspells.volatilecode.VolatileCodeProtocolLib;
 import com.nisovin.magicspells.zones.NoMagicZoneManager;
