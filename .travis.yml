@@ -11,3 +11,4 @@ deploy:
   file: dist/MagicSpells.jar
   on:
     repo: TheComputerGeek2/MagicSpells
+    tags: true
