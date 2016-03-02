@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.events.SpellApplyDamageEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
@@ -66,6 +67,7 @@ public class PainSpell extends TargetedSpell implements TargetedEntitySpell, Spe
 			}
 		}
 		if (damageType == null) {
+			DebugHandler.debugBadEnumValue(DamageCause.class, type);
 			damageType = DamageCause.ENTITY_ATTACK;
 		}
 	}

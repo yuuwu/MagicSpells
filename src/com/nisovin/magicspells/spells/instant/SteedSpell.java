@@ -18,6 +18,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.spigotmc.event.entity.EntityDismountEvent;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.util.MagicConfig;
@@ -54,6 +55,9 @@ public class SteedSpell extends InstantSpell {
 						break;
 					}
 				}
+				if (color == null) {
+					DebugHandler.debugBadEnumValue(Horse.Color.class, c);
+				}
 			}
 			if (s != null) {
 				for (Horse.Style h : Horse.Style.values()) {
@@ -62,6 +66,9 @@ public class SteedSpell extends InstantSpell {
 						break;
 					}
 				}
+				if (style == null) {
+					DebugHandler.debugBadEnumValue(Horse.Style.class, s);
+				}
 			}
 			if (v != null) {
 				for (Horse.Variant h : Horse.Variant.values()) {
@@ -69,6 +76,9 @@ public class SteedSpell extends InstantSpell {
 						variant = h;
 						break;
 					}
+				}
+				if (variant == null) {
+					DebugHandler.debugBadEnumValue(Horse.Variant.class, v);
 				}
 			}
 			if (a != null) {

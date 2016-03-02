@@ -5,6 +5,7 @@ import org.bukkit.block.Biome;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.castmodifiers.Condition;
 
 public class BiomeCondition extends Condition {
@@ -18,6 +19,7 @@ public class BiomeCondition extends Condition {
 		for (int i = 0; i < s.length; i++) {
 			biomes[i] = Biome.valueOf(s[i].toUpperCase());
 			if (biomes[i] == null) {
+				DebugHandler.debugBadEnumValue(Biome.class, s[i].toUpperCase());
 				return false;
 			}
 		}
