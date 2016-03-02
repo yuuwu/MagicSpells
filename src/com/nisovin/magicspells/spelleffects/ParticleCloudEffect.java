@@ -32,13 +32,14 @@ class ParticleCloudEffect extends SpellEffect {
 	}
 
 	@Override
-	public void playEffectLocation(Location location) {
+	public Runnable playEffectLocation(Location location) {
 		AreaEffectCloud aec = location.getWorld().spawn(location.clone().add(0, yOffset, 0), AreaEffectCloud.class);
 		aec.setParticle(particle);
 		aec.setRadius(radius);
 		aec.setRadiusPerTick(radiusPerTick);
 		aec.setDuration(duration);
 		aec.setColor(Color.fromRGB(color));
+		return null;
 	}
 	
 }
