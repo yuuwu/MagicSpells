@@ -1,20 +1,19 @@
 package com.nisovin.magicspells.spells;
 
-import com.nisovin.magicspells.MagicSpells;
-import com.nisovin.magicspells.Spell;
-import com.nisovin.magicspells.Spell.PostCastAction;
-import com.nisovin.magicspells.Spell.SpellCastState;
-import com.nisovin.magicspells.Subspell;
-import com.nisovin.magicspells.spelleffects.EffectPosition;
-import com.nisovin.magicspells.util.MagicConfig;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitScheduler;
+
+import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.Spell;
+import com.nisovin.magicspells.Subspell;
+import com.nisovin.magicspells.spelleffects.EffectPosition;
+import com.nisovin.magicspells.util.MagicConfig;
 
 public final class MultiSpell
   extends InstantSpell
@@ -40,11 +39,12 @@ public final class MultiSpell
     this.customSpellCastChance = getConfigBoolean("enable-custom-spell-cast-chance", false);
     this.enableIndividualChances = getConfigBoolean("enable-individual-chances", false);
     
-    this.actions = new ArrayList();
+    this.actions = new ArrayList<ActionChance>();
     this.spellList = getConfigStringList("spells", null);
   }
   
-  public void initialize()
+  @Override
+public void initialize()
   {
     super.initialize();
     if (this.spellList != null) {
@@ -72,7 +72,8 @@ public final class MultiSpell
     this.spellList = null;
   }
   
-  public Spell.PostCastAction castSpell(Player player, Spell.SpellCastState state, float power, String[] args)
+  @Override
+public Spell.PostCastAction castSpell(Player player, Spell.SpellCastState state, float power, String[] args)
   {
     if (state == Spell.SpellCastState.NORMAL)
     {
@@ -92,9 +93,9 @@ public final class MultiSpell
           }
         }
         int delay = 0;
-        for (Iterator localIterator3 = this.actions.iterator(); localIterator3.hasNext();)
+        for (Iterator<ActionChance> localIterator3 = this.actions.iterator(); localIterator3.hasNext();)
         {
-          actionChance = (ActionChance)localIterator3.next();
+          actionChance = localIterator3.next();
           Action action = actionChance.getAction();
           if (action.isDelay())
           {
@@ -124,9 +125,9 @@ public final class MultiSpell
           int s = 0;
           int i = 0;
           while (s < index) {
-            s = (int)Math.round(s + ((ActionChance)this.actions.get(i++)).getChance());
+            s = (int)Math.round(s + this.actions.get(i++).getChance());
           }
-          Action action = ((ActionChance)this.actions.get(Math.max(0, i - 1))).getAction();
+          Action action = this.actions.get(Math.max(0, i - 1)).getAction();
           if (action.isSpell())
           {
             if ((this.checkIndividualCooldowns) && (action.getSpell().getSpell().onCooldown(player)))
@@ -156,7 +157,7 @@ public final class MultiSpell
         }
         else
         {
-          Action action = ((ActionChance)this.actions.get(this.random.nextInt(this.actions.size()))).getAction();
+          Action action = this.actions.get(this.random.nextInt(this.actions.size())).getAction();
           if ((this.checkIndividualCooldowns) && (action.getSpell().getSpell().onCooldown(player)))
           {
             sendMessage(player, this.strOnCooldown);
@@ -170,7 +171,8 @@ public final class MultiSpell
     return Spell.PostCastAction.HANDLE_NORMALLY;
   }
   
-  public boolean castFromConsole(final CommandSender sender, final String[] args)
+  @Override
+public boolean castFromConsole(final CommandSender sender, final String[] args)
   {
     if (!this.castRandomSpellInstead)
     {
@@ -189,7 +191,8 @@ public final class MultiSpell
             final Spell spell = action.getSpell().getSpell();
             MagicSpells.scheduleDelayedTask(new Runnable()
             {
-              public void run()
+              @Override
+			public void run()
               {
                 spell.castFromConsole(sender, args);
               }
@@ -214,9 +217,9 @@ public final class MultiSpell
         int s = 0;
         int i = 0;
         while (s < index) {
-          s = (int)Math.round(s + ((ActionChance)this.actions.get(i++)).getChance());
+          s = (int)Math.round(s + this.actions.get(i++).getChance());
         }
-        Action action = ((ActionChance)this.actions.get(Math.max(0, i - 1))).getAction();
+        Action action = this.actions.get(Math.max(0, i - 1)).getAction();
         if (action.isSpell()) {
           action.getSpell().getSpell().castFromConsole(sender, args);
         }
@@ -233,7 +236,7 @@ public final class MultiSpell
       }
       else
       {
-        Action action = ((ActionChance)this.actions.get(this.random.nextInt(this.actions.size()))).getAction();
+        Action action = this.actions.get(this.random.nextInt(this.actions.size())).getAction();
         if (action.isSpell()) {
           action.getSpell().getSpell().castFromConsole(sender, args);
         }
@@ -242,12 +245,14 @@ public final class MultiSpell
     return true;
   }
   
-  public boolean canCastWithItem()
+  @Override
+public boolean canCastWithItem()
   {
     return this.castWithItem;
   }
   
-  public boolean canCastByCommand()
+  @Override
+public boolean canCastByCommand()
   {
     return this.castByCommand;
   }
@@ -304,7 +309,8 @@ public final class MultiSpell
       this.power = power;
     }
     
-    public void run()
+    @Override
+	public void run()
     {
       Player player = Bukkit.getPlayerExact(this.playerName);
       if ((player != null) && (player.isValid())) {
@@ -313,7 +319,7 @@ public final class MultiSpell
     }
   }
   
-  private class ActionChance
+  class ActionChance
   {
     private MultiSpell.Action action;
     private double chance;
