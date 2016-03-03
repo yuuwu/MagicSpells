@@ -200,7 +200,6 @@ public class VolatileCodeEnabled_1_8_R3 implements VolatileCodeHandle {
 
 	@Override
 	public void playExplosionEffect(Location location, float size) {
-		@SuppressWarnings("rawtypes")
 		PacketPlayOutExplosion packet = new PacketPlayOutExplosion(location.getX(), location.getY(), location.getZ(), size, new ArrayList(), null);
 		for (Player player : location.getWorld().getPlayers()) {
 			if (player.getLocation().distanceSquared(location) < 50 * 50) {

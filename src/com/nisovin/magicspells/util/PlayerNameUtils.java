@@ -12,7 +12,6 @@ public class PlayerNameUtils {
 		return Bukkit.getPlayerExact(playerName);
 	}
 	
-	@SuppressWarnings("deprecation")
 	public static Player getPlayer(String playername) {
 		//TODO come up with a non depreciated system
 		return Bukkit.getPlayer(playername);

@@ -19,6 +19,7 @@ class ParticleCloudEffect extends SpellEffect {
 
 	@Override
 	public void loadFromString(String string) {
+		//no current string format
 	}
 
 	@Override

@@ -173,7 +173,6 @@ public class SteedSpell extends InstantSpell {
 	@Override
 	public void turnOff() {
 		for (String name : mounted.keySet()) {
-			@SuppressWarnings("deprecation")
 			Player player = Bukkit.getPlayerExact(name);
 			if (player != null && player.getVehicle() != null) {
 				player.getVehicle().eject();

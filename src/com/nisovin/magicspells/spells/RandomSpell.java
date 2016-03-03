@@ -41,7 +41,8 @@ public class RandomSpell extends InstantSpell {
 			int weight = 0;
 			try {
 				weight = Integer.parseInt(split[1]);
-			} catch (NumberFormatException e) {				
+			} catch (NumberFormatException e) {
+				//no op
 			}
 			if (spell.process() && weight > 0) {
 				options.add(new SpellOption(spell, weight));

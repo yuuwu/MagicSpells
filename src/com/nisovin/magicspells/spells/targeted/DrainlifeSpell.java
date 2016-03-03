@@ -132,7 +132,6 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 				if (health > target.getMaxHealth()) health = target.getMaxHealth();
 				if (health == MIN_HEALTH && player != null) {
 					MagicSpells.getVolatileCodeHandler().setKiller(target, player);
-					//TODO use a non volatile handler for this
 				}
 				target.setHealth(health);
 				target.playEffect(EntityEffect.HURT);

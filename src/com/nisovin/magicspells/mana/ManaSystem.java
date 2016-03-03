@@ -127,6 +127,7 @@ public class ManaSystem extends ManaHandler {
 				}
 			}
 			MagicSpells.scheduleDelayedTask(new Runnable() {
+				@Override
 				public void run() {
 					showMana(player);
 				}

@@ -132,7 +132,6 @@ public class MinionSpell extends BuffSpell {
 							// send the minion after the player's target
 							event.setTarget(target);
 							MagicSpells.getVolatileCodeHandler().setTarget(minion, target);
-							//TODO use a non volatile handler for this
 							addUse(player);
 							chargeUseCost(player);
 						}
@@ -143,7 +142,6 @@ public class MinionSpell extends BuffSpell {
 						if (distSq > 3*3) {
 							// minion is too far, tell him to move closer
 							MagicSpells.getVolatileCodeHandler().entityPathTo(minion, player);
-							//TODO use a non volatile handler for this
 						} 
 					}
 				} else if (!targetPlayers && minions.containsValue(event.getEntity())) {
@@ -183,7 +181,6 @@ public class MinionSpell extends BuffSpell {
 					}
 					LivingEntity target = (LivingEntity)event.getEntity();
 					MagicSpells.getVolatileCodeHandler().setTarget(minions.get(p.getName()), target);
-					//TODO use a non volatile handler for this
 					targets.put(p.getName(), target);
 					addUse(p);
 					chargeUseCost(p);

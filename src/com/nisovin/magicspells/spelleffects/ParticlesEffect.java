@@ -2,7 +2,6 @@ package com.nisovin.magicspells.spelleffects;
 
 import org.bukkit.Color;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 
 import com.nisovin.magicspells.util.ColorUtil;
@@ -11,8 +10,6 @@ import com.nisovin.magicspells.util.EffectPackage;
 import com.nisovin.magicspells.util.ParticleNameUtil;
 
 import de.slikey.effectlib.util.ParticleEffect;
-import de.slikey.effectlib.util.ParticleEffect.BlockData;
-import de.slikey.effectlib.util.ParticleEffect.ItemData;
 import de.slikey.effectlib.util.ParticleEffect.ParticleData;
 
 public class ParticlesEffect extends SpellEffect {

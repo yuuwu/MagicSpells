@@ -291,17 +291,14 @@ public class SpawnMonsterSpell extends TargetedSpell implements TargetedLocation
 				for (int i = 0; i < attributeTypes.length; i++) {
 					if (attributeTypes[i] != null) {
 						MagicSpells.getVolatileCodeHandler().addEntityAttribute((LivingEntity)entity, attributeTypes[i], attributeValues[i], attributeOperations[i]);
-						//TODO use a non volatile handler for this
 					}
 				}
 			}
 			// set AI
 			if (removeAI) {
 				MagicSpells.getVolatileCodeHandler().removeAI((LivingEntity)entity);
-				//TODO use a non volatile handler for this
 				if (addLookAtPlayerAI) {
 					MagicSpells.getVolatileCodeHandler().addAILookAtPlayer((LivingEntity)entity, 10);
-					//TODO use a non volatile handler for this
 				}
 			}
 			if (noAI) {
@@ -319,6 +316,7 @@ public class SpawnMonsterSpell extends TargetedSpell implements TargetedLocation
 				final AttackMonitor monitor = new AttackMonitor(player, (LivingEntity)entity, target, power);
 				MagicSpells.registerEvents(monitor);
 				MagicSpells.scheduleDelayedTask(new Runnable() {
+					@Override
 					public void run() {
 						HandlerList.unregisterAll(monitor);
 					}
@@ -547,6 +545,7 @@ public class SpawnMonsterSpell extends TargetedSpell implements TargetedLocation
 			this.taskId = MagicSpells.scheduleRepeatingTask(this, 1, targetInterval);
 		}
 		
+		@Override
 		public void run() {
 			if (entity.isDead() || !entity.isValid()) {
 				MagicSpells.cancelTask(taskId);

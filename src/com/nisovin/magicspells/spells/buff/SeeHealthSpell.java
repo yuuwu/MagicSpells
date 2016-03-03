@@ -116,7 +116,6 @@ public class SeeHealthSpell extends BuffSpell {
 		item.setItemMeta(meta);
 		// send update
 		MagicSpells.getVolatileCodeHandler().sendFakeSlotUpdate(player, slot, item);
-		//TODO use a non volatile handler for this
 	}
 	
 	//private void resetHealthBar(Player player) {
@@ -125,7 +124,6 @@ public class SeeHealthSpell extends BuffSpell {
 	
 	private void resetHealthBar(Player player, int slot) {
 		MagicSpells.getVolatileCodeHandler().sendFakeSlotUpdate(player, slot, player.getItemInHand());
-		//TODO use a non volatile handler for this
 	}
 	
 	@EventHandler
@@ -135,7 +133,6 @@ public class SeeHealthSpell extends BuffSpell {
 		}
 	}
 	
-	@SuppressWarnings("deprecation")
 	@Override
 	public void turnOffBuff(Player player) {
 		Integer i = bars.remove(player.getName());
@@ -148,7 +145,6 @@ public class SeeHealthSpell extends BuffSpell {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	protected void turnOff() {
 		for (String playerName : bars.keySet()) {

@@ -175,6 +175,7 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 							final CommandSender s = actualSender;
 							final String c = comm;
 							MagicSpells.scheduleDelayedTask(new Runnable() {
+								@Override
 								public void run() {
 									Bukkit.dispatchCommand(s, c);
 								}

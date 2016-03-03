@@ -90,7 +90,6 @@ public class ExplodeSpell extends TargetedSpell implements TargetedLocationSpell
 		// check plugins
 		if (simulateTnt) {
 			boolean cancelled = MagicSpells.getVolatileCodeHandler().simulateTnt(target, player, explosionSize * power, addFire);
-			//TODO use a non volatile handler for this
 			if (cancelled) {
 				return false;
 			}
@@ -107,7 +106,6 @@ public class ExplodeSpell extends TargetedSpell implements TargetedLocationSpell
 		currentPower = power;
 		// cause explosion
 		boolean ret = MagicSpells.getVolatileCodeHandler().createExplosionByPlayer(player, target, explosionSize * power, addFire, !preventBlockDamage);
-		//TODO use a non volatile handler for this
 		if (ret) {
 			playSpellEffects(player, target);
 		}

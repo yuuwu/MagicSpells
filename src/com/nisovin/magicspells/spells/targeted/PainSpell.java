@@ -1,7 +1,5 @@
 package com.nisovin.magicspells.spells.targeted;
 
-import java.util.logging.Level;
-
 import org.bukkit.Bukkit;
 import org.bukkit.EntityEffect;
 import org.bukkit.entity.LivingEntity;
@@ -125,7 +123,6 @@ public class PainSpell extends TargetedSpell implements TargetedEntitySpell, Spe
 			if (health > target.getMaxHealth()) health = target.getMaxHealth();
 			if (health == 0 && player != null) {
 				MagicSpells.getVolatileCodeHandler().setKiller(target, player);
-				//TODO use a non volatile handler for this
 			}
 			target.setHealth(health);
 			target.playEffect(EntityEffect.HURT);

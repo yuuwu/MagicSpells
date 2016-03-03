@@ -11,7 +11,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import com.nisovin.magicspells.events.SpellApplyDamageEvent;
-import com.nisovin.magicspells.events.SpellTargetEvent;
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.spells.SpellDamageSpell;
 import com.nisovin.magicspells.util.MagicConfig;

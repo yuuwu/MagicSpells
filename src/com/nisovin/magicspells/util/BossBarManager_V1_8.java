@@ -22,6 +22,7 @@ public class BossBarManager_V1_8 implements BossBarManager, Listener {
 		MagicSpells.registerEvents(this);
 		
 		MagicSpells.scheduleRepeatingTask(new Runnable() {
+			@Override
 			public void run() {
 				for (String name : bossBarTitles.keySet()) {
 					Player player = Bukkit.getPlayerExact(name);
@@ -33,6 +34,7 @@ public class BossBarManager_V1_8 implements BossBarManager, Listener {
 		}, 8, 8);
 	}
 	
+	@Override
 	public void setPlayerBar(Player player, String title, double percent) {
 		boolean alreadyShowing = bossBarTitles.containsKey(player.getName());
 		bossBarTitles.put(player.getName(), title);
@@ -45,6 +47,7 @@ public class BossBarManager_V1_8 implements BossBarManager, Listener {
 		}
 	}
 	
+	@Override
 	public void removePlayerBar(Player player) {
 		if (bossBarTitles.remove(player.getName()) != null) {
 			bossBarValues.remove(player.getName());
@@ -70,6 +73,7 @@ public class BossBarManager_V1_8 implements BossBarManager, Listener {
 	public void onRespawn(final PlayerRespawnEvent event) {
 		if (bossBarTitles.containsKey(event.getPlayer().getName())) {
 			MagicSpells.scheduleDelayedTask(new Runnable() {
+				@Override
 				public void run() {
 					showBar(event.getPlayer());
 				}
@@ -81,6 +85,7 @@ public class BossBarManager_V1_8 implements BossBarManager, Listener {
 	public void onTeleport(final PlayerTeleportEvent event) {
 		if (bossBarTitles.containsKey(event.getPlayer().getName())) {
 			MagicSpells.scheduleDelayedTask(new Runnable() {
+				@Override
 				public void run() {
 					showBar(event.getPlayer());
 				}
@@ -94,6 +99,7 @@ public class BossBarManager_V1_8 implements BossBarManager, Listener {
 		bossBarValues.remove(event.getPlayer().getName());
 	}
 	
+	@Override
 	public void turnOff() {
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			if (bossBarTitles.containsKey(player.getName())) {

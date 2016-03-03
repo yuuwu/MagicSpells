@@ -76,7 +76,6 @@ public class DisguiseSpell extends TargetedSpell implements TargetedEntitySpell 
 		if (manager == null) {
 			try {
 				manager = MagicSpells.getVolatileCodeHandler().getDisguiseManager(config);
-				//TODO use a non volatile handler for this
 			} catch (Exception e) {
 				manager = null;
 			}
@@ -397,6 +396,7 @@ public class DisguiseSpell extends TargetedSpell implements TargetedEntitySpell 
 			this.skin = skin;
 			this.sig = sig;
 		}
+		@Override
 		public PlayerDisguiseData clone() {
 			return new PlayerDisguiseData(uuid, skin, sig);
 		}

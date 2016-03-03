@@ -148,7 +148,6 @@ public class ThrowBlockSpell extends InstantSpell implements TargetedLocationSpe
 			block.setDropItem(dropItem);
 			if (fallDamage > 0) {
 				MagicSpells.getVolatileCodeHandler().setFallingBlockHurtEntities(block, fallDamage, fallDamageMax);
-				//TODO use a non volatile handler for this
 			}
 			if (ensureSpellCast || stickyBlocks) {
 				new ThrowBlockMonitor(block, info);

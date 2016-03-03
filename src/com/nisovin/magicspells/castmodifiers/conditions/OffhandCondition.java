@@ -89,7 +89,9 @@ public class OffhandCondition extends Condition {
 			if (item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
 				thisname = item.getItemMeta().getDisplayName();
 			}
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			// no op
+		}
 		for (int i = 0; i < ids.length; i++) {
 			if (ids[i] == thisid && (!checkData[i] || datas[i] == thisdata) && (!checkName[i] || strEquals(names[i], thisname))) {
 				return true;

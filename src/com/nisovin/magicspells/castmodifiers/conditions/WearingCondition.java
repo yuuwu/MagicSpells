@@ -109,7 +109,7 @@ public class WearingCondition extends Condition {
 	
 	private boolean check(ItemStack item) {
 		if (item == null) return false;
-		int thisid = item.getTypeId(); //TODO use a non depreciated system here
+		int thisid = item.getTypeId();
 		short thisdata = item.getDurability();
 		String thisname = null;
 		try {

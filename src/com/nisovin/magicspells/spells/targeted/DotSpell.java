@@ -106,6 +106,7 @@ public class DotSpell extends TargetedSpell implements TargetedEntitySpell, Spel
 			taskId = MagicSpells.scheduleRepeatingTask(this, delay, interval);
 		}
 		
+		@Override
 		public void run() {
 			dur += interval;
 			if (dur > duration) {

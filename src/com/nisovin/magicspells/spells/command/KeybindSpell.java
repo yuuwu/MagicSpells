@@ -181,7 +181,6 @@ public class KeybindSpell extends CommandSpell {
 	
 	protected void sendFakeSlotUpdate(Player player, int slot, ItemStack item) {
 		MagicSpells.getVolatileCodeHandler().sendFakeSlotUpdate(player, slot, item);
-		//TODO use a non volatile handler for this
 	}
 	
 	private class Keybinds {

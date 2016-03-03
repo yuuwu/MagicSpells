@@ -61,7 +61,6 @@ public class BombSpell extends TargetedSpell implements TargetedLocationSpell {
 		return PostCastAction.HANDLE_NORMALLY;
 	}
 	
-	@SuppressWarnings("unused")
 	private boolean bomb(final Player player, final Location loc, final float power) {
 		final Block block = loc.getBlock();
 		if (block.getType() == Material.AIR || block.getType() == Material.LONG_GRASS || block.getType() == Material.SNOW) {

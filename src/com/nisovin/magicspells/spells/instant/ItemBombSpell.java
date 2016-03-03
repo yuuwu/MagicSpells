@@ -73,6 +73,7 @@ public class ItemBombSpell extends InstantSpell implements TargetedLocationSpell
 		i.setPickupDelay(delay * 2);
 		if (itemName != null) {
 			MagicSpells.scheduleDelayedTask(new Runnable() {
+				@Override
 				public void run() {
 					i.setCustomName(itemName);
 					i.setCustomNameVisible(true);
@@ -80,6 +81,7 @@ public class ItemBombSpell extends InstantSpell implements TargetedLocationSpell
 			}, itemNameDelay);
 		}
 		MagicSpells.scheduleDelayedTask(new Runnable() {
+			@Override
 			public void run() {
 				Location l = i.getLocation();
 				i.remove();

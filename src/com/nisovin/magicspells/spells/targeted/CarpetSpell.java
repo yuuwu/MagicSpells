@@ -131,6 +131,7 @@ public class CarpetSpell extends TargetedSpell implements TargetedLocationSpell 
 		}
 		if (duration > 0 && blocks.size() > 0) {
 			MagicSpells.scheduleDelayedTask(new Runnable() {
+				@Override
 				public void run() {
 					for (Block b : blocks) {
 						if (block.equals(b)) {
@@ -172,6 +173,7 @@ public class CarpetSpell extends TargetedSpell implements TargetedLocationSpell 
 			taskId = MagicSpells.scheduleRepeatingTask(this, touchCheckInterval, touchCheckInterval);
 		}
 		
+		@Override
 		public void run() {
 			if (blockMap.size() > 0) {
 				for (Player player : Bukkit.getOnlinePlayers()) {

@@ -159,6 +159,7 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 		if (state == SpellCastState.NORMAL) {
 			if (delay >= 0) {
 				MagicSpells.scheduleDelayedTask(new Runnable() {
+					@Override
 					public void run() {
 						conjureItems(player, power);
 					}
@@ -171,7 +172,6 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 		
 	}
 	
-	@SuppressWarnings("deprecation")
 	private void conjureItems(Player player, float power) {
 		// get items to drop
 		List<ItemStack> items = new ArrayList<ItemStack>();

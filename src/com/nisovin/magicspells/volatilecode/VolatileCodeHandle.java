@@ -13,7 +13,6 @@ import org.bukkit.util.Vector;
 import com.nisovin.magicspells.util.DisguiseManager;
 import com.nisovin.magicspells.util.MagicConfig;
 
-@Deprecated
 public interface VolatileCodeHandle {
 	
 	public void addPotionGraphicalEffect(LivingEntity entity, int color, int duration);

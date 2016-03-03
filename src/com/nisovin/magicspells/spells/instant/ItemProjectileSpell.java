@@ -94,6 +94,7 @@ public class ItemProjectileSpell extends InstantSpell {
 			taskId = MagicSpells.scheduleRepeatingTask(this, 3, 3);
 		}
 		
+		@Override
 		public void run() {
 			for (Entity e : entity.getNearbyEntities(hitRadius, hitRadius + 0.5, hitRadius)) {
 				if (e instanceof LivingEntity && validTargetList.canTarget(caster, (LivingEntity)e)) {

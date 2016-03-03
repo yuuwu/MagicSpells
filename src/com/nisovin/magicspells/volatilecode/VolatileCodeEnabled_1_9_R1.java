@@ -59,6 +59,7 @@ public class VolatileCodeEnabled_1_9_R1 implements VolatileCodeHandle {
 				field.setAccessible(true);
 				return ((net.minecraft.server.v1_9_R1.ItemStack)field.get(item)).getTag();
 			} catch (Exception e) {
+				//no op currently
 			}
 		}
 		return null;
@@ -78,6 +79,7 @@ public class VolatileCodeEnabled_1_9_R1 implements VolatileCodeHandle {
 			field.setAccessible(true);
 			nmsItem = ((net.minecraft.server.v1_9_R1.ItemStack)field.get(item));
 		} catch (Exception e) {
+			//no op currently
 		}
 		if (nmsItem == null) {
 			nmsItem = CraftItemStack.asNMSCopy(craftItem);
@@ -90,6 +92,7 @@ public class VolatileCodeEnabled_1_9_R1 implements VolatileCodeHandle {
 				field.setAccessible(true);
 				field.set(craftItem, nmsItem);
 			} catch (Exception e) {
+				//no op currently
 			}
 		}
 		
@@ -404,6 +407,7 @@ public class VolatileCodeEnabled_1_9_R1 implements VolatileCodeHandle {
 				if (player.getLocation().distanceSquared(location) <= rSq) {
 					((CraftPlayer)player).getHandle().playerConnection.sendPacket(packet);
 				} else {
+					//no op yet
 				}
 			}
 		} catch (Exception e) {
@@ -431,6 +435,7 @@ public class VolatileCodeEnabled_1_9_R1 implements VolatileCodeHandle {
 		}
 		
 		MagicSpells.scheduleDelayedTask(new Runnable() {
+			@Override
 			public void run() {
 				for (Player player : players) {
 					if (player.isValid()) {
@@ -737,6 +742,7 @@ public class VolatileCodeEnabled_1_9_R1 implements VolatileCodeHandle {
 
 	@Override
 	public void setNoAIFlag(LivingEntity entity) {
+		//no op yet
 	}
 
 	@Override

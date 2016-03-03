@@ -5,7 +5,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 
-import de.slikey.effectlib.Effect;
 import de.slikey.effectlib.util.ParticleEffect;
 import de.slikey.effectlib.util.ParticleEffect.ItemData;
 import de.slikey.effectlib.util.ParticleEffect.ParticleData;
