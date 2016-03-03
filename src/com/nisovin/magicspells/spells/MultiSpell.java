@@ -80,9 +80,9 @@ public final class MultiSpell
       if (!this.castRandomSpellInstead)
       {
         if (this.checkIndividualCooldowns) {
-          for (ActionChance actionChance : this.actions)
+          for (ActionChance actionChance1 : this.actions)
           {
-            Action action = actionChance.getAction();
+            Action action = actionChance1.getAction();
             if ((action.isSpell()) && 
               (action.getSpell().getSpell().onCooldown(player)))
             {
@@ -117,8 +117,8 @@ public final class MultiSpell
         if (this.customSpellCastChance)
         {
           int total = 0;
-          for (ActionChance actionChance : this.actions) {
-            total = (int)Math.round(total + actionChance.getChance());
+          for (ActionChance actionChance2 : this.actions) {
+            total = (int)Math.round(total + actionChance2.getChance());
           }
           index = this.random.nextInt(total);
           int s = 0;
@@ -139,12 +139,12 @@ public final class MultiSpell
         }
         else if (this.enableIndividualChances)
         {
-          for (ActionChance actionChance : this.actions)
+          for (ActionChance actionChance3 : this.actions)
           {
             double chance = Math.random();
-            if ((actionChance.getChance() / 100.0D > chance) && (actionChance.getAction().isSpell()))
+            if ((actionChance3.getChance() / 100.0D > chance) && (actionChance3.getAction().isSpell()))
             {
-              Action action = actionChance.getAction();
+              Action action = actionChance3.getAction();
               if ((this.checkIndividualCooldowns) && (action.getSpell().getSpell().onCooldown(player)))
               {
                 sendMessage(player, this.strOnCooldown);
