@@ -12,6 +12,7 @@ import org.bukkit.util.Vector;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Subspell;
 import com.nisovin.magicspells.events.SpellTargetEvent;
+import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.Util;
@@ -87,6 +88,7 @@ public class ItemProjectileSpell extends InstantSpell {
 				vel = caster.getLocation().getDirection().multiply(speed);
 			}
 			entity = caster.getWorld().dropItem(location, item.clone());
+			playSpellEffects(EffectPosition.PROJECTILE, entity);
 			entity.teleport(location);
 			entity.setPickupDelay(1000000);
 			entity.setVelocity(vel);
