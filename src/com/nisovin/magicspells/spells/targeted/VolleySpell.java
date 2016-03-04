@@ -11,6 +11,7 @@ import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -232,6 +233,7 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 			// fire an arrow
 			if (count < arrowsShooter) {
 				Arrow a = spawn.getWorld().spawnArrow(spawn, dir, speedShooter, (spread/10.0F));
+				playSpellEffects(EffectPosition.PROJECTILE, a);
 				a.setVelocity(a.getVelocity());
 				if (player != null) {
 					a.setShooter(player);
