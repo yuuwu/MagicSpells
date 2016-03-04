@@ -135,7 +135,7 @@ public class MagicItemNameResolver implements ItemNameResolver {
 			try {
 				durability = Short.parseShort(sdata);
 			} catch (NumberFormatException e) {
-				DebugHandler.debugNumberFormat(e);
+				//DebugHandler.debugNumberFormat(e);
 			}
 			return new MagicItemMaterial(type, durability);
 		}

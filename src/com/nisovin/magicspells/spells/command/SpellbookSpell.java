@@ -266,7 +266,7 @@ public class SpellbookSpell extends CommandSpell {
 				}
 			}
 		} catch (FileNotFoundException e) {
-			DebugHandler.debugFileNotFoundException(e);
+			//DebugHandler.debugFileNotFoundException(e);
 		} 
 	}
 	
