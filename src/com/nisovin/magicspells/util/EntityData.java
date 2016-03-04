@@ -199,7 +199,8 @@ public class EntityData {
 		if (type.equals("player")) {
 			entityType = EntityType.PLAYER;
 		} else {
-			entityType = EntityType.fromName(type);
+			//entityType = EntityType.fromName(type);
+			entityType = EntityType.valueOf(type.toUpperCase());
 		}
 	}
 	
