@@ -55,6 +55,7 @@ public class FreezeSpell extends InstantSpell implements SpellDamageSpell {
 			Vector mod;
 			for (int i = 0; i < snowballs; i++) {
 				Snowball snowball = player.launchProjectile(Snowball.class);
+				playSpellEffects(EffectPosition.PROJECTILE, snowball);
 				snowball.setFallDistance(identifier); // tag the snowballs
 				mod = new Vector((rand.nextDouble() - .5) * horizSpread, (rand.nextDouble() - .5) * vertSpread, (rand.nextDouble() - .5) * horizSpread);
 				snowball.setVelocity(snowball.getVelocity().add(mod));
