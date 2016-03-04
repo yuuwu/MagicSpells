@@ -88,7 +88,7 @@ public class FireworksEffect extends SpellEffect {
 					colors[i] = Integer.parseInt(c[i], 16);
 				} catch (NumberFormatException e) {
 					colors[i] = 0;
-					DebugHandler.debugNumberFormat(e); //TODO make this one a warning
+					//DebugHandler.debugNumberFormat(e);
 				}
 			}
 		}
@@ -101,7 +101,7 @@ public class FireworksEffect extends SpellEffect {
 					fadeColors[i] = Integer.parseInt(fc[i], 16);
 				} catch (NumberFormatException e) {
 					fadeColors[i] = 0;
-					DebugHandler.debugNumberFormat(e); //TODO make this one a warning
+					//DebugHandler.debugNumberFormat(e);
 				}
 			}
 		}
