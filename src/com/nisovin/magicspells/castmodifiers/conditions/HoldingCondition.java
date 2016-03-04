@@ -8,6 +8,7 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
 import com.nisovin.magicspells.DebugHandler;
+import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.castmodifiers.Condition;
 
 public class HoldingCondition extends Condition {
@@ -63,7 +64,7 @@ public class HoldingCondition extends Condition {
 
 	@Override
 	public boolean check(Player player) {
-		ItemStack item = player.getItemInHand();
+		ItemStack item = MagicSpells.getVolatileCodeHandler().getItemInMainHand(player);
 		return check(item);
 	}
 	

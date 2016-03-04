@@ -80,10 +80,10 @@ public class RepairSpell extends InstantSpell {
 			int repaired = 0;
 			for (String s : toRepair) {
 				if (s.equals("held")) {
-					ItemStack item = player.getItemInHand();
+					ItemStack item = MagicSpells.getVolatileCodeHandler().getItemInMainHand(player);
 					if (item != null && isRepairable(item.getType()) && item.getDurability() > 0) {
 						item.setDurability(newDura(item));
-						player.setItemInHand(item);
+						MagicSpells.getVolatileCodeHandler().setItemInMainHand(player, item);
 						repaired++;
 					}
 				} else if (s.equals("hotbar") || s.equals("inventory")) {

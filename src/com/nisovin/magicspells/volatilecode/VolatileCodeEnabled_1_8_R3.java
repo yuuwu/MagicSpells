@@ -752,20 +752,28 @@ public class VolatileCodeEnabled_1_8_R3 implements VolatileCodeHandle {
 
 	@Override
 	public void setOffhand(Player player, ItemStack item) {
-		// TODO Auto-generated method stub
-		
+		// no offhand in 1.8
 	}
 
 	@Override
 	public ItemStack getOffhand(Player player) {
-		// TODO Auto-generated method stub
+		// no offhand in 1.8
 		return null;
 	}
 
 	@Override
 	public void showItemCooldown(Player player, ItemStack item, int duration) {
-		// TODO Auto-generated method stub
-		
+		// no op
+	}
+
+	@Override
+	public void setItemInMainHand(Player player, ItemStack item) {
+		player.setItemInHand(item);
+	}
+
+	@Override
+	public ItemStack getItemInMainHand(Player player) {
+		return player.getItemInHand();
 	}
 
 }

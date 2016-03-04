@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import com.nisovin.magicspells.DebugHandler;
+import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.castmodifiers.Condition;
 
 public class DurabilityLessThanCondition extends Condition {
@@ -40,7 +41,7 @@ public class DurabilityLessThanCondition extends Condition {
 	public boolean check(Player player) {
 		ItemStack item = null;
 		if (slot == -1) {
-			item = player.getItemInHand();
+			item = MagicSpells.getVolatileCodeHandler().getItemInMainHand(player);
 		} else if (slot == 0) {
 			item = player.getInventory().getHelmet();
 		} else if (slot == 1) {

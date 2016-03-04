@@ -1246,7 +1246,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 			return false;
 		}
 		if (durabilityCost > 0) {
-			ItemStack inHand = player.getItemInHand();
+			ItemStack inHand = MagicSpells.getVolatileCodeHandler().getItemInMainHand(player);
 			if (inHand == null || inHand.getDurability() >= inHand.getType().getMaxDurability()) {
 				return false;
 			}
@@ -1339,15 +1339,15 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 			ExperienceUtils.changeExp(player, -experienceCost);
 		}
 		if (durabilityCost != 0) {
-			ItemStack inHand = player.getItemInHand();
+			ItemStack inHand = MagicSpells.getVolatileCodeHandler().getItemInMainHand(player);
 			if (inHand != null && inHand.getType().getMaxDurability() > 0) {
 				short newDura = (short) (inHand.getDurability() + durabilityCost);
 				if (newDura < 0) newDura = 0;
 				if (newDura >= inHand.getType().getMaxDurability()) {
-					player.setItemInHand(null);
+					MagicSpells.getVolatileCodeHandler().setItemInMainHand(player, null);
 				} else {
 					inHand.setDurability(newDura);
-					player.setItemInHand(inHand);
+					MagicSpells.getVolatileCodeHandler().setItemInMainHand(player, inHand);
 				}
 			}
 		}

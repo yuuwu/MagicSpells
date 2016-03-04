@@ -750,7 +750,7 @@ public class DisguiseManager_1_8_R3 extends DisguiseManager {
 	}
 	
 	private void addEquipmentPackets(Player disguised, List<Packet> packets) {
-		ItemStack inHand = disguised.getItemInHand();
+		ItemStack inHand = MagicSpells.getVolatileCodeHandler().getItemInMainHand(disguised);
 		if (inHand != null && inHand.getType() != Material.AIR) {
 			PacketPlayOutEntityEquipment packet5 = new PacketPlayOutEntityEquipment(disguised.getEntityId(), 0, CraftItemStack.asNMSCopy(inHand));
 			packets.add(packet5);

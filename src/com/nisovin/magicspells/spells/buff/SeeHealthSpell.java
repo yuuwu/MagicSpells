@@ -75,7 +75,7 @@ public class SeeHealthSpell extends BuffSpell {
 	void showHealthBar(Player player, LivingEntity entity) {
 		int slot = player.getInventory().getHeldItemSlot();
 		// get item
-		ItemStack item = player.getItemInHand();
+		ItemStack item = MagicSpells.getVolatileCodeHandler().getItemInMainHand(player);
 		if (item == null || item.getType() == Material.AIR) {
 			item = new ItemStack(Material.PISTON_MOVING_PIECE, 0);
 		} else {
@@ -123,7 +123,7 @@ public class SeeHealthSpell extends BuffSpell {
 	//}
 	
 	private void resetHealthBar(Player player, int slot) {
-		MagicSpells.getVolatileCodeHandler().sendFakeSlotUpdate(player, slot, player.getItemInHand());
+		MagicSpells.getVolatileCodeHandler().sendFakeSlotUpdate(player, slot, MagicSpells.getVolatileCodeHandler().getItemInMainHand(player));
 	}
 	
 	@EventHandler

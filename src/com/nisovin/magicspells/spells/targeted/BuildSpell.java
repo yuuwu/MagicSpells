@@ -91,7 +91,7 @@ public class BuildSpell extends TargetedSpell implements TargetedLocationSpell {
 		state.setData(item.getData());
 		state.update(true);
 		if (checkPlugins) {
-			BlockPlaceEvent event = new BlockPlaceEvent(block, previousState, against, player.getItemInHand(), player, true);
+			BlockPlaceEvent event = new BlockPlaceEvent(block, previousState, against, MagicSpells.getVolatileCodeHandler().getItemInMainHand(player), player, true);
 			Bukkit.getServer().getPluginManager().callEvent(event);
 			if (event.isCancelled() && block.getType() == item.getType()) {
 				previousState.update(true);

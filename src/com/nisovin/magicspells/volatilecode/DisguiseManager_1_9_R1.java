@@ -81,6 +81,7 @@ public class DisguiseManager_1_9_R1 extends DisguiseManager {
 					uuid = UUID.fromString(data.uuid);
 				}
 			} catch (Exception e) {
+				//no op yet
 			}
 			
 			GameProfile profile = new GameProfile(uuid, name);
@@ -114,6 +115,7 @@ public class DisguiseManager_1_9_R1 extends DisguiseManager {
 				}
 				@Override
 				public void sendMessage(IChatBaseComponent arg0) {
+					// no op yet
 				}
 				@Override
 				public BlockPosition getChunkCoordinates() {
@@ -464,6 +466,7 @@ public class DisguiseManager_1_9_R1 extends DisguiseManager {
 				final DisguiseSpell.Disguise disguise = disguises.get(name.toLowerCase());
 				if (player != null && disguise != null) {
 					Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
+						@Override
 						public void run() {
 							Player disguised = Bukkit.getPlayer(name);
 							if (disguised != null) {
@@ -474,6 +477,7 @@ public class DisguiseManager_1_9_R1 extends DisguiseManager {
 					event.setCancelled(true);
 				}
 			} else if (packet instanceof PacketPlayOutPlayerInfo) {
+				// no op yet
 			} else if (hideArmor && packet instanceof PacketPlayOutEntityEquipment) {
 				if (refPacketEntityEquipment.getInt(packet, "b") > 0 && disguisedEntityIds.containsKey(refPacketEntityEquipment.getInt(packet, "a"))) {
 					event.setCancelled(true);
@@ -678,6 +682,7 @@ public class DisguiseManager_1_9_R1 extends DisguiseManager {
 					e.printStackTrace();
 				}
 				MagicSpells.scheduleDelayedTask(new Runnable() {
+					@Override
 					public void run() {
 						//disguised.updateInventory();
 					}

@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
+import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
@@ -105,8 +106,8 @@ public class ConjureBookSpell extends InstantSpell implements TargetedLocationSp
 			boolean added = false;
 			ItemStack item = getBook(player, args);
 			if (addToInventory) {
-				if (player.getItemInHand() == null || player.getItemInHand().getType() == Material.AIR) {
-					player.setItemInHand(item);
+				if (MagicSpells.getVolatileCodeHandler().getItemInMainHand(player) == null || MagicSpells.getVolatileCodeHandler().getItemInMainHand(player).getType() == Material.AIR) {
+					MagicSpells.getVolatileCodeHandler().setItemInMainHand(player, item);
 					added = true;
 				} else {
 					added = Util.addToInventory(player.getInventory(), item, false, false);

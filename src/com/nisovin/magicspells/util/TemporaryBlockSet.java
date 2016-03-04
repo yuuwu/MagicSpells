@@ -37,7 +37,7 @@ public class TemporaryBlockSet implements Runnable {
 			if (callPlaceEvent) {
 				BlockState state = block.getState();
 				replaceWith.setBlock(block, false);
-				BlockPlaceEvent event = new BlockPlaceEvent(block, state, block, player.getItemInHand(), player, true);
+				BlockPlaceEvent event = new BlockPlaceEvent(block, state, block, MagicSpells.getVolatileCodeHandler().getItemInMainHand(player), player, true);
 				Bukkit.getPluginManager().callEvent(event);
 				if (event.isCancelled()) {
 					BlockUtils.setTypeAndData(block, original, (byte)0, false);

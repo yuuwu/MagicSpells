@@ -129,7 +129,7 @@ public class DisarmSpell extends TargetedSpell implements TargetedEntitySpell {
 	
 	ItemStack getItemInHand(LivingEntity entity) {
 		if (entity instanceof Player) {
-			return ((Player)entity).getItemInHand();
+			return MagicSpells.getVolatileCodeHandler().getItemInMainHand(((Player)entity));
 		} else {
 			EntityEquipment equip = entity.getEquipment();
 			if (equip != null) {
@@ -141,7 +141,7 @@ public class DisarmSpell extends TargetedSpell implements TargetedEntitySpell {
 	
 	void setItemInHand(LivingEntity entity, ItemStack item) {
 		if (entity instanceof Player) {
-			((Player)entity).setItemInHand(item);
+			MagicSpells.getVolatileCodeHandler().setItemInMainHand(((Player)entity), item);
 		} else {
 			EntityEquipment equip = entity.getEquipment();
 			if (equip != null) {

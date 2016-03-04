@@ -85,7 +85,7 @@ public class MaterializeSpell extends TargetedSpell implements TargetedLocationS
 		
 		if (checkPlugins && player != null) {
 			material.setBlock(block, false);
-			BlockPlaceEvent event = new BlockPlaceEvent(block, blockState, against, player.getItemInHand(), player, true);
+			BlockPlaceEvent event = new BlockPlaceEvent(block, blockState, against, MagicSpells.getVolatileCodeHandler().getItemInMainHand(player), player, true);
 			Bukkit.getPluginManager().callEvent(event);
 			blockState.update(true);
 			if (event.isCancelled()) {

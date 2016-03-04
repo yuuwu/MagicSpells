@@ -104,7 +104,7 @@ public class KeybindSpell extends CommandSpell {
 			}
 			
 			int slot = player.getInventory().getHeldItemSlot();
-			ItemStack item = player.getItemInHand();
+			ItemStack item = MagicSpells.getVolatileCodeHandler().getItemInMainHand(player);
 			
 			if (args[0].equalsIgnoreCase("clear")) {
 				keybinds.clearKeybind(slot);

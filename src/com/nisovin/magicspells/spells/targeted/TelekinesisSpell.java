@@ -84,7 +84,7 @@ public class TelekinesisSpell extends TargetedSpell implements TargetedLocationS
 	
 	private boolean checkPlugins(Player caster, Block target) {
 		if (checkPlugins) {
-			PlayerInteractEvent event = new PlayerInteractEvent(caster, Action.RIGHT_CLICK_BLOCK, caster.getItemInHand(), target, BlockFace.SELF);
+			PlayerInteractEvent event = new PlayerInteractEvent(caster, Action.RIGHT_CLICK_BLOCK, MagicSpells.getVolatileCodeHandler().getItemInMainHand(caster), target, BlockFace.SELF);
 			Bukkit.getPluginManager().callEvent(event);
 			if (event.useInteractedBlock() == Result.DENY) {
 				return false;

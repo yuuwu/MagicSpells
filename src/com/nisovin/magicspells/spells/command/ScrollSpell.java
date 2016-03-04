@@ -141,7 +141,7 @@ public class ScrollSpell extends CommandSpell {
 			}
 			
 			// get item in hand
-			ItemStack inHand = player.getItemInHand();
+			ItemStack inHand = MagicSpells.getVolatileCodeHandler().getItemInMainHand(player);
 			if (inHand.getAmount() != 1 || !itemType.equals(inHand)) {
 				// fail -- incorrect item in hand
 				sendMessage(player, strUsage);
@@ -184,7 +184,7 @@ public class ScrollSpell extends CommandSpell {
 			
 			// create scroll
 			inHand = createScroll(spell, uses, inHand);
-			player.setItemInHand(inHand);
+			MagicSpells.getVolatileCodeHandler().setItemInMainHand(player, inHand);
 			
 			// done
 			sendMessage(player, formatMessage(strCastSelf, "%s", spell.getName()));
@@ -239,7 +239,7 @@ public class ScrollSpell extends CommandSpell {
 		if ((rightClickCast && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) ||
 			(leftClickCast && (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK))) {
 			Player player = event.getPlayer();
-			ItemStack inHand = player.getItemInHand();
+			ItemStack inHand = MagicSpells.getVolatileCodeHandler().getItemInMainHand(player);
 			if (itemType.getMaterial() != inHand.getType() || inHand.getAmount() > 1) return;
 			
 			// check for predefined scroll
@@ -248,7 +248,7 @@ public class ScrollSpell extends CommandSpell {
 				if (spell != null) {
 					int uses = predefinedScrollUses.get(Integer.valueOf(inHand.getDurability()));
 					inHand = createScroll(spell, uses, inHand);
-					player.setItemInHand(inHand);
+					MagicSpells.getVolatileCodeHandler().setItemInMainHand(player, inHand);
 				}
 			}
 			
@@ -295,13 +295,13 @@ public class ScrollSpell extends CommandSpell {
 					if (uses > 0) {
 						inHand = createScroll(spell, uses, inHand);
 						if (textContainsUses) {
-							player.setItemInHand(inHand);
+							MagicSpells.getVolatileCodeHandler().setItemInMainHand(player, inHand);
 						}
 					} else {
 						if (removeScrollWhenDepleted) {
-							player.setItemInHand(null);
+							MagicSpells.getVolatileCodeHandler().setItemInMainHand(player, null);
 						} else {
-							player.setItemInHand(itemType.toItemStack(1));
+							MagicSpells.getVolatileCodeHandler().setItemInMainHand(player, itemType.toItemStack(1));
 						}
 					}
 				}

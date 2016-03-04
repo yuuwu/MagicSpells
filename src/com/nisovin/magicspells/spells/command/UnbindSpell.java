@@ -74,7 +74,7 @@ public class UnbindSpell extends CommandSpell {
 						sendMessage(player, strCantUnbind);
 						return PostCastAction.ALREADY_HANDLED;
 					}
-					CastItem item = new CastItem(player.getItemInHand());
+					CastItem item = new CastItem(MagicSpells.getVolatileCodeHandler().getItemInMainHand(player));
 					boolean removed = spellbook.removeCastItem(spell, item);
 					if (!removed) {
 						sendMessage(player, strNotBound);

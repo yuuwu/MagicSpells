@@ -28,7 +28,6 @@ public class CastListener implements Listener {
 		this.plugin = plugin;
 	}
 	
-	@SuppressWarnings("deprecation")
 	@EventHandler(priority=EventPriority.MONITOR)
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		final Player player = event.getPlayer();
@@ -171,7 +170,7 @@ public class CastListener implements Listener {
 	}
 	
 	private void castSpell(Player player) {		
-		ItemStack inHand = player.getItemInHand();
+		ItemStack inHand = MagicSpells.getVolatileCodeHandler().getItemInMainHand(player);
 		if (!plugin.allowCastWithFist && (inHand == null || inHand.getType() == Material.AIR)) return;
 		
 		Spell spell = MagicSpells.getSpellbook(player).getActiveSpell(inHand);

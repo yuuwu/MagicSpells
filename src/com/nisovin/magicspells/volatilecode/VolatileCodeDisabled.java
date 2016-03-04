@@ -198,6 +198,7 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 	
 	@Override
 	public void setNoAIFlag(LivingEntity entity) {
+		// no op
 	}
 
 	@Override
@@ -277,17 +278,27 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 
 	@Override
 	public void setOffhand(Player player, ItemStack item) {
+		//no op
 	}
 
 	@Override
 	public ItemStack getOffhand(Player player) {
-		// TODO Auto-generated method stub
+		// no op
 		return null;
 	}
 
 	@Override
 	public void showItemCooldown(Player player, ItemStack item, int duration) {
-		// TODO Auto-generated method stub
-		
+		//no op
+	}
+
+	@Override
+	public void setItemInMainHand(Player player, ItemStack item) {
+		player.setItemInHand(item); //TODO update these when needed
+	}
+
+	@Override
+	public ItemStack getItemInMainHand(Player player) {
+		return player.getItemInHand(); //TODO update these when needed
 	}
 }

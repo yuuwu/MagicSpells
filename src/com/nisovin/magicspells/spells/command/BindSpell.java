@@ -83,7 +83,7 @@ public class BindSpell extends CommandSpell {
 					sendMessage(player, strSpellCantBind);
 					return PostCastAction.ALREADY_HANDLED;
 				} else {
-					CastItem castItem = new CastItem(player.getItemInHand());
+					CastItem castItem = new CastItem(MagicSpells.getVolatileCodeHandler().getItemInMainHand(player));
 					MagicSpells.debug(3, "Trying to bind spell '" + spell.getInternalName() + "' to cast item " + castItem.toString() + "...");
 					if (castItem.getItemTypeId() == 0 && !allowBindToFist) {
 						sendMessage(player, strCantBindItem);

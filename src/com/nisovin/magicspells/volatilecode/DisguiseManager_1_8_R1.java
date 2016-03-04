@@ -690,6 +690,7 @@ public class DisguiseManager_1_8_R1 extends DisguiseManager {
 					e.printStackTrace();
 				}
 				MagicSpells.scheduleDelayedTask(new Runnable() {
+					@Override
 					public void run() {
 						//disguised.updateInventory();
 					}
@@ -783,7 +784,7 @@ public class DisguiseManager_1_8_R1 extends DisguiseManager {
 	}
 	
 	private void addEquipmentPackets(Player disguised, List<Packet> packets) {
-		ItemStack inHand = disguised.getItemInHand();
+		ItemStack inHand = MagicSpells.getVolatileCodeHandler().getItemInMainHand(disguised);
 		if (inHand != null && inHand.getType() != Material.AIR) {
 			PacketPlayOutEntityEquipment packet5 = new PacketPlayOutEntityEquipment(disguised.getEntityId(), 0, CraftItemStack.asNMSCopy(inHand));
 			packets.add(packet5);

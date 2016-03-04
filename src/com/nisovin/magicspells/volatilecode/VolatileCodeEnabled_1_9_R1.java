@@ -771,4 +771,14 @@ public class VolatileCodeEnabled_1_9_R1 implements VolatileCodeHandle {
 		((CraftPlayer)player).getHandle().playerConnection.sendPacket(packet);
 	}
 
+	@Override
+	public void setItemInMainHand(Player player, ItemStack item) {
+		player.getInventory().setItemInMainHand(item);
+	}
+
+	@Override
+	public ItemStack getItemInMainHand(Player player) {
+		return player.getInventory().getItemInMainHand();
+	}
+
 }

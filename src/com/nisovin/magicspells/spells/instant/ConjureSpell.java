@@ -381,11 +381,11 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 		@EventHandler(priority = EventPriority.LOWEST)
 		void onRightClick(PlayerInteractEvent event) {
 			if (event.hasItem()) {
-				ItemStack item = event.getPlayer().getItemInHand();
+				ItemStack item = MagicSpells.getVolatileCodeHandler().getItemInMainHand(event.getPlayer());
 				ExpirationResult result = updateExpiresLineIfNeeded(item);
 				if (result == ExpirationResult.EXPIRED) {
 					
-					event.getPlayer().setItemInHand(null);
+					MagicSpells.getVolatileCodeHandler().setItemInMainHand(event.getPlayer(), null);
 					event.setCancelled(true);
 				}
 			}

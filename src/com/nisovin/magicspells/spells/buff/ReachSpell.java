@@ -116,7 +116,7 @@ public class ReachSpell extends BuffSpell {
 					// place
 					
 					// check for block in hand
-					ItemStack inHand = player.getItemInHand();
+					ItemStack inHand = MagicSpells.getVolatileCodeHandler().getItemInMainHand(player);
 					if (inHand != null && inHand.getType() != Material.AIR && inHand.getType().isBlock()) {
 						
 						// check for disallowed
@@ -141,9 +141,9 @@ public class ReachSpell extends BuffSpell {
 							if (consumeBlocks && player.getGameMode() != GameMode.CREATIVE) {
 								if (inHand.getAmount() > 1) {
 									inHand.setAmount(inHand.getAmount() - 1);
-									player.setItemInHand(inHand);
+									MagicSpells.getVolatileCodeHandler().setItemInMainHand(player, inHand);
 								} else {
-									player.setItemInHand(null);
+									MagicSpells.getVolatileCodeHandler().setItemInMainHand(player, null);
 								}
 							}
 							addUseAndChargeCost(player);

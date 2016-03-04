@@ -98,7 +98,7 @@ public class TomeSpell extends CommandSpell {
 				}
 			}
 			
-			ItemStack item = player.getItemInHand();
+			ItemStack item = MagicSpells.getVolatileCodeHandler().getItemInMainHand(player);
 			if (item.getType() != Material.WRITTEN_BOOK) {
 				// fail -- no book
 				sendMessage(player, strNoBook);
@@ -115,7 +115,7 @@ public class TomeSpell extends CommandSpell {
 					uses = Integer.parseInt(args[1]);
 				}
 				item = createTome(spell, uses, item);
-				player.setItemInHand(item);
+				MagicSpells.getVolatileCodeHandler().setItemInMainHand(player, item);
 			}
 		}
 		return PostCastAction.HANDLE_NORMALLY;
@@ -181,7 +181,7 @@ public class TomeSpell extends CommandSpell {
 				sendMessage(event.getPlayer(), formatMessage(strCantLearn, "%s", spell.getName()));
 			} else {
 				// call event
-				SpellLearnEvent learnEvent = new SpellLearnEvent(spell, event.getPlayer(), LearnSource.TOME, event.getPlayer().getItemInHand());
+				SpellLearnEvent learnEvent = new SpellLearnEvent(spell, event.getPlayer(), LearnSource.TOME, MagicSpells.getVolatileCodeHandler().getItemInMainHand(event.getPlayer()));
 				Bukkit.getPluginManager().callEvent(learnEvent);
 				if (learnEvent.isCancelled()) {
 					// fail -- plugin cancelled
