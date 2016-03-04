@@ -22,6 +22,7 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.events.SpellTargetLocationEvent;
 import com.nisovin.magicspells.materials.MagicBlockMaterial;
 import com.nisovin.magicspells.materials.MagicMaterial;
+import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedEntityFromLocationSpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
@@ -182,6 +183,7 @@ public class DestroySpell extends TargetedSpell implements TargetedLocationSpell
 			MagicMaterial mat = new MagicBlockMaterial(b.getState().getData());
 			Location l = new Location(target.getWorld(), b.getX() + 0.5, b.getY() + 0.5, b.getZ() + 0.5);
 			FallingBlock fb = mat.spawnFallingBlock(l);
+			playSpellEffects(EffectPosition.PROJECTILE, fb);
 			fb.setDropItem(false);
 			Vector v = null;
 			if (velocityType == VelocityType.OUT) {
