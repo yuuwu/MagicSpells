@@ -144,6 +144,7 @@ public class ThrowBlockSpell extends InstantSpell implements TargetedLocationSpe
 		FallingBlockInfo info = new FallingBlockInfo(player, power);
 		if (material != null) {
 			FallingBlock block = material.spawnFallingBlock(location);
+			playSpellEffects(EffectPosition.PROJECTILE, block);
 			block.setVelocity(velocity);
 			block.setDropItem(dropItem);
 			if (fallDamage > 0) {
@@ -155,6 +156,7 @@ public class ThrowBlockSpell extends InstantSpell implements TargetedLocationSpe
 			entity = block;
 		} else if (tntFuse > 0) {
 			TNTPrimed tnt = location.getWorld().spawn(location, TNTPrimed.class);
+			playSpellEffects(EffectPosition.PROJECTILE, tnt);
 			tnt.setFuseTicks(tntFuse);
 			tnt.setVelocity(velocity);
 			entity = tnt;
