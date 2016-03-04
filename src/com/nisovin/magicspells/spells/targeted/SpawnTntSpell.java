@@ -13,6 +13,7 @@ import org.bukkit.util.Vector;
 
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spell;
+import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
@@ -69,6 +70,7 @@ public class SpawnTntSpell extends TargetedSpell implements TargetedLocationSpel
 	
 	void spawnTnt(Player caster, float power, Location loc) {
 		TNTPrimed tnt = loc.getWorld().spawn(loc, TNTPrimed.class);
+		playSpellEffects(EffectPosition.PROJECTILE, tnt);
 		tnt.setFuseTicks(fuse);
 		if (velocity > 0) {
 			tnt.setVelocity(loc.getDirection().normalize().setY(0).multiply(velocity).setY(upVelocity));
