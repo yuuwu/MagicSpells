@@ -119,6 +119,7 @@ public abstract class Condition {
 		conditions.put("lookingatblock", LookingAtBlockCondition.class);
 		conditions.put("oncooldown", OnCooldownCondition.class);
 		conditions.put("hasmark", HasMarkCondition.class);
+		conditions.put("playercountabove", PlayerCountAbove.class);
 	}
 	
 }
