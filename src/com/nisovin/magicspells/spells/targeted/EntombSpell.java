@@ -20,6 +20,9 @@ import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellType;
 import com.nisovin.magicspells.util.SpellTypes;
 import com.nisovin.magicspells.util.TargetInfo;
+
+//special effect position is played in the blocks that are spawned to create the tomb
+
 @SpellType(types={SpellTypes.TARGETED_ENTITY_SPELL})
 public class EntombSpell extends TargetedSpell implements TargetedEntitySpell {
 
@@ -77,52 +80,62 @@ public class EntombSpell extends TargetedSpell implements TargetedEntitySpell {
 		Block temp = feet.getRelative(1,0,0);
 		if (temp.getType() == Material.AIR) {
 			tombBlockType.setBlock(temp);
+			playSpellEffects(EffectPosition.SPECIAL, temp.getLocation());
 			tombBlocks.add(temp);
 		}
 		temp = feet.getRelative(1,1,0);
 		if (temp.getType() == Material.AIR) {
 			tombBlockType.setBlock(temp);
+			playSpellEffects(EffectPosition.SPECIAL, temp.getLocation());
 			tombBlocks.add(temp);
 		}
 		temp = feet.getRelative(-1,0,0);
 		if (temp.getType() == Material.AIR) {
 			tombBlockType.setBlock(temp);
+			playSpellEffects(EffectPosition.SPECIAL, temp.getLocation());
 			tombBlocks.add(temp);
 		}
 		temp = feet.getRelative(-1,1,0);
 		if (temp.getType() == Material.AIR) {
 			tombBlockType.setBlock(temp);
+			playSpellEffects(EffectPosition.SPECIAL, temp.getLocation());
 			tombBlocks.add(temp);
 		}
 		temp = feet.getRelative(0,0,1);
 		if (temp.getType() == Material.AIR) {
 			tombBlockType.setBlock(temp);
+			playSpellEffects(EffectPosition.SPECIAL, temp.getLocation());
 			tombBlocks.add(temp);
 		}
 		temp = feet.getRelative(0,1,1);
 		if (temp.getType() == Material.AIR) {
 			tombBlockType.setBlock(temp);
+			playSpellEffects(EffectPosition.SPECIAL, temp.getLocation());
 			tombBlocks.add(temp);
 		}
 		temp = feet.getRelative(0,0,-1);
 		if (temp.getType() == Material.AIR) {
 			tombBlockType.setBlock(temp);
+			playSpellEffects(EffectPosition.SPECIAL, temp.getLocation());
 			tombBlocks.add(temp);
 		}
 		temp = feet.getRelative(0,1,-1);
 		if (temp.getType() == Material.AIR) {
 			tombBlockType.setBlock(temp);
+			playSpellEffects(EffectPosition.SPECIAL, temp.getLocation());
 			tombBlocks.add(temp);
 		}
 		if (closeTopAndBottom) {
 			temp = feet.getRelative(0,-1,0);
 			if (temp.getType() == Material.AIR) {
 				tombBlockType.setBlock(temp);
+				playSpellEffects(EffectPosition.SPECIAL, temp.getLocation());
 				tombBlocks.add(temp);
 			}
 			temp = feet.getRelative(0,2,0);
 			if (temp.getType() == Material.AIR) {
 				tombBlockType.setBlock(temp);
+				playSpellEffects(EffectPosition.SPECIAL, temp.getLocation());
 				tombBlocks.add(temp);
 			}
 		}				
