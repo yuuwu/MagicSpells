@@ -108,6 +108,7 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 				}
 				a.setMetadata("MagicSpellsSource", new FixedMetadataValue(MagicSpells.plugin, "VolleySpell" + internalName));
 				if (removeDelay > 0) arrowList.add(a);
+				playSpellEffects(EffectPosition.PROJECTILE, a);
 			}
 			
 			if (removeDelay > 0) {
