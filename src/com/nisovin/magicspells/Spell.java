@@ -1380,7 +1380,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		if (inventory == null) return false;
 		int count = 0;
 		ItemStack[] items = inventory.getContents();
-		for (int i = 0; i < items.length; i++) {
+		for (int i = 0; i < 36; i++) {
 			if (items[i] != null && item.isSimilar(items[i])) {
 				count += items[i].getAmount();
 			}

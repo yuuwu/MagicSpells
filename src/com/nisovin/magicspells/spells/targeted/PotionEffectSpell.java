@@ -23,6 +23,7 @@ public class PotionEffectSpell extends TargetedSpell implements TargetedEntitySp
 	private int duration;
 	private int strength;
 	private boolean ambient;
+	private boolean hidden;
 	private boolean targeted;
 	private boolean spellPowerAffectsDuration;
 	private boolean spellPowerAffectsStrength;
@@ -34,6 +35,7 @@ public class PotionEffectSpell extends TargetedSpell implements TargetedEntitySp
 		duration = getConfigInt("duration", 0);
 		strength = getConfigInt("strength", 0);
 		ambient = getConfigBoolean("ambient", false);
+		hidden = getConfigBoolean("hidden", false);
 		targeted = getConfigBoolean("targeted", false);
 		spellPowerAffectsDuration = getConfigBoolean("spell-power-affects-duration", true);
 		spellPowerAffectsStrength = getConfigBoolean("spell-power-affects-strength", true);
@@ -73,7 +75,7 @@ public class PotionEffectSpell extends TargetedSpell implements TargetedEntitySp
 			int dur = spellPowerAffectsDuration ? Math.round(duration * power) : duration;
 			int str = spellPowerAffectsStrength ? Math.round(strength * power) : strength;
 			
-			applyPotionEffect(player, target, new PotionEffect(type, dur, str, ambient));
+			applyPotionEffect(player, target, new PotionEffect(type, dur, str, ambient, !hidden));
 			if (targeted) {
 				playSpellEffects(player, target);
 			} else {
@@ -105,7 +107,7 @@ public class PotionEffectSpell extends TargetedSpell implements TargetedEntitySp
 		} else {
 			int dur = spellPowerAffectsDuration ? Math.round(duration * power) : duration;
 			int str = spellPowerAffectsStrength ? Math.round(strength * power) : strength;
-			PotionEffect effect = new PotionEffect(type, dur, str, ambient);
+			PotionEffect effect = new PotionEffect(type, dur, str, ambient, !hidden);
 			if (targeted) {
 				applyPotionEffect(caster, target, effect);
 				playSpellEffects(caster, target);
@@ -124,7 +126,7 @@ public class PotionEffectSpell extends TargetedSpell implements TargetedEntitySp
 		} else {
 			int dur = spellPowerAffectsDuration ? Math.round(duration * power) : duration;
 			int str = spellPowerAffectsStrength ? Math.round(strength * power) : strength;
-			PotionEffect effect = new PotionEffect(type, dur, str, ambient);
+			PotionEffect effect = new PotionEffect(type, dur, str, ambient, !hidden);
 			applyPotionEffect(null, target, effect);
 			playSpellEffects(EffectPosition.TARGET, target);
 			return true;
