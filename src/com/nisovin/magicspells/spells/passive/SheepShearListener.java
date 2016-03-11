@@ -1,0 +1,69 @@
+package com.nisovin.magicspells.spells.passive;
+
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+
+import org.bukkit.DyeColor;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Sheep;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerShearEntityEvent;
+
+import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.Spellbook;
+import com.nisovin.magicspells.spells.PassiveSpell;
+
+public class SheepShearListener extends PassiveListener {
+
+	EnumMap<DyeColor, List<PassiveSpell>> spellMap = new EnumMap<DyeColor, List<PassiveSpell>>(DyeColor.class);
+	List<PassiveSpell> allColorSpells = new ArrayList<PassiveSpell>();
+	
+	List<PassiveSpell> spellsLoaded = new ArrayList<PassiveSpell>();
+	List<PassiveSpell> spellsDeclined = new ArrayList<PassiveSpell>();
+	List<PassiveSpell> spellsFailed = new ArrayList<PassiveSpell>();
+	List<PassiveSpell> spellsAccepted = new ArrayList<PassiveSpell>();
+	
+	@Override
+	public void initialize() {
+		super.initialize();
+		for (DyeColor c: DyeColor.values()) {
+			spellMap.put(c, new ArrayList<PassiveSpell>());
+		}
+	}
+	
+	@Override
+	public void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var) {
+		if (var == null || var.equalsIgnoreCase("all")) {
+			allColorSpells.add(spell);
+		} else {
+			DyeColor c = DyeColor.valueOf(var.toUpperCase());
+			if (c == null) {
+				throw new IllegalArgumentException("Cannot resolve " + var + " to DyeColor");
+			}
+			spellMap.get(DyeColor.valueOf(var.toUpperCase())).add(spell);
+		}
+	}
+	
+	@EventHandler
+	public void onSheepShear(PlayerShearEntityEvent event) {
+		if (!(event.getEntity() instanceof Sheep)) return;
+		Sheep s = (Sheep)event.getEntity();
+		Player p = event.getPlayer();
+		List<PassiveSpell> spells = spellMap.get(s.getColor());
+		Spellbook spellbook = MagicSpells.getSpellbook(p);
+		for (PassiveSpell spell : spells) {
+			if (spellbook.hasSpell(spell)) {
+				spell.activate(p);
+			}
+		}
+		for (PassiveSpell spell: allColorSpells) {
+			if (spellbook.hasSpell(spell)) {
+				spell.activate(p);
+			}
+		}
+	}
+
+
+	
+}
