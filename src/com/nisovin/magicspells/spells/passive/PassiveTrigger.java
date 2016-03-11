@@ -47,6 +47,7 @@ public class PassiveTrigger {
 	public static PassiveTrigger TICKS = addTrigger("ticks", TicksListener.class);
 	public static PassiveTrigger RESOURCE_PACK = addTrigger("resourcepack", ResourcePackListener.class);
 	public static PassiveTrigger ENTER_BED = addTrigger("enterbed", EnterBedListener.class);
+	public static PassiveTrigger LEAVE_BED = addTrigger("leavebed", LeaveBedListener.class);
 		
 	public static PassiveTrigger addTrigger(String name, Class<? extends PassiveListener> listener) {
 		PassiveTrigger trigger = new PassiveTrigger(name, listener);
