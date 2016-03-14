@@ -173,6 +173,7 @@ public class MagicSpells extends JavaPlugin {
 		PluginManager pm = plugin.getServer().getPluginManager();
 		
 		effectManager = new EffectManager(this);
+		effectManager.enableDebug(debug);
 		
 		// create storage stuff
 		spells = new HashMap<String,Spell>();
