@@ -29,7 +29,7 @@ public class ParticleNameUtil {
 			if (splits.length > 2) {
 				materialData = Integer.parseInt(splits[2]);
 			}
-			if (mat.isBlock()) {
+			if (effect == ParticleEffect.BLOCK_CRACK || effect == ParticleEffect.BLOCK_DUST) {
 				data = new BlockData(mat, (byte) materialData);
 			} else {
 				data = new ItemData(mat, (byte) materialData);
