@@ -1514,9 +1514,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 						// check for teams
 						if (target != null && target instanceof Player && MagicSpells.plugin.checkScoreboardTeams) {
 							Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
-							@SuppressWarnings("deprecation")
 							Team playerTeam = scoreboard.getPlayerTeam(player);
-							@SuppressWarnings("deprecation")
 							Team targetTeam = scoreboard.getPlayerTeam((Player)target);
 							if (playerTeam != null && targetTeam != null) {
 								if (playerTeam.equals(targetTeam)) {
@@ -1548,7 +1546,6 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 						
 						// call damage event
 						if (targetDamageCause != null) {
-							@SuppressWarnings("deprecation")
 							EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(player, target, targetDamageCause, targetDamageAmount);
 							Bukkit.getServer().getPluginManager().callEvent(event);
 							if (event.isCancelled()) {

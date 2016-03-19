@@ -123,7 +123,6 @@ public class DotSpell extends TargetedSpell implements TargetedEntitySpell, Spel
 			dam = event.getFinalDamage();
 			if (preventKnockback) {
 				// bukkit doesn't call a damage event here, so we'll do it ourselves
-				@SuppressWarnings("deprecation")
 				EntityDamageByEntityEvent devent = new EntityDamageByEntityEvent(caster, target, DamageCause.ENTITY_ATTACK, damage);
 				Bukkit.getPluginManager().callEvent(devent);
 				if (!devent.isCancelled()) {
