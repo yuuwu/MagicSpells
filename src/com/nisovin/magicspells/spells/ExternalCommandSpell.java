@@ -43,6 +43,8 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 	private String strCantUseCommand;
 	private String strNoTarget;
 	String strBlockedOutput;
+	boolean doVariableReplacement;
+	boolean useTargetVariablesInstead;
 	
 	ConversationFactory convoFac;
 	private Prompt convoPrompt;
@@ -65,6 +67,10 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 		strCantUseCommand = getConfigString("str-cant-use-command", "&4You don't have permission to do that.");
 		strNoTarget = getConfigString("str-no-target", "No target found.");
 		strBlockedOutput = getConfigString("str-blocked-output", "");
+		doVariableReplacement = getConfigBoolean("do-variable-replacement", false);
+		useTargetVariablesInstead = getConfigBoolean("use-target-variables-instead", false);
+		
+		
 		
 		if (requirePlayerTarget) {
 			validTargetList = new ValidTargetList(true, false);
@@ -154,9 +160,18 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 					}
 				}
 				
-				int delay = 0;				
+				int delay = 0;
+				Player varOwner;
+				if (!useTargetVariablesInstead) {
+					varOwner = sender instanceof Player ? null: (Player)sender;
+				} else{
+					varOwner = target;
+				}
 				for (String comm : commandToExecute) {
 					if (comm != null && !comm.isEmpty()) {
+						if (doVariableReplacement) {
+							comm = MagicSpells.doVariableReplacements(varOwner, comm);
+						}
 						if (args != null && args.length > 0) {
 							for (int i = 0; i < args.length; i++) {
 								comm = comm.replace("%"+(i+1), args[i]);
