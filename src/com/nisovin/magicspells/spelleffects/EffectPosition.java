@@ -39,6 +39,13 @@ public enum EffectPosition {
 	 *   - WitherSkullSpell
 	 *   - FireballSpell
 	 *   - ArrowSpell
+	 *   - VolleySpell
+	 *   - ThrowBlockSpell
+	 *   - FreezeSpell
+	 *   - ProjectileSpell
+	 *   - DestroySpell
+	 *   - ItemProjectileSpell
+	 *   - SpawnTntSpell
 	 **/
 	PROJECTILE(10);
 	
