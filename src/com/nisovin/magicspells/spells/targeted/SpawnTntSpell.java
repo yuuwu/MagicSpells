@@ -71,6 +71,7 @@ public class SpawnTntSpell extends TargetedSpell implements TargetedLocationSpel
 	void spawnTnt(Player caster, float power, Location loc) {
 		TNTPrimed tnt = loc.getWorld().spawn(loc, TNTPrimed.class);
 		playSpellEffects(EffectPosition.PROJECTILE, tnt);
+		playTrackingLinePatterns(EffectPosition.DYNAMIC_CASTER_PROJECTILE_LINE, caster.getLocation(), tnt.getLocation(), caster, tnt);
 		tnt.setFuseTicks(fuse);
 		if (velocity > 0) {
 			tnt.setVelocity(loc.getDirection().normalize().setY(0).multiply(velocity).setY(upVelocity));

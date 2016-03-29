@@ -2,6 +2,7 @@ package com.nisovin.magicspells.spelleffects;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
@@ -306,6 +307,10 @@ public abstract class SpellEffect {
 			}
 		}
 		return null;
+	}
+	
+	public void playTrackingLinePatterns(Location origin, Location target, Entity originEntity, Entity targetEntity) {
+		// no op, effects should override this with their own behavior
 	}
 	
 	/**

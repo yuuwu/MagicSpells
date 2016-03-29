@@ -184,6 +184,7 @@ public class DestroySpell extends TargetedSpell implements TargetedLocationSpell
 			Location l = new Location(target.getWorld(), b.getX() + 0.5, b.getY() + 0.5, b.getZ() + 0.5);
 			FallingBlock fb = mat.spawnFallingBlock(l);
 			playSpellEffects(EffectPosition.PROJECTILE, fb);
+			playTrackingLinePatterns(EffectPosition.DYNAMIC_CASTER_PROJECTILE_LINE, source, fb.getLocation(), null, fb);
 			fb.setDropItem(false);
 			Vector v = null;
 			if (velocityType == VelocityType.OUT) {

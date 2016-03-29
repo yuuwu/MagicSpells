@@ -36,18 +36,38 @@ public enum EffectPosition {
 	/** May be referenced as: projectile
 	 * Some spells may use this to play an effect on projectile entities.
 	 * Currently enabled in:
-	 *   - WitherSkullSpell
-	 *   - FireballSpell
 	 *   - ArrowSpell
-	 *   - VolleySpell
-	 *   - ThrowBlockSpell
-	 *   - FreezeSpell
-	 *   - ProjectileSpell
 	 *   - DestroySpell
+	 *   - FireballSpell
+	 *   - FreezeSpell
+	 *   - HomingArrowSpell
 	 *   - ItemProjectileSpell
+	 *   - ProjectileSpell
 	 *   - SpawnTntSpell
+	 *   - ThrowBlockSpell
+	 *   - VolleySpell
+	 *   - WitherSkullSpell
 	 **/
-	PROJECTILE(10);
+	PROJECTILE(10),
+	
+	/**
+	 * May be referenced as: casterprojectile or casterprojectileline
+	 * Currently supported effects:
+	 *    - effectlibline
+	 * Currently enabled in:
+	 *    - ArrowSpell
+	 *    - DestroySpell
+	 *    - FireballSpell
+	 *    - FreezeSpell
+	 *    - HomingArrowSpell
+	 *    - ItemProjectileSpell
+	 *    - ProjectileSpell
+	 *    - SpawnTntSpell
+	 *    - ThrowBlockSpell
+	 *    - VolleySpell
+	 *    - WitherSkullSpell
+	 */
+	DYNAMIC_CASTER_PROJECTILE_LINE(11);
 	
 	private int id;
 	private EffectPosition(int num) {

@@ -89,6 +89,7 @@ public class ItemProjectileSpell extends InstantSpell {
 			}
 			entity = caster.getWorld().dropItem(location, item.clone());
 			playSpellEffects(EffectPosition.PROJECTILE, entity);
+			playTrackingLinePatterns(EffectPosition.DYNAMIC_CASTER_PROJECTILE_LINE, caster.getLocation(), entity.getLocation(), caster, entity);
 			entity.teleport(location);
 			entity.setPickupDelay(1000000);
 			entity.setVelocity(vel);

@@ -139,6 +139,7 @@ public class ArrowSpell extends Spell {
 					if (!castEvent.isCancelled()) {
 						event.getProjectile().setMetadata("MSArrowSpell", new FixedMetadataValue(MagicSpells.plugin, new ArrowSpellData(spell, castEvent.getPower(), castEvent.getReagents())));
 						playSpellEffects(EffectPosition.PROJECTILE, event.getProjectile());
+						playTrackingLinePatterns(EffectPosition.DYNAMIC_CASTER_PROJECTILE_LINE, shooter.getLocation(), event.getProjectile().getLocation(), shooter, event.getProjectile());
 					} else {
 						event.setCancelled(true);
 						event.getProjectile().remove();

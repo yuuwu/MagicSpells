@@ -153,6 +153,7 @@ public class ProjectileSpell extends InstantSpell {
 			if (projectileClass != null) {
 				Projectile projectile = player.launchProjectile(projectileClass);
 				playSpellEffects(EffectPosition.PROJECTILE, projectile);
+				playTrackingLinePatterns(EffectPosition.DYNAMIC_CASTER_PROJECTILE_LINE, player.getLocation(), projectile.getLocation(), player, projectile);
 				projectile.setBounce(false);
 				if (velocity > 0) {
 					projectile.setVelocity(player.getLocation().getDirection().multiply(velocity));

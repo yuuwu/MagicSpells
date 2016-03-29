@@ -634,6 +634,8 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 			return EffectPosition.REVERSE_LINE;
 		} else if (spos.equalsIgnoreCase("projectile")) {
 			return EffectPosition.PROJECTILE;
+		} else if (spos.equalsIgnoreCase("casterprojectile") | spos.equalsIgnoreCase("casterprojectileline")) {
+			return EffectPosition.DYNAMIC_CASTER_PROJECTILE_LINE;
 		}
 		return null;
 	}
@@ -1658,6 +1660,14 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 			}
 		}
 	}
+	
+	public void playTrackingLinePatterns(EffectPosition pos, Location origin, Location target, Entity originEntity, Entity targetEntity) {
+		List<SpellEffect> spellEffects = effects.get(pos);
+		for (SpellEffect e: spellEffects) {
+			e.playTrackingLinePatterns(origin, target, originEntity, targetEntity);
+		}
+	}
+	
 	
 	public void initializePlayerEffectTracker(Player p) {
 		if (callbacks != null) {

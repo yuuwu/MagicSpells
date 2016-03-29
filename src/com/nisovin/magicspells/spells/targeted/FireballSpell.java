@@ -149,6 +149,7 @@ public class FireballSpell extends TargetedSpell implements TargetedEntityFromLo
 			playSpellEffects(EffectPosition.CASTER, from);
 		}
 		playSpellEffects(EffectPosition.PROJECTILE, fireball);
+		playTrackingLinePatterns(EffectPosition.DYNAMIC_CASTER_PROJECTILE_LINE, from, fireball.getLocation(), caster, fireball);
 		
 		return true;
 	}

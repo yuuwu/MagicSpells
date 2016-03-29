@@ -109,6 +109,7 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 				a.setMetadata("MagicSpellsSource", new FixedMetadataValue(MagicSpells.plugin, "VolleySpell" + internalName));
 				if (removeDelay > 0) arrowList.add(a);
 				playSpellEffects(EffectPosition.PROJECTILE, a);
+				playTrackingLinePatterns(EffectPosition.DYNAMIC_CASTER_PROJECTILE_LINE, spawn, a.getLocation(), player, a);
 			}
 			
 			if (removeDelay > 0) {
@@ -235,6 +236,7 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 			if (count < arrowsShooter) {
 				Arrow a = spawn.getWorld().spawnArrow(spawn, dir, speedShooter, (spread/10.0F));
 				playSpellEffects(EffectPosition.PROJECTILE, a);
+				playTrackingLinePatterns(EffectPosition.DYNAMIC_CASTER_PROJECTILE_LINE, player.getLocation(), a.getLocation(), player, a);
 				a.setVelocity(a.getVelocity());
 				if (player != null) {
 					a.setShooter(player);

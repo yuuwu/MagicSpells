@@ -69,7 +69,8 @@ public class HomingArrowSpell extends TargetedSpell implements TargetedEntitySpe
 		}
 		v.multiply(velocity * power);
 		projectile.setVelocity(v);
-		
+		playSpellEffects(EffectPosition.PROJECTILE, projectile);
+		playTrackingLinePatterns(EffectPosition.DYNAMIC_CASTER_PROJECTILE_LINE, from, projectile.getLocation(), player, projectile);
 		arrows.add(new HomingArrow(player, projectile, target, power));
 		if (monitor == 0) {
 			monitor = MagicSpells.scheduleRepeatingTask(new HomingArrowMonitor(), 1, 1);
