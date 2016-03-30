@@ -114,6 +114,7 @@ public class MaterializeSpell extends TargetedSpell implements TargetedLocationS
 					if (material.getMaterial().equals(block.getType())) {
 						block.setType(Material.AIR);
 						playSpellEffects(EffectPosition.DELAYED, block.getLocation());
+						playSpellEffects(EffectPosition.BLOCK_DESTRUCTION, block.getLocation());
 						if (playBreakEffect) {
 							block.getWorld().playEffect(block.getLocation(), Effect.STEP_SOUND, block.getType());
 						}

@@ -111,6 +111,12 @@ public class SpawnTntSpell extends TargetedSpell implements TargetedLocationSpel
 				event.blockList().clear();
 				event.setYield(0f);
 			}
+			
+			//now play the block destruction effect where blocks were removed
+			for (Block b: event.blockList()) {
+				playSpellEffects(EffectPosition.BLOCK_DESTRUCTION, b.getLocation());
+			}
+			
 			if (spell != null) {
 				if (info.caster != null) {
 					if (info.caster.isValid() && !info.caster.isDead()) {

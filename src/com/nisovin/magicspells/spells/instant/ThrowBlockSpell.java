@@ -186,6 +186,7 @@ public class ThrowBlockSpell extends InstantSpell implements TargetedLocationSpe
 								Block b = block.getLocation().getBlock();
 								if (material.equals(b) || (material.getMaterial() == Material.ANVIL && b.getType() == Material.ANVIL)) {
 									b.setType(Material.AIR);
+									playSpellEffects(EffectPosition.BLOCK_DESTRUCTION, block.getLocation());
 								}
 							}
 						}

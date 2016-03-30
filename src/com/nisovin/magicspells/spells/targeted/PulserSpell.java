@@ -321,6 +321,7 @@ public class PulserSpell extends TargetedSpell implements TargetedLocationSpell 
 		public void stop() {
 			if (!block.getChunk().isLoaded()) block.getChunk().load();
 			block.setType(Material.AIR);
+			playSpellEffects(EffectPosition.BLOCK_DESTRUCTION, block.getLocation());
 			if (spellOnBreak != null) {
 				if (caster == null) {
 					spellOnBreak.castAtLocation(location, power);

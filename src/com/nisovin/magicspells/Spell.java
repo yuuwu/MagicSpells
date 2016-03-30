@@ -636,6 +636,8 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 			return EffectPosition.PROJECTILE;
 		} else if (spos.equalsIgnoreCase("casterprojectile") | spos.equalsIgnoreCase("casterprojectileline")) {
 			return EffectPosition.DYNAMIC_CASTER_PROJECTILE_LINE;
+		} else if (spos.equalsIgnoreCase("blockdestroy") || spos.equalsIgnoreCase("blockdestruction")) {
+			return EffectPosition.BLOCK_DESTRUCTION;
 		}
 		return null;
 	}

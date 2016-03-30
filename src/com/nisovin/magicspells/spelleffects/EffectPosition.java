@@ -67,7 +67,19 @@ public enum EffectPosition {
 	 *    - VolleySpell
 	 *    - WitherSkullSpell
 	 */
-	DYNAMIC_CASTER_PROJECTILE_LINE(11);
+	DYNAMIC_CASTER_PROJECTILE_LINE(11),
+	
+	/**
+	 * May be referenced as: blockdestroy or blockdestruction
+	 * Spells supported in:
+	 *     - ThrowBlockSpell
+	 *     - SpawnTntSpell
+	 *     - MaterializeSpell
+	 *     - PulserSpell
+	 *     - EntombSpell
+	 */
+	BLOCK_DESTRUCTION(12);
+	//TODO add this effect position to the WallSpell
 	
 	private int id;
 	private EffectPosition(int num) {

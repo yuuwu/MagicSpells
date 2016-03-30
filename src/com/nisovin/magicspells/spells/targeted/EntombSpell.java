@@ -191,6 +191,7 @@ public class EntombSpell extends TargetedSpell implements TargetedEntitySpell {
 			for (Block block : tomb) {
 				if (tombBlockType.getMaterial() == block.getType()) {
 					block.setType(Material.AIR);
+					playSpellEffects(EffectPosition.BLOCK_DESTRUCTION, block.getLocation());
 				}
 			}
 			blocks.removeAll(tomb);
