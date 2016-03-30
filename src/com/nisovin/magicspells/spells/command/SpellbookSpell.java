@@ -19,7 +19,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spell;
 import com.nisovin.magicspells.Spellbook;

@@ -68,7 +68,7 @@ public class CastListener implements Listener {
 			}
 		} else if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			// right click -- cycle spell and/or process mana pots
-			ItemStack inHand = player.getItemInHand();
+			ItemStack inHand = MagicSpells.getVolatileCodeHandler().getItemInMainHand(player);
 			
 			if ((inHand != null && inHand.getType() != Material.AIR) || plugin.allowCastWithFist) {
 			
@@ -134,7 +134,7 @@ public class CastListener implements Listener {
 							} else {
 								inHand.setAmount(inHand.getAmount()-1);
 							}
-							player.setItemInHand(inHand);
+							MagicSpells.getVolatileCodeHandler().setItemInMainHand(player, inHand);
 							player.updateInventory();
 						}
 					}

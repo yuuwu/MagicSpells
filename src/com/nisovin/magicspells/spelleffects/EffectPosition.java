@@ -14,19 +14,51 @@ public enum EffectPosition {
 	/** Can be referenced as: line, trail **/
 	TRAIL(3),
 	
-	/** Can be referenced as: disabled **/
+	/** Can be referenced as: disabled
+	 *  Used in:
+	 *      - SteedSpell
+	 *      - HasteSpell
+	 *      - ExternalCommandSpell
+	 *      - BuffSpell (and all sub classes)
+	 *      - DisguiseSpell
+	 **/
 	DISABLED(4),
 	
 	/** Can be referenced as: delayed **/
 	DELAYED(5),
 	
-	/** Can be referenced as: special **/
+	/** Can be referenced as: special
+	 *  Is used differently based upon each spell.
+	 *  Behavior is defined in:
+	 *  - MenuSpell
+	 *  - FlightPathSpell
+	 *  - ProjectileSpell
+	 *  - PortalSpell
+	 *  - ConjureSpell
+	 *  - ConjureFireworkSpell
+	 *  - ConjureBookSpell
+	 *  - BeamSpell
+	 *  - EntombSpell
+	 *  - ForcebombSpell
+	 *  - HomingMissileSpell
+	 *  - HomingArrowSpell
+	 *  - BombSpell
+	 *  - AreaEffectSpell
+	 **/
 	SPECIAL(6),
 	
-	/** Can be referenced as: buff, active **/
+	/** Can be referenced as: buff, active 
+	 *  Used in:
+	 *      - BuffSpell (and all subclasses)
+	 *      - StunSpell
+	 **/
 	BUFF(7),
 	
-	/** Can be referenced as: orbit **/
+	/** Can be referenced as: orbit
+	 *  Used in:
+	 *      - BuffSpell (and all subclasses)
+	 *      - StunSpell
+	 **/
 	ORBIT(8),
 	
 	/** Can be referenced as: reverse_line, reverseline, rline **/

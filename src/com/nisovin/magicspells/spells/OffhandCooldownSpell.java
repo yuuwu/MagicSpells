@@ -38,6 +38,7 @@ public class OffhandCooldownSpell extends InstantSpell {
 		
 		if (spell != null && item != null) {
 			MagicSpells.scheduleRepeatingTask(new Runnable() {
+				@Override
 				public void run() {
 					Iterator<Player> iter = players.iterator();
 					while (iter.hasNext()) {

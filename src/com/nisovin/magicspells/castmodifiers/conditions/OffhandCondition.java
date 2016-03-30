@@ -4,7 +4,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
 import com.nisovin.magicspells.MagicSpells;

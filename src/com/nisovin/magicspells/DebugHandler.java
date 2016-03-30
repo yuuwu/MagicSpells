@@ -18,7 +18,7 @@ public class DebugHandler {
 		}
 	}
 	
-	public static void debugBadEnumValue(Class<? extends Enum> e, String receivedValue) {
+	public static void debugBadEnumValue(Class<? extends Enum<?>> e, String receivedValue) {
 		try {
 			Method getValuesMethod = e.getMethod("values");
 			MagicSpells.plugin.getLogger().log(Level.WARNING, "Bad enum value of \"" + receivedValue + "\" received for type \"" + e.getName() + "\"");
