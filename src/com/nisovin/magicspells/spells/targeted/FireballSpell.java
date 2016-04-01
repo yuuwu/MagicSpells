@@ -126,6 +126,7 @@ public class FireballSpell extends TargetedSpell implements TargetedEntityFromLo
 			fireball.setShooter(player);
 			
 			playSpellEffects(EffectPosition.CASTER, player);
+			playSpellEffects(EffectPosition.PROJECTILE, fireball);
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}
