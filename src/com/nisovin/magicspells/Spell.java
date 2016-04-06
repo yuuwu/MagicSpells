@@ -1664,9 +1664,13 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	}
 	
 	public void playTrackingLinePatterns(EffectPosition pos, Location origin, Location target, Entity originEntity, Entity targetEntity) {
-		List<SpellEffect> spellEffects = effects.get(pos);
-		for (SpellEffect e: spellEffects) {
-			e.playTrackingLinePatterns(origin, target, originEntity, targetEntity);
+		if (effects != null) {
+			List<SpellEffect> spellEffects = effects.get(pos);
+			if (spellEffects != null) {
+				for (SpellEffect e: spellEffects) {
+					e.playTrackingLinePatterns(origin, target, originEntity, targetEntity);
+				}
+			}
 		}
 	}
 	
