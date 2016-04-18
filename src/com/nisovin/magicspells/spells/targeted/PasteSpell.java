@@ -16,15 +16,12 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.SpellType;
-import com.nisovin.magicspells.util.SpellTypes;
 import com.sk89q.worldedit.CuboidClipboard;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.blocks.BaseBlock;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.schematic.SchematicFormat;
-@SpellType(types={SpellTypes.TARGETED_LOCATION_SPELL})
 public class PasteSpell extends TargetedSpell implements TargetedLocationSpell {
 
 	File file;

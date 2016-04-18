@@ -3,17 +3,14 @@ package com.nisovin.magicspells.spells.targeted;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.util.Vector;
 
+import com.nisovin.magicspells.events.MagicSpellsEntityDamageByEntityEvent;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.SpellType;
-import com.nisovin.magicspells.util.SpellTypes;
 import com.nisovin.magicspells.util.TargetInfo;
-@SpellType(types={SpellTypes.TARGETED_ENTITY_SPELL})
 public class ForcetossSpell extends TargetedSpell implements TargetedEntitySpell {
 
 	private int damage;
@@ -47,7 +44,7 @@ public class ForcetossSpell extends TargetedSpell implements TargetedEntitySpell
 			if (damage > 0) {
 				double damage = this.damage * power;
 				if (target instanceof Player && checkPlugins) {
-					EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(player, target, DamageCause.ENTITY_ATTACK, damage);
+					MagicSpellsEntityDamageByEntityEvent event = new MagicSpellsEntityDamageByEntityEvent(player, target, DamageCause.ENTITY_ATTACK, damage);
 					Bukkit.getServer().getPluginManager().callEvent(event);
 					if (event.isCancelled()) {
 						return noTarget(player);

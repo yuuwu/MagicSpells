@@ -4,21 +4,17 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
-import org.bukkit.entity.Villager.Profession;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -38,10 +34,7 @@ import com.nisovin.magicspells.util.DisguiseManager;
 import com.nisovin.magicspells.util.EntityData;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
-import com.nisovin.magicspells.util.SpellType;
-import com.nisovin.magicspells.util.SpellTypes;
 import com.nisovin.magicspells.util.TargetInfo;
-@SpellType(types={SpellTypes.TARGETED_ENTITY_SPELL})
 public class DisguiseSpell extends TargetedSpell implements TargetedEntitySpell {
 
 	static DisguiseManager manager;

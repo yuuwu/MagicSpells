@@ -3,17 +3,14 @@ package com.nisovin.magicspells.spells.targeted;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 
+import com.nisovin.magicspells.events.MagicSpellsEntityRegainHealthEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.SpellType;
-import com.nisovin.magicspells.util.SpellTypes;
 import com.nisovin.magicspells.util.TargetInfo;
-@SpellType(types={SpellTypes.TARGETED_ENTITY_SPELL})
 public class HealSpell extends TargetedSpell implements TargetedEntitySpell {
 	
 	private double healAmount;
@@ -64,7 +61,7 @@ public class HealSpell extends TargetedSpell implements TargetedEntitySpell {
 		double health = target.getHealth();
 		double amt = healAmount * power;
 		if (checkPlugins) {
-			EntityRegainHealthEvent evt = new EntityRegainHealthEvent(target, amt, RegainReason.CUSTOM);
+			MagicSpellsEntityRegainHealthEvent evt = new MagicSpellsEntityRegainHealthEvent(target, amt, RegainReason.CUSTOM);
 			Bukkit.getPluginManager().callEvent(evt);
 			if (evt.isCancelled()) {
 				return false;

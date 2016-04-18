@@ -25,15 +25,12 @@ import com.nisovin.magicspells.util.BoundingBox;
 import com.nisovin.magicspells.util.EffectPackage;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.ParticleNameUtil;
-import com.nisovin.magicspells.util.SpellType;
-import com.nisovin.magicspells.util.SpellTypes;
 import com.nisovin.magicspells.util.SpellTypesAllowed;
 import com.nisovin.magicspells.util.Util;
 
 import de.slikey.effectlib.util.ParticleEffect;
 import de.slikey.effectlib.util.ParticleEffect.ParticleData;
 
-@SpellType(types={SpellTypes.TARGETED_LOCATION_SPELL})
 public class ParticleProjectileSpell extends InstantSpell implements TargetedLocationSpell {
 
 	float startYOffset;

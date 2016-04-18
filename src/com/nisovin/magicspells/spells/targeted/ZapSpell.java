@@ -11,19 +11,16 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.util.Vector;
 
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.events.MagicSpellsBlockBreakEvent;
 import com.nisovin.magicspells.events.SpellTargetLocationEvent;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.SpellType;
-import com.nisovin.magicspells.util.SpellTypes;
-@SpellType(types={SpellTypes.TARGETED_LOCATION_SPELL})
 public class ZapSpell extends TargetedSpell implements TargetedLocationSpell {
 	
 	private String strCantZap;
@@ -110,7 +107,7 @@ public class ZapSpell extends TargetedSpell implements TargetedLocationSpell {
 	private boolean zap(Block target, Player player) {
 		// check for protection
 		if (checkPlugins && player != null) {
-			BlockBreakEvent event = new BlockBreakEvent(target, player);
+			MagicSpellsBlockBreakEvent event = new MagicSpellsBlockBreakEvent(target, player);
 			MagicSpells.plugin.getServer().getPluginManager().callEvent(event);
 			if (event.isCancelled()) {
 				// a plugin cancelled the event

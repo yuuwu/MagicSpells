@@ -3,19 +3,39 @@ package com.nisovin.magicspells.spelleffects;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 
-import com.nisovin.magicspells.util.ConfigData;
-
 import de.slikey.effectlib.util.ParticleEffect;
 
+/**
+ * AngryEffect<br>
+ * <table border=1>
+ *     	<tr>
+ *         <th>
+ *             Config Field
+ *         </th>
+ *    	     <th>
+ *             Data Type
+ *         </th>
+ *         <th>
+ *             Description
+ *         </th>
+ *     	</tr>
+ *     	<tr>
+ *         	<td>
+ *         		<code>range</code>
+ *         	</td>
+ *         	<td>
+ *         		Integer
+ *         	</td>
+ *         	<td>
+ *         		How far the effect should be visible.
+ *         	</td>
+ *     	</tr>
+ * </table>
+ */
 public class AngryEffect extends SpellEffect {
 
 	private ParticleEffect effect = ParticleEffect.VILLAGER_ANGRY;
 	
-	@ConfigData(field="range",
-			dataType="int",
-			defaultValue="32",
-			description="The internal data is stored as a double for effect lib, but best used as an integer." +
-					"Set to something like 625 for long range rendering")
 	private double range = 32;
 	
 	//these are location shifts made to the center point

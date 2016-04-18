@@ -7,11 +7,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.PlayerDeathEvent;
 
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.events.MagicSpellsEntityDamageByEntityEvent;
 import com.nisovin.magicspells.events.SpellApplyDamageEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.SpellDamageSpell;
@@ -123,7 +123,7 @@ public class DotSpell extends TargetedSpell implements TargetedEntitySpell, Spel
 			dam = event.getFinalDamage();
 			if (preventKnockback) {
 				// bukkit doesn't call a damage event here, so we'll do it ourselves
-				EntityDamageByEntityEvent devent = new EntityDamageByEntityEvent(caster, target, DamageCause.ENTITY_ATTACK, damage);
+				MagicSpellsEntityDamageByEntityEvent devent = new MagicSpellsEntityDamageByEntityEvent(caster, target, DamageCause.ENTITY_ATTACK, damage);
 				Bukkit.getPluginManager().callEvent(devent);
 				if (!devent.isCancelled()) {
 					target.damage(devent.getDamage());

@@ -7,9 +7,9 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.BlockPlaceEvent;
 
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.events.MagicSpellsBlockPlaceEvent;
 import com.nisovin.magicspells.materials.MagicMaterial;
 
 public class TemporaryBlockSet implements Runnable {
@@ -37,7 +37,7 @@ public class TemporaryBlockSet implements Runnable {
 			if (callPlaceEvent) {
 				BlockState state = block.getState();
 				replaceWith.setBlock(block, false);
-				BlockPlaceEvent event = new BlockPlaceEvent(block, state, block, MagicSpells.getVolatileCodeHandler().getItemInMainHand(player), player, true);
+				MagicSpellsBlockPlaceEvent event = new MagicSpellsBlockPlaceEvent(block, state, block, MagicSpells.getVolatileCodeHandler().getItemInMainHand(player), player, true);
 				Bukkit.getPluginManager().callEvent(event);
 				if (event.isCancelled()) {
 					BlockUtils.setTypeAndData(block, original, (byte)0, false);

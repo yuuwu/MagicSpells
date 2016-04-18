@@ -15,12 +15,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.events.MagicSpellsBlockBreakEvent;
+import com.nisovin.magicspells.events.MagicSpellsBlockPlaceEvent;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.util.MagicConfig;
@@ -99,7 +99,7 @@ public class ReachSpell extends BuffSpell {
 						return;
 					}
 					// call break event
-					BlockBreakEvent evt = new BlockBreakEvent(targetBlock, player);
+					MagicSpellsBlockBreakEvent evt = new MagicSpellsBlockBreakEvent(targetBlock, player);
 					Bukkit.getPluginManager().callEvent(evt);
 					if (!evt.isCancelled()) {
 						// remove block
@@ -131,7 +131,7 @@ public class ReachSpell extends BuffSpell {
 						state.setData(inHand.getData());
 						state.update(true);
 						// call event
-						BlockPlaceEvent evt = new BlockPlaceEvent(airBlock, prevState, targetBlock, inHand, player, true);
+						MagicSpellsBlockPlaceEvent evt = new MagicSpellsBlockPlaceEvent(airBlock, prevState, targetBlock, inHand, player, true);
 						Bukkit.getPluginManager().callEvent(evt);
 						if (evt.isCancelled()) {
 							// cancelled, revert

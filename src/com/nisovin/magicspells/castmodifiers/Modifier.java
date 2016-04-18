@@ -1,5 +1,7 @@
 package com.nisovin.magicspells.castmodifiers;
 
+import java.util.HashMap;
+
 import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.DebugHandler;
@@ -253,7 +255,8 @@ public class Modifier {
 	}
 	
 	private static ModifierType getTypeByName(String name) {
-		if (name.equalsIgnoreCase("required") || name.equalsIgnoreCase("require")) {
+		return ModifierType.getModifierTypeByName(name);
+		/*if (name.equalsIgnoreCase("required") || name.equalsIgnoreCase("require")) {
 			return ModifierType.REQUIRED;
 		} else if (name.equalsIgnoreCase("denied") || name.equalsIgnoreCase("deny")) {
 			return ModifierType.DENIED;
@@ -278,20 +281,45 @@ public class Modifier {
 		} else {
 			return null;
 		}
+		*/
 	}
 	
 	private enum ModifierType {
-		REQUIRED,
-		DENIED,
-		POWER,
-		ADD_POWER,
-		COOLDOWN,
-		REAGENTS,
-		CAST_TIME,
-		STOP,
-		CONTINUE,
-		CAST,
-		CAST_INSTEAD
+		REQUIRED("required", "require"),
+		DENIED("denied", "deny"),
+		POWER("power", "empower", "multiply"),
+		ADD_POWER("addpower", "add"),
+		COOLDOWN("cooldown"),
+		REAGENTS("reagents"),
+		CAST_TIME("casttime"),
+		STOP("stop"),
+		CONTINUE("continue"),
+		CAST("cast"),
+		CAST_INSTEAD("castinstead");
+		private String[] keys;
+		private static boolean initialized = false;
+		private ModifierType(String... keys) {
+			this.keys = keys;
+		}
+		
+		static HashMap<String, ModifierType> nameMap;
+		static void initialize() {
+			nameMap = new HashMap<String, ModifierType>();
+			for (ModifierType type: ModifierType.values()) {
+				for (String key: type.keys) {
+					nameMap.put(key.toLowerCase(), type);
+				}
+			}
+			initialized = true;
+		}
+		
+		public static ModifierType getModifierTypeByName(String name) {
+			if (!initialized) {
+				initialize();
+			}
+			return nameMap.get(name.toLowerCase());
+		}
+		
 	}
 	
 }

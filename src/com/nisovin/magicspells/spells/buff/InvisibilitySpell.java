@@ -16,16 +16,60 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.spells.BuffSpell;
-import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
 
+/**
+ * InvisibilitySpell<br>
+ * <table border=1>
+ *     <tr>
+ *         <th>
+ *             Config Field
+ *         </th>
+ *         <th>
+ *             Data Type
+ *         </th>
+ *         <th>
+ *             Description
+ *         </th>
+ *         <th>
+ *             Default
+ *         </th>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             prevent-pickups
+ *         </td>
+ *         <td>
+ *             Boolean
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             true
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             cancel-on-spell-cast
+ *         </td>
+ *         <td>
+ *             Boolean
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             false
+ *         </td>
+ *     </tr>
+ * </table>
+ */
 public class InvisibilitySpell extends BuffSpell {
 
-	@ConfigData(field="prevent-pickups", dataType="boolean", defaultValue="true")
 	private boolean preventPickups;
 	
-	@ConfigData(field="cancel-on-spell-cast", dataType="boolean", defaultValue="false")
 	private boolean cancelOnSpellCast;
 	
 	private HashMap<String,CostCharger> invisibles = new HashMap<String, InvisibilitySpell.CostCharger>();

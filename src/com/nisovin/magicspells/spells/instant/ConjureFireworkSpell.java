@@ -17,12 +17,9 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.SpellType;
-import com.nisovin.magicspells.util.SpellTypes;
 import com.nisovin.magicspells.util.Util;
 
 // the special position plays on the dropped items
-@SpellType(types={SpellTypes.TARGETED_LOCATION_SPELL})
 public class ConjureFireworkSpell extends InstantSpell implements TargetedLocationSpell {
 
 	boolean addToInventory;

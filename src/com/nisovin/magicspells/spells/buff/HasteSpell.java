@@ -11,15 +11,59 @@ import org.bukkit.potion.PotionEffectType;
 
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.BuffSpell;
-import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.MagicConfig;
 
+/**
+ * HasteSpell<br>
+ * <table border=1>
+ *     <tr>
+ *         <th>
+ *             Config Field
+ *         </th>
+ *         <th>
+ *             Data Type
+ *         </th>
+ *         <th>
+ *             Description
+ *         </th>
+ *         <th>
+ *             Default
+ *         </th>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             effect-strength
+ *         </td>
+ *         <td>
+ *             Integer
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             3
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             boost-duration
+ *         </td>
+ *         <td>
+ *             Integer
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             300
+ *         </td>
+ *     </tr>
+ * </table>
+ */
 public class HasteSpell extends BuffSpell {
 
-	@ConfigData(field="effect-strength", dataType="int", defaultValue="3")
 	private int strength;
 	
-	@ConfigData(field="boost-duration", dataType="int", defaultValue="300")
 	private int boostDuration;
 	
 	private HashMap<Player,Integer> hasted;

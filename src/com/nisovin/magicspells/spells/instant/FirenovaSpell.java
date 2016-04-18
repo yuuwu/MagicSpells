@@ -9,19 +9,17 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.events.MagicSpellsEntityDamageByEntityEvent;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.SpellType;
-import com.nisovin.magicspells.util.SpellTypes;
 
-@SpellType(types={SpellTypes.TARGETED_LOCATION_SPELL})
 public class FirenovaSpell extends InstantSpell implements TargetedLocationSpell {
 
 	int range;
@@ -85,7 +83,7 @@ public class FirenovaSpell extends InstantSpell implements TargetedLocationSpell
 				for (Player p : fireImmunity) {
 					if (Math.abs(p.getLocation().getX() - loc.getX()) < range+2 && Math.abs(p.getLocation().getZ() - loc.getZ()) < range+2 && Math.abs(p.getLocation().getY() - loc.getY()) < range) {
 						// nearby, check plugins for pvp
-						EntityDamageByEntityEvent evt = new EntityDamageByEntityEvent(p, player, DamageCause.ENTITY_ATTACK, event.getDamage());
+						MagicSpellsEntityDamageByEntityEvent evt = new MagicSpellsEntityDamageByEntityEvent(p, player, DamageCause.ENTITY_ATTACK, event.getDamage());
 						Bukkit.getServer().getPluginManager().callEvent(evt);
 						if (evt.isCancelled()) {
 							event.setCancelled(true);

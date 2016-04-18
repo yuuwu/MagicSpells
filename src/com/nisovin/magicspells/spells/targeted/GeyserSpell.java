@@ -11,12 +11,12 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
 
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.events.MagicSpellsEntityDamageByEntityEvent;
 import com.nisovin.magicspells.materials.MagicBlockMaterial;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
@@ -24,11 +24,8 @@ import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellAnimation;
-import com.nisovin.magicspells.util.SpellType;
-import com.nisovin.magicspells.util.SpellTypes;
 import com.nisovin.magicspells.util.TargetInfo;
 import com.nisovin.magicspells.util.Util;
-@SpellType(types={SpellTypes.TARGETED_ENTITY_SPELL})
 public class GeyserSpell extends TargetedSpell implements TargetedEntitySpell {
 	
 	private double damage;
@@ -86,7 +83,7 @@ public class GeyserSpell extends TargetedSpell implements TargetedEntitySpell {
 		
 		// check plugins
 		if (caster != null && target instanceof Player && checkPlugins && damage > 0) {
-			EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(caster, target, DamageCause.ENTITY_ATTACK, dam);
+			MagicSpellsEntityDamageByEntityEvent event = new MagicSpellsEntityDamageByEntityEvent(caster, target, DamageCause.ENTITY_ATTACK, dam);
 			Bukkit.getServer().getPluginManager().callEvent(event);
 			if (event.isCancelled()) {
 				return false;

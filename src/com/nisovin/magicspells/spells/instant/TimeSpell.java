@@ -7,10 +7,7 @@ import org.bukkit.entity.Player;
 import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.SpellType;
-import com.nisovin.magicspells.util.SpellTypes;
 
-@SpellType(types={SpellTypes.TARGETED_LOCATION_SPELL})
 public class TimeSpell extends InstantSpell implements TargetedLocationSpell {
 
 	private int timeToSet;

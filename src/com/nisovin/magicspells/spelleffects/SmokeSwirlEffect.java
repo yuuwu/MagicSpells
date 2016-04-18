@@ -8,11 +8,36 @@ import org.bukkit.entity.Entity;
 
 import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
-import com.nisovin.magicspells.util.ConfigData;
 
+/**
+ * SmokeSwirlEffect<br>
+ * <table border=1>
+ *     <tr>
+ *         <th>
+ *             Config Field
+ *         </th>
+ *         <th>
+ *             Data Type
+ *         </th>
+ *         <th>
+ *             Description
+ *         </th>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>duration</code>
+ *         </td>
+ *         <td>
+ *             Integer
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ * </table>
+ */
 public class SmokeSwirlEffect extends SpellEffect {
 
-	@ConfigData(field="duration", dataType="int", defaultValue="20")
 	int duration = 20;
 	
 	@Override

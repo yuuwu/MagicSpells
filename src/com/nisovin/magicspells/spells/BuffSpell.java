@@ -23,23 +23,221 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spelleffects.SpellEffect;
-import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
 import com.nisovin.magicspells.util.SpellReagents;
-import com.nisovin.magicspells.util.SpellType;
-import com.nisovin.magicspells.util.SpellTypes;
 import com.nisovin.magicspells.util.TargetInfo;
 
-@SpellType(types={SpellTypes.TARGETED_ENTITY_SPELL})
+
+/**
+ * BuffSpell<br>
+ * <table border=1>
+ *     <tr>
+ *         <th>
+ *             Config Field
+ *         </th>
+ *         <th>
+ *             Data Type
+ *         </th>
+ *         <th>
+ *             Description
+ *         </th>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             targeted
+ *         </td>
+ *         <td>
+ *             Boolean
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             toggle
+ *         </td>
+ *         <td>
+ *             Boolean
+ *         </td>
+ *         <td>
+ *            ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             use-cost
+ *         </td>
+ *         <td>
+ *             Reagents
+ *         </td>
+ *         <td>
+ *            ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             use-cost-interval
+ *         </td>
+ *         <td>
+ *             Integer
+ *         </td>
+ *         <td>
+ *            ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             num-uses
+ *         </td>
+ *         <td>
+ *             Integer
+ *         </td>
+ *         <td>
+ *            ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             duration
+ *         </td>
+ *         <td>
+ *             Integer
+ *         </td>
+ *         <td>
+ *            ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             power-affects-duration
+ *         </td>
+ *         <td>
+ *             Boolean
+ *         </td>
+ *         <td>
+ *            ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             cancel-on-give-damage
+ *         </td>
+ *         <td>
+ *             Boolean
+ *         </td>
+ *         <td>
+ *            ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             cancel-on-take-damage
+ *         </td>
+ *         <td>
+ *             Boolean
+ *         </td>
+ *         <td>
+ *            ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             cancel-on-death
+ *         </td>
+ *         <td>
+ *             Boolean
+ *         </td>
+ *         <td>
+ *            ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             cancel-on-teleport
+ *         </td>
+ *         <td>
+ *             Boolean
+ *         </td>
+ *         <td>
+ *            ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             cancel-on-change-world
+ *         </td>
+ *         <td>
+ *             Boolean
+ *         </td>
+ *         <td>
+ *            ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             cancel-on-spell-cast
+ *         </td>
+ *         <td>
+ *             Boolean
+ *         </td>
+ *         <td>
+ *            ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             cancel-on-logout
+ *         </td>
+ *         <td>
+ *             Boolean
+ *         </td>
+ *         <td>
+ *            ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             str-fade
+ *         </td>
+ *         <td>
+ *             String
+ *         </td>
+ *         <td>
+ *            ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             can-cast-with-item
+ *         </td>
+ *         <td>
+ *             Boolean
+ *         </td>
+ *         <td>
+ *            ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             can-cast-by-command
+ *         </td>
+ *         <td>
+ *             Boolean
+ *         </td>
+ *         <td>
+ *            ???
+ *         </td>
+ *     </tr>
+ * </table>
+ */
 public abstract class BuffSpell extends TargetedSpell implements TargetedEntitySpell {
 	
 	BuffSpell thisSpell;
 	
-	@ConfigData(field="targeted", dataType="boolean", defaultValue="false")
 	protected boolean targeted;
 	
-	@ConfigData(field="toggle", dataType="boolean", defaultValue="true")
 	protected boolean toggle;
 	
 	protected int healthCost = 0;
@@ -48,19 +246,14 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 	protected int experienceCost = 0;
 	protected int levelsCost = 0;
 	
-	@ConfigData(field="use-cost", dataType="Reagents")
 	protected SpellReagents reagents;
 	
-	@ConfigData(field="use-cost-interval", dataType="int", defaultValue="0")
 	protected int useCostInterval;
 	
-	@ConfigData(field="num-uses", dataType="int", defaultValue="0")
 	protected int numUses;
 	
-	@ConfigData(field="duration", dataType="float", defaultValue="0")
 	protected float duration;
 	
-	@ConfigData(field="power-affects-duration", dataType="boolean", defaultValue="true")
 	protected boolean powerAffectsDuration;
 	protected boolean cancelOnGiveDamage;
 	protected boolean cancelOnTakeDamage;

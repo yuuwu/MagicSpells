@@ -8,6 +8,44 @@ import org.bukkit.inventory.ItemStack;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.util.Util;
 
+/**
+ * ItemCooldownEffect<br>
+ * <table border=1>
+ *     <tr>
+ *         <th>
+ *             Config Field
+ *         </th>
+ *         <th>
+ *             Data Type
+ *         </th>
+ *         <th>
+ *             Description
+ *         </th>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>item</code>
+ *         </td>
+ *         <td>
+ *             String
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>duration</code>
+ *         </td>
+ *         <td>
+ *             Integer
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ * </table>
+ */
 public class ItemCooldownEffect extends SpellEffect {
 
 	ItemStack item;

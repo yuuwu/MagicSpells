@@ -10,23 +10,20 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.CreeperPowerEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.PigZapEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.PigZapEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 
 import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.events.MagicSpellsEntityDamageByEntityEvent;
 import com.nisovin.magicspells.events.SpellTargetLocationEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.SpellType;
-import com.nisovin.magicspells.util.SpellTypes;
 import com.nisovin.magicspells.util.TargetInfo;
-@SpellType(types={SpellTypes.TARGETED_LOCATION_SPELL})
 public class LightningSpell extends TargetedSpell implements TargetedLocationSpell {
 	
 	private boolean requireEntityTarget;
@@ -59,7 +56,7 @@ public class LightningSpell extends TargetedSpell implements TargetedLocationSpe
 					power = targetInfo.getPower(); //TODO make an alternative to overriding the parameter
 				}
 				if (entityTarget != null && entityTarget instanceof Player && checkPlugins) {
-					EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(player, entityTarget, DamageCause.ENTITY_ATTACK, 1 + additionalDamage);
+					MagicSpellsEntityDamageByEntityEvent event = new MagicSpellsEntityDamageByEntityEvent(player, entityTarget, DamageCause.ENTITY_ATTACK, 1 + additionalDamage);
 					Bukkit.getServer().getPluginManager().callEvent(event);
 					if (event.isCancelled()) {
 						entityTarget = null;

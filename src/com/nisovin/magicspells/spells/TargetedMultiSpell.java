@@ -17,12 +17,8 @@ import com.nisovin.magicspells.Subspell;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.SpellType;
-import com.nisovin.magicspells.util.SpellTypes;
-import com.nisovin.magicspells.util.SpellTypesAllowed;
 import com.nisovin.magicspells.util.TargetInfo;
 
-@SpellType(types={SpellTypes.TARGETED_ENTITY_SPELL, SpellTypes.TARGETED_LOCATION_SPELL})
 public final class TargetedMultiSpell extends TargetedSpell implements TargetedEntitySpell, TargetedLocationSpell {
 
 	@ConfigData(field="check-individual-cooldowns", dataType="boolean", defaultValue="false")
@@ -43,7 +39,6 @@ public final class TargetedMultiSpell extends TargetedSpell implements TargetedE
 	@ConfigData(field="stop-on-fail", dataType="boolean", defaultValue="true")
 	boolean stopOnFail;
 	
-	@SpellTypesAllowed({SpellTypes.TARGETED_LOCATION_SPELL, SpellTypes.TARGETED_ENTITY_SPELL})
 	@ConfigData(field="spells", dataType="String[]", defaultValue="null")
 	private List<String> spellList;
 	

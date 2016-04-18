@@ -11,10 +11,7 @@ import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.SpellType;
-import com.nisovin.magicspells.util.SpellTypes;
 import com.nisovin.magicspells.util.TargetInfo;
-@SpellType(types={SpellTypes.TARGETED_ENTITY_SPELL, SpellTypes.TARGETED_LOCATION_SPELL})
 public class DummySpell extends TargetedSpell implements TargetedEntitySpell, TargetedLocationSpell {
 
 	public DummySpell(MagicConfig config, String spellName) {

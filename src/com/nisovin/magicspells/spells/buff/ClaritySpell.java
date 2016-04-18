@@ -12,14 +12,11 @@ import org.bukkit.event.EventHandler;
 import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.SpellTypes;
-import com.nisovin.magicspells.util.SpellTypesAllowed;
 
 public class ClaritySpell extends BuffSpell {
 
 	float multiplier;
 	
-	@SpellTypesAllowed({SpellTypes.ALL})
 	Set<String> spells;
 	
 	Map<String, Float> buffed = new HashMap<String, Float>();

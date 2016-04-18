@@ -11,6 +11,33 @@ import com.nisovin.magicspells.mana.ManaChangeReason;
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 
+/**
+ * ManaRegenSpell<br>
+ * <table border=1>
+ *     <tr>
+ *         <th>
+ *             Config Field
+ *         </th>
+ *         <th>
+ *             Data Type
+ *         </th>
+ *         <th>
+ *             Description
+ *         </th>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             regen-mod-amt
+ *         </td>
+ *         <td>
+ *             Integer
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ * </table>
+ */
 public class ManaRegenSpell extends BuffSpell { 
 
 	private int regenModAmt;

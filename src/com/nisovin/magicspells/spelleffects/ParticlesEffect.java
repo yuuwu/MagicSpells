@@ -5,13 +5,149 @@ import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 
 import com.nisovin.magicspells.util.ColorUtil;
-import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.EffectPackage;
 import com.nisovin.magicspells.util.ParticleNameUtil;
 
 import de.slikey.effectlib.util.ParticleEffect;
 import de.slikey.effectlib.util.ParticleEffect.ParticleData;
 
+/**
+ * ParticlesEffect<br>
+ * <table border=1>
+ *     <tr>
+ *         <th>
+ *             Config Field
+ *         </th>
+ *         <th>
+ *             Data Type
+ *         </th>
+ *         <th>
+ *             Description
+ *         </th>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>particle-name</code>
+ *         </td>
+ *         <td>
+ *             String
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>horiz-spread</code>
+ *         </td>
+ *         <td>
+ *             Double
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>vert-spread</code>
+ *         </td>
+ *         <td>
+ *             Double
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>red</code>
+ *         </td>
+ *         <td>
+ *             Double
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>green</code>
+ *         </td>
+ *         <td>
+ *             Double
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>blue</code>
+ *         </td>
+ *         <td>
+ *             Double
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>speed</code>
+ *         </td>
+ *         <td>
+ *             Double
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>count</code>
+ *         </td>
+ *         <td>
+ *             Integer
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>y-offset</code>
+ *         </td>
+ *         <td>
+ *             Double
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>render-distance</code>
+ *         </td>
+ *         <td>
+ *             Integer
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>color</code>
+ *         </td>
+ *         <td>
+ *             String
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ * </table>
+ */
 public class ParticlesEffect extends SpellEffect {
 	
 	ParticleEffect effect;
@@ -23,10 +159,6 @@ public class ParticlesEffect extends SpellEffect {
 	int count = 5;
 	float yOffset = 0F;
 	
-	@ConfigData(field="render-distance",
-			dataType="int",
-			defaultValue="32",
-			description="Set to something like 625 for long range rendering.")
 	int renderDistance = 32;
 	Color color = null;
 	ParticleData data = null;

@@ -877,7 +877,7 @@ public class MagicSpells extends JavaPlugin {
 	static public void sendMessage(Player player, String message) {
 		if (message != null && !message.equals("")) {
 			// do var replacements
-			message = doVariableReplacements(player, message); //TODO find an alternative to reassigning the parameter
+			message = doVariableReplacements(player, message);
 			// send messages
 			String [] msgs = message.replaceAll("&([0-9a-fk-or])", "\u00A7$1").split("\n");
 			for (String msg : msgs) {
@@ -897,7 +897,7 @@ public class MagicSpells extends JavaPlugin {
 				String[] varData = varText.substring(5, varText.length() - 1).split(":");
 				double val = plugin.variableManager.getValue(varData[0], player);
 				String sval = varData.length == 1 ? Util.getStringNumber(val, -1) : Util.getStringNumber(val, Integer.parseInt(varData[1]));
-				string = string.replace(varText, sval); //TODO find an alternative to reassigning the parameter
+				string = string.replace(varText, sval);
 			}
 		}
 		return string;

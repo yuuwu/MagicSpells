@@ -7,10 +7,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.events.MagicSpellsEntityDamageByEntityEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.util.MagicConfig;
@@ -94,7 +94,7 @@ public class FlamewalkSpell extends BuffSpell {
 						if (entity instanceof Player) {
 							if (entity != player && targetPlayers) {
 								if (checkPlugins) {
-									EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(player, entity, DamageCause.ENTITY_ATTACK, (double)1);
+									MagicSpellsEntityDamageByEntityEvent event = new MagicSpellsEntityDamageByEntityEvent(player, entity, DamageCause.ENTITY_ATTACK, (double)1);
 									Bukkit.getServer().getPluginManager().callEvent(event);
 									if (event.isCancelled()) {
 										continue;

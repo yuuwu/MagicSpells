@@ -2,7 +2,6 @@ package com.nisovin.magicspells.spelleffects;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
@@ -16,22 +15,7 @@ import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.expression.Expression;
 
 /**
- * 
  * Represents a graphical effect that can be used with the 'effects' option of a spell.<p>
- * 
- * Configurable fields<br>
- * <ul>
- * <li>height-offset</li>
- * <li>forward-offset</li>
- * <li>delay</li>
- * <li>distance-between</li>
- * <li>effect-interval</li>
- * <li>orbit-radius</li>
- * <li>orbit-seconds-per-revolution</li>
- * <li>orbit-counter-clockwise</li>
- * <li>orbit-tick-interval</li>
- * <li>orbit-y-offset</li>
- * </ul>
  */
 public abstract class SpellEffect {
 	

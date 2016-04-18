@@ -4,19 +4,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.EntityEffect;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.events.MagicSpellsEntityDamageByEntityEvent;
 import com.nisovin.magicspells.events.SpellApplyDamageEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.SpellDamageSpell;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.SpellType;
-import com.nisovin.magicspells.util.SpellTypes;
 import com.nisovin.magicspells.util.TargetInfo;
 import com.nisovin.magicspells.util.expression.Expression;
 
@@ -31,7 +29,6 @@ import com.nisovin.magicspells.util.expression.Expression;
  * <li>damage-type: "ENTITY_ATTACK"</li>
  * </ul>
  */
-@SpellType(types={SpellTypes.TARGETED_ENTITY_SPELL, SpellTypes.SPELL_DAMAGE_SPELL})
 public class PainSpell extends TargetedSpell implements TargetedEntitySpell, SpellDamageSpell {
 
 	private Expression damageExpression;
@@ -103,7 +100,7 @@ public class PainSpell extends TargetedSpell implements TargetedEntitySpell, Spe
 		//double dam = damage * power;
 		if (target instanceof Player && checkPlugins && player != null) {
 			// handle the event myself so I can detect cancellation properly
-			EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(player, target, damageType, localDamage);
+			MagicSpellsEntityDamageByEntityEvent event = new MagicSpellsEntityDamageByEntityEvent(player, target, damageType, localDamage);
 			Bukkit.getServer().getPluginManager().callEvent(event);
 			if (event.isCancelled()) {
 				return false;

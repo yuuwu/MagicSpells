@@ -20,21 +20,19 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.util.Vector;
 
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.events.MagicSpellsEntityDamageByEntityEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedEntityFromLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.BlockUtils;
 import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.SpellType;
-import com.nisovin.magicspells.util.SpellTypes;
 import com.nisovin.magicspells.util.TargetInfo;
 import com.nisovin.magicspells.util.Util;
-@SpellType(types={SpellTypes.TARGETED_ENTITY_FROM_LOCATION_SPELL})
 public class FireballSpell extends TargetedSpell implements TargetedEntityFromLocationSpell {
 	
 	private boolean requireEntityTarget;
@@ -95,7 +93,7 @@ public class FireballSpell extends TargetedSpell implements TargetedEntityFromLo
 					return noTarget(player);
 				} else if (entity instanceof Player && checkPlugins) {
 					// run a pvp damage check
-					EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(player, entity, DamageCause.ENTITY_ATTACK, (double)1);
+					MagicSpellsEntityDamageByEntityEvent event = new MagicSpellsEntityDamageByEntityEvent(player, entity, DamageCause.ENTITY_ATTACK, (double)1);
 					Bukkit.getServer().getPluginManager().callEvent(event);
 					if (event.isCancelled()) {
 						return noTarget(player);

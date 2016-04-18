@@ -10,10 +10,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.SpellType;
-import com.nisovin.magicspells.util.SpellTypes;
 import com.nisovin.magicspells.util.TargetInfo;
-@SpellType(types={SpellTypes.TARGETED_ENTITY_SPELL})
 public class MountSpell extends TargetedSpell implements TargetedEntitySpell {
 
 	boolean reverse = false;

@@ -9,19 +9,16 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 
 import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.events.MagicSpellsBlockPlaceEvent;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.SpellType;
-import com.nisovin.magicspells.util.SpellTypes;
-@SpellType(types={SpellTypes.TARGETED_LOCATION_SPELL})
 public class BuildSpell extends TargetedSpell implements TargetedLocationSpell {
 	
 	private int slot;
@@ -91,7 +88,7 @@ public class BuildSpell extends TargetedSpell implements TargetedLocationSpell {
 		state.setData(item.getData());
 		state.update(true);
 		if (checkPlugins) {
-			BlockPlaceEvent event = new BlockPlaceEvent(block, previousState, against, MagicSpells.getVolatileCodeHandler().getItemInMainHand(player), player, true);
+			MagicSpellsBlockPlaceEvent event = new MagicSpellsBlockPlaceEvent(block, previousState, against, MagicSpells.getVolatileCodeHandler().getItemInMainHand(player), player, true);
 			Bukkit.getServer().getPluginManager().callEvent(event);
 			if (event.isCancelled() && block.getType() == item.getType()) {
 				previousState.update(true);

@@ -12,15 +12,12 @@ import org.bukkit.event.EventPriority;
 import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.SpellTypes;
-import com.nisovin.magicspells.util.SpellTypesAllowed;
 
 public class EmpowerSpell extends BuffSpell {
 
 	private float extraPower;
 	private float maxPower;
 	
-	@SpellTypesAllowed({SpellTypes.ALL})
 	private Set<String> spells;
 	
 	private HashMap<String, Float> empowered;

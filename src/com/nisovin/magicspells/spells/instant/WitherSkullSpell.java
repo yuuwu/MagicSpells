@@ -10,10 +10,7 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.spells.TargetedEntityFromLocationSpell;
 import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.SpellType;
-import com.nisovin.magicspells.util.SpellTypes;
 
-@SpellType(types={SpellTypes.TARGETED_ENTITY_FROM_LOCATION_SPELL})
 public class WitherSkullSpell extends InstantSpell implements TargetedEntityFromLocationSpell {
 
 	boolean charged;

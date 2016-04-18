@@ -17,9 +17,6 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.SpellType;
-import com.nisovin.magicspells.util.SpellTypes;
-@SpellType(types={SpellTypes.TARGETED_LOCATION_SPELL})
 public class SpawnTntSpell extends TargetedSpell implements TargetedLocationSpell {
 
 	int fuse;

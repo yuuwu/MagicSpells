@@ -28,7 +28,7 @@ public class LeapSpell extends InstantSpell {
 		forwardVelocity = getConfigInt("forward-velocity", 40) / 10D;
 		upwardVelocity = getConfigInt("upward-velocity", 15) / 10D;
 		cancelDamage = getConfigBoolean("cancel-damage", true);
-		clientOnly = getConfigBoolean("client-only", true);
+		clientOnly = getConfigBoolean("client-only", false);
 		
 		if (cancelDamage) {
 			jumping = new HashSet<Player>();

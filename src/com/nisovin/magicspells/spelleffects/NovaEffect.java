@@ -20,29 +20,64 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.materials.MagicUnknownMaterial;
 import com.nisovin.magicspells.util.BlockUtils;
-import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.SpellAnimation;
 import com.nisovin.magicspells.util.Util;
 
 /**
- * public class SoundEffect<p>
- * Configuration fields:<br>
- * <ul>
- * <li>type</li>
- * <li>radius</li>
- * <li>expand-interval</li>
- * </ul>
+ * NovaEffect<br>
+ * <table border=1>
+ *     <tr>
+ *         <th>
+ *             Config Field
+ *         </th>
+ *         <th>
+ *             Data Type
+ *         </th>
+ *         <th>
+ *             Description
+ *         </th>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>type</code>
+ *         </td>
+ *         <td>
+ *             String
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>radius</code>
+ *         </td>
+ *         <td>
+ *             Integer
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>expand-interval</code>
+ *         </td>
+ *         <td>
+ *             Integer
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ * </table>
  */
-
 public class NovaEffect extends SpellEffect {
 	
-	@ConfigData(field="type", dataType="String", defaultValue="fire")
 	MagicMaterial mat;
 	
-	@ConfigData(field="radius", dataType="int", defaultValue="3")
 	int radius = 3;
 	
-	@ConfigData(field="expand-interval", dataType="int", defaultValue="5")
 	int novaTickInterval = 5;
 
 	@Override

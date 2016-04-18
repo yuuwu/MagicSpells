@@ -7,37 +7,117 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.MagicSpells;
-import com.nisovin.magicspells.util.ConfigData;
+
 /**
- * class TitleEffect<p>
- * Configuration fields:<br>
- * <ul>
- * <li>title</li>
- * <li>subtitle</li>
- * <li>fade-in</li>
- * <li>stay</li>
- * <li>fade-out</li>
- * <li>broadcast</li>
- * </ul>
+ * TitleEffect<br>
+ * <table border=1>
+ *     <tr>
+ *         <th>
+ *             Config Field
+ *         </th>
+ *         <th>
+ *             Data Type
+ *         </th>
+ *         <th>
+ *             Description
+ *         </th>
+ *         <th>
+ *             Default
+ *         </th>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>title</code>
+ *         </td>
+ *         <td>
+ *             String
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             <code>null</code>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>subtitle</code>
+ *         </td>
+ *         <td>
+ *             String
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>fade-in</code>
+ *         </td>
+ *         <td>
+ *             Integer
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>stay</code>
+ *         </td>
+ *         <td>
+ *             Integer
+ *         </td>
+ *         <td>
+ *              ???
+ *         </td>
+ *         <td>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>fade-out</code>
+ *         </td>
+ *         <td>
+ *             Integer
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>broadcast</code>
+ *         </td>
+ *         <td>
+ *             Boolean
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *         </td>
+ *     </tr>
+ * </table>
  */
 public class TitleEffect extends SpellEffect {
 
-	@ConfigData(field="title", dataType="String", defaultValue="")
 	String title = null;
 	
-	@ConfigData(field="subtitle", dataType="String", defaultValue="")
 	String subtitle = null;
 	
-	@ConfigData(field="fade-in", dataType="int", defaultValue="10")
 	int fadeIn = 10;
 	
-	@ConfigData(field="stay", dataType="int", defaultValue="40")
 	int stay = 40;
 	
-	@ConfigData(field="fade-out", dataType="int", defaultValue="10")
 	int fadeOut = 10;
 	
-	@ConfigData(field="broadcast", dataType="boolean", defaultValue="false")
 	boolean broadcast = false;
 	
 	@Override

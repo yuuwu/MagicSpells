@@ -7,22 +7,49 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.MagicSpells;
-import com.nisovin.magicspells.util.ConfigData;
 
 /**
- * public class ActionBarTextEffect<p>
- * Configuration fields:<br>
- * <ul>
- * <li>message</li>
- * <li>broadcast</li>
- * </ul>
+ * ActionBarTextEffect<br>
+ * <table border=1>
+ *     <tr>
+ *         <th>
+ *             Config Field
+ *         </th>
+ *         <th>
+ *             Data Type
+ *         </th>
+ *         <th>
+ *             Description
+ *         </th>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>message</code>
+ *         </td>
+ *         <td>
+ *             String
+ *         </td>
+ *         <td>
+ *             The message to display.
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>broadcast</code>
+ *         </td>
+ *         <td>
+ *             boolean
+ *         </td>
+ *         <td>
+ *             If true, the effect will be sent to everyone online. If false, it will only be sent to ???
+ *         </td>
+ *     </tr>
+ * </table>
  */
 public class ActionBarTextEffect extends SpellEffect {
 
-	@ConfigData(field="message", dataType="String", defaultValue="")
 	String message = "";
 	
-	@ConfigData(field="broadcast", dataType="boolean", defaultValue="false")
 	boolean broadcast = false;
 	
 	@Override

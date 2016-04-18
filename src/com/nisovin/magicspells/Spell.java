@@ -45,7 +45,6 @@ import com.nisovin.magicspells.spelleffects.SpellEffect;
 import com.nisovin.magicspells.spells.PassiveSpell;
 import com.nisovin.magicspells.util.BlockUtils;
 import com.nisovin.magicspells.util.CastItem;
-import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.ExperienceUtils;
 import com.nisovin.magicspells.util.IntMap;
 import com.nisovin.magicspells.util.MagicConfig;
@@ -58,175 +57,536 @@ import com.nisovin.magicspells.variables.VariableManager;
 
 import de.slikey.effectlib.Effect;
 
+
+/**
+ * Spell<br>
+ * <table border=1>
+ *     <tr>
+ *         <th>
+ *             Config Field
+ *         </th>
+ *         <th>
+ *             Data Type
+ *         </th>
+ *         <th>
+ *             Description
+ *         </th>
+ *         <th>
+ *             Default
+ *         </th>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>debug</code>
+ *         </td>
+ *         <td>
+ *             Boolean
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             <code>false</code>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>name</code>
+ *         </td>
+ *         <td>
+ *             String
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             (internal name)
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>aliases</code>
+ *         </td>
+ *         <td>
+ *             String List
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             <code>null</code>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>helper-spell</code>
+ *         </td>
+ *         <td>
+ *             Boolean
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             <code>false</code>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>always-granted</code>
+ *         </td>
+ *         <td>
+ *             Boolean
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             <code>false</code>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>permission-name</code>
+ *         </td>
+ *         <td>
+ *             String
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             (internal name)
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>incantations</code>
+ *         </td>
+ *         <td>
+ *             String List
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             <code>null</code>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>description</code>
+ *         </td>
+ *         <td>
+ *             String
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             <code>null</code>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>cast-item</code>
+ *         </td>
+ *         <td>
+ *             String
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             <code>null</code>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>cast-items</code>
+ *         </td>
+ *         <td>
+ *             String List
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             <code>null</code>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>right-click-cast-item</code>
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>right-click-cast-items</code>
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>consume-cast-item</code>
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>consume-cast-items</code>
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>left-click-cast-item</code>
+ *         </td>
+ *         <td>
+ *             Boolean
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>right-click-cast-item</code>
+ *         </td>
+ *         <td>
+ *             Boolean
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>bindable</code>
+ *         </td>
+ *         <td>
+ *             Boolean
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             <code>true</code>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>bindable-items</code>
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>experience</code>
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>min-range</code>
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>range</code>
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>beneficial</code>
+ *         </td>
+ *         <td>
+ *             Boolean
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             <code>false</code>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>target-damage-cause</code>
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>modifiers</code>
+ *         </td>
+ *         <td>
+ *             String List
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             <code>null</code>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>target-modifiers</code>
+ *         </td>
+ *         <td>
+ *             String List
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             <code>null</code>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>prerequisites</code>
+ *         </td>
+ *         <td>
+ *             String List
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             <code>null</code>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>replaces</code>
+ *         </td>
+ *         <td>
+ *             String List
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             <code>null</code>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>precludes</code>
+ *         </td>
+ *         <td>
+ *             String List
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             <code>null</code>
+ *         </td>
+ *     </tr>
+ * </table>
+ */
 public abstract class Spell implements Comparable<Spell>, Listener {
 
 	private MagicConfig config;
 	
-	@ConfigData(field="debug", dataType="boolean", defaultValue="false")
 	private boolean debug;
 	protected String internalName;
 	
-	@ConfigData(field="name", dataType="String", defaultValue="<internal name>")
 	protected String name;
 	
 	protected String profilingKey;
 	
-	@ConfigData(field="aliases", dataType="String[]", defaultValue="null")
 	protected String[] aliases;
 	
-	@ConfigData(field="helper-spell", dataType="boolean", defaultValue="false")
 	protected boolean helperSpell;
 	
-	@ConfigData(field="always-granted", dataType="boolean", defaultValue="false")
 	protected boolean alwaysGranted;
 	
-	@ConfigData(field="permission-name", dataType="String", defaultValue="<internal name>")
 	protected String permName;
 	
-	@ConfigData(field="incantations", dataType="String[]", defaultValue="null")
 	protected List<String> incantations;
 	
-	@ConfigData(field="description", dataType="String", defaultValue="null")
 	protected String description;
 	
-	@ConfigData(field="cast-item|cast-items")
 	protected CastItem[] castItems;
 	
-	@ConfigData(field="right-click-cast-item|right-click-cast-items")
 	protected CastItem[] rightClickCastItems;
 	
-	@ConfigData(field="consume-cast-item|consume-cast-items")
 	protected CastItem[] consumeCastItems;
 	
-	@ConfigData(field="left-click-cast-item", dataType="boolean")
 	protected boolean castWithLeftClick;
 	
-	@ConfigData(field="right-click-cast-item", dataType="boolean")
 	protected boolean castWithRightClick;
 	
-	@ConfigData
 	protected String danceCastSequence;
 	
-	@ConfigData
 	protected boolean requireCastItemOnCommand;
 	
-	@ConfigData(field="bindable", dataType="boolean", defaultValue="true")
 	protected boolean bindable;
 	
-	@ConfigData(field="bindable-items", dataType="String[]", defaultValue="null")
 	protected HashSet<CastItem> bindableItems;
 	
-	@ConfigData
 	protected ItemStack spellIcon;
 	
-	@ConfigData
 	protected int broadcastRange;
 	
-	@ConfigData(field="experience")
 	protected int experience;
 	
-	@ConfigData
 	protected EnumMap<EffectPosition, List<SpellEffect>> effects;
 	protected Map<String, Map<EffectPosition, List<Runnable>>> callbacks;
 	
-	@ConfigData(field="min-range")
 	protected int minRange;
 	
-	@ConfigData(field="range")
 	protected int range;
 	
-	@ConfigData
 	protected boolean spellPowerAffectsRange;
 	
-	@ConfigData
 	protected boolean obeyLos;
 	
-	@ConfigData
 	protected ValidTargetList validTargetList;
 	
-	@ConfigData(field="beneficial", dataType="boolean", defaultValue="false")
 	protected boolean beneficial;
 	
-	@ConfigData(field="target-damage-cause")
 	private DamageCause targetDamageCause;
 	
 	private double targetDamageAmount;
 	
 	protected HashSet<Byte> losTransparentBlocks;
 
-	@ConfigData
 	protected int castTime;
 	
-	@ConfigData
 	protected boolean interruptOnMove;
 	
-	@ConfigData
 	protected boolean interruptOnTeleport;
 	
-	@ConfigData
 	protected boolean interruptOnDamage;
 	
-	@ConfigData
 	protected boolean interruptOnCast;
 	
-	@ConfigData
 	protected String spellNameOnInterrupt;
 	
-	@ConfigData
 	protected Spell spellOnInterrupt;
 	
-	@ConfigData
 	protected SpellReagents reagents;
 	
-	@ConfigData
 	protected float cooldown;
 	protected float serverCooldown;
 	protected List<String> rawSharedCooldowns;
 	protected HashMap<Spell, Float> sharedCooldowns;
 	
-	@ConfigData
 	protected boolean ignoreGlobalCooldown;
 	
-	@ConfigData
 	protected int charges;
 	
-	@ConfigData
 	protected String rechargeSound;
 
-	@ConfigData(field="modifiers", dataType="String[]", defaultValue="null")
 	private List<String> modifierStrings;
 	
-	@ConfigData(field="target-modifiers", dataType="String[]", defaultValue="null")
 	private List<String> targetModifierStrings;
 	
 	protected ModifierSet modifiers;
 	protected ModifierSet targetModifiers;
 	
-	@ConfigData(field="prerequisites", dataType="String[]", defaultValue="null")
 	protected List<String> prerequisites;
 	
-	@ConfigData(field="replaces", dataType="String[]", defaultValue="null")
 	protected List<String> replaces;
 	
-	@ConfigData(field="precludes", dataType="String[]", defaultValue="null")
 	protected List<String> precludes;
 	
-	@ConfigData
 	protected Map<String, Integer> xpGranted;
 	
-	@ConfigData
 	protected Map<String, Integer> xpRequired;
 	
-	@ConfigData
 	protected List<String> worldRestrictions;
 	
-	@ConfigData
 	protected Map<String, Double> variableModsCast;
 	
-	@ConfigData
 	protected Map<String, Double> variableModsCasted;
 	
-	@ConfigData
 	protected Map<String, Double> variableModsTarget;
 	
 	protected String soundOnCooldown;
@@ -234,40 +594,28 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	
 	protected String strCost;
 	
-	@ConfigData
 	protected String strCastSelf;
 	
-	@ConfigData
 	protected String strCastOthers;
 	
-	@ConfigData
 	protected String strOnCooldown;
 	
-	@ConfigData
 	protected String strMissingReagents;
 	
-	@ConfigData
 	protected String strCantCast;
 	
-	@ConfigData
 	protected String strCantBind;
 	
-	@ConfigData
 	protected String strWrongWorld;
 	
-	@ConfigData
 	protected String strWrongCastItem;
 	
-	@ConfigData
 	protected String strCastStart;
 	
-	@ConfigData
 	protected String strInterrupted;
 	
-	@ConfigData
 	protected String strModifierFailed;
 	
-	@ConfigData
 	protected String strXpAutoLearned;
 	
 	private HashMap<String, Long> nextCast;

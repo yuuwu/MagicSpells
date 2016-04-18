@@ -10,19 +10,16 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.BlockPlaceEvent;
 
 import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.events.MagicSpellsBlockPlaceEvent;
 import com.nisovin.magicspells.events.SpellTargetLocationEvent;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.SpellType;
-import com.nisovin.magicspells.util.SpellTypes;
-@SpellType(types={SpellTypes.TARGETED_LOCATION_SPELL})
 public class MaterializeSpell extends TargetedSpell implements TargetedLocationSpell {
 
 	MagicMaterial material;
@@ -85,7 +82,7 @@ public class MaterializeSpell extends TargetedSpell implements TargetedLocationS
 		
 		if (checkPlugins && player != null) {
 			material.setBlock(block, false);
-			BlockPlaceEvent event = new BlockPlaceEvent(block, blockState, against, MagicSpells.getVolatileCodeHandler().getItemInMainHand(player), player, true);
+			MagicSpellsBlockPlaceEvent event = new MagicSpellsBlockPlaceEvent(block, blockState, against, MagicSpells.getVolatileCodeHandler().getItemInMainHand(player), player, true);
 			Bukkit.getPluginManager().callEvent(event);
 			blockState.update(true);
 			if (event.isCancelled()) {

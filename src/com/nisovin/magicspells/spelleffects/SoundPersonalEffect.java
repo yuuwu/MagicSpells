@@ -6,26 +6,62 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.MagicSpells;
-import com.nisovin.magicspells.util.ConfigData;
 
 /**
- * public class SoundPersonalEffect<p>
- * Configuration fields:<br>
- * <ul>
- * <li>sound</li>
- * <li>volume</li>
- * <li>pitch</li>
- * </ul>
+ * SoundPersonalEffect<br>
+ * <table border=1>
+ *     <tr>
+ *         <th>
+ *             Config Field
+ *         </th>
+ *         <th>
+ *             Data Type
+ *         </th>
+ *         <th>
+ *             Description
+ *         </th>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>sound</code>
+ *         </td>
+ *         <td>
+ *             String
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>volume</code>
+ *         </td>
+ *         <td>
+ *             Double
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>pitch</code>
+ *         </td>
+ *         <td>
+ *             Double
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ * </table>
  */
 public class SoundPersonalEffect extends SpellEffect {
 	
-	@ConfigData(field="sound", dataType="String", defaultValue="random.pop")
 	String sound = "random.pop";
 	
-	@ConfigData(field="volume", dataType="double", defaultValue="1.0")
 	float volume = 1.0F;
 	
-	@ConfigData(field="pitch", dataType="double", defaultValue="1.0")
 	float pitch = 1.0F;
 	boolean broadcast = false;
 

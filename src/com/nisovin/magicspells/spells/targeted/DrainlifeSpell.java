@@ -7,11 +7,11 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.util.Vector;
 
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.events.MagicSpellsEntityDamageByEntityEvent;
 import com.nisovin.magicspells.events.SpellApplyDamageEvent;
 import com.nisovin.magicspells.mana.ManaChangeReason;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
@@ -21,8 +21,6 @@ import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.ExperienceUtils;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellAnimation;
-import com.nisovin.magicspells.util.SpellType;
-import com.nisovin.magicspells.util.SpellTypes;
 import com.nisovin.magicspells.util.TargetInfo;
 
 /**
@@ -41,7 +39,6 @@ import com.nisovin.magicspells.util.TargetInfo;
  * <li>check-plugins: true</li>
  * </ul>
  */
-@SpellType(types={SpellTypes.TARGETED_ENTITY_SPELL, SpellTypes.SPELL_DAMAGE_SPELL})
 public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell, SpellDamageSpell {
 	
 	public static final int MAX_FOOD_LEVEL = 20;
@@ -112,7 +109,7 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 		// drain from target
 		if (takeType.equals(STR_GIVE_TAKE_TYPE_HEALTH)) {
 			if (target instanceof Player && checkPlugins) {
-				EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(player, target, DamageCause.ENTITY_ATTACK, take);
+				MagicSpellsEntityDamageByEntityEvent event = new MagicSpellsEntityDamageByEntityEvent(player, target, DamageCause.ENTITY_ATTACK, take);
 				Bukkit.getServer().getPluginManager().callEvent(event);
 				if (event.isCancelled()) {
 					return false;

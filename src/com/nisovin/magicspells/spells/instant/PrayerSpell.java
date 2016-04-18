@@ -2,9 +2,9 @@ package com.nisovin.magicspells.spells.instant;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 
+import com.nisovin.magicspells.events.MagicSpellsEntityRegainHealthEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.util.MagicConfig;
@@ -34,7 +34,7 @@ public class PrayerSpell extends InstantSpell {
 				if (health > 0) {
 					double amt = amountHealed * power;
 					if (checkPlugins && amt > 0) {
-						EntityRegainHealthEvent evt = new EntityRegainHealthEvent(player, amt, RegainReason.CUSTOM);
+						MagicSpellsEntityRegainHealthEvent evt = new MagicSpellsEntityRegainHealthEvent(player, amt, RegainReason.CUSTOM);
 						Bukkit.getPluginManager().callEvent(evt);
 						if (evt.isCancelled()) {
 							return PostCastAction.ALREADY_HANDLED;

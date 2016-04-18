@@ -11,31 +11,75 @@ import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.materials.MagicUnknownMaterial;
-import com.nisovin.magicspells.util.ConfigData;
 
 /**
- * public class ItemSprayEffect<p>
- * Configuration fields:<br>
- * <ul>
- * <li>mat</li>
- * <li>quantity</li>
- * <li>duration</li>
- * <li>force</li>
- * </ul>
+ * ItemSprayEffect<br>
+ * <table border=1>
+ *     <tr>
+ *         <th>
+ *             Config Field
+ *         </th>
+ *         <th>
+ *             Data Type
+ *         </th>
+ *         <th>
+ *             Description
+ *         </th>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>type</code>
+ *         </td>
+ *         <td>
+ *             String
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>quantity</code>
+ *         </td>
+ *         <td>
+ *             Integer
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>duration</code>
+ *         </td>
+ *         <td>
+ *             Integer
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>force</code>
+ *         </td>
+ *         <td>
+ *             Double
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *     </tr>
+ * </table>
  */
-
 public class ItemSprayEffect extends SpellEffect {
 
-	@ConfigData(field="type", dataType="String", defaultValue="redstone")
 	MagicMaterial mat;
 	
-	@ConfigData(field="quantity", dataType="int", defaultValue="15")
 	int num = 15;
 	
-	@ConfigData(field="duration", dataType="int", defaultValue="10")
 	int duration = 10;
 	
-	@ConfigData(field="force", dataType="double", defaultValue="1.0")
 	float force = 1.0F;
 
 	@Override

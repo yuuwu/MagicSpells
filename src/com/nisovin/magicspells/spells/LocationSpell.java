@@ -8,15 +8,12 @@ import com.nisovin.magicspells.Subspell;
 import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.MagicLocation;
-import com.nisovin.magicspells.util.SpellTypes;
-import com.nisovin.magicspells.util.SpellTypesAllowed;
 
 public class LocationSpell extends InstantSpell {
 
 	@ConfigData(field="location", dataType="String", defaultValue="world,0,0,0")
 	MagicLocation location;
 	
-	@SpellTypesAllowed({SpellTypes.TARGETED_LOCATION_SPELL})
 	@ConfigData(field="spell", dataType="String", defaultValue="")
 	Subspell spell;
 	

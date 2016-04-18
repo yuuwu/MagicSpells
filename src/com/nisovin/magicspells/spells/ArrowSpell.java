@@ -27,31 +27,118 @@ import com.nisovin.magicspells.Subspell;
 import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.events.SpellTargetEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
-import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellReagents;
-import com.nisovin.magicspells.util.SpellTypes;
-import com.nisovin.magicspells.util.SpellTypesAllowed;
 
+
+/**
+ * ArrowSpell<br>
+ * <table border=1>
+ *     <tr>
+ *         <th>
+ *             Config Field
+ *         </th>
+ *         <th>
+ *             Data Type
+ *         </th>
+ *         <th>
+ *             Description
+ *         </th>
+ *         <th>
+ *             Default
+ *         </th>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>bow-name</code>
+ *         </td>
+ *         <td>
+ *             String
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             <code>null</code>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>spell-on-hit-entity</code>
+ *         </td>
+ *         <td>
+ *             String
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             <code>null</code>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>spell-on-hit-ground</code>
+ *         </td>
+ *         <td>
+ *             String
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             <code>null</code>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *             <code>use-bow-force</code>
+ *         </td>
+ *         <td>
+ *             Boolean
+ *         </td>
+ *         <td>
+ *             ???
+ *         </td>
+ *         <td>
+ *             <code>true</code>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *         </td>
+ *         <td>
+ *         </td>
+ *         <td>
+ *         </td>
+ *         <td>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>
+ *         </td>
+ *         <td>
+ *         </td>
+ *         <td>
+ *         </td>
+ *         <td>
+ *         </td>
+ *     </tr>
+ * </table>
+ */
 public class ArrowSpell extends Spell {
 
 	private static ArrowSpellHandler handler;
 	
-	@ConfigData(field="bow-name", dataType="String", defaultValue="null")
 	String bowName;
 	
-	@SpellTypesAllowed({SpellTypes.TARGETED_ENTITY_SPELL})
-	@ConfigData(field="spell-on-hit-entity", dataType="String", defaultValue="null")
 	String spellNameOnHitEntity;
 	
-	@SpellTypesAllowed({SpellTypes.TARGETED_LOCATION_SPELL})
-	@ConfigData(field="spell-on-hit-ground", dataType="String", defaultValue="null")
 	String spellNameOnHitGround;
 	
 	Subspell spellOnHitEntity;
 	Subspell spellOnHitGround;
 	
-	@ConfigData(field="use-bow-force", dataType="boolean", defaultValue="true")
 	boolean useBowForce;
 	
 	public ArrowSpell(MagicConfig config, String spellName) {

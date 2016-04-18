@@ -17,12 +17,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.util.Vector;
 
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spell;
+import com.nisovin.magicspells.events.MagicSpellsEntityDamageByEntityEvent;
 import com.nisovin.magicspells.events.SpellTargetEvent;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
@@ -30,11 +31,8 @@ import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.util.BlockUtils;
 import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.SpellType;
-import com.nisovin.magicspells.util.SpellTypes;
 import com.nisovin.magicspells.util.Util;
 
-@SpellType(types={SpellTypes.TARGETED_LOCATION_SPELL})
 public class ThrowBlockSpell extends InstantSpell implements TargetedLocationSpell {
 
 	MagicMaterial material;
@@ -286,7 +284,7 @@ public class ThrowBlockSpell extends InstantSpell implements TargetedLocationSpe
 				}
 				double damage = event.getDamage() * power;
 				if (checkPlugins && info.player != null) {
-					EntityDamageByEntityEvent evt = new EntityDamageByEntityEvent(info.player, event.getEntity(), DamageCause.ENTITY_ATTACK, damage);
+					MagicSpellsEntityDamageByEntityEvent evt = new MagicSpellsEntityDamageByEntityEvent(info.player, event.getEntity(), DamageCause.ENTITY_ATTACK, damage);
 					Bukkit.getPluginManager().callEvent(evt);
 					if (evt.isCancelled()) {
 						event.setCancelled(true);
