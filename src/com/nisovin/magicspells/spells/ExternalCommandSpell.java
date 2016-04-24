@@ -161,7 +161,7 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 				int delay = 0;
 				Player varOwner;
 				if (!useTargetVariablesInstead) {
-					varOwner = sender instanceof Player ? null: (Player)sender;
+					varOwner = (sender != null && sender instanceof Player) ? (Player)sender: null;
 				} else{
 					varOwner = target;
 				}
