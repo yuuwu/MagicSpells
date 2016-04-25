@@ -27,6 +27,8 @@ import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 public class VolleySpell extends TargetedSpell implements TargetedLocationSpell, TargetedEntityFromLocationSpell {
 
+	private static final String METADATA_KEY = "MagicSpellsSource";
+	
 	VolleySpell thisSpell;
 	
 	int arrows;
@@ -102,7 +104,7 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 				if (fire > 0) {
 					a.setFireTicks(fire);
 				}
-				a.setMetadata("MagicSpellsSource", new FixedMetadataValue(MagicSpells.plugin, "VolleySpell" + internalName));
+				a.setMetadata(METADATA_KEY, new FixedMetadataValue(MagicSpells.plugin, "VolleySpell" + internalName));
 				if (removeDelay > 0) arrowList.add(a);
 				playSpellEffects(EffectPosition.PROJECTILE, a);
 				playTrackingLinePatterns(EffectPosition.DYNAMIC_CASTER_PROJECTILE_LINE, spawn, a.getLocation(), player, a);
@@ -183,8 +185,8 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 		if (!(event.getEntity() instanceof Player)) return;
 		Entity damagerEntity = event.getDamager();
 		//gotta be an arrow and have some metadata
-		if (!(damagerEntity instanceof Arrow) || !damagerEntity.hasMetadata("MagicSpellsSource")) return;
-		MetadataValue meta = damagerEntity.getMetadata("MagicSpellsSource").iterator().next();
+		if (!(damagerEntity instanceof Arrow) || !damagerEntity.hasMetadata(METADATA_KEY)) return;
+		MetadataValue meta = damagerEntity.getMetadata(METADATA_KEY).iterator().next();
 		//make sure it is actually from this spell
 		if (!meta.value().equals("VolleySpell" + internalName)) return;
 		Player p = (Player) event.getEntity();
@@ -240,7 +242,7 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 				if (fire > 0) {
 					a.setFireTicks(fire);
 				}
-				a.setMetadata("MagicSpellsSource", new FixedMetadataValue(MagicSpells.plugin, "VolleySpell" + internalName));
+				a.setMetadata(METADATA_KEY, new FixedMetadataValue(MagicSpells.plugin, "VolleySpell" + internalName));
 				if (removeDelay > 0) {
 					arrowMap.put(count, a);
 				}

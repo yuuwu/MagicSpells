@@ -15,6 +15,7 @@ import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.MagicLocation;
 import com.nisovin.magicspells.util.PlayerNameUtils;
 
+// advanced perm is for teleporting to other player's recall points
 public class RecallSpell extends InstantSpell implements TargetedEntitySpell {
 	
 	private String markSpellName;

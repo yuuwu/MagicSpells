@@ -212,4 +212,19 @@ public class SpellReagents {
 		return other;
 	}
 	
+	@Override
+	public String toString() {
+		return "SpellReagents:["
+			+ "items=" + items
+			+ ",mana=" + mana
+			+ ",health=" + health
+			+ ",hunger=" + hunger
+			+ ",experience=" + experience
+			+ ",levels=" + levels
+			+ ",durability=" + durability
+			+ ",money=" + money
+			+ ",variables=" + variables
+			+ "]";
+	}
+	
 }

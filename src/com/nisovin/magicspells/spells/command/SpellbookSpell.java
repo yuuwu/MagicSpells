@@ -49,6 +49,8 @@ import com.nisovin.magicspells.util.MagicLocation;
  * <li>str-learned: "You have learned the %s spell!"</li>
  * </ul>
  */
+// advanced perm is for being able to destroy spellbooks
+// op is currently required for using the reload
 public class SpellbookSpell extends CommandSpell {
 	
 	private int defaultUses;

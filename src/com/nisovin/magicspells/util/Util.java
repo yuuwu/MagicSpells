@@ -51,6 +51,19 @@ public class Util {
 		return random.nextInt(bound);
 	}
 	
+	/**
+	 * Format is<br />
+	 * 
+	 * <code>itemID#color;enchant-level+enchant-level+enchant-level...|name|lore|lore...</code><p />
+	 * 
+	 * OR<p>
+	 * 
+	 * <code>predefined item key</code><br />
+	 * 
+	 * @param string The string to resolve to an item
+	 * 
+	 * @return the item stack represented by the string
+	 */
 	public static ItemStack getItemStackFromString(String string) {
 		try {
 			if (predefinedItems.containsKey(string)) return predefinedItems.get(string).clone();
@@ -96,7 +109,7 @@ public class Util {
 					}
 				}
 			}
-			if (s.contains("#")) {
+			if (s.contains("#")) { 
 				String[] temp = s.split("#");
 				s = temp[0];
 				if (temp[1].matches("[0-9A-Fa-f]+")) {
@@ -140,6 +153,134 @@ public class Util {
 		}
 	}
 	
+	
+	/**
+	 * <strong>Global Options</strong><br />
+	 * Currently Applies to:
+	 * <ul>
+	 * 	<li>All Items</li>
+	 * </ul>
+	 * <p />
+	 * 
+	 * <code>type</code>: &lt;String&gt;<br />
+	 * Description: The name of the material type.
+	 * <p />
+	 * 
+	 * <code>name</code>: &lt;String&gt;<br />
+	 * Description: The custom name for the item.
+	 * <p />
+	 * 
+	 * <code>lore</code>: &lt;String or String List&gt;<br />
+	 * //TODO explain
+	 * <p />
+	 * 
+	 * <code>enchants</code>: &lt;String List&gt;<br />
+	 * //TODO explain
+	 * <p />
+	 * 
+	 * <code>hide-tooltip</code>: &lt;Boolean&gt;<br />
+	 * //TODO explain
+	 * <p />
+	 * 
+	 * <code>unbreakable</code>: &lt;Boolean&gt;<br />
+	 * Description: If true, the item will not take durability damage by vanilla behavior.
+	 * <p />
+	 * 
+	 * <code>attributes</code>: &lt;Configuration Section&gt;<br />
+	 * //TODO explain
+	 * <p />
+	 * 
+	 * <hr>
+	 * 
+	 * <strong>LeatherArmorMeta</strong><br />
+	 * Currently Applies to:
+	 * <ul>
+	 * 	<li>Leather Armor</li>
+	 * </ul>
+	 * <p />
+	 * 
+	 * <code>color</code>: &lt;String&gt;<br />
+	 * //TODO explain
+	 * <p />
+	 * 
+	 * <hr>
+	 * 
+	 * <strong>PotionMeta</strong><br />
+	 * Currently Applies to:
+	 * <ul>
+	 * 	<li>Potions</li>
+	 * 	<li>Tipped Arrows</li>
+	 * </ul>
+	 * <p />
+	 * 
+	 * <code>potioneffects</code>: &lt;String List&gt;<br />
+	 * //TODO explain
+	 * <p />
+	 * 
+	 * <hr>
+	 * 
+	 * <strong>SkullMeta</strong><br />
+	 * Currently Applies to:
+	 * <ul>
+	 * 	<li>Skulls</li>
+	 * </ul>
+	 * <p />
+	 * 
+	 * <code>skullowner</code>: &lt;String&gt;<br />
+	 * //TODO explain
+	 * <p />
+	 * 
+	 * <hr>
+	 * 
+	 * <strong>Repairable</strong><br />
+	 * Currently Applies to:
+	 * <ul>
+	 * 	<li>TODO</li>
+	 * </ul>
+	 * <p />
+	 * 
+	 * <code>repaircost</code>: &lt;Integer&gt;<br />
+	 * //TODO explain
+	 * <p />
+	 * 
+	 * <hr>
+	 * 
+	 * <strong>BookMeta</strong><br />
+	 * Currently Applies to:
+	 * <ul>
+	 * 	<li>Written Books</li>
+	 * </ul>
+	 * <p />
+	 * 
+	 * <code>title</code>: &lt;String&gt;<br />
+	 * //TODO explain
+	 * <p />
+	 * 
+	 * <code>author</code>: &lt;String&gt;<br />
+	 * Description: the name to use as the author of the book.
+	 * <p />
+	 * 
+	 * <code>pages</code>: &lt;String List&gt;<br />
+	 * //TODO explain
+	 * <p />
+	 * 
+	 * <hr>
+	 * 
+	 * <strong>BannerMeta</strong><br />
+	 * Currently Applies to:
+	 * <ul>
+	 * 	<li>Banners</li>
+	 * </ul>
+	 * <p />
+	 * 
+	 * <code>color</code>: &lt;String&gt;<br />
+	 * //TODO explain
+	 * <p />
+	 * 
+	 * <code>patterns</code>: &lt;String List&gt;<br />
+	 * //TODO explain
+	 * 
+	 */
 	public static ItemStack getItemStackFromConfig(ConfigurationSection config) {
 		try {
 			if (!config.contains("type")) return null;

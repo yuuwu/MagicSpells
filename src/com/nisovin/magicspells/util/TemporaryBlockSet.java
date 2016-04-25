@@ -86,5 +86,4 @@ public class TemporaryBlockSet implements Runnable {
 	public interface BlockSetRemovalCallback {
 		public void run(TemporaryBlockSet set);
 	}
-
 }

@@ -35,6 +35,7 @@ import org.bukkit.scoreboard.Team;
 import org.bukkit.util.BlockIterator;
 
 import com.nisovin.magicspells.castmodifiers.ModifierSet;
+import com.nisovin.magicspells.events.MagicSpellsEntityDamageByEntityEvent;
 import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.events.SpellCastedEvent;
 import com.nisovin.magicspells.events.SpellTargetEvent;
@@ -1898,7 +1899,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 						
 						// call damage event
 						if (targetDamageCause != null) {
-							EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(player, target, targetDamageCause, targetDamageAmount);
+							EntityDamageByEntityEvent event = new MagicSpellsEntityDamageByEntityEvent(player, target, targetDamageCause, targetDamageAmount);
 							Bukkit.getServer().getPluginManager().callEvent(event);
 							if (event.isCancelled()) {
 								target = null;
@@ -2438,7 +2439,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		private void interrupt() {
 			sendMessage(player, strInterrupted);
 			if (spellOnInterrupt != null) {
-				spellOnInterrupt.castSpell(player, SpellCastState.NORMAL, spellCast.getPower(), null);
+				spellOnInterrupt.castSpell(player, SpellCastState.NORMAL, spellCast.getPower(), null); // null args
 			}
 		}
 	}

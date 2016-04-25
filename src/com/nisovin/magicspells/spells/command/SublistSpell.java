@@ -15,6 +15,7 @@ import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
 
+// advanced perm is for listing other player's spells
 public class SublistSpell extends CommandSpell {
 	
 	private int lineLength = 60;

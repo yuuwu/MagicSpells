@@ -10,4 +10,17 @@ public class ManaRank {
 	String prefix;
 	ChatColor colorFull;
 	ChatColor colorEmpty;
+	
+	@Override
+	public String toString() {
+		return "ManaRank:["
+			+ "name=" + name
+			+ ",startingMana=" + startingMana
+			+ ",maxMana=" + maxMana
+			+ ",regenAmount=" + regenAmount
+			+ ",prefix=" + prefix
+			+ ",colorFull=" + colorFull
+			+ ",colorEmpty=" + colorEmpty
+			+ "]";
+	}
 }

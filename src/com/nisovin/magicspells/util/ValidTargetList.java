@@ -135,4 +135,17 @@ public class ValidTargetList {
 		return targetPlayers;
 	}
 	
+	@Override
+	public String toString() {
+		return "ValidTargetList:["
+			+ "targetSelf=" + targetSelf
+			+ ",targetPlayers=" + targetPlayers
+			+ ",targetInvisibles=" + targetInvisibles
+			+ ",targetNonPlayers=" + targetNonPlayers
+			+ ",targetMonsters=" + targetMonsters
+			+ ",targetAnimals=" + targetAnimals
+			+ ",types=" + types
+			+ "]";
+	}
+	
 }

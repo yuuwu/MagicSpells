@@ -229,6 +229,7 @@ public class Spellbook {
 				}
 			}
 		}
+		MagicSpells.debug("Checking learn permissions for " + player.getName());
 		return player.hasPermission("magicspells.learn." + spell.getPermissionName());
 	}
 	
@@ -657,6 +658,19 @@ public class Spellbook {
 			plugin.getServer().getLogger().severe("Error saving player spellbook: " + playerName);
 			e.printStackTrace();
 		}		
+	}
+	
+	@Override
+	public String toString() {
+		return "Spellbook:[playerName=" + playerName
+			+ ",uniqueId=" + uniqueId
+			+ ",allSpells=" + allSpells
+			+ ",ItemSpells=" + itemSpells
+			+ ",ActiveSpells=" + activeSpells
+			+ ",CustomBindings=" + customBindings
+			+ ",temporarySpells=" + temporarySpells
+			+ ",cantLearn=" + cantLearn
+			+ "]";
 	}
 	
 }

@@ -67,6 +67,8 @@ public class ProjectileSpell extends InstantSpell {
 	
 	private Random random = new Random();
 	
+	private static final String METADATA_KEY = "MagicSpellsSource";
+	
 	public ProjectileSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
@@ -166,7 +168,7 @@ public class ProjectileSpell extends InstantSpell {
 				if (applySpellPowerToVelocity) {
 					projectile.setVelocity(projectile.getVelocity().multiply(power));
 				}
-				projectile.setMetadata("MagicSpellsSource", new FixedMetadataValue(MagicSpells.plugin, "ProjectileSpell_" + internalName));
+				projectile.setMetadata(METADATA_KEY, new FixedMetadataValue(MagicSpells.plugin, "ProjectileSpell_" + internalName));
 				projectiles.put(projectile, new ProjectileInfo(player, power, (effectInterval > 0 ? new RegularProjectileMonitor(projectile) : null)));
 				playSpellEffects(EffectPosition.CASTER, projectile);
 			} else if (projectileItem != null) {

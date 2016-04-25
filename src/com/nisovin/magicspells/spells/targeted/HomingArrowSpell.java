@@ -35,7 +35,7 @@ public class HomingArrowSpell extends TargetedSpell implements TargetedEntitySpe
 		specialEffectInterval = getConfigInt("special-effect-interval", 0);
 		projectileClassName = getConfigString("projectile-class", "org.bukkit.entity.Snowball");
 		try {
-			Class<? extends Projectile> configProjectileClass = MagicSpells.plugin.getPluginClassLoader().loadClass(projectileClassName).asSubclass(Projectile.class);
+			Class<? extends Projectile> configProjectileClass = Class.forName(projectileClassName).asSubclass(Projectile.class);
 			if (!configProjectileClass.equals(Projectile.class)) {
 				MagicSpells.error("projectile-class must be a subclass of Projectile");
 			} else {

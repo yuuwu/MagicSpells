@@ -17,6 +17,8 @@ import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
 import com.nisovin.magicspells.util.Util;
 
+// advanced perm allows you to make others forget a spell
+// put * for the spell to forget all of them
 public class ForgetSpell extends CommandSpell {
 
 	private boolean allowSelfForget;

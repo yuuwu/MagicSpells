@@ -253,6 +253,12 @@ public class MagicItemNameResolver implements ItemNameResolver {
 		}
 	}
 	
+	/*
+	 * Data format
+	 * species direction
+	 * species = birch, jungle, redwood, random
+	 * direction = east, west, north, south, random
+	 */
 	private Tree getTree(String data) {
 		TreeSpecies species = TreeSpecies.GENERIC;
 		BlockFace dir = BlockFace.UP;
@@ -287,6 +293,8 @@ public class MagicItemNameResolver implements ItemNameResolver {
 		return new Leaves(getTreeSpecies(data));
 	}
 	
+	// data can be
+	// birch, jungle, redwood, random
 	private TreeSpecies getTreeSpecies(String data) {
 		if (data.equalsIgnoreCase("birch")) {
 			return TreeSpecies.BIRCH;

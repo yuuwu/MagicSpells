@@ -171,18 +171,18 @@ public class Subspell {
 		boolean ret = false;
 		if (isTargetedEntity) {
 			if (mode == CastMode.HARD && player != null) {
-				SpellCastResult result = spell.cast(player, power, null);
+				SpellCastResult result = spell.cast(player, power, null); // the null is just no args
 				return result.state == SpellCastState.NORMAL && result.action == PostCastAction.HANDLE_NORMALLY;
 			} else if (mode == CastMode.FULL && player != null) {
 				boolean success = false;
-				SpellCastEvent spellCast = spell.preCast(player, power * subPower, null);
+				SpellCastEvent spellCast = spell.preCast(player, power * subPower, null); // the null is just no args
 				if (spellCast != null && spellCast.getSpellCastState() == SpellCastState.NORMAL) {
 					success = ((TargetedEntitySpell)spell).castAtEntity(player, target, spellCast.getPower());
 					spell.postCast(spellCast, success ? PostCastAction.HANDLE_NORMALLY : PostCastAction.ALREADY_HANDLED);
 				}
 				return success;
 			} else if (mode == CastMode.PARTIAL) {
-				SpellCastEvent event = new SpellCastEvent(spell, player, SpellCastState.NORMAL, power * subPower, null, 0, null, 0);
+				SpellCastEvent event = new SpellCastEvent(spell, player, SpellCastState.NORMAL, power * subPower /*power*/, null /*args*/, 0, null /*reagents*/, 0);
 				Bukkit.getPluginManager().callEvent(event);
 				if (!event.isCancelled() && event.getSpellCastState() == SpellCastState.NORMAL) {
 					if (player != null) {
@@ -191,7 +191,7 @@ public class Subspell {
 						ret = ((TargetedEntitySpell)spell).castAtEntity(target, event.getPower());
 					}
 					if (ret) {
-						Bukkit.getPluginManager().callEvent(new SpellCastedEvent(spell, player, SpellCastState.NORMAL, event.getPower(), null, 0, null, PostCastAction.HANDLE_NORMALLY));
+						Bukkit.getPluginManager().callEvent(new SpellCastedEvent(spell, player, SpellCastState.NORMAL, event.getPower(), null /*args*/, 0, null /*reagents*/, PostCastAction.HANDLE_NORMALLY));
 					}
 				}
 			} else {

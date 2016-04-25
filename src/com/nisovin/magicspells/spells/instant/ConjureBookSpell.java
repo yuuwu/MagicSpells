@@ -18,6 +18,9 @@ import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.Util;
 
 // the special position plays on the dropped items
+// replaces {{name}} with the user's username
+// replaces {{disp}} with the user's display name
+// replaces {{<integer>}} with the argument at index <integer>
 public class ConjureBookSpell extends InstantSpell implements TargetedLocationSpell {
 
 	boolean addToInventory;

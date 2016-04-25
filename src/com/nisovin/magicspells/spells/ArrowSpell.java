@@ -141,6 +141,8 @@ public class ArrowSpell extends Spell {
 	
 	boolean useBowForce;
 	
+	private static final String METADATA_KEY = "MSArrowSpell";
+	
 	public ArrowSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
@@ -224,9 +226,9 @@ public class ArrowSpell extends Spell {
 					SpellCastEvent castEvent = new SpellCastEvent(spell, shooter, SpellCastState.NORMAL, useBowForce ? event.getForce() : 1.0F, null, cooldown, reagents, castTime);
 					Bukkit.getPluginManager().callEvent(castEvent);
 					if (!castEvent.isCancelled()) {
-						event.getProjectile().setMetadata("MSArrowSpell", new FixedMetadataValue(MagicSpells.plugin, new ArrowSpellData(spell, castEvent.getPower(), castEvent.getReagents())));
-						playSpellEffects(EffectPosition.PROJECTILE, event.getProjectile());
-						playTrackingLinePatterns(EffectPosition.DYNAMIC_CASTER_PROJECTILE_LINE, shooter.getLocation(), event.getProjectile().getLocation(), shooter, event.getProjectile());
+						event.getProjectile().setMetadata(METADATA_KEY, new FixedMetadataValue(MagicSpells.plugin, new ArrowSpellData(spell, castEvent.getPower(), castEvent.getReagents())));
+						spell.playSpellEffects(EffectPosition.PROJECTILE, event.getProjectile());
+						spell.playTrackingLinePatterns(EffectPosition.DYNAMIC_CASTER_PROJECTILE_LINE, shooter.getLocation(), event.getProjectile().getLocation(), shooter, event.getProjectile());
 					} else {
 						event.setCancelled(true);
 						event.getProjectile().remove();
@@ -239,7 +241,7 @@ public class ArrowSpell extends Spell {
 		public void onArrowHit(ProjectileHitEvent event) {
 			final Projectile arrow = event.getEntity();
 			if (arrow.getType() != EntityType.ARROW) return;
-			List<MetadataValue> metas = arrow.getMetadata("MSArrowSpell");
+			List<MetadataValue> metas = arrow.getMetadata(METADATA_KEY);
 			if (metas == null || metas.size() == 0) return;
 			for (MetadataValue meta : metas) {
 				final ArrowSpellData data = (ArrowSpellData)meta.value();
@@ -255,7 +257,7 @@ public class ArrowSpell extends Spell {
 									data.spell.removeReagents(shooter, data.reagents);
 								}
 								data.casted = true;
-								arrow.removeMetadata("MSArrowSpell", MagicSpells.plugin);
+								arrow.removeMetadata(METADATA_KEY, MagicSpells.plugin);
 							}
 						}
 					}, 0);
@@ -270,7 +272,7 @@ public class ArrowSpell extends Spell {
 			if (event.getDamager().getType() != EntityType.ARROW) return;
 			if (!(event.getEntity() instanceof LivingEntity)) return;
 			Projectile arrow = (Projectile)event.getDamager();
-			List<MetadataValue> metas = arrow.getMetadata("MSArrowSpell");
+			List<MetadataValue> metas = arrow.getMetadata(METADATA_KEY);
 			if (metas == null || metas.size() == 0) return;
 			Player shooter = (Player)arrow.getShooter();
 			for (MetadataValue meta : metas) {
@@ -289,7 +291,7 @@ public class ArrowSpell extends Spell {
 				break;
 			}
 			arrow.remove();
-			arrow.removeMetadata("MSArrowSpell", MagicSpells.plugin);
+			arrow.removeMetadata(METADATA_KEY, MagicSpells.plugin);
 		}
 		
 		public void turnOff() {

@@ -26,6 +26,7 @@ import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellReagents;
 import com.nisovin.magicspells.util.Util;
 
+// advanced perm is for specifying the number of uses if it isn't normally allowed
 public class ImbueSpell extends CommandSpell {
 
 	private String key;
