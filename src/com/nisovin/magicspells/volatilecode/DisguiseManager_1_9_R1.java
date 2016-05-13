@@ -44,17 +44,29 @@ import com.nisovin.magicspells.util.ReflectionHelper;
 
 public class DisguiseManager_1_9_R1 extends DisguiseManager {
 
+	@SuppressWarnings("rawtypes")
 	ReflectionHelper<Packet> refPacketNamedEntity = new ReflectionHelper<Packet>(PacketPlayOutNamedEntitySpawn.class, "a", "b");
+	@SuppressWarnings("rawtypes")
 	ReflectionHelper<Packet> refPacketPlayerInfo = new ReflectionHelper<Packet>(PacketPlayOutPlayerInfo.class, "a", "b");
+	@SuppressWarnings("rawtypes")
 	ReflectionHelper<Packet> refPacketSpawnEntityLiving = new ReflectionHelper<Packet>(PacketPlayOutSpawnEntityLiving.class, "a", "i", "j", "k");
+	@SuppressWarnings("rawtypes")
 	ReflectionHelper<Packet> refPacketSpawnEntity = new ReflectionHelper<Packet>(PacketPlayOutSpawnEntity.class, "a");
+	@SuppressWarnings("rawtypes")
 	ReflectionHelper<Packet> refPacketEntityEquipment = new ReflectionHelper<Packet>(PacketPlayOutEntityEquipment.class, "a", "b");
+	@SuppressWarnings("rawtypes")
 	ReflectionHelper<Packet> refPacketRelEntityMove = new ReflectionHelper<Packet>(PacketPlayOutEntity.class, "a", "b", "c", "d");
+	@SuppressWarnings("rawtypes")
 	ReflectionHelper<Packet> refPacketRelEntityMoveLook = new ReflectionHelper<Packet>(PacketPlayOutEntity.class, "a", "b", "c", "d", "e", "f");
+	@SuppressWarnings("rawtypes")
 	ReflectionHelper<Packet> refPacketRelEntityTeleport = new ReflectionHelper<Packet>(PacketPlayOutEntityTeleport.class, "a", "b", "c", "d", "e", "f");
+	@SuppressWarnings("rawtypes")
 	ReflectionHelper<Packet> refPacketEntityLook = new ReflectionHelper<Packet>(PacketPlayOutEntity.class, "a", "e", "f");
+	@SuppressWarnings("rawtypes")
 	ReflectionHelper<Packet> refPacketEntityHeadRot = new ReflectionHelper<Packet>(PacketPlayOutEntityHeadRotation.class, "a", "b");
+	@SuppressWarnings("rawtypes")
 	ReflectionHelper<Packet> refPacketEntityMetadata = new ReflectionHelper<Packet>(PacketPlayOutEntityMetadata.class, "a");
+	@SuppressWarnings("rawtypes")
 	ReflectionHelper<Packet> refPacketAttachEntity = new ReflectionHelper<Packet>(PacketPlayOutAttachEntity.class, "a", "b");
 	ReflectionHelper<Entity> refEntity = new ReflectionHelper<Entity>(Entity.class, "id");
 	
@@ -453,6 +465,7 @@ public class DisguiseManager_1_9_R1 extends DisguiseManager {
 					PacketType.Play.Server.ENTITY_HEAD_ROTATION);
 		}
 		
+		@SuppressWarnings("rawtypes")
 		@Override
 		public void onPacketSending(PacketEvent event) {
 			final Player player = event.getPlayer();
@@ -582,6 +595,7 @@ public class DisguiseManager_1_9_R1 extends DisguiseManager {
 		tracker.a(((CraftPlayer)disguised).getHandle(), packet29);
 	}
 	
+	@SuppressWarnings("rawtypes")
 	private void broadcastPacketDisguised(Player disguised, PacketType packetId, Packet packet) {
 		PacketContainer con = new PacketContainer(packetId, packet);
 		for (Player player : protocolManager.getEntityTrackers(disguised)) {
@@ -595,6 +609,7 @@ public class DisguiseManager_1_9_R1 extends DisguiseManager {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	private void broadcastPacketGlobal(PacketType packetId, Packet packet) {
 		PacketContainer con = new PacketContainer(packetId, packet);
 		for (Player player : Bukkit.getOnlinePlayers()) {
@@ -606,6 +621,7 @@ public class DisguiseManager_1_9_R1 extends DisguiseManager {
 		}
 	}
 	
+	@SuppressWarnings("rawtypes")
 	private void sendDisguisedSpawnPacket(Player viewer, Player disguised, DisguiseSpell.Disguise disguise, Entity entity) {
 		if (entity == null) entity = getEntity(disguised, disguise);
 		if (entity != null) {
@@ -631,6 +647,7 @@ public class DisguiseManager_1_9_R1 extends DisguiseManager {
 		}
 	}
 	
+	@SuppressWarnings("rawtypes")
 	@Override
 	protected void sendDisguisedSpawnPackets(final Player disguised, DisguiseSpell.Disguise disguise) {
 		Entity entity = getEntity(disguised, disguise);
@@ -691,6 +708,7 @@ public class DisguiseManager_1_9_R1 extends DisguiseManager {
 		}
 	}
 	
+	@SuppressWarnings("rawtypes")
 	private List<Packet> getPacketsToSend(Player disguised, DisguiseSpell.Disguise disguise, Entity entity) {
 		List<Packet> packets = new ArrayList<Packet>();
 		if (entity instanceof EntityHuman) {
@@ -775,6 +793,7 @@ public class DisguiseManager_1_9_R1 extends DisguiseManager {
 		return packets;
 	}
 	
+	@SuppressWarnings("rawtypes")
 	private void addEquipmentPackets(Player disguised, List<Packet> packets) {
 		ItemStack inHand = disguised.getInventory().getItemInMainHand();
 		if (inHand != null && inHand.getType() != Material.AIR) {

@@ -7,6 +7,7 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
@@ -108,5 +109,7 @@ public interface VolatileCodeHandle {
 	public ItemStack getItemInMainHand(Player player);
 	
 	public void showItemCooldown(Player player, ItemStack item, int duration);
+	
+	public ItemStack getItemInMainHand(EntityEquipment equip);
 	
 }

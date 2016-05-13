@@ -36,6 +36,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -779,6 +780,11 @@ public class VolatileCodeEnabled_1_9_R1 implements VolatileCodeHandle {
 	@Override
 	public ItemStack getItemInMainHand(Player player) {
 		return player.getInventory().getItemInMainHand();
+	}
+
+	@Override
+	public ItemStack getItemInMainHand(EntityEquipment equip) {
+		return equip.getItemInMainHand();
 	}
 
 }

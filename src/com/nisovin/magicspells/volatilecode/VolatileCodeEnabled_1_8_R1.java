@@ -32,6 +32,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
@@ -766,14 +767,22 @@ public class VolatileCodeEnabled_1_8_R1 implements VolatileCodeHandle {
 		//no op
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void setItemInMainHand(Player player, ItemStack item) {
 		player.setItemInHand(item);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public ItemStack getItemInMainHand(Player player) {
 		return player.getItemInHand();
+	}
+
+	@SuppressWarnings("deprecation")
+	@Override
+	public ItemStack getItemInMainHand(EntityEquipment equip) {
+		return equip.getItemInHand();
 	}
 
 }

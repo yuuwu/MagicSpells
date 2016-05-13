@@ -130,7 +130,7 @@ public class DisarmSpell extends TargetedSpell implements TargetedEntitySpell {
 		} else {
 			EntityEquipment equip = entity.getEquipment();
 			if (equip != null) {
-				return equip.getItemInHand();
+				return MagicSpells.getVolatileCodeHandler().getItemInMainHand(equip);
 			}
 		}
 		return null;

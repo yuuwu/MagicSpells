@@ -75,7 +75,7 @@ public class HoldingCondition extends Condition {
 		} else {
 			EntityEquipment equip = target.getEquipment();
 			if (equip != null) {
-				return check(equip.getItemInHand());
+				return check(MagicSpells.getVolatileCodeHandler().getItemInMainHand(equip));
 			} else {
 				return false;
 			}

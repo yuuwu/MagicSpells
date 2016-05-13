@@ -17,6 +17,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.SmallFireball;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.material.Button;
@@ -294,11 +295,16 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 
 	@Override
 	public void setItemInMainHand(Player player, ItemStack item) {
-		player.setItemInHand(item); //TODO update these when needed
+		player.setItemInHand(item);
 	}
 
 	@Override
 	public ItemStack getItemInMainHand(Player player) {
-		return player.getItemInHand(); //TODO update these when needed
+		return player.getItemInHand();
+	}
+
+	@Override
+	public ItemStack getItemInMainHand(EntityEquipment equip) {
+		return equip.getItemInHand();
 	}
 }

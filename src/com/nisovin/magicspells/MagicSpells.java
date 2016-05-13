@@ -61,6 +61,7 @@ import com.nisovin.magicspells.volatilecode.VolatileCodeDisabled;
 import com.nisovin.magicspells.volatilecode.VolatileCodeEnabled_1_8_R1;
 import com.nisovin.magicspells.volatilecode.VolatileCodeEnabled_1_8_R3;
 import com.nisovin.magicspells.volatilecode.VolatileCodeEnabled_1_9_R1;
+import com.nisovin.magicspells.volatilecode.VolatileCodeEnabled_1_9_R2;
 import com.nisovin.magicspells.volatilecode.VolatileCodeHandle;
 import com.nisovin.magicspells.volatilecode.VolatileCodeProtocolLib;
 import com.nisovin.magicspells.zones.NoMagicZoneManager;
@@ -203,6 +204,11 @@ public class MagicSpells extends JavaPlugin {
 		boolean v1_9 = false;
 		if (config.getBoolean("general.enable-volatile-features", true)) {
 			try {
+				Class.forName("net.minecraft.server.v1_9_R2.MinecraftServer");
+				volatileCodeHandle = new VolatileCodeEnabled_1_9_R2();
+				v1_9 = true;
+			} catch (ClassNotFoundException e_1_9_2) {
+			try {
 				Class.forName("net.minecraft.server.v1_9_R1.MinecraftServer");
 				volatileCodeHandle = new VolatileCodeEnabled_1_9_R1();
 				v1_9 = true;
@@ -227,6 +233,7 @@ public class MagicSpells extends JavaPlugin {
 					}
 				}
 			}
+		}
 		} else {
 			volatileCodeHandle = new VolatileCodeDisabled();
 		}
