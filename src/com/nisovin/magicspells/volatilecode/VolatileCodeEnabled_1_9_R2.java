@@ -454,11 +454,11 @@ public class VolatileCodeEnabled_1_9_R2 implements VolatileCodeHandle {
 	
 	@Override
 	public DisguiseManager getDisguiseManager(MagicConfig config) {
-		if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) {
+		/*if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) {
 			return new DisguiseManager_1_9_R2(config);
-		} else {
+		} else {*/
 			return new DisguiseManagerEmpty(config);
-		}
+		//}
 	}
 
 	@Override
