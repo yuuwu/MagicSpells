@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -158,7 +159,7 @@ public class TicksListener extends PassiveListener {
 				Collection<Player> players = entry.getValue();
 				if (players.size() > 0) {
 					for (Player p : new ArrayList<Player>(players)) {
-						if (p.isValid()) {
+						if (p.isOnline() && p.isValid()) {
 							entry.getKey().activate(p);
 						} else {
 							players.remove(p);
