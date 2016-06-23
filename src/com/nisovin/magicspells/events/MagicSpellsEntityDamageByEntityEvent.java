@@ -15,7 +15,7 @@ public class MagicSpellsEntityDamageByEntityEvent extends
 	public MagicSpellsEntityDamageByEntityEvent(Entity damager, Entity damagee,
 			DamageCause cause, double damage) {
 		//super(damager, damagee, cause, damage);
-		super(damager, damagee, cause, getModTemplate(damage), getModifierFunctionTemplate(damage));
+		super(damager, damagee, cause, getModTemplate(damage), getModifierFunctionTemplate(0D));
 	}
 	
 	private static Map<DamageModifier, Double> getModTemplate(double baseDamage) {
