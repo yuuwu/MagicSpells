@@ -42,6 +42,8 @@ import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.materials.ItemNameResolver.ItemTypeAndData;
 import com.nisovin.magicspells.materials.MagicMaterial;
 
+import de.slikey.effectlib.util.VectorUtils;
+
 public class Util {
 
 	public static Map<String, ItemStack> predefinedItems = new HashMap<String, ItemStack>();
@@ -897,6 +899,26 @@ public class Util {
 		double z = (v.getX() * sin) + (v.getZ() * cos);
 		v.setX(x);
 		v.setZ(z);
+	}
+	
+	public static Location applyRelativeOffset(Location loc, Vector relativeOffset) {
+		return loc.add(VectorUtils.rotateVector(relativeOffset, loc));
+	}
+	
+	public static Location applyAbsoluteOffset(Location loc, Vector offset) {
+		return loc.add(offset);
+	}
+	
+	public static Location applyOffsets(Location loc, Vector relativeOffset, Vector absoluteOffset) {
+		return applyAbsoluteOffset(applyRelativeOffset(loc, relativeOffset), absoluteOffset);
+	}
+	
+	public static Location faceTarget(Location origin, Location target) {
+		return origin.setDirection(getVectorToTarget(origin, target));
+	}
+	
+	public static Vector getVectorToTarget(Location origin, Location target) {
+		return target.toVector().subtract(origin.toVector());
 	}
 	
 	public static boolean downloadFile(String url, File file) {

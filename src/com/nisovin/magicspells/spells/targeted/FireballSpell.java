@@ -48,6 +48,11 @@ public class FireballSpell extends TargetedSpell implements TargetedEntityFromLo
 	
 	HashMap<Fireball,Float> fireballs;
 	private int taskId;
+	private Vector relativeCastLocationOffset;
+	boolean useRelativeCastLocationOffset = false;
+	private Vector absoluteCastLocationOffset;
+	boolean useAbsoluteCastLocationOffset = false;
+	boolean doOffsetTargetingCorrections = true;
 	
 	public FireballSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -62,6 +67,12 @@ public class FireballSpell extends TargetedSpell implements TargetedEntityFromLo
 		noExplosionDamage = getConfigInt("no-explosion-damage", 5);
 		noExplosionDamageRange = getConfigInt("no-explosion-damage-range", 3);
 		noFire = getConfigBoolean("no-fire", false);
+		relativeCastLocationOffset = getConfigVector("relative-cast-position-offset", "0,0,0");
+		useRelativeCastLocationOffset = getConfigBoolean("use-relative-cast-location-offset", false);
+		absoluteCastLocationOffset = getConfigVector("absolute-cast-position-offset", "0,0,0");
+		useAbsoluteCastLocationOffset = getConfigBoolean("use-absolute-cast-location-offset", false);
+		doOffsetTargetingCorrections = getConfigBoolean("do-offset-targeting-corrections", true);
+		
 		
 		fireballs = new HashMap<Fireball, Float>();
 		taskId = MagicSpells.scheduleRepeatingTask(new Runnable() {
@@ -81,6 +92,7 @@ public class FireballSpell extends TargetedSpell implements TargetedEntityFromLo
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			// get a target if required
+			Location targetLoc = null;
 			boolean selfTarget = false;
 			if (requireEntityTarget) {
 				TargetInfo<LivingEntity> targetInfo = getTargetedEntity(player, power);
@@ -99,6 +111,7 @@ public class FireballSpell extends TargetedSpell implements TargetedEntityFromLo
 						return noTarget(player);
 					}
 				}
+				targetLoc = entity.getLocation();
 				if (entity.equals(player)) {
 					selfTarget = true;
 				}
@@ -108,6 +121,8 @@ public class FireballSpell extends TargetedSpell implements TargetedEntityFromLo
 			Location loc;
 			if (!selfTarget) {
 				loc = player.getEyeLocation().toVector().add(player.getLocation().getDirection().multiply(2)).toLocation(player.getWorld(), player.getLocation().getYaw(), player.getLocation().getPitch());
+				loc = offsetLocation(loc);
+				loc = applyOffsetTargetingCorrection(loc, targetLoc);
 			} else {
 				loc = player.getLocation().toVector().add(player.getLocation().getDirection().setY(0).multiply(2)).toLocation(player.getWorld(), player.getLocation().getYaw()+180, 0);
 			}
@@ -129,8 +144,16 @@ public class FireballSpell extends TargetedSpell implements TargetedEntityFromLo
 		return PostCastAction.HANDLE_NORMALLY;
 	}
 
+	private Location applyOffsetTargetingCorrection(Location origin, Location target) {
+		if (doOffsetTargetingCorrections && target != null) {
+			return Util.faceTarget(origin, target);
+		}
+		return origin;
+	}
+	
 	@Override
 	public boolean castAtEntityFromLocation(Player caster, Location from, LivingEntity target, float power) {
+		from = offsetLocation(from);
 		Vector facing = target.getLocation().toVector().subtract(from.toVector()).normalize();
 		Location loc = from.clone();
 		Util.setLocationFacingFromVector(loc, facing);
@@ -259,6 +282,17 @@ public class FireballSpell extends TargetedSpell implements TargetedEntityFromLo
 	@Override
 	public void turnOff() {
 		MagicSpells.cancelTask(taskId);
+	}
+	
+	private Location offsetLocation(Location loc) {
+		Location ret = loc;
+		if (useRelativeCastLocationOffset) {
+			ret = Util.applyRelativeOffset(ret, relativeCastLocationOffset);
+		}
+		if (useAbsoluteCastLocationOffset) {
+			ret = Util.applyAbsoluteOffset(ret, absoluteCastLocationOffset);
+		}
+		return ret;
 	}
 	
 }

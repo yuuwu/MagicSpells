@@ -33,6 +33,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.util.BlockIterator;
+import org.bukkit.util.Vector;
 
 import com.nisovin.magicspells.castmodifiers.ModifierSet;
 import com.nisovin.magicspells.events.MagicSpellsEntityDamageByEntityEvent;
@@ -1142,6 +1143,19 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	 */
 	protected String getConfigString(String key, String defaultValue) {
 		return config.getString("spells." + internalName + "." + key, defaultValue);
+	}
+		
+	/**
+	 * Access a Vector config value for this spell.
+	 * 
+	 * @param key The key of the config value
+	 * @param defaultValue The value to return if it does not exist in the config
+	 * 
+	 * @return The config value, or defaultValue if it does not exist
+	 */
+	protected Vector getConfigVector(String key, String defaultValue) {
+		String[] vecStrings = getConfigString(key, defaultValue).split(",");
+		return new Vector(Double.parseDouble(vecStrings[0]), Double.parseDouble(vecStrings[1]), Double.parseDouble(vecStrings[2]));
 	}
 	
 	/**

@@ -81,7 +81,7 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 	
 	private void volley(Player player, Location from, Location target, float power) {
 		Location spawn = from.clone();
-		spawn.setY(spawn.getY()+3);
+		spawn.setY(spawn.getY() + 3);
 		Vector v;
 		if (noTarget || target == null) {
 			v = from.getDirection();
