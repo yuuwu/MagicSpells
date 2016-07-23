@@ -17,6 +17,7 @@ import org.bukkit.util.Vector;
 
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.events.SpellCastEvent;
+import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
@@ -155,6 +156,7 @@ public class LevitateSpell extends TargetedSpell implements TargetedEntitySpell 
 			this.distance = distance;
 			this.counter = 0;
 			taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(MagicSpells.plugin, this, tickRate, tickRate);
+			playTrackingLinePatterns(EffectPosition.DYNAMIC_CASTER_PROJECTILE_LINE, caster.getLocation(), target.getLocation(), caster, target);
 			stopped = false;
 		}
 		
