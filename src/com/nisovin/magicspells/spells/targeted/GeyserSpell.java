@@ -35,6 +35,7 @@ public class GeyserSpell extends TargetedSpell implements TargetedEntitySpell {
 	MagicMaterial geyserType;
 	private boolean ignoreArmor;
 	private boolean checkPlugins;
+	private boolean avoidDamageModification;
 
 	public GeyserSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -53,6 +54,7 @@ public class GeyserSpell extends TargetedSpell implements TargetedEntitySpell {
 		}
 		ignoreArmor = getConfigBoolean("ignore-armor", false);
 		checkPlugins = getConfigBoolean("check-plugins", true);
+		avoidDamageModification = getConfigBoolean("avoid-damage-modification", false);
 	}
 
 	@Override
@@ -88,7 +90,9 @@ public class GeyserSpell extends TargetedSpell implements TargetedEntitySpell {
 			if (event.isCancelled()) {
 				return false;
 			}
-			dam = event.getDamage();
+			if (!avoidDamageModification) {
+				dam = event.getDamage();
+			}
 		}
 		
 		// do damage and launch target

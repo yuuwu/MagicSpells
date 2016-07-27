@@ -56,6 +56,7 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 	boolean instant;
 	private boolean ignoreArmor;
 	private boolean checkPlugins;
+	private boolean avoidDamageModification;
 	
 	private static final String STR_GIVE_TAKE_TYPE_HEALTH = "health";
 	private static final String STR_GIVE_TAKE_TYPE_MANA = "mana";
@@ -75,6 +76,7 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 		instant = getConfigBoolean("instant", true);
 		ignoreArmor = getConfigBoolean("ignore-armor", false);
 		checkPlugins = getConfigBoolean("check-plugins", true);
+		avoidDamageModification = getConfigBoolean("avoid-damage-modification", false);
 	}
 	
 	@Override
@@ -114,7 +116,9 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 				if (event.isCancelled()) {
 					return false;
 				}
-				take = event.getDamage();
+				if (!avoidDamageModification) {
+					take = event.getDamage();
+				}
 				player.setLastDamageCause(event);
 			}
 			SpellApplyDamageEvent event = new SpellApplyDamageEvent(this, player, target, take, DamageCause.MAGIC, spellDamageType);

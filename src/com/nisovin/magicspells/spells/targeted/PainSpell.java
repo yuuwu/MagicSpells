@@ -37,6 +37,7 @@ public class PainSpell extends TargetedSpell implements TargetedEntitySpell, Spe
 	private boolean ignoreArmor;
 	private boolean checkPlugins;
 	private DamageCause damageType;
+	private boolean avoidDamageModification;
 	
 	public PainSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -65,6 +66,7 @@ public class PainSpell extends TargetedSpell implements TargetedEntitySpell, Spe
 			DebugHandler.debugBadEnumValue(DamageCause.class, type);
 			damageType = DamageCause.ENTITY_ATTACK;
 		}
+		avoidDamageModification = getConfigBoolean("avoid-damage-modification", false);
 	}
 
 	@Override
@@ -105,7 +107,9 @@ public class PainSpell extends TargetedSpell implements TargetedEntitySpell, Spe
 			if (event.isCancelled()) {
 				return false;
 			}
-			localDamage = event.getDamage();
+			if (!avoidDamageModification) {
+				localDamage = event.getDamage();
+			}
 			target.setLastDamageCause(event);
 		}
 		//Bukkit.getPluginManager().callEvent(new SpellApplyDamageEvent(this, player, target, localDamage, DamageCause.MAGIC));

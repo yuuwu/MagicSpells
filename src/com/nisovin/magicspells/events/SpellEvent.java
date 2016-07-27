@@ -5,7 +5,7 @@ import org.bukkit.event.Event;
 
 import com.nisovin.magicspells.Spell;
 
-public abstract class SpellEvent extends Event {
+public abstract class SpellEvent extends Event implements IMagicSpellsCompatEvent {
 
 	protected Spell spell;
 	protected Player caster;

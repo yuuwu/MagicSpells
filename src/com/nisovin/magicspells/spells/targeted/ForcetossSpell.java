@@ -18,6 +18,7 @@ public class ForcetossSpell extends TargetedSpell implements TargetedEntitySpell
 	private float vForce;
 	private boolean checkPlugins;
 	private boolean powerAffectsForce;
+	private boolean avoidDamageModification;
 	
 	public ForcetossSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -27,6 +28,7 @@ public class ForcetossSpell extends TargetedSpell implements TargetedEntitySpell
 		vForce = getConfigInt("vertical-force", 10) / 10.0F;
 		checkPlugins = getConfigBoolean("check-plugins", true);
 		powerAffectsForce = getConfigBoolean("power-affects-force", true);
+		avoidDamageModification = getConfigBoolean("avoid-damage-modification", false);
 	}
 
 	@Override
@@ -49,7 +51,9 @@ public class ForcetossSpell extends TargetedSpell implements TargetedEntitySpell
 					if (event.isCancelled()) {
 						return noTarget(player);
 					}
-					damage = event.getDamage();
+					if (!avoidDamageModification) {
+						damage = event.getDamage();
+					}
 				}
 				target.damage(damage);
 			}
