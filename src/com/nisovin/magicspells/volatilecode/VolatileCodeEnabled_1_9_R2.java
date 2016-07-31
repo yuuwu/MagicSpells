@@ -47,6 +47,7 @@ import com.mojang.authlib.properties.Property;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.util.BoundingBox;
 import com.nisovin.magicspells.util.DisguiseManager;
+import com.nisovin.magicspells.util.IDisguiseManager;
 import com.nisovin.magicspells.util.MagicConfig;
 
 public class VolatileCodeEnabled_1_9_R2 implements VolatileCodeHandle {
@@ -454,12 +455,15 @@ public class VolatileCodeEnabled_1_9_R2 implements VolatileCodeHandle {
 	}
 	
 	@Override
-	public DisguiseManager getDisguiseManager(MagicConfig config) {
-		/*if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) {
-			return new DisguiseManager_1_9_R2(config);
-		} else {*/
-			return new DisguiseManagerEmpty(config);
-		//}
+	public IDisguiseManager getDisguiseManager(MagicConfig config) {
+		if (Bukkit.getPluginManager().isPluginEnabled("LibsDisguises")) {
+			try {
+			return new DisguiseManagerLibsDisguises(config);
+			} catch (Exception e) {
+				return new DisguiseManagerEmpty(config);
+			}
+		}
+		return new DisguiseManagerEmpty(config);
 	}
 
 	@Override

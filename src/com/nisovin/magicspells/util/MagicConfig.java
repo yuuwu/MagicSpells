@@ -2,9 +2,11 @@ package com.nisovin.magicspells.util;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -18,6 +20,79 @@ public class MagicConfig {
 		this(MagicSpells.plugin);
 	}
 	
+	/*
+	 * general outline of the format of this config (WIP)
+	 * general:
+	 *     enable-volatile-features: true
+	 *     debug: false
+	 *     debug-null: true
+	 *     debug-number-format: true
+	 *     debug-level: 3
+	 *     enable-error-logging: true
+	 *     enable-profiling: false
+	 *     text-color: ChatColor.DARK_AQUA.getChar()
+	 *     broadcast-range: 20
+	 *     ops-have-all-spells: true
+	 *     default-all-perms-false: false
+	 *     ignore-grant-perms: false
+	 *     ignore-cast-perms: false
+	 *     separate-player-spells-per-world: false
+	 *     allow-cycle-to-no-spell: false
+	 *     always-show-message-on-cycle: false
+	 *     only-cycle-to-castable-spells: true
+	 *     spell-icon-slot: -1
+	 *     allow-cast-with-fist: false
+	 *     cast-with-left-click: true
+	 *     cast-with-right-click: false
+	 *     ignore-default-bindings: false
+	 *     ignore-cast-item-enchants: true
+	 *     ignore-cast-item-names: false
+	 *     ignore-cast-item-name-colors: false
+	 *     check-world-pvp-flag: true
+	 *     check-scoreboard-teams: false
+	 *     show-str-cost-on-missing-reagents: true
+	 *     los-transparent-blocks: new ArrayList<Byte>()
+	 *     ignore-cast-item-durability: new ArrayList<Integer>()
+	 *     global-cooldown: 500
+	 *     cast-on-animate: false
+	 *     use-exp-bar-as-cast-time-bar: true
+	 *     cooldowns-persist-through-reload: true
+	 *     entity-names:
+	 *     sound-on-cooldown: null
+	 *     sound-missing-reagents: null
+	 *     str-cast-usage: "Usage: /cast <spell>. Use /cast list to see a list of spells."
+	 *     str-unknown-spell: "You do not know a spell with that name."
+	 *     str-spell-change: "You are now using the %s spell."
+	 *     str-spell-change-empty: "You are no longer using a spell."
+	 *     str-on-cooldown: "That spell is on cooldown."
+	 *     str-missing-reagents: "You do not have the reagents for that spell."
+	 *     str-cant-cast: "You can't cast that spell right now."
+	 *     str-cant-bind: "You cannot bind that spell to that item."
+	 *     str-wrong-world: "You cannot cast that spell here."
+	 *     console-name: "Admin"
+	 *     str-xp-auto-learned: "You have learned the %s spell!"
+	 *     buff-check-interval: 0
+	 *     ops-ignore-reagents: true
+	 *     ops-ignore-cooldowns: true
+	 *     ops-ignore-cast-times: true
+	 *     hide-predefined-items-tooltips: false
+	 *     enable-magic-xp: false
+	 *     enable-dance-casting: true
+	 *     enable-logging: false
+	 *     enable-tab-completion: true
+	 *     
+	 *     
+	 *     predefined-items:
+	 *     variables:
+	 * mana:
+	 *     enable-mana-system: false
+	 *     mana-potion-cooldown: 30
+	 *     str-mana-potion-on-cooldown: "You cannot use another mana potion yet."
+	 *     mana-potions: null
+	 *     
+	 * spells:
+	 * no-magic-zones:
+	 */
 	public MagicConfig(MagicSpells plugin) {
 		try {
 			File folder = plugin.getDataFolder();

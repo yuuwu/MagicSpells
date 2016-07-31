@@ -30,14 +30,14 @@ import com.nisovin.magicspells.events.SpellCastedEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.util.DisguiseManager;
 import com.nisovin.magicspells.util.EntityData;
+import com.nisovin.magicspells.util.IDisguiseManager;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
 import com.nisovin.magicspells.util.TargetInfo;
 public class DisguiseSpell extends TargetedSpell implements TargetedEntitySpell {
 
-	static DisguiseManager manager;
+	static IDisguiseManager manager;
 
 	private DisguiseSpell thisSpell;
 	private EntityData entityData;
@@ -257,7 +257,7 @@ public class DisguiseSpell extends TargetedSpell implements TargetedEntitySpell 
 		}
 	}
 	
-	public static DisguiseManager getDisguiseManager() {
+	public static IDisguiseManager getDisguiseManager() {
 		return manager;
 	}
 	

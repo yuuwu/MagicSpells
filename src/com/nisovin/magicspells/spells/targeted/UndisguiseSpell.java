@@ -6,12 +6,12 @@ import org.bukkit.entity.Player;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.util.DisguiseManager;
+import com.nisovin.magicspells.util.IDisguiseManager;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
 public class UndisguiseSpell extends TargetedSpell implements TargetedEntitySpell {
 
-	DisguiseManager manager;
+	IDisguiseManager manager;
 	
 	public UndisguiseSpell(MagicConfig config, String spellName) {
 		super(config, spellName);

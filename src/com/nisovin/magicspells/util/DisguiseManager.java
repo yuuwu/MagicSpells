@@ -19,7 +19,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spells.targeted.DisguiseSpell;
 
-public abstract class DisguiseManager implements Listener {
+public abstract class DisguiseManager implements Listener, IDisguiseManager {
 
 	protected boolean hideArmor;
 	
@@ -36,18 +36,22 @@ public abstract class DisguiseManager implements Listener {
 		Bukkit.getPluginManager().registerEvents(this, MagicSpells.plugin);
 	}
 	
+	@Override
 	public void registerSpell(DisguiseSpell spell) {
 		disguiseSpells.add(spell);
 	}
 	
+	@Override
 	public void unregisterSpell(DisguiseSpell spell) {
 		disguiseSpells.remove(spell);
 	}
 	
+	@Override
 	public int registeredSpellsCount() {
 		return disguiseSpells.size();
 	}
 	
+	@Override
 	public void addDisguise(Player player, DisguiseSpell.Disguise disguise) {
 		if (isDisguised(player)) {
 			removeDisguise(player);
@@ -60,14 +64,17 @@ public abstract class DisguiseManager implements Listener {
 		applyDisguise(player, disguise);
 	}
 	
+	@Override
 	public void removeDisguise(Player player) {
 		removeDisguise(player, true);
 	}
 	
+	@Override
 	public void removeDisguise(Player player, boolean sendPlayerPackets) {
 		removeDisguise(player, sendPlayerPackets, true);
 	}
 	
+	@Override
 	public void removeDisguise(Player player, boolean sendPlayerPackets, boolean delaySpawnPacket) {
 		DisguiseSpell.Disguise disguise = disguises.get(player.getName().toLowerCase());
 		disguisedEntityIds.remove(player.getEntityId());
@@ -80,14 +87,17 @@ public abstract class DisguiseManager implements Listener {
 		mounts.remove(player.getEntityId());
 	}
 	
+	@Override
 	public boolean isDisguised(Player player) {
 		return disguises.containsKey(player.getName().toLowerCase());
 	}
 	
+	@Override
 	public DisguiseSpell.Disguise getDisguise(Player player) {
 		return disguises.get(player.getName().toLowerCase());
 	}
 	
+	@Override
 	public void destroy() {
 		HandlerList.unregisterAll(this);
 		cleanup();

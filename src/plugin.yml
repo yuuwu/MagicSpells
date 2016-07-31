@@ -1,8 +1,8 @@
 name: MagicSpells
 main: com.nisovin.magicspells.MagicSpells
 version: VERSION_STRING
-author: nisovin
-softdepend: [Vault,ProtocolLib,WorldGuard,Residence,PowerNBT]
+authors: [nisovin, TheComputerGeek2]
+softdepend: [Vault,ProtocolLib,WorldGuard,Residence,PowerNBT,LibsDisguises]
 depend: [EffectLib]
 commands:
     magicspellcast:

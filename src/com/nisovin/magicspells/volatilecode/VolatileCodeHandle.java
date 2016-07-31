@@ -11,7 +11,7 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-import com.nisovin.magicspells.util.DisguiseManager;
+import com.nisovin.magicspells.util.IDisguiseManager;
 import com.nisovin.magicspells.util.MagicConfig;
 
 public interface VolatileCodeHandle {
@@ -60,7 +60,7 @@ public interface VolatileCodeHandle {
 	
 	public void setKiller(LivingEntity entity, Player killer);
 	
-	public DisguiseManager getDisguiseManager(MagicConfig config);
+	public IDisguiseManager getDisguiseManager(MagicConfig config);
 	
 	public void playDragonDeathEffect(Location location);
 	

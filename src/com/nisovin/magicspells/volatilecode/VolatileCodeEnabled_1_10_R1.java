@@ -46,7 +46,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.util.BoundingBox;
-import com.nisovin.magicspells.util.DisguiseManager;
+import com.nisovin.magicspells.util.IDisguiseManager;
 import com.nisovin.magicspells.util.MagicConfig;
 
 public class VolatileCodeEnabled_1_10_R1 implements VolatileCodeHandle {
@@ -100,7 +100,7 @@ public class VolatileCodeEnabled_1_10_R1 implements VolatileCodeHandle {
 		return craftItem;
 	}
 	
-	public VolatileCodeEnabled_1_10_R1() {
+	public VolatileCodeEnabled_1_10_R1(MagicConfig config) {
 		try {
 			packet63Fields[0] = PacketPlayOutWorldParticles.class.getDeclaredField("a");
 			packet63Fields[1] = PacketPlayOutWorldParticles.class.getDeclaredField("b");
@@ -125,7 +125,6 @@ public class VolatileCodeEnabled_1_10_R1 implements VolatileCodeHandle {
 				particleMap.put(particle.b(), particle);
 			}
 		}
-				
 	}
 	
 	@Override
@@ -454,12 +453,16 @@ public class VolatileCodeEnabled_1_10_R1 implements VolatileCodeHandle {
 	}
 	
 	@Override
-	public DisguiseManager getDisguiseManager(MagicConfig config) {
-		/*if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) {
-			return new DisguiseManager_1_10_R1(config);
-		} else {*/
+	public IDisguiseManager getDisguiseManager(MagicConfig config) {
+		if (Bukkit.getPluginManager().isPluginEnabled("LibsDisguises")) {
+			try {
+				return new DisguiseManagerLibsDisguises(config);
+			} catch (Exception e) {
+				return new DisguiseManagerEmpty(config);
+			}
+		} else {
 			return new DisguiseManagerEmpty(config);
-		//}
+		}
 	}
 
 	@Override
