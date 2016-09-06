@@ -122,6 +122,9 @@ public abstract class Condition {
 		conditions.put("playercountabove", PlayerCountAbove.class);
 		conditions.put("targetmaxhealthgreaterthan", TargetMaxHealthGreaterThanCondition.class);
 		conditions.put("targetmaxhealthlessthan", TargetMaxHealthLessThanCondition.class);
+		conditions.put("worldguardmembership", WorldGuardRegionMembershipCondition.class);
+		conditions.put("worldguardbooleanflag", WorldGuardBooleanFlagCondition.class);
+		conditions.put("worldguardstateflag", WorldGuardStateFlagCondition.class);
 	}
 	
 }
