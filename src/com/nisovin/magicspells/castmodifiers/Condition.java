@@ -125,6 +125,11 @@ public abstract class Condition {
 		conditions.put("worldguardmembership", WorldGuardRegionMembershipCondition.class);
 		conditions.put("worldguardbooleanflag", WorldGuardBooleanFlagCondition.class);
 		conditions.put("worldguardstateflag", WorldGuardStateFlagCondition.class);
+		conditions.put("oxygenabove", OxygenAboveCondition.class);
+		conditions.put("oxygenbelow", OxygenBelowCondition.class);
+		conditions.put("oxygenequals", OxygenEqualsCondition.class);
+		conditions.put("yawabove", YawAboveCondition.class);
+		conditions.put("yawbelow", YawBelowCondition.class);
 	}
 	
 }
