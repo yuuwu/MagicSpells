@@ -3,6 +3,7 @@ package com.nisovin.magicspells;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -20,6 +21,7 @@ import com.nisovin.magicspells.mana.ManaChangeReason;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.util.PlayerNameUtils;
+import com.nisovin.magicspells.util.RegexUtil;
 import com.nisovin.magicspells.util.Util;
 
 public class CastCommand implements CommandExecutor, TabCompleter {
@@ -156,18 +158,52 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 					// end /c setmana handling
 					
 				} else if (sender.isOp() && args[0].equals("modifyvariable") && args.length == 4) {
-					// /c modifyvariable
+					// /c modifyvariable <var> <player> ((=|-)?)<value>
 					String var = args[1];
 					String player = args[2];
 					boolean set = false;
+					boolean multiply = false;
+					boolean divide = false;
 					double num = 0;
-					if (args[3].startsWith("=")) {
+					String numString = args[3];
+					
+					//possible operations
+					//+-=*/
+					
+					if (numString.startsWith("*")) {
+						multiply = true;
+						numString = numString.substring(1);
+					} else if (numString.startsWith("/")) {
+						divide = true;
+						numString = numString.substring(1);
+					} else if (numString.startsWith("=")) {
 						set = true;
-						num = Double.parseDouble(args[3].substring(1));
-					} else {
-						num = Double.parseDouble(args[3]);
+						numString = numString.substring(1);
+					} else if (numString.startsWith("+")) {
+						numString = numString.substring(1);
 					}
-					if (set) {
+					
+					Matcher m = RegexUtil.DOUBLE_PATTERN.matcher(numString);
+					if (!m.matches()) {
+						boolean negate = false;
+						if (numString.startsWith("-")) {
+							negate = true;
+							numString = numString.substring(1);
+						}
+						num = MagicSpells.getVariableManager().getValue(numString, PlayerNameUtils.getPlayer(player));
+						if (negate) {
+							num *= -1;
+						}
+					} else {
+						num = Double.parseDouble(numString);
+					}
+					
+					
+					if (multiply) {
+						MagicSpells.getVariableManager().multiplyBy(var, PlayerNameUtils.getPlayer(player), num);
+					} else if (divide) {
+						MagicSpells.getVariableManager().divideBy(var, PlayerNameUtils.getPlayer(player), num);
+					} else if (set) {
 						MagicSpells.getVariableManager().set(var, player, num);
 					} else {
 						MagicSpells.getVariableManager().modify(var, player, num);
