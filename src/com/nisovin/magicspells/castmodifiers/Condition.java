@@ -130,6 +130,8 @@ public abstract class Condition {
 		conditions.put("oxygenequals", OxygenEqualsCondition.class);
 		conditions.put("yawabove", YawAboveCondition.class);
 		conditions.put("yawbelow", YawBelowCondition.class);
+		conditions.put("saturationabove", SaturationAboveCondition.class);
+		conditions.put("saturationbelow", SaturationBelowCondition.class);
 	}
 	
 }
