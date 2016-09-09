@@ -132,6 +132,8 @@ public abstract class Condition {
 		conditions.put("yawbelow", YawBelowCondition.class);
 		conditions.put("saturationabove", SaturationAboveCondition.class);
 		conditions.put("saturationbelow", SaturationBelowCondition.class);
+		conditions.put("moneymorethan", MoneyMoreThanCondition.class);
+		conditions.put("moneylessthan", MoneyLessThanCondition.class);
 	}
 	
 }

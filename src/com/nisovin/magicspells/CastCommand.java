@@ -190,7 +190,13 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 							negate = true;
 							numString = numString.substring(1);
 						}
-						num = MagicSpells.getVariableManager().getValue(numString, PlayerNameUtils.getPlayer(player));
+						String targetPlayerName = player;
+						if (numString.contains(":")) {
+							String[] targetVarData = numString.split(":");
+							targetPlayerName = targetVarData[0];
+							numString = targetVarData[1];
+						}
+						num = MagicSpells.getVariableManager().getValue(numString, PlayerNameUtils.getPlayer(targetPlayerName));
 						if (negate) {
 							num *= -1;
 						}
@@ -214,7 +220,7 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 					// /c magicitem
 					ItemStack item = Util.getItemStackFromString(args[1]);
 					if (item != null) {
-						if (args.length > 2 && args[2].matches("^[0-9]+$")) {
+						if (args.length > 2 && RegexUtil.matches(RegexUtil.SIMPLE_INT_PATTERN, args[2])) {
 							item.setAmount(Integer.parseInt(args[2]));
 						}
 						((Player)sender).getInventory().addItem(item);
