@@ -345,7 +345,7 @@ public class SpawnMonsterSpell extends TargetedSpell implements TargetedLocation
 	}
 	
 	void prepMob(Player player, Entity entity) {
-		entity.setGravity(gravity);
+		MagicSpells.getVolatileCodeHandler().setGravity(entity, gravity);
 		
 		// set as tamed
 		if (tamed && entity instanceof Tameable && player != null) {

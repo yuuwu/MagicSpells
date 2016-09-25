@@ -13,6 +13,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
+import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.events.SpellTargetEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
@@ -54,7 +55,7 @@ public class FreezeSpell extends InstantSpell implements SpellDamageSpell {
 			Vector mod;
 			for (int i = 0; i < snowballs; i++) {
 				Snowball snowball = player.launchProjectile(Snowball.class);
-				snowball.setGravity(snowballGravity);
+				MagicSpells.getVolatileCodeHandler().setGravity(snowball, snowballGravity);
 				playSpellEffects(EffectPosition.PROJECTILE, snowball);
 				playTrackingLinePatterns(EffectPosition.DYNAMIC_CASTER_PROJECTILE_LINE, player.getLocation(), snowball.getLocation(), player, snowball);
 				snowball.setFallDistance(identifier); // tag the snowballs

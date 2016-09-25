@@ -118,7 +118,7 @@ public class ConjureBookSpell extends InstantSpell implements TargetedLocationSp
 			if (!added) {
 				Item dropped = player.getWorld().dropItem(player.getLocation(), item);
 				dropped.setItemStack(item);
-				dropped.setGravity(projectileHasGravity);
+				MagicSpells.getVolatileCodeHandler().setGravity(dropped, projectileHasGravity);
 				playSpellEffects(EffectPosition.SPECIAL, dropped);
 				//player.getWorld().dropItem(player.getLocation(), item).setItemStack(item);
 			}
@@ -136,7 +136,7 @@ public class ConjureBookSpell extends InstantSpell implements TargetedLocationSp
 		ItemStack item = book.clone();
 		Item dropped = target.getWorld().dropItem(target, item);
 		dropped.setItemStack(item);
-		dropped.setGravity(projectileHasGravity);
+		MagicSpells.getVolatileCodeHandler().setGravity(dropped, projectileHasGravity);
 		playSpellEffects(EffectPosition.SPECIAL, dropped);
 		//target.getWorld().dropItem(target, item).setItemStack(item);
 		return true;

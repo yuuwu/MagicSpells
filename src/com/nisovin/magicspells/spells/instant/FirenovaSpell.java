@@ -19,7 +19,9 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.util.MagicConfig;
-
+/*
+ * The special position for effects is implemented here to run on each nova block placed.
+ */
 public class FirenovaSpell extends InstantSpell implements TargetedLocationSpell {
 
 	int range;
@@ -144,10 +146,12 @@ public class FirenovaSpell extends InstantSpell implements TargetedLocationSpell
 									b = under;
 								}
 								mat.setBlock(b, false);
+								playSpellEffects(EffectPosition.SPECIAL, b.getLocation());
 								fireBlocks.add(b);
 							} else if (b.getRelative(BlockFace.UP).getType() == Material.AIR || (burnTallGrass && b.getRelative(BlockFace.UP).getType() == Material.LONG_GRASS)) {
 								b = b.getRelative(BlockFace.UP);
 								mat.setBlock(b, false);
+								playSpellEffects(EffectPosition.SPECIAL, b.getLocation());
 								fireBlocks.add(b);
 							}
 						}

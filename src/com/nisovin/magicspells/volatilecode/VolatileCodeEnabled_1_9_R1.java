@@ -29,6 +29,7 @@ import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftTNTPrimed;
 import org.bukkit.craftbukkit.v1_9_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Creature;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Fireball;
@@ -785,6 +786,17 @@ public class VolatileCodeEnabled_1_9_R1 implements VolatileCodeHandle {
 	@Override
 	public ItemStack getItemInMainHand(EntityEquipment equip) {
 		return equip.getItemInMainHand();
+	}
+
+	@Override
+	public boolean hasGravity(Entity entity) {
+		//doesn't exist in this version of minecraft
+		return false;
+	}
+
+	@Override
+	public void setGravity(Entity entity, boolean gravity) {
+		//doesn't exist in this version of minecraft
 	}
 
 }

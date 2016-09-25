@@ -337,7 +337,7 @@ public class DisguiseManagerLibsDisguises implements Listener, IDisguiseManager 
 	public void onQuit(PlayerQuitEvent event) {
 		disguisedEntityIds.remove(event.getPlayer().getEntityId());
 		me.libraryaddict.disguise.disguisetypes.Disguise dis = libsDisguisedEntityIds.remove(event.getPlayer().getEntityId());
-		if (dis.isDisguiseInUse()) dis.stopDisguise();
+		if (dis != null && dis.isDisguiseInUse()) dis.stopDisguise();
 		
 		dragons.remove(event.getPlayer().getEntityId());
 		if (mounts.containsKey(event.getPlayer().getEntityId())) {

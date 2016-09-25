@@ -141,7 +141,7 @@ public class ParticleCloudSpell extends TargetedSpell implements TargetedLocatio
 		for (PotionEffect eff: effects) {
 			cloud.addCustomEffect(eff, true);
 		}
-		cloud.setGravity(useGravity);
+		MagicSpells.getVolatileCodeHandler().setGravity(cloud, useGravity);
 		return cloud;
 	}
 

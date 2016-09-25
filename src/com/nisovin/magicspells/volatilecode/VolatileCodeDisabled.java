@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Creature;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Fireball;
@@ -306,5 +307,16 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 	@Override
 	public ItemStack getItemInMainHand(EntityEquipment equip) {
 		return equip.getItemInHand();
+	}
+
+	@Override
+	public boolean hasGravity(Entity entity) {
+		//not all versions have gravity adjustment, so can't put it here
+		return false;
+	}
+
+	@Override
+	public void setGravity(Entity entity, boolean gravity) {
+		//not all versions have gravity adjustment, so can't put it here
 	}
 }

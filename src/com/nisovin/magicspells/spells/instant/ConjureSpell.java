@@ -233,7 +233,7 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 				if (!added && (dropIfInventoryFull || !addToInventory)) {
 					Item i = player.getWorld().dropItem(loc, item);
 					i.setItemStack(item);
-					i.setGravity(itemHasGravity);
+					MagicSpells.getVolatileCodeHandler().setGravity(i, itemHasGravity);
 					playSpellEffects(EffectPosition.SPECIAL, i);
 					//player.getWorld().dropItem(loc, item).setItemStack(item);
 				}
@@ -317,7 +317,7 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 				v.normalize().multiply(randomVelocity);
 				dropped.setVelocity(v);
 			}
-			dropped.setGravity(itemHasGravity);
+			MagicSpells.getVolatileCodeHandler().setGravity(dropped, itemHasGravity);
 			playSpellEffects(EffectPosition.SPECIAL, dropped);
 		}
 		return true;

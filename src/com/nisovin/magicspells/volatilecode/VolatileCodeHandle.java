@@ -2,6 +2,7 @@ package com.nisovin.magicspells.volatilecode;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Fireball;
@@ -111,5 +112,9 @@ public interface VolatileCodeHandle {
 	public void showItemCooldown(Player player, ItemStack item, int duration);
 	
 	public ItemStack getItemInMainHand(EntityEquipment equip);
+	
+	public boolean hasGravity(Entity entity);
+	
+	public void setGravity(Entity entity, boolean gravity);
 	
 }

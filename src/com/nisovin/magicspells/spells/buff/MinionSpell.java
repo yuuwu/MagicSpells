@@ -94,7 +94,7 @@ public class MinionSpell extends BuffSpell {
 			
 			// spawn creature
 			LivingEntity minion = (LivingEntity)player.getWorld().spawnEntity(loc, creatureType);
-			minion.setGravity(gravity);
+			MagicSpells.getVolatileCodeHandler().setGravity(minion, gravity);
 			if (minion instanceof Creature) {
 				minions.put(player.getName(), minion);
 				targets.put(player.getName(), null);

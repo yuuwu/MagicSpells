@@ -44,6 +44,7 @@ public enum EffectPosition {
 	 *  - HomingArrowSpell
 	 *  - BombSpell
 	 *  - AreaEffectSpell
+	 *  - FirenovaSpell
 	 **/
 	SPECIAL(6),
 	

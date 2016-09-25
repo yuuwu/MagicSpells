@@ -100,7 +100,7 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 				if (powerAffectsSpeed) speed *= power;
 				Arrow a = from.getWorld().spawnArrow(spawn, v, speed, (spread/10.0F));
 				a.setVelocity(a.getVelocity());
-				a.setGravity(arrowsHaveGravity);
+				MagicSpells.getVolatileCodeHandler().setGravity(a, arrowsHaveGravity);
 				if (player != null) {
 					a.setShooter(player);
 				}
@@ -236,7 +236,7 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 			// fire an arrow
 			if (count < arrowsShooter) {
 				Arrow a = spawn.getWorld().spawnArrow(spawn, dir, speedShooter, (spread/10.0F));
-				a.setGravity(arrowsHaveGravity);
+				MagicSpells.getVolatileCodeHandler().setGravity(a, arrowsHaveGravity);
 				playSpellEffects(EffectPosition.PROJECTILE, a);
 				playTrackingLinePatterns(EffectPosition.DYNAMIC_CASTER_PROJECTILE_LINE, player.getLocation(), a.getLocation(), player, a);
 				a.setVelocity(a.getVelocity());
