@@ -800,7 +800,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 						if (obj instanceof String) {
 							String eff = (String)obj;
 							String[] data = eff.split(" ", 3);
-							EffectPosition pos = getPositionFromString(data[0]);
+							EffectPosition pos = EffectPosition.getPositionFromString(data[0]);
 							if (pos != null) {
 								SpellEffect effect = SpellEffect.createNewEffectByName(data[1]);
 								if (effect != null) {
@@ -819,7 +819,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 			} else if (config.isSection(section + "." + spellName + ".effects")) {
 				for (String key : config.getKeys(section + "." + spellName + ".effects")) {
 					ConfigurationSection effConf = config.getSection(section + "." + spellName + ".effects." + key);
-					EffectPosition pos = getPositionFromString(effConf.getString("position", ""));
+					EffectPosition pos = EffectPosition.getPositionFromString(effConf.getString("position", ""));
 					if (pos != null) {
 						SpellEffect effect = SpellEffect.createNewEffectByName(effConf.getString("effect", ""));
 						if (effect != null) {
@@ -960,37 +960,6 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 			strXpAutoLearned = strXpAutoLearned.replace("%s", this.name);
 		}
 		
-	}
-	
-	private EffectPosition getPositionFromString(String spos) {
-		if (spos.equalsIgnoreCase("start") || spos.equalsIgnoreCase("startcast")) {
-			return EffectPosition.START_CAST;
-		} else if (spos.equalsIgnoreCase("pos1") || spos.equalsIgnoreCase("position1") || spos.equalsIgnoreCase("caster") || spos.equalsIgnoreCase("actor")) {
-			return EffectPosition.CASTER;
-		} else if (spos.equalsIgnoreCase("pos2") || spos.equalsIgnoreCase("position2") || spos.equalsIgnoreCase("target")) {
-			return EffectPosition.TARGET;
-		} else if (spos.equalsIgnoreCase("line") || spos.equalsIgnoreCase("trail")) {
-			return EffectPosition.TRAIL;
-		} else if (spos.equalsIgnoreCase("disabled")) {
-			return EffectPosition.DISABLED;
-		} else if (spos.equalsIgnoreCase("delayed")) {
-			return EffectPosition.DELAYED;
-		} else if (spos.equalsIgnoreCase("special")) {
-			return EffectPosition.SPECIAL;
-		} else if (spos.equalsIgnoreCase("buff") || spos.equalsIgnoreCase("active")) {
-			return EffectPosition.BUFF;
-		} else if (spos.equalsIgnoreCase("orbit")) {
-			return EffectPosition.ORBIT;
-		} else if (spos.equalsIgnoreCase("reverse_line") || spos.equalsIgnoreCase("reverseline") || spos.equalsIgnoreCase("rline")) {
-			return EffectPosition.REVERSE_LINE;
-		} else if (spos.equalsIgnoreCase("projectile")) {
-			return EffectPosition.PROJECTILE;
-		} else if (spos.equalsIgnoreCase("casterprojectile") | spos.equalsIgnoreCase("casterprojectileline")) {
-			return EffectPosition.DYNAMIC_CASTER_PROJECTILE_LINE;
-		} else if (spos.equalsIgnoreCase("blockdestroy") || spos.equalsIgnoreCase("blockdestruction")) {
-			return EffectPosition.BLOCK_DESTRUCTION;
-		}
-		return null;
 	}
 	
 	protected SpellReagents getConfigReagents(String option) {

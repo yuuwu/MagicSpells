@@ -85,4 +85,8 @@ public class VariableMod {
 		return op;
 	}
 	
+	public VariableOwner getVariableOwner() {
+		return variableOwner;
+	}
+	
 }

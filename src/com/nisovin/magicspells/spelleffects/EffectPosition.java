@@ -1,18 +1,21 @@
 package com.nisovin.magicspells.spelleffects;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public enum EffectPosition {
 
 	/** Can be referenced as: start, startcast **/
-	START_CAST(0),
+	START_CAST(0, "start", "startcast"),
 	
 	/** Can be referenced as: pos1, position1, caster, actor **/
-	CASTER(1),
+	CASTER(1, "pos1", "position1", "caster", "actor"),
 	
 	/** Can be referenced as: pos2, position2, target **/
-	TARGET(2),
+	TARGET(2, "pos2", "position2", "target"),
 	
 	/** Can be referenced as: line, trail **/
-	TRAIL(3),
+	TRAIL(3, "line", "trail"),
 	
 	/** Can be referenced as: disabled
 	 *  Used in:
@@ -22,10 +25,10 @@ public enum EffectPosition {
 	 *      - BuffSpell (and all sub classes)
 	 *      - DisguiseSpell
 	 **/
-	DISABLED(4),
+	DISABLED(4, "disabled"),
 	
 	/** Can be referenced as: delayed **/
-	DELAYED(5),
+	DELAYED(5, "delayed"),
 	
 	/** Can be referenced as: special
 	 *  Is used differently based upon each spell.
@@ -46,24 +49,24 @@ public enum EffectPosition {
 	 *  - AreaEffectSpell
 	 *  - FirenovaSpell
 	 **/
-	SPECIAL(6),
+	SPECIAL(6, "special"),
 	
 	/** Can be referenced as: buff, active 
 	 *  Used in:
 	 *      - BuffSpell (and all subclasses)
 	 *      - StunSpell
 	 **/
-	BUFF(7),
+	BUFF(7, "buff", "active"),
 	
 	/** Can be referenced as: orbit
 	 *  Used in:
 	 *      - BuffSpell (and all subclasses)
 	 *      - StunSpell
 	 **/
-	ORBIT(8),
+	ORBIT(8, "orbit"),
 	
 	/** Can be referenced as: reverse_line, reverseline, rline **/
-	REVERSE_LINE(9),
+	REVERSE_LINE(9, "reverse_line", "reverseline", "rline"),
 	
 	
 	/** May be referenced as: projectile
@@ -81,7 +84,7 @@ public enum EffectPosition {
 	 *   - VolleySpell
 	 *   - WitherSkullSpell
 	 **/
-	PROJECTILE(10),
+	PROJECTILE(10, "projectile"),
 	
 	/**
 	 * May be referenced as: casterprojectile or casterprojectileline
@@ -100,7 +103,7 @@ public enum EffectPosition {
 	 *    - VolleySpell
 	 *    - WitherSkullSpell
 	 */
-	DYNAMIC_CASTER_PROJECTILE_LINE(11),
+	DYNAMIC_CASTER_PROJECTILE_LINE(11, "casterprojectile", "casterprojectileline"),
 	
 	/**
 	 * May be referenced as: blockdestroy or blockdestruction
@@ -111,16 +114,43 @@ public enum EffectPosition {
 	 *     - PulserSpell
 	 *     - EntombSpell
 	 */
-	BLOCK_DESTRUCTION(12);
+	BLOCK_DESTRUCTION(12, "blockdestroy", "blockdestruction");
 	//TODO add this effect position to the WallSpell
 	
 	private int id;
-	private EffectPosition(int num) {
+	private String[] names;
+	
+	private static Map<String, EffectPosition> nameMap = new HashMap<String, EffectPosition>();
+	private static boolean initialized = false;
+	
+	private EffectPosition(int num, String... names) {
 		this.id = num;
+		this.names = names;
 	}
 	
 	public int getId() {
 		return id;
 	}
 	
+	private static void initializeNameMap() {
+		if (nameMap == null) nameMap = new HashMap<String, EffectPosition>();
+		nameMap.clear();
+		for (EffectPosition pos: EffectPosition.values()) {
+			//make sure the number id can be mapped
+			nameMap.put(pos.id + "", pos);
+			
+			//for all of the names
+			for (String name: pos.names) {
+				nameMap.put(name.toLowerCase(), pos);
+			}
+		}
+		initialized = true;
+	}
+	
+	public static EffectPosition getPositionFromString(String pos) {
+		if (!initialized) {
+			initializeNameMap();
+		}
+		return nameMap.get(pos.toLowerCase());
+	}
 }
