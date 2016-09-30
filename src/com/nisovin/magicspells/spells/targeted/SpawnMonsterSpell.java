@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -141,7 +142,14 @@ public class SpawnMonsterSpell extends TargetedSpell implements TargetedLocation
 		
 		fireTicks = getConfigInt("fire-ticks", 0);
 		duration = getConfigInt("duration", 0);
+		
+		boolean nameplateUsesFormatting = getConfigBoolean("nameplate-formatting", false);
 		nameplateText = getConfigString("nameplate-text", "");
+		
+		if (nameplateUsesFormatting) {
+			nameplateText = ChatColor.translateAlternateColorCodes('&', nameplateText);
+		}
+		
 		removeAI = getConfigBoolean("remove-ai", false);
 		noAI = getConfigBoolean("no-ai", false);
 		addLookAtPlayerAI = getConfigBoolean("add-look-at-player-ai", false);
