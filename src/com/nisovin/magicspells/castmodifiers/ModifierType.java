@@ -680,6 +680,10 @@ public enum ModifierType {
 
 	private ModifierType(boolean usesModVarString, boolean usesModVarFloat, boolean usesModVarInt, boolean usesCustomData, String... keys) {
 		this.keys = keys;
+		this.usesCustomData = usesCustomData;
+		this.usesModifierVar = usesModVarString;
+		this.usesModifierVarFloat = usesModVarFloat;
+		this.usesModifierVarInt = usesModVarInt;
 	}
 	
 	public boolean usesCustomData() {
