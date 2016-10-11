@@ -1,10 +1,8 @@
 package com.nisovin.magicspells.spells.buff;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,12 +10,13 @@ import org.bukkit.event.EventHandler;
 import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.SpellFilter;
 
 public class ClaritySpell extends BuffSpell {
 
 	float multiplier;
 	
-	Set<String> spells;
+	private SpellFilter filter;
 	
 	Map<String, Float> buffed = new HashMap<String, Float>();
 	
@@ -25,11 +24,11 @@ public class ClaritySpell extends BuffSpell {
 		super(config, spellName);
 		
 		multiplier = getConfigFloat("multiplier", 0.5F);
-		List<String> list = getConfigStringList("spells", null);
-		if (list != null && list.size() > 0) {
-			spells = new HashSet<String>();
-			spells.addAll(list);
-		}
+		List<String> spells = getConfigStringList("spells", null);
+		List<String> deniedSpells = getConfigStringList("denied-spells", null);
+		List<String> tagList = getConfigStringList("spell-tags", null);
+		List<String> deniedTagList = getConfigStringList("denied-spell-tags", null);
+		filter = new SpellFilter(spells, deniedSpells, tagList, deniedTagList);
 	}
 
 	@Override
@@ -37,10 +36,10 @@ public class ClaritySpell extends BuffSpell {
 		buffed.put(player.getName(), power);
 		return true;
 	}
-
+	
 	@EventHandler(ignoreCancelled = true)
 	public void onSpellCast(SpellCastEvent event) {
-		if (buffed.containsKey(event.getCaster().getName()) && (spells == null || spells.contains(event.getSpell().getInternalName()))) {
+		if (buffed.containsKey(event.getCaster().getName()) && filter.check(event.getSpell())) {
 			float power = buffed.get(event.getCaster().getName());
 			float mod = multiplier;
 			if (multiplier < 1) {

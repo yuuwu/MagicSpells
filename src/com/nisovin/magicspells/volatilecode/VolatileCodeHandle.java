@@ -10,6 +10,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.util.Vector;
 
 import com.nisovin.magicspells.util.IDisguiseManager;
@@ -116,5 +117,9 @@ public interface VolatileCodeHandle {
 	public boolean hasGravity(Entity entity);
 	
 	public void setGravity(Entity entity, boolean gravity);
+	
+	public void setTexture(SkullMeta meta, String texture, String signature);
+	
+	public void setSkin(Player player, String skin, String signature);
 	
 }

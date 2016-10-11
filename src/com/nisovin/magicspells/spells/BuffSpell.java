@@ -336,7 +336,7 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 			TargetInfo<Player> targetInfo = getTargetedPlayer(player, power);
 			if (targetInfo == null) return noTarget(player);
 			target = targetInfo.getTarget();
-			power = targetInfo.getPower(); //TODO make an alternative to overriding the parameter
+			power = targetInfo.getPower();
 		} else {
 			target = player;
 		}

@@ -21,6 +21,7 @@ import org.bukkit.entity.SmallFireball;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.material.Button;
 import org.bukkit.material.Lever;
 import org.bukkit.potion.PotionEffect;
@@ -170,7 +171,7 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 	
 	@Override
 	public void playParticleEffect(Location location, String name, float spreadX, float spreadY, float spreadZ, float speed, int count, int radius, float yOffset) {
-		//TODO
+		//need volatile code
 	}
 	
 	@Override
@@ -318,5 +319,15 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 	@Override
 	public void setGravity(Entity entity, boolean gravity) {
 		//not all versions have gravity adjustment, so can't put it here
+	}
+
+	@Override
+	public void setTexture(SkullMeta meta, String texture, String signature) {
+		//need volatile code for this
+	}
+
+	@Override
+	public void setSkin(Player player, String skin, String signature) {
+		//need volatile code for this
 	}
 }

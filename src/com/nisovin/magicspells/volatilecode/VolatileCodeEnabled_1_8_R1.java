@@ -35,6 +35,7 @@ import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.util.Vector;
 
 import com.mojang.authlib.GameProfile;
@@ -795,6 +796,36 @@ public class VolatileCodeEnabled_1_8_R1 implements VolatileCodeHandle {
 	@Override
 	public void setGravity(Entity entity, boolean gravity) {
 		//doesn't exist in this version of minecraft
+	}
+
+	@Override
+	public void setTexture(SkullMeta meta, String texture, String signature) {
+		try {
+			Field profileField = meta.getClass().getField("profile");
+			profileField.setAccessible(true);
+			GameProfile profile = (GameProfile) profileField.get(meta);
+			setTexture(profile, texture, signature);
+			profileField.set(meta, profile);
+		} catch (NoSuchFieldException e) {
+			MagicSpells.handleException(e);
+		} catch (SecurityException e) {
+			MagicSpells.handleException(e);
+		} catch (IllegalArgumentException e) {
+			MagicSpells.handleException(e);
+		} catch (IllegalAccessException e) {
+			MagicSpells.handleException(e);
+		}
+	}
+	
+	@Override
+	public void setSkin(Player player, String skin, String signature) {
+		CraftPlayer craftPlayer = (CraftPlayer)player;
+		setTexture(craftPlayer.getProfile(), skin, signature);
+	}
+	
+	private GameProfile setTexture(GameProfile profile, String texture, String signature) {
+		profile.getProperties().put("textures", new Property("textures", texture));
+		return profile;
 	}
 
 }

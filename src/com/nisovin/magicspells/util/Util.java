@@ -401,6 +401,12 @@ public class Util {
 				((SkullMeta)meta).setOwner(config.getString("skullowner"));
 			}
 			
+			if (config.contains("texture") && config.isString("texture") && meta instanceof SkullMeta) {
+				if (config.contains("signature") && config.isString("signature")) {
+					MagicSpells.getVolatileCodeHandler().setTexture((SkullMeta)meta, config.getString("texture"), config.getString("signature"));
+				}
+			}
+			
 			// flower pot
 			/*if (config.contains("flower") && item.getType() == Material.FLOWER_POT && meta instanceof BlockStateMeta) {
 				MagicMaterial flower = MagicSpells.getItemNameResolver().resolveBlock(config.getString("flower"));

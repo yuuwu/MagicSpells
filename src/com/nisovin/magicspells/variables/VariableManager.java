@@ -35,7 +35,7 @@ import com.nisovin.magicspells.util.Util;
 import com.nisovin.magicspells.util.VariableMod;
 
 public class VariableManager implements Listener {
-
+	
 	Map<String, Variable> variables = new HashMap<String, Variable>();
 	Set<String> dirtyPlayerVars = new HashSet<String>();
 	boolean dirtyGlobalVars = false;

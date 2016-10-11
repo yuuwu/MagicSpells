@@ -1,6 +1,7 @@
 package com.nisovin.magicspells;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -625,6 +626,8 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	IntMap<String> chargesConsumed;
 	private long nextCastServer;
 	
+	private Set<String> tags;
+	
 	public Spell(MagicConfig config, String spellName) {
 		this.config = config;
 		
@@ -960,6 +963,15 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 			strXpAutoLearned = strXpAutoLearned.replace("%s", this.name);
 		}
 		
+		this.tags = new HashSet<String>(config.getStringList(section + "." + spellName + ".tags", new ArrayList<String>()));
+	}
+	
+	public Set<String> getTags() {
+		return Collections.unmodifiableSet(this.tags);
+	}
+	
+	public boolean hasTag(String tag) {
+		return tags.contains(tag);
 	}
 	
 	protected SpellReagents getConfigReagents(String option) {

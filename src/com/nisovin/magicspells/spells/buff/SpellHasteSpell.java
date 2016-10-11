@@ -1,6 +1,7 @@
 package com.nisovin.magicspells.spells.buff;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -9,6 +10,7 @@ import org.bukkit.event.EventPriority;
 import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.SpellFilter;
 /**
  * SpellHasteSpell<br>
  * <table border=1>
@@ -53,7 +55,9 @@ public class SpellHasteSpell extends BuffSpell {
     private float cooldownModAmt;
     
     private HashMap<String, Float> spellTimersModified;
-
+    
+    private SpellFilter filter;
+    
     public SpellHasteSpell(MagicConfig config, String spellname) {
         super(config, spellname);
         
@@ -61,6 +65,13 @@ public class SpellHasteSpell extends BuffSpell {
         cooldownModAmt = getConfigInt("cooldown-mod-amt", -25) / 100F;
         
         spellTimersModified = new HashMap<String, Float>();
+        
+        List<String> spells = getConfigStringList("spells", null);
+		List<String> deniedSpells = getConfigStringList("denied-spells", null);
+		List<String> tagList = getConfigStringList("spell-tags", null);
+		List<String> deniedTagList = getConfigStringList("denied-spell-tags", null);
+		
+		filter = new SpellFilter(spells, deniedSpells, tagList, deniedTagList);
     }
     
     @Override
@@ -71,6 +82,8 @@ public class SpellHasteSpell extends BuffSpell {
     
     @EventHandler (priority=EventPriority.MONITOR)
     public void onSpellSpeedCast(SpellCastEvent event) {
+    	if (!filter.check(event.getSpell())) return;
+    	
     	Float power = spellTimersModified.get(event.getCaster().getName());
     	if (power != null) {
     		// modify cast time
