@@ -826,8 +826,32 @@ public class VolatileCodeEnabled_1_9_R1 implements VolatileCodeHandle {
 	}
 	
 	private GameProfile setTexture(GameProfile profile, String texture, String signature) {
-		profile.getProperties().put("textures", new Property("textures", texture));
+		if (signature == null || signature.equalsIgnoreCase("")) {
+			profile.getProperties().put("textures", new Property("textures", texture));
+		} else {
+			profile.getProperties().put("textures", new Property("textures", texture, signature));
+		}
 		return profile;
+	}
+	
+	@Override
+	public void setTexture(SkullMeta meta, String texture, String signature,
+			String uuid, String name) {
+		try {
+			Field profileField = meta.getClass().getField("profile");
+			profileField.setAccessible(true);
+			GameProfile profile = new GameProfile(UUID.fromString(uuid), name);
+			setTexture(profile, texture, signature);
+			profileField.set(meta, profile);
+		} catch (NoSuchFieldException e) {
+			MagicSpells.handleException(e);
+		} catch (SecurityException e) {
+			MagicSpells.handleException(e);
+		} catch (IllegalArgumentException e) {
+			MagicSpells.handleException(e);
+		} catch (IllegalAccessException e) {
+			MagicSpells.handleException(e);
+		}
 	}
 
 }

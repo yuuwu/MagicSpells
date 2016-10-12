@@ -330,4 +330,11 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 	public void setSkin(Player player, String skin, String signature) {
 		//need volatile code for this
 	}
+
+	@Override
+	public void setTexture(SkullMeta meta, String texture, String signature,
+			String uuid, String name) {
+		// TODO Auto-generated method stub
+		
+	}
 }
