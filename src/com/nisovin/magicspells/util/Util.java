@@ -397,16 +397,27 @@ public class Util {
 			}
 			
 			// skull owner
-			if (config.contains("skullowner") && config.isString("skullowner") && meta instanceof SkullMeta) {
-				((SkullMeta)meta).setOwner(config.getString("skullowner"));
-			}
-			
-			if (config.contains("texture") && config.isString("texture") && meta instanceof SkullMeta) {
-				if (config.contains("signature") && config.isString("signature")) {
-					MagicSpells.getVolatileCodeHandler().setTexture((SkullMeta)meta, config.getString("texture"), config.getString("signature"));
+			if (meta instanceof SkullMeta) {
+				if (config.contains("skullowner") && config.isString("skullowner")) {
+					((SkullMeta)meta).setOwner(config.getString("skullowner"));
 				}
-			}
-			
+				
+				String uuid = null;
+				if (config.contains("uuid") && config.isString("uuid")) {
+					uuid = config.getString("uuid");
+				}
+				
+				String texture = null;
+				if (config.contains("texture") && config.isString("texture")) {
+					texture = config.getString("texture");
+				}
+				
+				String signature = null;
+				if (config.contains("signature") && config.isString("signature")) {
+					signature = config.getString("signature");
+				}
+				MagicSpells.getVolatileCodeHandler().setTexture((SkullMeta)meta, texture, signature, uuid, ((SkullMeta) meta).getOwner());
+				}
 			// flower pot
 			/*if (config.contains("flower") && item.getType() == Material.FLOWER_POT && meta instanceof BlockStateMeta) {
 				MagicMaterial flower = MagicSpells.getItemNameResolver().resolveBlock(config.getString("flower"));

@@ -120,6 +120,8 @@ public interface VolatileCodeHandle {
 	
 	public void setTexture(SkullMeta meta, String texture, String signature);
 	
+	public void setTexture(SkullMeta meta, String texture, String signature, String uuid, String name);
+	
 	public void setSkin(Player player, String skin, String signature);
 	
 }

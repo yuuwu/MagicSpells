@@ -35,6 +35,9 @@ public class PasteSpell extends TargetedSpell implements TargetedLocationSpell {
 	int tickInterval;
 	int blocksPerTick;
 	
+	boolean undo; //this will only work with instant paste for now
+	int undoDelayTicks;
+	
 	public PasteSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
@@ -53,6 +56,13 @@ public class PasteSpell extends TargetedSpell implements TargetedLocationSpell {
 		pasteAir = getConfigBoolean("paste-air", false);
 		pasteEntities = getConfigBoolean("paste-entities", true);
 		pasteAtCaster = getConfigBoolean("paste-at-caster", false);
+		
+		undo = getConfigBoolean("undo", false);
+		undoDelayTicks = getConfigInt("undo-delay-ticks", 200);
+		if (undoDelayTicks < 0) {
+			undoDelayTicks = 0;
+		}
+		
 		playBlockBreakEffect = getConfigBoolean("play-block-break-effect", true);
 		
 		float blocksPerSecond = getConfigFloat("blocks-per-second", 0);
@@ -111,8 +121,16 @@ public class PasteSpell extends TargetedSpell implements TargetedLocationSpell {
 	private boolean pasteInstant(Location target) {
 		try {
 			CuboidClipboard cuboid = SchematicFormat.MCEDIT.load(file);
-			EditSession session = new EditSession(new BukkitWorld(target.getWorld()), maxBlocks);
+			final EditSession session = new EditSession(new BukkitWorld(target.getWorld()), maxBlocks);
 			cuboid.paste(session, new Vector(target.getX(), target.getY(), target.getZ()), !pasteAir, pasteEntities);
+			MagicSpells.plugin.getServer().getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
+
+				@Override
+				public void run() {
+					session.undo(session);
+				}
+				
+			}, undoDelayTicks);
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
