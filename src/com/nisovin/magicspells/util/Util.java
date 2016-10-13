@@ -416,7 +416,9 @@ public class Util {
 				if (config.contains("signature") && config.isString("signature")) {
 					signature = config.getString("signature");
 				}
-				MagicSpells.getVolatileCodeHandler().setTexture((SkullMeta)meta, texture, signature, uuid, ((SkullMeta) meta).getOwner());
+				if (texture != null) {
+					MagicSpells.getVolatileCodeHandler().setTexture((SkullMeta)meta, texture, signature, uuid, ((SkullMeta) meta).getOwner());
+				}
 				}
 			// flower pot
 			/*if (config.contains("flower") && item.getType() == Material.FLOWER_POT && meta instanceof BlockStateMeta) {

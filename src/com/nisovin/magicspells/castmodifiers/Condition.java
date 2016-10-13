@@ -136,6 +136,7 @@ public abstract class Condition {
 		conditions.put("moneylessthan", MoneyLessThanCondition.class);
 		conditions.put("collection", MultiCondition.class);
 		conditions.put("age", AgeCondition.class);
+		conditions.put("targeting", TargetingCondition.class);
 	}
 	
 }
