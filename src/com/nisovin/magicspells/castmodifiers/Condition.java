@@ -137,6 +137,9 @@ public abstract class Condition {
 		conditions.put("collection", MultiCondition.class);
 		conditions.put("age", AgeCondition.class);
 		conditions.put("targeting", TargetingCondition.class);
+		conditions.put("powerlessthan", PowerLessThanCondition.class);
+		conditions.put("powergreaterthan", PowerGreaterThanCondition.class);
+		conditions.put("powerequals", PowerEqualsCondition.class);
 	}
 	
 }
