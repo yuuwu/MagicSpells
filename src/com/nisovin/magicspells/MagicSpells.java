@@ -906,7 +906,7 @@ public class MagicSpells extends JavaPlugin {
 	}
 	
 	static private Pattern chatVarMatchPattern = Pattern.compile("%var:[A-Za-z0-9_]+(:[0-9]+)?%", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);		
-	static public String doVariableReplacements(Player player, String string) {
+	static public String doSubjectVariableReplacements(Player player, String string) {
 		if (string != null && plugin.variableManager != null && string.contains("%var")) {
 			Matcher matcher = chatVarMatchPattern.matcher(string);
 			while (matcher.find()) {
@@ -914,6 +914,24 @@ public class MagicSpells extends JavaPlugin {
 				String[] varData = varText.substring(5, varText.length() - 1).split(":");
 				double val = plugin.variableManager.getValue(varData[0], player);
 				String sval = varData.length == 1 ? Util.getStringNumber(val, -1) : Util.getStringNumber(val, Integer.parseInt(varData[1]));
+				string = string.replace(varText, sval);
+			}
+		}
+		return string;
+	}
+	
+	
+	static private Pattern chatPlayerVarMatchPattern = Pattern.compile("%playervar:" + RegexUtil.USERNAME_REGEXP + ":[A-Za-z0-9_]+(:[0-9]+)?%", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);		
+	static public String doVariableReplacements(Player player, String string) {
+		string = doSubjectVariableReplacements(player, string);
+		if (string != null && plugin.variableManager != null && string.contains("%playervar")) {
+			Matcher matcher = chatPlayerVarMatchPattern.matcher(string);
+			while (matcher.find()) {
+				String varText = matcher.group();
+				String[] varData = varText.substring(11, varText.length() - 1).split(":");
+				String variableOwnerName = varData[0];
+				double val = plugin.variableManager.getValue(varData[1], variableOwnerName);
+				String sval = varData.length == 2 ? Util.getStringNumber(val, -1) : Util.getStringNumber(val, Integer.parseInt(varData[2]));
 				string = string.replace(varText, sval);
 			}
 		}

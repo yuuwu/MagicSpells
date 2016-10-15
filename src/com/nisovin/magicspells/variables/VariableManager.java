@@ -178,6 +178,15 @@ public class VariableManager implements Listener {
 		}
 	}
 	
+	public double getValue(String variable, String player) {
+		Variable var = variables.get(variable);
+		if (var != null) {
+			return var.getValue(player);
+		} else {
+			return 0;
+		}
+	}
+	
 	public Variable getVariable(String name) {
 		return variables.get(name);
 	}

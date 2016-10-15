@@ -8,6 +8,8 @@ public class RegexUtil {
 	
 	public static final Pattern SIMPLE_INT_PATTERN = Pattern.compile("^[0-9]+$");
 	
+	public static final String USERNAME_REGEXP = "[a-zA-Z0-9_]{3,16}";
+	
 	public static final boolean matches(Pattern pattern, String string) {
 		return pattern.matcher(string).matches();
 	}
