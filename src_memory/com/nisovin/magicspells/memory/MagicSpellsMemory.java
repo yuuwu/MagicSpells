@@ -101,7 +101,7 @@ public class MagicSpellsMemory extends JavaPlugin {
 			int used = getUsedMemory(player);
 			int max = getMaxMemory(player);
 			if (sender instanceof Player) {
-				MagicSpells.sendMessage((Player)sender, strMemoryUsage, "%memory", used+"", "%total", max+"");
+				MagicSpells.sendMessage(MagicSpells.formatMessage(strMemoryUsage, "%memory", used+"", "%total", max+""), (Player)sender, null);
 			} else {
 				String s = strMemoryUsage.replace("%memory", used+"").replace("%total", max+"");
 				sender.sendMessage(s);

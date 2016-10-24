@@ -117,7 +117,7 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 		// check if already known
 		Spellbook spellbook = MagicSpells.getSpellbook(player);
 		if (spellbook.hasSpell(spell)) {
-			MagicSpells.sendMessage(player, strAlreadyKnown, "%s", spellName);
+			MagicSpells.sendMessage(MagicSpells.formatMessage(strAlreadyKnown, "%s", spellName), player, null);
 			return;
 		}
 		
@@ -126,14 +126,14 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 		
 		// check for currency
 		if (!currency.has(player, cost.amount, cost.currency)) {
-			MagicSpells.sendMessage(player, strCantAfford, "%s", spellName, "%c", cost+"");
+			MagicSpells.sendMessage(MagicSpells.formatMessage(strCantAfford, "%s", spellName, "%c", cost+""), player, null);
 			return;
 		}
 		
 		// attempt to teach
 		boolean taught = MagicSpells.teachSpell(player, spellName);
 		if (!taught) {
-			MagicSpells.sendMessage(player, strCantLearn, "%s", spellName);
+			MagicSpells.sendMessage(MagicSpells.formatMessage(strCantLearn, "%s", spellName), player, null);
 			return;
 		}
 		
@@ -141,7 +141,7 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 		currency.remove(player, cost.amount, cost.currency);
 		
 		// success!
-		MagicSpells.sendMessage(player, strPurchased, "%s", spellName, "%c", cost+"");
+		MagicSpells.sendMessage(MagicSpells.formatMessage(strPurchased, "%s", spellName, "%c", cost+""), player, null);
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -164,7 +164,7 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 		
 		// check if can afford
 		if (!currency.has(player, cost.amount, cost.currency)) {
-			MagicSpells.sendMessage(player, strCantAffordScroll, "%s", spellName, "%c", cost+"", "%u", uses+"");
+			MagicSpells.sendMessage(MagicSpells.formatMessage(strCantAffordScroll, "%s", spellName, "%c", cost+"", "%u", uses+""), player, null);
 			return;
 		}
 		
@@ -188,7 +188,7 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 		}
 		
 		// done!
-		MagicSpells.sendMessage(player, strPurchasedScroll, "%s", spellName, "%c", cost+"", "%u", uses+"");
+		MagicSpells.sendMessage(MagicSpells.formatMessage(strPurchasedScroll, "%s", spellName, "%c", cost+"", "%u", uses+""), player, null);
 	}
 	
 	private Cost getCost(String line) {
