@@ -234,9 +234,9 @@ public class ProjectileSpell extends InstantSpell {
 						entityName = entityType.name().toLowerCase();
 					}
 				}
-				sendMessage(info.player, strHitCaster, "%t", entityName);
+				sendMessage(formatMessage(strHitCaster, "%t", entityName), info.player, MagicSpells.NULL_ARGS);
 				if (target instanceof Player) {
-					sendMessage((Player)target, strHitTarget, "%a", info.player.getDisplayName());
+					sendMessage(formatMessage(strHitTarget, "%a", info.player.getDisplayName()), (Player)target, MagicSpells.NULL_ARGS);
 				}
 			} else {
 				aoe(projectile, info);
@@ -259,7 +259,7 @@ public class ProjectileSpell extends InstantSpell {
 						playSpellEffects(EffectPosition.TARGET, loc);
 					}
 				}
-				sendMessage(info.player, strHitCaster);
+				sendMessage(strHitCaster, info.player, MagicSpells.NULL_ARGS);
 			} else {
 				aoe(projectile, info);
 			}
@@ -299,11 +299,11 @@ public class ProjectileSpell extends InstantSpell {
 				
 				// send message if player
 				if (target instanceof Player) {
-					sendMessage((Player)target, strHitTarget, "%a", info.player.getDisplayName());
+					sendMessage(formatMessage(strHitTarget, "%a", info.player.getDisplayName()), (Player)target, MagicSpells.NULL_ARGS);
 				}
 			}
 		}
-		sendMessage(info.player, strHitCaster);
+		sendMessage(strHitCaster, info.player, MagicSpells.NULL_ARGS);
 	}
 	
 	public class ProjectileListener implements Listener {

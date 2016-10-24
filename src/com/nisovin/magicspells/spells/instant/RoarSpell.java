@@ -40,7 +40,7 @@ public class RoarSpell extends InstantSpell {
 			
 			if (cancelIfNoTargets && count == 0) {
 				// nothing affected
-				sendMessage(player, strNoTarget);
+				sendMessage(strNoTarget, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			} else {
 				playSpellEffects(EffectPosition.CASTER, player);

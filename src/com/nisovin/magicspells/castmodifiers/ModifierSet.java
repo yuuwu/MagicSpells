@@ -55,7 +55,7 @@ public class ModifierSet {
 			boolean cont = modifier.apply(event);
 			if (!cont) {
 				String msg = modifier.strModifierFailed != null ? modifier.strModifierFailed : event.getSpell().getStrModifierFailed();
-				MagicSpells.sendMessage(event.getCaster(), msg);
+				MagicSpells.sendMessage(msg, event.getCaster(), event.getSpellArgs());
 				break;
 			}
 		}
@@ -75,7 +75,7 @@ public class ModifierSet {
 			boolean cont = modifier.apply(event);
 			if (!cont) {
 				if (modifier.strModifierFailed != null) {
-					MagicSpells.sendMessage(event.getCaster(), modifier.strModifierFailed);
+					MagicSpells.sendMessage(modifier.strModifierFailed, event.getCaster(), MagicSpells.NULL_ARGS);
 				}
 				break;
 			}

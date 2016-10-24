@@ -351,7 +351,7 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 	@Override
 	public boolean castAtEntity(Player caster, LivingEntity target, float power) {
 		if (target instanceof Player) {
-			return activate(caster, (Player)target, power, null, true) == PostCastAction.HANDLE_NORMALLY;
+			return activate(caster, (Player)target, power, MagicSpells.NULL_ARGS, true) == PostCastAction.HANDLE_NORMALLY;
 		} else {
 			return false;
 		}
@@ -360,7 +360,7 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 	@Override
 	public boolean castAtEntity(LivingEntity target, float power) {
 		if (target instanceof Player) {
-			return activate(null, (Player)target, power, null, true) == PostCastAction.HANDLE_NORMALLY;
+			return activate(null, (Player)target, power, MagicSpells.NULL_ARGS, true) == PostCastAction.HANDLE_NORMALLY;
 		} else {
 			return false;
 		}
@@ -546,7 +546,7 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 			if (durationEndTime != null) durationEndTime.remove(player.getName());
 			BuffManager buffman = MagicSpells.getBuffManager();
 			if (buffman != null) buffman.removeBuff(player, this);
-			sendMessage(player, strFade);
+			sendMessage(strFade, player, null);
 			playSpellEffects(EffectPosition.DISABLED, player);
 			turnOffBuff(player);
 			cancelEffects(EffectPosition.CASTER, player.getUniqueId().toString());

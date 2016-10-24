@@ -136,7 +136,7 @@ public class ScrollSpell extends CommandSpell {
 		if (state == SpellCastState.NORMAL) {
 			if (args == null || args.length == 0) {
 				// fail -- no args
-				sendMessage(player, strUsage);
+				sendMessage(strUsage, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			
@@ -144,7 +144,7 @@ public class ScrollSpell extends CommandSpell {
 			ItemStack inHand = MagicSpells.getVolatileCodeHandler().getItemInMainHand(player);
 			if (inHand.getAmount() != 1 || !itemType.equals(inHand)) {
 				// fail -- incorrect item in hand
-				sendMessage(player, strUsage);
+				sendMessage(strUsage, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			
@@ -153,10 +153,10 @@ public class ScrollSpell extends CommandSpell {
 			Spellbook spellbook = MagicSpells.getSpellbook(player);
 			if (spell == null || spellbook == null || !spellbook.hasSpell(spell)) {
 				// fail -- no such spell
-				sendMessage(player, strNoSpell);
+				sendMessage(strNoSpell, player, args);
 				return PostCastAction.ALREADY_HANDLED;			
 			} else if (requireTeachPerm && !spellbook.canTeach(spell)) {
-				sendMessage(player, strCantTeach);
+				sendMessage(strCantTeach, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			
@@ -174,7 +174,7 @@ public class ScrollSpell extends CommandSpell {
 				SpellReagents reagents = spell.getReagents().multiply(uses);
 				if (!hasReagents(player, reagents)) {
 					// missing reagents
-					sendMessage(player, strMissingReagents);
+					sendMessage(strMissingReagents, player, args);
 					return PostCastAction.ALREADY_HANDLED;
 				} else {
 					// has reagents, so just remove them
@@ -187,7 +187,7 @@ public class ScrollSpell extends CommandSpell {
 			MagicSpells.getVolatileCodeHandler().setItemInMainHand(player, inHand);
 			
 			// done
-			sendMessage(player, formatMessage(strCastSelf, "%s", spell.getName()));
+			sendMessage(formatMessage(strCastSelf, "%s", spell.getName()), player, args);
 			return PostCastAction.NO_MESSAGES;
 		}
 		return PostCastAction.HANDLE_NORMALLY;
@@ -265,7 +265,7 @@ public class ScrollSpell extends CommandSpell {
 	
 			// check for permission
 			if (requireScrollCastPermOnUse && !MagicSpells.getSpellbook(player).canCast(this)) {
-				sendMessage(player, strUseFail);
+				sendMessage(strUseFail, player, MagicSpells.NULL_ARGS);
 				return;
 			}
 					
@@ -307,7 +307,7 @@ public class ScrollSpell extends CommandSpell {
 				}
 				
 				// send msg
-				sendMessage(player, formatMessage(strOnUse, "%s", spell.getName(), "%u", (uses>=0?uses+"":"many")));
+				sendMessage(formatMessage(strOnUse, "%s", spell.getName(), "%u", (uses>=0?uses+"":"many")), player, MagicSpells.NULL_ARGS);
 			}
 		}
 	}

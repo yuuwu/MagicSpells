@@ -145,7 +145,7 @@ public class DisguiseSpell extends TargetedSpell implements TargetedEntitySpell 
 			Disguise oldDisguise = disguised.remove(player.getName().toLowerCase());
 			manager.removeDisguise(player);
 			if (oldDisguise != null && toggle) {
-				sendMessage(player, strFade);
+				sendMessage(strFade, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			TargetInfo<Player> target = getTargetPlayer(player, power);
@@ -175,7 +175,7 @@ public class DisguiseSpell extends TargetedSpell implements TargetedEntitySpell 
 		Disguise disguise = disguised.remove(player.getName().toLowerCase());
 		if (disguise != null) {
 			disguise.cancelDuration();
-			sendMessage(player, strFade);
+			sendMessage(strFade, player, MagicSpells.NULL_ARGS);
 			playSpellEffects(EffectPosition.DISABLED, player);
 		}
 	}

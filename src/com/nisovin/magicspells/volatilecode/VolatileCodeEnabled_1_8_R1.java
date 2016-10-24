@@ -238,8 +238,9 @@ public class VolatileCodeEnabled_1_8_R1 implements VolatileCodeHandle {
 	public void setTarget(LivingEntity entity, LivingEntity target) {
 		if (entity instanceof Creature) {
 			((Creature)entity).setTarget(target);
+		} else {
+			((EntityInsentient)((CraftLivingEntity)entity).getHandle()).setGoalTarget(((CraftLivingEntity)target).getHandle(), TargetReason.CUSTOM, true);
 		}
-		((EntityInsentient)((CraftLivingEntity)entity).getHandle()).setGoalTarget(((CraftLivingEntity)target).getHandle(), TargetReason.CUSTOM, true);
 	}
 
 	@Override

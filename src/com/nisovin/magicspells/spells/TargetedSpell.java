@@ -67,17 +67,17 @@ public abstract class TargetedSpell extends InstantSpell {
 		if (target instanceof Player) {
 			playerTarget = (Player)target;
 		}
-		sendMessage(caster, prepareMessage(strCastSelf, caster, targetName, playerTarget));
+		sendMessage(prepareMessage(strCastSelf, caster, targetName, playerTarget), caster, MagicSpells.NULL_ARGS);
 		if (playerTarget != null) {
-			sendMessage(playerTarget, prepareMessage(strCastTarget, caster, targetName, playerTarget));
+			sendMessage(prepareMessage(strCastTarget, caster, targetName, playerTarget), playerTarget, MagicSpells.NULL_ARGS);
 		}
-		sendMessageNear(caster, playerTarget, prepareMessage(strCastOthers, caster, targetName, playerTarget), broadcastRange);
+		sendMessageNear(caster, playerTarget, prepareMessage(strCastOthers, caster, targetName, playerTarget), broadcastRange, MagicSpells.NULL_ARGS);
 	}
 	
 	private String prepareMessage(String message, Player caster, String targetName, Player playerTarget) {
 		if (message != null && !message.isEmpty()) {
-			message = message.replace("%a", caster.getDisplayName()); //TODO make an alternative to overriding the parameter
-			message = message.replace("%t", targetName); //TODO make an alternative to overriding the parameter
+			message = message.replace("%a", caster.getDisplayName());
+			message = message.replace("%t", targetName);
 			if (playerTarget != null && MagicSpells.getVariableManager() != null && message.contains("%targetvar")) {
 				Matcher matcher = chatVarTargetMatchPattern.matcher(message);
 				while (matcher.find()) {
@@ -85,7 +85,7 @@ public abstract class TargetedSpell extends InstantSpell {
 					String[] varData = varText.substring(5, varText.length() - 1).split(":");
 					double val = MagicSpells.getVariableManager().getValue(varData[0], playerTarget);
 					String sval = varData.length == 1 ? Util.getStringNumber(val, -1) : Util.getStringNumber(val, Integer.parseInt(varData[1]));
-					message = message.replace(varText, sval); //TODO make an alternative to overriding the parameter
+					message = message.replace(varText, sval);
 				}
 			}
 			if (caster != null && MagicSpells.getVariableManager() != null && message.contains("%castervar")) { 
@@ -165,7 +165,7 @@ public abstract class TargetedSpell extends InstantSpell {
 	 */
 	protected PostCastAction noTarget(Player player, String message) {
 		fizzle(player);
-		sendMessage(player, message);
+		sendMessage(message, player, MagicSpells.NULL_ARGS);
 		if (spellOnFail != null) {
 			spellOnFail.cast(player, 1.0F);
 		}

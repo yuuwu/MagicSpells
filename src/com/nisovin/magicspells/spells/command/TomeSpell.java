@@ -83,17 +83,17 @@ public class TomeSpell extends CommandSpell {
 			Spell spell;
 			if (args == null || args.length == 0) {
 				// fail -- no args
-				sendMessage(player, strUsage);
+				sendMessage(strUsage, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			} else {
 				Spellbook spellbook = MagicSpells.getSpellbook(player);
 				spell = MagicSpells.getSpellByInGameName(args[0]);
 				if (spell == null || spellbook == null || !spellbook.hasSpell(spell)) {
 					// fail -- no spell
-					sendMessage(player, strNoSpell);
+					sendMessage(strNoSpell, player, args);
 					return PostCastAction.ALREADY_HANDLED;
 				} else if (requireTeachPerm && !MagicSpells.getSpellbook(player).canTeach(spell)) {
-					sendMessage(player, strCantTeach);
+					sendMessage(strCantTeach, player, args);
 					return PostCastAction.ALREADY_HANDLED;
 				}
 			}
@@ -101,13 +101,13 @@ public class TomeSpell extends CommandSpell {
 			ItemStack item = MagicSpells.getVolatileCodeHandler().getItemInMainHand(player);
 			if (item.getType() != Material.WRITTEN_BOOK) {
 				// fail -- no book
-				sendMessage(player, strNoBook);
+				sendMessage(strNoBook, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			
 			if (!allowOverwrite && getSpellDataFromTome(item) != null) {
 				// fail -- already has a spell
-				sendMessage(player, strAlreadyHasSpell);
+				sendMessage(strAlreadyHasSpell, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			} else {
 				int uses = defaultUses;
@@ -175,22 +175,22 @@ public class TomeSpell extends CommandSpell {
 		if (spell != null && spellbook != null) {
 			if (spellbook.hasSpell(spell)) {
 				// fail -- already known
-				sendMessage(event.getPlayer(), formatMessage(strAlreadyKnown, "%s", spell.getName()));
+				sendMessage(formatMessage(strAlreadyKnown, "%s", spell.getName()), event.getPlayer(), MagicSpells.NULL_ARGS);
 			} else if (!spellbook.canLearn(spell)) {
 				// fail -- can't learn
-				sendMessage(event.getPlayer(), formatMessage(strCantLearn, "%s", spell.getName()));
+				sendMessage(formatMessage(strCantLearn, "%s", spell.getName()), event.getPlayer(), MagicSpells.NULL_ARGS);
 			} else {
 				// call event
 				SpellLearnEvent learnEvent = new SpellLearnEvent(spell, event.getPlayer(), LearnSource.TOME, MagicSpells.getVolatileCodeHandler().getItemInMainHand(event.getPlayer()));
 				Bukkit.getPluginManager().callEvent(learnEvent);
 				if (learnEvent.isCancelled()) {
 					// fail -- plugin cancelled
-					sendMessage(event.getPlayer(), formatMessage(strCantLearn, "%s", spell.getName()));
+					sendMessage(formatMessage(strCantLearn, "%s", spell.getName()), event.getPlayer(), MagicSpells.NULL_ARGS);
 				} else {
 					// give spell
 					spellbook.addSpell(spell);
 					spellbook.save();
-					sendMessage(event.getPlayer(), formatMessage(strLearned, "%s", spell.getName()));
+					sendMessage(formatMessage(strLearned, "%s", spell.getName()), event.getPlayer(), MagicSpells.NULL_ARGS);
 					if (cancelReadOnLearn) {
 						event.setCancelled(true);
 					}

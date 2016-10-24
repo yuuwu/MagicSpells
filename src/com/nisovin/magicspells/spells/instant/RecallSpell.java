@@ -73,15 +73,15 @@ public class RecallSpell extends InstantSpell implements TargetedEntitySpell {
 				mark = getRecallLocation(player);
 			}
 			if (mark == null) {
-				sendMessage(player, strNoMark);
+				sendMessage(strNoMark, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			} else if (!allowCrossWorld && !mark.getWorld().getName().equals(player.getLocation().getWorld().getName())) {
 				// can't cross worlds
-				sendMessage(player, strOtherWorld);
+				sendMessage(strOtherWorld, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			} else if (maxRange > 0 && mark.toVector().distanceSquared(player.getLocation().toVector()) > maxRange*maxRange) {
 				// too far
-				sendMessage(player, strTooFar);
+				sendMessage(strTooFar, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			} else {
 				// all good!
@@ -93,7 +93,7 @@ public class RecallSpell extends InstantSpell implements TargetedEntitySpell {
 				} else {
 					// fail -- teleport prevented
 					MagicSpells.error("Recall teleport blocked for " + player.getName());
-					sendMessage(player, strRecallFailed);
+					sendMessage(strRecallFailed, player, args);
 					return PostCastAction.ALREADY_HANDLED;
 				}
 			}

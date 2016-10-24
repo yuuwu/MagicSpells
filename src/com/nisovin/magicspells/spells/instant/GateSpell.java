@@ -41,7 +41,7 @@ public class GateSpell extends InstantSpell {
 			if (world == null) {
 				// fail -- no world
 				MagicSpells.error(name + ": world " + this.world + " does not exist");
-				sendMessage(player, strGateFailed);
+				sendMessage(strGateFailed, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			
@@ -71,7 +71,7 @@ public class GateSpell extends InstantSpell {
 			} else {
 				// fail -- no location
 				MagicSpells.error(name + ": " + this.coords + " is not a valid location");
-				sendMessage(player, strGateFailed);
+				sendMessage(strGateFailed, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			location.setX(location.getX()+.5);
@@ -83,7 +83,7 @@ public class GateSpell extends InstantSpell {
 			if (!BlockUtils.isPathable(b) || !BlockUtils.isPathable(b.getRelative(0,1,0))) {
 				// fail -- blocked
 				MagicSpells.error(name + ": landing spot blocked");
-				sendMessage(player, strGateFailed);
+				sendMessage(strGateFailed, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			
@@ -97,7 +97,7 @@ public class GateSpell extends InstantSpell {
 			} else {
 				// fail - teleport blocked
 				MagicSpells.error(name + ": teleport prevented!");
-				sendMessage(player, strGateFailed);
+				sendMessage(strGateFailed, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 		}

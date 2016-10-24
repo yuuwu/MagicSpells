@@ -100,7 +100,7 @@ public class SpellbookSpell extends CommandSpell {
 		if (state == SpellCastState.NORMAL) {
 			if (args == null || args.length < 1 || args.length > 2 || (args.length == 2 && !args[1].matches("^[0-9]+$"))) {
 				// fail: show usage string
-				sendMessage(player, strUsage);
+				sendMessage(strUsage, player, args);
 			} else {
 				// check for reload
 				if (player.isOp() && args[0].equalsIgnoreCase("reload")) {
@@ -115,18 +115,18 @@ public class SpellbookSpell extends CommandSpell {
 				Spell spell = MagicSpells.getSpellByInGameName(args[0]);
 				if (spellbook == null || spell == null || !spellbook.hasSpell(spell)) {
 					// fail: no such spell
-					sendMessage(player, strNoSpell);
+					sendMessage(strNoSpell, player, args);
 				} else if (!MagicSpells.getSpellbook(player).canTeach(spell)) {
 					// fail: can't teach
-					sendMessage(player, strCantTeach);
+					sendMessage(strCantTeach, player, args);
 				} else {
 					Block target = getTargetedBlock(player, 10);
 					if (target == null || !spellbookBlock.equals(target)) {
 						// fail: must target a bookcase
-						sendMessage(player, strNoTarget);
+						sendMessage(strNoTarget, player, args);
 					} else if (bookLocations.contains(target.getLocation())) {
 						// fail: already a spellbook there
-						sendMessage(player, strHasSpellbook);
+						sendMessage(strHasSpellbook, player, args);
 					} else {
 						// create spellbook
 						bookLocations.add(new MagicLocation(target.getLocation()));
@@ -137,7 +137,7 @@ public class SpellbookSpell extends CommandSpell {
 							bookUses.add(Integer.parseInt(args[1]));
 						}
 						saveSpellbooks();
-						sendMessage(player, formatMessage(strCastSelf, "%s", spell.getName()));
+						sendMessage(formatMessage(strCastSelf, "%s", spell.getName()), player, args);
 						playSpellEffects(player, target.getLocation());
 						return PostCastAction.NO_MESSAGES;
 					}
@@ -168,25 +168,25 @@ public class SpellbookSpell extends CommandSpell {
 				Spell spell = MagicSpells.getSpellByInternalName(bookSpells.get(i));
 				if (spellbook == null || spell == null) {
 					// fail: something's wrong
-					sendMessage(player, strLearnError);
+					sendMessage(strLearnError, player, MagicSpells.NULL_ARGS);
 				} else if (!spellbook.canLearn(spell)) {
 					// fail: can't learn
-					sendMessage(player, formatMessage(strCantLearn, "%s", spell.getName()));
+					sendMessage(formatMessage(strCantLearn, "%s", spell.getName()), player, MagicSpells.NULL_ARGS);
 				} else if (spellbook.hasSpell(spell)) {
 					// fail: already known
-					sendMessage(player, formatMessage(strAlreadyKnown, "%s", spell.getName()));
+					sendMessage(formatMessage(strAlreadyKnown, "%s", spell.getName()), player, MagicSpells.NULL_ARGS);
 				} else {
 					// call learn event
 					SpellLearnEvent learnEvent = new SpellLearnEvent(spell, player, LearnSource.SPELLBOOK, event.getClickedBlock());
 					Bukkit.getPluginManager().callEvent(learnEvent);
 					if (learnEvent.isCancelled()) {
 						// fail: plugin cancelled it
-						sendMessage(player, formatMessage(strCantLearn, "%s", spell.getName()));
+						sendMessage(formatMessage(strCantLearn, "%s", spell.getName()), player, MagicSpells.NULL_ARGS);
 					} else {
 						// teach the spell
 						spellbook.addSpell(spell);
 						spellbook.save();
-						sendMessage(player, formatMessage(strLearned, "%s", spell.getName()));
+						sendMessage(formatMessage(strLearned, "%s", spell.getName()), player, MagicSpells.NULL_ARGS);
 						playSpellEffects(EffectPosition.DELAYED, player);
 						int uses = bookUses.get(i);
 						if (uses > 0) {
@@ -220,7 +220,7 @@ public class SpellbookSpell extends CommandSpell {
 				} else {
 					// cancel it
 					event.setCancelled(true);
-					sendMessage(event.getPlayer(), strCantDestroy);
+					sendMessage(strCantDestroy, event.getPlayer(), MagicSpells.NULL_ARGS);
 				}
 			}			
 		}

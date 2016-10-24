@@ -100,7 +100,7 @@ public class DowseSpell extends InstantSpell {
 				}
 							
 				if (foundBlock == null) {
-					sendMessage(player, strNotFound);
+					sendMessage(strNotFound, player, args);
 					return PostCastAction.ALREADY_HANDLED;
 				} else {
 					if (rotatePlayer) {
@@ -162,7 +162,7 @@ public class DowseSpell extends InstantSpell {
 				
 				
 				if (foundEntity == null) {
-					sendMessage(player, strNotFound);
+					sendMessage(strNotFound, player, args);
 					return PostCastAction.ALREADY_HANDLED;
 				} else {
 					if (rotatePlayer) {
@@ -181,7 +181,7 @@ public class DowseSpell extends InstantSpell {
 			
 			playSpellEffects(EffectPosition.CASTER, player);
 			if (getDistance) {
-				sendMessage(player, strCastSelf, "%d", distance+"");
+				sendMessage(formatMessage(strCastSelf, "%d", distance+""), player, args);
 				sendMessageNear(player, strCastOthers);
 				return PostCastAction.NO_MESSAGES;
 			}

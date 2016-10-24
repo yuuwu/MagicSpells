@@ -90,7 +90,7 @@ public final class TargetedMultiSpell extends TargetedSpell implements TargetedE
 					if (action.isSpell()) {
 						if (action.getSpell().getSpell().onCooldown(player)) {
 							// a spell is on cooldown
-							sendMessage(player, strOnCooldown);
+							sendMessage(strOnCooldown, player, args);
 							return PostCastAction.ALREADY_HANDLED;
 						}
 					}

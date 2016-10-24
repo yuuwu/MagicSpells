@@ -50,7 +50,7 @@ public class ForgetSpell extends CommandSpell {
 		if (state == SpellCastState.NORMAL) {
 			if (args == null || args.length == 0 || args.length > 2) {
 				// fail: missing args
-				sendMessage(player, strUsage);
+				sendMessage(strUsage, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 				// get caster spellbook
@@ -64,14 +64,14 @@ public class ForgetSpell extends CommandSpell {
 				List<Player> players = MagicSpells.plugin.getServer().matchPlayer(args[0]);
 				if (players.size() != 1) {
 					// fail: no player match
-					sendMessage(player, strNoTarget);
+					sendMessage(strNoTarget, player, args);
 					return PostCastAction.ALREADY_HANDLED;
 				} else {
 					target = players.get(0);
 				}
 			} else {
 				// fail: missing args
-				sendMessage(player, strUsage);
+				sendMessage(strUsage, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			
@@ -86,14 +86,14 @@ public class ForgetSpell extends CommandSpell {
 			}
 			if (spell == null && !all) {
 				// fail: no spell match
-				sendMessage(player, strNoSpell);
+				sendMessage(strNoSpell, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			
 			// check if caster has spell
 			if (!all && !casterSpellbook.hasSpell(spell)) {
 				// fail: caster doesn't have spell
-				sendMessage(player, strNoSpell);
+				sendMessage(strNoSpell, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			
@@ -101,7 +101,7 @@ public class ForgetSpell extends CommandSpell {
 			Spellbook targetSpellbook = MagicSpells.getSpellbook(target);
 			if (targetSpellbook == null || (!all && !targetSpellbook.hasSpell(spell))) {
 				// fail: error
-				sendMessage(player, strDoesntKnow);
+				sendMessage(strDoesntKnow, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			} 
 			
@@ -110,12 +110,12 @@ public class ForgetSpell extends CommandSpell {
 				targetSpellbook.removeSpell(spell);
 				targetSpellbook.save();
 				if (!player.equals(target)) {
-					sendMessage(target, formatMessage(strCastTarget, "%a", player.getDisplayName(), "%s", spell.getName(), "%t", target.getDisplayName())); //TODO check for null access
-					sendMessage(player, formatMessage(strCastSelf, "%a", player.getDisplayName(), "%s", spell.getName(), "%t", target.getDisplayName()));
+					sendMessage(formatMessage(strCastTarget, "%a", player.getDisplayName(), "%s", spell.getName(), "%t", target.getDisplayName()), target, args); //TODO check for null access
+					sendMessage(formatMessage(strCastSelf, "%a", player.getDisplayName(), "%s", spell.getName(), "%t", target.getDisplayName()), player, args);
 					playSpellEffects(EffectPosition.CASTER, player);
 					playSpellEffects(EffectPosition.TARGET, target);
 				} else {
-					sendMessage(player, strCastSelfTarget, "%s", spell.getName()); //TODO check for null access
+					sendMessage(formatMessage(strCastSelfTarget, "%s", spell.getName()), player, args); //TODO check for null access
 					playSpellEffects(EffectPosition.CASTER, player);
 				}
 				return PostCastAction.NO_MESSAGES;
@@ -124,11 +124,11 @@ public class ForgetSpell extends CommandSpell {
 				targetSpellbook.addGrantedSpells();
 				targetSpellbook.save();
 				if (!player.equals(target)) {
-					sendMessage(player, strResetTarget, "%t", target.getDisplayName());
+					sendMessage(formatMessage(strResetTarget, "%t", target.getDisplayName()), player, args);
 					playSpellEffects(EffectPosition.CASTER, player);
 					playSpellEffects(EffectPosition.TARGET, target);
 				} else {
-					sendMessage(player, strResetSelf);
+					sendMessage(strResetSelf, player, args);
 					playSpellEffects(EffectPosition.CASTER, player);
 				}
 				return PostCastAction.NO_MESSAGES;
@@ -170,7 +170,7 @@ public class ForgetSpell extends CommandSpell {
 							if (!all) {
 								targetSpellbook.removeSpell(spell);
 								targetSpellbook.save();
-								sendMessage(target, formatMessage(strCastTarget, "%a", getConsoleName(), "%s", spell.getName(), "%t", target.getDisplayName())); //TODO check for null access
+								sendMessage(formatMessage(strCastTarget, "%a", getConsoleName(), "%s", spell.getName(), "%t", target.getDisplayName()), target, args); //TODO check for null access
 								sender.sendMessage(formatMessage(strCastSelf, "%a", getConsoleName(), "%s", spell.getName(), "%t", target.getDisplayName()));
 							} else {
 								targetSpellbook.removeAllSpells();

@@ -52,36 +52,36 @@ public class UnbindSpell extends CommandSpell {
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			if (args == null || args.length == 0) {
-				sendMessage(player, strUsage);
+				sendMessage(strUsage, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			} else {
 				Spell spell = MagicSpells.getSpellByInGameName(Util.arrayJoin(args, ' '));
 				Spellbook spellbook = MagicSpells.getSpellbook(player);
 				if (spell == null || spellbook == null) {
 					// fail - no such spell, or no spellbook
-					sendMessage(player, strNoSpell);
+					sendMessage(strNoSpell, player, args);
 					return PostCastAction.ALREADY_HANDLED;
 				} else if (!spellbook.hasSpell(spell)) {
 					// fail - doesn't know spell
-					sendMessage(player, strNoSpell);
+					sendMessage(strNoSpell, player, args);
 					return PostCastAction.ALREADY_HANDLED;
 				} else if (!spell.canCastWithItem()) {
 					// fail - spell can't be bound
-					sendMessage(player, strCantBindSpell);
+					sendMessage(strCantBindSpell, player, args);
 					return PostCastAction.ALREADY_HANDLED;
 				} else {
 					if (allowedSpells != null && !allowedSpells.contains(spell)) {
-						sendMessage(player, strCantUnbind);
+						sendMessage(strCantUnbind, player, args);
 						return PostCastAction.ALREADY_HANDLED;
 					}
 					CastItem item = new CastItem(MagicSpells.getVolatileCodeHandler().getItemInMainHand(player));
 					boolean removed = spellbook.removeCastItem(spell, item);
 					if (!removed) {
-						sendMessage(player, strNotBound);
+						sendMessage(strNotBound, player, args);
 						return PostCastAction.ALREADY_HANDLED;
 					}
 					spellbook.save();
-					sendMessage(player, formatMessage(strCastSelf, "%s", spell.getName()));
+					sendMessage(formatMessage(strCastSelf, "%s", spell.getName()), player, args);
 					playSpellEffects(EffectPosition.CASTER, player);
 					return PostCastAction.NO_MESSAGES;
 				}

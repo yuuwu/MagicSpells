@@ -58,46 +58,46 @@ public class TeachSpell extends CommandSpell {
 		if (state == SpellCastState.NORMAL) {
 			if (args == null || args.length != 2) {
 				// fail: missing args
-				sendMessage(player, strUsage);
+				sendMessage(strUsage, player, args);
 			} else {
 				List<Player> players = MagicSpells.plugin.getServer().matchPlayer(args[0]);
 				if (players.size() != 1) {
 					// fail: no player match
-					sendMessage(player, strNoTarget);
+					sendMessage(strNoTarget, player, args);
 				} else {
 					Spell spell = MagicSpells.getSpellByInGameName(args[1]);
 					Player target = players.get(0);
 					if (spell == null) {
 						// fail: no spell match
-						sendMessage(player, strNoSpell);
+						sendMessage(strNoSpell, player, args);
 					} else {
 						Spellbook spellbook = MagicSpells.getSpellbook(player);
 						if (spellbook == null || (!spellbook.hasSpell(spell) && requireKnownSpell)) {
 							// fail: player doesn't have spell
-							sendMessage(player, strNoSpell);
+							sendMessage(strNoSpell, player, args);
 						} else if (!spellbook.canTeach(spell)) {
 							// fail: cannot teach
-							sendMessage(player, strCantTeach);
+							sendMessage(strCantTeach, player, args);
 						} else {
 							// yay! can learn!
 							Spellbook targetSpellbook = MagicSpells.getSpellbook(target);
 							if (targetSpellbook == null || !targetSpellbook.canLearn(spell)) {
 								// fail: no spellbook for some reason or can't learn the spell
-								sendMessage(player, strCantLearn);
+								sendMessage(strCantLearn, player, args);
 							} else if (targetSpellbook.hasSpell(spell)) {
 								// fail: target already knows spell
-								sendMessage(player, strAlreadyKnown);
+								sendMessage(strAlreadyKnown, player, args);
 							} else {
 								// call event
 								boolean cancelled = callEvent(spell, target, player);
 								if (cancelled) {
 									// fail: plugin cancelled it
-									sendMessage(player, strCantLearn);
+									sendMessage(strCantLearn, player, args);
 								} else {									
 									targetSpellbook.addSpell(spell);
 									targetSpellbook.save();
-									sendMessage(target, formatMessage(strCastTarget, "%a", player.getDisplayName(), "%s", spell.getName(), "%t", target.getDisplayName()));
-									sendMessage(player, formatMessage(strCastSelf, "%a", player.getDisplayName(), "%s", spell.getName(), "%t", target.getDisplayName()));
+									sendMessage(formatMessage(strCastTarget, "%a", player.getDisplayName(), "%s", spell.getName(), "%t", target.getDisplayName()), target, args);
+									sendMessage(formatMessage(strCastSelf, "%a", player.getDisplayName(), "%s", spell.getName(), "%t", target.getDisplayName()), player, args);
 									playSpellEffects(EffectPosition.CASTER, player);
 									playSpellEffects(EffectPosition.TARGET, target);
 									return PostCastAction.NO_MESSAGES;
@@ -145,7 +145,7 @@ public class TeachSpell extends CommandSpell {
 						} else {
 							targetSpellbook.addSpell(spell);
 							targetSpellbook.save();
-							sendMessage(players.get(0), formatMessage(strCastTarget, "%a", getConsoleName(), "%s", spell.getName(), "%t", players.get(0).getDisplayName()));
+							sendMessage(formatMessage(strCastTarget, "%a", getConsoleName(), "%s", spell.getName(), "%t", players.get(0).getDisplayName()), players.get(0), args);
 							sender.sendMessage(formatMessage(strCastSelf, "%a", getConsoleName(), "%s", spell.getName(), "%t", players.get(0).getDisplayName()));
 						}
 					}

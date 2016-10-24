@@ -136,7 +136,7 @@ public class RepairSpell extends InstantSpell {
 				}
 			}
 			if (repaired == 0) {
-				sendMessage(player, strNothingToRepair);
+				sendMessage(strNothingToRepair, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			} else {
 				playSpellEffects(EffectPosition.CASTER, player);

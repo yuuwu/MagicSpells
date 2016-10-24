@@ -84,7 +84,7 @@ public class PortalSpell extends InstantSpell {
 			}
 			if (loc == null) {
 				// no mark
-				sendMessage(player, strNoMark);
+				sendMessage(strNoMark, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			} else {
 				
@@ -93,12 +93,12 @@ public class PortalSpell extends InstantSpell {
 				double distanceSq = 0;
 				if (maxDistanceSq > 0) {
 					if (!loc.getWorld().equals(playerLoc.getWorld())) {
-						sendMessage(player, strTooFar);
+						sendMessage(strTooFar, player, args);
 						return PostCastAction.ALREADY_HANDLED;
 					} else {
 						distanceSq = playerLoc.distanceSquared(loc);
 						if (distanceSq > maxDistanceSq) {
-							sendMessage(player, strTooFar);
+							sendMessage(strTooFar, player, args);
 							return PostCastAction.ALREADY_HANDLED;
 						}
 					}
@@ -107,7 +107,7 @@ public class PortalSpell extends InstantSpell {
 					if (loc.getWorld().equals(playerLoc.getWorld())) {
 						if (distanceSq == 0) distanceSq = playerLoc.distanceSquared(loc);
 						if (distanceSq < minDistanceSq) {
-							sendMessage(player, strTooClose);
+							sendMessage(strTooClose, player, args);
 							return PostCastAction.ALREADY_HANDLED;
 						}
 					}
@@ -200,7 +200,7 @@ public class PortalSpell extends InstantSpell {
 		
 		boolean checkTeleport(Player player) {
 			if (cooldownUntil.containsKey(player.getName()) && cooldownUntil.get(player.getName()) > System.currentTimeMillis()) {
-				sendMessage(player, strTeleportCooldownFail);
+				sendMessage(strTeleportCooldownFail, player, MagicSpells.NULL_ARGS);
 				return false;
 			}
 			cooldownUntil.put(player.getName(), System.currentTimeMillis() + teleportCooldown);
@@ -211,14 +211,14 @@ public class PortalSpell extends InstantSpell {
 					if (hasReagents(player, teleportCost)) {
 						payer = player;
 					} else {
-						sendMessage(player, strTeleportCostFail);
+						sendMessage(strTeleportCostFail, player, MagicSpells.NULL_ARGS);
 						return false;
 					}
 				} else {
 					if (hasReagents(caster, teleportCost)) {
 						payer = caster;
 					} else {
-						sendMessage(player, strTeleportCostFail);
+						sendMessage(strTeleportCostFail, player, MagicSpells.NULL_ARGS);
 						return false;
 					}
 				}

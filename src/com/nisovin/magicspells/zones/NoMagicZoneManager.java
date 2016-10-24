@@ -106,7 +106,7 @@ public class NoMagicZoneManager {
 		for (NoMagicZone zone : zonesOrdered) {
 			ZoneCheckResult result = zone.check(player.getLocation(), spell);
 			if (result == ZoneCheckResult.DENY) {
-				MagicSpells.sendMessage(player, zone.getMessage());
+				MagicSpells.sendMessage(zone.getMessage(), player, null);
 				return;
 			}
 		}

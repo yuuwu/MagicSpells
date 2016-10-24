@@ -15,6 +15,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
+import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spells.TargetedEntityFromLocationSpell;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
@@ -75,13 +76,13 @@ public class SummonSpell extends TargetedSpell implements TargetedEntitySpell, T
 			// check usage
 			if (targetName.equals("")) {
 				// fail -- show usage
-				sendMessage(player, strUsage);
+				sendMessage(strUsage, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			
 			// check location
 			if (landLoc == null || !BlockUtils.isSafeToStand(landLoc.clone())) {
-				sendMessage(player, strUsage);
+				sendMessage(strUsage, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			
@@ -107,10 +108,10 @@ public class SummonSpell extends TargetedSpell implements TargetedEntitySpell, T
 			if (requireAcceptance) {
 				pendingSummons.put(target, landLoc);
 				pendingTimes.put(target, System.currentTimeMillis());
-				sendMessage(target, strSummonPending, "%a", player.getDisplayName());
+				sendMessage(formatMessage(strSummonPending, "%a", player.getDisplayName()), target, args);
 			} else {
 				target.teleport(landLoc);
-				sendMessage(target, strSummonAccepted, "%a", player.getDisplayName());
+				sendMessage(formatMessage(strSummonAccepted, "%a", player.getDisplayName()), target, args);
 			}
 			
 			sendMessages(player, target);
@@ -126,11 +127,11 @@ public class SummonSpell extends TargetedSpell implements TargetedEntitySpell, T
 			Player player = event.getPlayer();
 			if (maxAcceptDelay > 0 && pendingTimes.get(player) + maxAcceptDelay*1000 < System.currentTimeMillis()) {
 				// waited too long
-				sendMessage(player, strSummonExpired);
+				sendMessage(strSummonExpired, player, MagicSpells.NULL_ARGS);
 			} else {
 				// all ok, teleport
 				player.teleport(pendingSummons.get(player));
-				sendMessage(player, strSummonAccepted);
+				sendMessage(strSummonAccepted, player, MagicSpells.NULL_ARGS);
 			}
 			pendingSummons.remove(player);
 			pendingTimes.remove(player);

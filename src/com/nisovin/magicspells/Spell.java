@@ -1209,7 +1209,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 			action = PostCastAction.ALREADY_HANDLED;
 		} else {
 			action = PostCastAction.DELAYED;
-			sendMessage(player, strCastStart);
+			sendMessage(strCastStart, player, args);
 			playSpellEffects(EffectPosition.START_CAST, player);
 			if (MagicSpells.plugin.useExpBarAsCastTimeBar) {
 				new DelayedSpellCastWithBar(spellCast);
@@ -1308,38 +1308,38 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 					removeReagents(player, spellCast.getReagents());
 				}
 				if (action == PostCastAction.HANDLE_NORMALLY || action == PostCastAction.MESSAGES_ONLY || action == PostCastAction.NO_COOLDOWN || action == PostCastAction.NO_REAGENTS) {
-					sendMessages(player);
+					sendMessages(player, spellCast.getSpellArgs());
 				}
 				if (experience > 0) {
 					player.giveExp(experience);
 				}
 			} else if (state == SpellCastState.ON_COOLDOWN) {
-				MagicSpells.sendMessage(player, formatMessage(strOnCooldown, "%c", Math.round(getCooldown(player))+""));
+				MagicSpells.sendMessage(formatMessage(strOnCooldown, "%c", Math.round(getCooldown(player))+""), player, spellCast.getSpellArgs());
 				if (soundOnCooldown != null) {
 					MagicSpells.getVolatileCodeHandler().playSound(player, soundOnCooldown, 1f, 1f);
 				}
 			} else if (state == SpellCastState.MISSING_REAGENTS) {
-				MagicSpells.sendMessage(player, strMissingReagents);
+				MagicSpells.sendMessage(strMissingReagents, player, spellCast.getSpellArgs());
 				if (MagicSpells.plugin.showStrCostOnMissingReagents && strCost != null && !strCost.isEmpty()) {
-					MagicSpells.sendMessage(player, "    (" + strCost + ")");
+					MagicSpells.sendMessage("    (" + strCost + ")", player, spellCast.getSpellArgs());
 				}
 				if (soundMissingReagents != null) {
 					MagicSpells.getVolatileCodeHandler().playSound(player, soundMissingReagents, 1f, 1f);
 				}
 			} else if (state == SpellCastState.CANT_CAST) {
-				MagicSpells.sendMessage(player, strCantCast);
+				MagicSpells.sendMessage(strCantCast, player, spellCast.getSpellArgs());
 			} else if (state == SpellCastState.NO_MAGIC_ZONE) {
 				MagicSpells.plugin.noMagicZones.sendNoMagicMessage(player, this);
 			} else if (state == SpellCastState.WRONG_WORLD) {
-				MagicSpells.sendMessage(player, strWrongWorld);
+				MagicSpells.sendMessage(strWrongWorld, player, spellCast.getSpellArgs());
 			}
 		}
 		SpellCastedEvent event = new SpellCastedEvent(this, player, state, spellCast.getPower(), spellCast.getSpellArgs(), cooldown, reagents, action);
 		Bukkit.getPluginManager().callEvent(event);
 	}
 	
-	public void sendMessages(Player player) {
-		sendMessage(player, strCastSelf, "%a", player.getDisplayName());
+	public void sendMessages(Player player, String[] args) {
+		sendMessage(formatMessage(strCastSelf, "%a", player.getDisplayName()), player, args);
 		sendMessageNear(player, formatMessage(strCastOthers, "%a", player.getDisplayName()));
 	}
 
@@ -2120,7 +2120,12 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	 * @param replacements the replacements to be made, in pairs
 	 */
 	protected void sendMessage(Player player, String message, String... replacements) {
-		sendMessage(player, formatMessage(message, replacements));
+		sendMessage(formatMessage(message, replacements), player, null);
+	}
+	
+	
+	protected void sendMessage(Player player, String message) {
+		sendMessage(message, player, null);
 	}
 	
 	/**
@@ -2128,8 +2133,8 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	 * @param player the player to send the message to
 	 * @param message the message to send
 	 */
-	protected void sendMessage(Player player, String message) {
-		MagicSpells.sendMessage(player, message);
+	protected void sendMessage(String message, Player player, String[] args) {
+		MagicSpells.sendMessage(message, player, args);
 	}
 	
 	/**
@@ -2138,7 +2143,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	 * @param message the message to send
 	 */
 	protected void sendMessageNear(Player player, String message) {
-		sendMessageNear(player, null, message, broadcastRange);
+		sendMessageNear(player, null, message, broadcastRange, MagicSpells.NULL_ARGS);
 	}
 	
 	/**
@@ -2147,7 +2152,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	 * @param message the message to send
 	 * @param range the broadcast range
 	 */
-	protected void sendMessageNear(Player player, Player ignore, String message, int range) {
+	protected void sendMessageNear(Player player, Player ignore, String message, int range, String[] args) {
 		if (message != null && !message.equals("") && !player.hasPermission("magicspells.silent")) {
 			String [] msgs = message.replaceAll("&([0-9a-f])", "\u00A7$1").split("\n");
 			List<Entity> entities = player.getNearbyEntities(range*2, range*2, range*2);
@@ -2433,7 +2438,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		}
 		
 		private void interrupt() {
-			sendMessage(player, strInterrupted);
+			sendMessage(strInterrupted, player, null);
 			if (spellOnInterrupt != null) {
 				spellOnInterrupt.castSpell(player, SpellCastState.NORMAL, spellCast.getPower(), null); // null args
 			}
@@ -2516,7 +2521,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		}
 		
 		private void interrupt() {
-			sendMessage(player, strInterrupted);
+			sendMessage(strInterrupted, player, null);
 			end();
 			if (spellOnInterrupt != null) {
 				spellOnInterrupt.castSpell(player, SpellCastState.NORMAL, spellCast.getPower(), null);

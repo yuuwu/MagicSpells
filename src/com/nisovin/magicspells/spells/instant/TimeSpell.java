@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.util.MagicConfig;
@@ -32,7 +33,7 @@ public class TimeSpell extends InstantSpell implements TargetedLocationSpell {
 	void setTime(World world) {
 		world.setTime(timeToSet);
 		for (Player p : world.getPlayers()) {
-			sendMessage(p, strAnnounce);
+			sendMessage(strAnnounce, p, MagicSpells.NULL_ARGS);
 		}
 	}
 

@@ -77,6 +77,9 @@ public class MagicSpells extends JavaPlugin {
 	//change this when you want to start tweaking the source and fixing bugs
 	public static Level DEVELOPER_DEBUG_LEVEL = Level.OFF;
 	
+	//pass this to methods that want spell arguments passed but doesn't have any to be passed
+	public static final String[] NULL_ARGS = null;
+	
 	VolatileCodeHandle volatileCodeHandle;
 	
 	boolean debug;
@@ -860,7 +863,7 @@ public class MagicSpells extends JavaPlugin {
 	 * @param replacements the replacements to make, in pairs.
 	 * @return the formatted string
 	 */
-	static public String formatMessage(String message, String... replacements) {
+	public static String formatMessage(String message, String... replacements) {
 		if (message == null) return null;
 		
 		String msg = message;
@@ -882,8 +885,12 @@ public class MagicSpells extends JavaPlugin {
 	 * @param message the message to send
 	 * @param replacements the replacements to be made, in pairs
 	 */
-	static public void sendMessage(Player player, String message, String... replacements) {
-		sendMessage(player, formatMessage(message, replacements));
+	public static void sendMessageAndFormat(Player player, String message, String... replacements) {
+		sendMessage(formatMessage(message, replacements), player, null);
+	}
+	
+	public static void sendMessage(Player player, String message) {
+		sendMessage(message, player, null);
 	}
 	
 	/**
@@ -891,10 +898,10 @@ public class MagicSpells extends JavaPlugin {
 	 * @param player the player to send the message to
 	 * @param message the message to send
 	 */
-	static public void sendMessage(Player player, String message) {
+	public static void sendMessage(String message, Player player, String[] args) {
 		if (message != null && !message.equals("")) {
 			// do var replacements
-			message = doVariableReplacements(player, message);
+			message = doArgumentAndVariableSubstitution(message, player, args);
 			// send messages
 			String [] msgs = message.replaceAll("&([0-9a-fk-or])", "\u00A7$1").split("\n");
 			for (String msg : msgs) {
@@ -905,8 +912,8 @@ public class MagicSpells extends JavaPlugin {
 		}
 	}
 	
-	static private Pattern chatVarMatchPattern = Pattern.compile("%var:[A-Za-z0-9_]+(:[0-9]+)?%", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);		
-	static public String doSubjectVariableReplacements(Player player, String string) {
+	private static Pattern chatVarMatchPattern = Pattern.compile("%var:[A-Za-z0-9_]+(:[0-9]+)?%", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);		
+	public static String doSubjectVariableReplacements(Player player, String string) {
 		if (string != null && plugin.variableManager != null && string.contains("%var")) {
 			Matcher matcher = chatVarMatchPattern.matcher(string);
 			while (matcher.find()) {
@@ -921,8 +928,8 @@ public class MagicSpells extends JavaPlugin {
 	}
 	
 	
-	static private Pattern chatPlayerVarMatchPattern = Pattern.compile("%playervar:" + RegexUtil.USERNAME_REGEXP + ":[A-Za-z0-9_]+(:[0-9]+)?%", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);		
-	static public String doVariableReplacements(Player player, String string) {
+	private static Pattern chatPlayerVarMatchPattern = Pattern.compile("%playervar:" + RegexUtil.USERNAME_REGEXP + ":[A-Za-z0-9_]+(:[0-9]+)?%", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);		
+	public static String doVariableReplacements(Player player, String string) {
 		string = doSubjectVariableReplacements(player, string);
 		if (string != null && plugin.variableManager != null && string.contains("%playervar")) {
 			Matcher matcher = chatPlayerVarMatchPattern.matcher(string);
@@ -936,6 +943,31 @@ public class MagicSpells extends JavaPlugin {
 			}
 		}
 		return string;
+	}
+	
+	//%arg:(index):defaultValue%
+	private static Pattern argumentSubstitutionPattern = Pattern.compile("%arg:[0-9]+:[0-9a-zA-Z_]+%");
+	public static String doArgumentSubstitution(String string, String[] args) {
+		if (string != null && argumentSubstitutionPattern != null && string.contains("%arg")) {
+			Matcher matcher = argumentSubstitutionPattern.matcher(string);
+			while (matcher.find()) {
+				String argText = matcher.group();
+				String[] argData = argText.substring(5, argText.length()-1).split(":");
+				int argIndex = Integer.parseInt(argData[0]) - 1;
+				String newValue;
+				if (args != null && args.length < argIndex + 1) {
+					newValue = args[argIndex];
+				} else {
+					newValue = argData[1];
+				}
+				string = string.replace(argText, newValue);
+			}
+		}
+		return string;
+	}
+	
+	public static String doArgumentAndVariableSubstitution(String string, Player player, String[] args) {
+		return doVariableReplacements(player, doArgumentSubstitution(string, args));
 	}
 	
 	public static void registerEvents(final Listener listener) {

@@ -42,7 +42,7 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 				args = Util.splitParams(args); //TODO find an alternative to reassigning the parameter
 				if (args == null || args.length == 0) {
 					if (sender instanceof Player) {
-						MagicSpells.sendMessage((Player)sender, plugin.strCastUsage);
+						MagicSpells.sendMessage(plugin.strCastUsage, (Player)sender, MagicSpells.NULL_ARGS);
 					} else {
 						sender.sendMessage(plugin.textColor + plugin.strCastUsage);
 					}
@@ -319,10 +319,10 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 							}
 							spell.cast(player, spellArgs);
 						} else {
-							MagicSpells.sendMessage(player, spell.getStrWrongCastItem());
+							MagicSpells.sendMessage(spell.getStrWrongCastItem(), player, null);
 						}
 					} else {
-						MagicSpells.sendMessage(player, plugin.strUnknownSpell);
+						MagicSpells.sendMessage(plugin.strUnknownSpell, player, null);
 					}
 				} else { // not a player
 					Spell spell = plugin.spellNames.get(args[0].toLowerCase());

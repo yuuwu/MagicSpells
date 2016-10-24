@@ -1,5 +1,6 @@
 package com.nisovin.magicspells.spells;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -170,7 +171,7 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 				}
 			}
 			
-			open(player, opener, entityTarget, locTarget, power);
+			open(player, opener, entityTarget, locTarget, power, args);
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}
@@ -179,9 +180,9 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 		return item.getType().name() + "_" + item.getDurability() + "_" + item.getItemMeta().getDisplayName();
 	}
 	
-	void open(final Player caster, Player opener, LivingEntity entityTarget, Location locTarget, final float power) {
+	void open(final Player caster, Player opener, LivingEntity entityTarget, Location locTarget, final float power, final String[] args) {
 		if (delay < 0) {
-			openMenu(caster, opener, entityTarget, locTarget, power);
+			openMenu(caster, opener, entityTarget, locTarget, power, args);
 		} else {
 			final Player p = opener;
 			final LivingEntity e = entityTarget;
@@ -189,13 +190,13 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 			MagicSpells.scheduleDelayedTask(new Runnable() {
 				@Override
 				public void run() {
-					openMenu(caster, p, e, l, power);
+					openMenu(caster, p, e, l, power, args);
 				}
 			}, delay);
 		}
 	}
 	
-	void openMenu(Player caster, Player opener, LivingEntity entityTarget, Location locTarget, float power) {
+	void openMenu(Player caster, Player opener, LivingEntity entityTarget, Location locTarget, float power, String[] args) {
 		castPower.put(opener.getName(), power);
 		if (requireEntityTarget && entityTarget != null) {
 			castEntityTarget.put(opener.getName(), entityTarget);
@@ -205,7 +206,7 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 		}
 		
 		Inventory inv = Bukkit.createInventory(opener, size, title);
-		applyOptionsToInventory(opener, inv);
+		applyOptionsToInventory(opener, inv, args);
 		opener.openInventory(inv);
 		
 		if (entityTarget != null && caster != null) {
@@ -221,7 +222,7 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 		}
 	}
 	
-	void applyOptionsToInventory(Player opener, Inventory inv) {
+	void applyOptionsToInventory(Player opener, Inventory inv, String[] args) {
 		inv.clear();
 		for (MenuOption option : options.values()) {
 			if (option.spell != null && inv.getItem(option.slot) == null) {
@@ -232,11 +233,11 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 				}
 				ItemStack item = option.item.clone();
 				ItemMeta meta = item.getItemMeta();
-				meta.setDisplayName(MagicSpells.doVariableReplacements(opener, meta.getDisplayName()));
+				meta.setDisplayName(MagicSpells.doArgumentAndVariableSubstitution(meta.getDisplayName(), opener, args));
 				List<String> lore = meta.getLore();
 				if (lore != null && lore.size() > 1) {
 					for (int i = 0; i < lore.size() - 1; i++) {
-						lore.set(i, MagicSpells.doVariableReplacements(opener, lore.get(i)));
+						lore.set(i, MagicSpells.doArgumentAndVariableSubstitution(lore.get(i), opener, args));
 					}
 					meta.setLore(lore);
 				}
@@ -291,7 +292,7 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 						}
 					}, 0);
 				} else {
-					applyOptionsToInventory(player, event.getView().getTopInventory());
+					applyOptionsToInventory(player, event.getView().getTopInventory(), MagicSpells.NULL_ARGS);
 				}
 			}
 		}
@@ -316,7 +317,7 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 				return false;
 			}
 		}
-		open(caster, opener, target, null, power);
+		open(caster, opener, target, null, power, MagicSpells.NULL_ARGS);
 		return true;
 	}
 
@@ -325,7 +326,7 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 		if (!targetOpensMenuInstead) return false;
 		if (requireEntityTarget && !validTargetList.canTarget(target)) return false;
 		if (target instanceof Player) {
-			open(null, (Player)target, null, null, power);
+			open(null, (Player)target, null, null, power, MagicSpells.NULL_ARGS);
 			return true;
 		} else {
 			return false;
@@ -334,7 +335,7 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 
 	@Override
 	public boolean castAtLocation(Player caster, Location target, float power) {
-		open(caster, caster, null, target, power);
+		open(caster, caster, null, target, power, MagicSpells.NULL_ARGS);
 		return true;
 	}
 
@@ -345,10 +346,11 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 	
 	@Override
 	public boolean castFromConsole(CommandSender sender, String[] args) {
-		if (args.length == 1) {
+		if (args.length >= 1) {
 			Player player = PlayerNameUtils.getPlayer(args[0]);
+			String[] spellArgs = (args.length > 1) ? Arrays.copyOfRange(args, 1, args.length) : null;
 			if (player != null) {
-				open(null, player, null, null, 1);
+				open(null, player, null, null, 1, spellArgs);
 				return true;
 			}
 		}

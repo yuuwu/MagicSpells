@@ -257,7 +257,7 @@ public class PassiveSpell extends Spell {
 					}
 				}
 				removeReagents(caster, event.getReagents());
-				sendMessage(caster, strCastSelf);
+				sendMessage(strCastSelf, caster, MagicSpells.NULL_ARGS);
 				SpellCastedEvent event2 = new SpellCastedEvent(this, caster, SpellCastState.NORMAL, basePower, null, event.getCooldown(), event.getReagents(), PostCastAction.HANDLE_NORMALLY);
 				Bukkit.getPluginManager().callEvent(event2);
 				disabled = false;
@@ -269,11 +269,11 @@ public class PassiveSpell extends Spell {
 			}
 		} else if (state != SpellCastState.NORMAL && sendFailureMessages) {
 			if (state == SpellCastState.ON_COOLDOWN) {
-				MagicSpells.sendMessage(caster, formatMessage(strOnCooldown, "%c", Math.round(getCooldown(caster))+""));
+				MagicSpells.sendMessage(formatMessage(strOnCooldown, "%c", Math.round(getCooldown(caster))+""), caster, null);
 			} else if (state == SpellCastState.MISSING_REAGENTS) {
-				MagicSpells.sendMessage(caster, strMissingReagents);
+				MagicSpells.sendMessage(strMissingReagents, caster, MagicSpells.NULL_ARGS);
 				if (MagicSpells.showStrCostOnMissingReagents() && strCost != null && !strCost.isEmpty()) {
-					MagicSpells.sendMessage(caster, "    (" + strCost + ")");
+					MagicSpells.sendMessage("    (" + strCost + ")", caster, MagicSpells.NULL_ARGS);
 				}
 			}
 		}

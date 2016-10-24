@@ -81,7 +81,7 @@ public class CastListener implements Listener {
 				}
 				if (spell != null) {
 					// send message
-					MagicSpells.sendMessage(player, plugin.strSpellChange, "%s", spell.getName());
+					MagicSpells.sendMessageAndFormat(player, plugin.strSpellChange, "%s", spell.getName());
 					// show spell icon
 					if (plugin.spellIconSlot >= 0) {
 						showIcon(player, plugin.spellIconSlot, spell.getSpellIcon());
@@ -117,7 +117,7 @@ public class CastListener implements Listener {
 						if (plugin.manaPotionCooldown > 0) {
 							Long c = plugin.manaPotionCooldowns.get(player);
 							if (c != null && c > System.currentTimeMillis()) {
-								MagicSpells.sendMessage(player, plugin.strManaPotionOnCooldown.replace("%c", ""+(int)((c-System.currentTimeMillis())/1000)));
+								MagicSpells.sendMessage(plugin.strManaPotionOnCooldown.replace("%c", ""+(int)((c-System.currentTimeMillis())/1000)), player, MagicSpells.NULL_ARGS);
 								return;
 							}
 						}

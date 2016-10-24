@@ -27,7 +27,7 @@ public class PrayerSpell extends InstantSpell {
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			if (player.getHealth() >= player.getMaxHealth() && amountHealed > 0) {
-				sendMessage(player, strAtFullHealth);
+				sendMessage(strAtFullHealth, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			} else if (player.isValid()) {
 				double health = player.getHealth();

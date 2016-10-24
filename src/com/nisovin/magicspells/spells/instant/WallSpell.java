@@ -76,7 +76,7 @@ public class WallSpell extends InstantSpell {
 			Block target = getTargetedBlock(player, (distance > 0 && distance < 15) ? distance : 3);
 			if (target == null || target.getType() != Material.AIR) {
 				// fail
-				sendMessage(player, strNoTarget);
+				sendMessage(strNoTarget, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			} else {
 				
@@ -88,7 +88,7 @@ public class WallSpell extends InstantSpell {
 					Bukkit.getPluginManager().callEvent(event);
 					BlockUtils.setTypeAndData(target, Material.AIR, (byte)0, false);
 					if (event.isCancelled()) {
-						sendMessage(player, strNoTarget);
+						sendMessage(strNoTarget, player, args);
 						return PostCastAction.ALREADY_HANDLED;
 					}
 				}

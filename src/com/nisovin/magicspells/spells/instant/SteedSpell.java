@@ -94,7 +94,7 @@ public class SteedSpell extends InstantSpell {
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			if (player.getVehicle() != null) {
-				sendMessage(player, strAlreadyMounted);
+				sendMessage(strAlreadyMounted, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			Entity entity = player.getWorld().spawnEntity(player.getLocation(), type);

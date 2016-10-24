@@ -164,7 +164,7 @@ public class SilenceSpell extends TargetedSpell implements TargetedEntitySpell {
 				Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
 					@Override
 					public void run() {
-						sendMessage(event.getCaster(), strSilenced);
+						sendMessage(strSilenced, event.getCaster(), event.getSpellArgs());
 					}
 				});
 			}
@@ -176,7 +176,7 @@ public class SilenceSpell extends TargetedSpell implements TargetedEntitySpell {
 		public void onChat(AsyncPlayerChatEvent event) {
 			if (silenced.containsKey(event.getPlayer().getName())) {
 				event.setCancelled(true);
-				sendMessage(event.getPlayer(), strSilenced);
+				sendMessage(strSilenced, event.getPlayer(), MagicSpells.NULL_ARGS);
 			}
 		}
 	}
@@ -186,7 +186,7 @@ public class SilenceSpell extends TargetedSpell implements TargetedEntitySpell {
 		public void onCommand(PlayerCommandPreprocessEvent event) {
 			if (silenced.containsKey(event.getPlayer().getName())) {
 				event.setCancelled(true);
-				sendMessage(event.getPlayer(), strSilenced);
+				sendMessage(strSilenced, event.getPlayer(), MagicSpells.NULL_ARGS);
 			}
 		}
 	}

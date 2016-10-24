@@ -98,11 +98,11 @@ public class DanceCastListener implements Listener {
 		boolean casted = false;
 		Spell spell = spells.get(castSequence);
 		if (spell != null) {
-			MagicSpells.sendMessage(player, strDanceComplete);
+			MagicSpells.sendMessage(strDanceComplete, player, MagicSpells.NULL_ARGS);
 			SpellCastResult result = spell.cast(player);
 			casted = result.state == SpellCastState.NORMAL && result.action != PostCastAction.ALREADY_HANDLED;
 		} else if (forceEnd) {
-			MagicSpells.sendMessage(player, strDanceFail);
+			MagicSpells.sendMessage(strDanceFail, player, MagicSpells.NULL_ARGS);
 		}
 		if (casted || forceEnd) {
 			String playerName = player.getName();
@@ -143,7 +143,7 @@ public class DanceCastListener implements Listener {
 						player.setAllowFlight(true);
 						player.setFlying(false);
 					}
-					MagicSpells.sendMessage(player, strDanceStart);
+					MagicSpells.sendMessage(strDanceStart, player, MagicSpells.NULL_ARGS);
 					if (startSound != null) {
 						MagicSpells.getVolatileCodeHandler().playSound(player, startSound, startSoundVolume, startSoundPitch);
 						//SoundUtils.playSound(player, startSound, startSoundVolume, startSoundPitch); //the new system again
@@ -236,7 +236,7 @@ public class DanceCastListener implements Listener {
 			if (cast != null) {
 				Player player = PlayerNameUtils.getPlayerExact(playerName);
 				if (player != null) {
-					MagicSpells.sendMessage(player, strDanceFail);
+					MagicSpells.sendMessage(strDanceFail, player, MagicSpells.NULL_ARGS);
 				}
 			}
 		}

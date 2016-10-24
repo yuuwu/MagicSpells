@@ -34,18 +34,18 @@ public class HelpSpell extends CommandSpell {
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			if (args == null || args.length == 0) {
-				sendMessage(player, strUsage);
+				sendMessage(strUsage, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			} else {
 				Spell spell = MagicSpells.getSpellByInGameName(Util.arrayJoin(args, ' '));
 				Spellbook spellbook = MagicSpells.getSpellbook(player);
 				if (spell == null || (requireKnownSpell && (spellbook == null || !spellbook.hasSpell(spell)))) {
-					sendMessage(player, strNoSpell);
+					sendMessage(strNoSpell, player, args);
 					return PostCastAction.ALREADY_HANDLED;
 				} else {
-					sendMessage(player, formatMessage(strDescLine, "%s", spell.getName(), "%d", spell.getDescription()));
+					sendMessage(formatMessage(strDescLine, "%s", spell.getName(), "%d", spell.getDescription()), player, args);
 					if (spell.getCostStr() != null && !spell.getCostStr().equals("")) {
-						sendMessage(player, formatMessage(strCostLine, "%c", spell.getCostStr()));
+						sendMessage(formatMessage(strCostLine, "%c", spell.getCostStr()), player, args);
 					}
 				}
 			}

@@ -90,7 +90,7 @@ public class ImbueSpell extends CommandSpell {
 		if (state == SpellCastState.NORMAL) {
 			if (args == null || args.length == 0) {
 				// usage
-				sendMessage(player, strUsage);
+				sendMessage(strUsage, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			
@@ -98,7 +98,7 @@ public class ImbueSpell extends CommandSpell {
 			ItemStack inHand = MagicSpells.getVolatileCodeHandler().getItemInMainHand(player);
 			if (!allowedItemTypes.contains(inHand.getType())) {
 				// disallowed item
-				sendMessage(player, strCantImbueItem);
+				sendMessage(strCantImbueItem, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			boolean allowed = false;
@@ -110,14 +110,14 @@ public class ImbueSpell extends CommandSpell {
 			}
 			if (!allowed) {
 				// disallowed item
-				sendMessage(player, strCantImbueItem);
+				sendMessage(strCantImbueItem, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			
 			// check for already imbued
 			if (getImbueData(inHand) != null) {
 				// already imbued
-				sendMessage(player, strCantImbueItem);
+				sendMessage(strCantImbueItem, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			
@@ -125,19 +125,19 @@ public class ImbueSpell extends CommandSpell {
 			Spell spell = MagicSpells.getSpellByInGameName(args[0]);
 			if (spell == null) {
 				// no spell
-				sendMessage(player, strCantImbueSpell);
+				sendMessage(strCantImbueSpell, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			if (!MagicSpells.getSpellbook(player).hasSpell(spell)) {
 				// doesn't know spell
-				sendMessage(player, strCantImbueSpell);
+				sendMessage(strCantImbueSpell, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			
 			// check teach perm
 			if (requireTeachPerm && !MagicSpells.getSpellbook(player).canTeach(spell)) {
 				// can't teach
-				sendMessage(player, strCantImbueSpell);
+				sendMessage(strCantImbueSpell, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			
@@ -157,7 +157,7 @@ public class ImbueSpell extends CommandSpell {
 				SpellReagents reagents = spell.getReagents().multiply(uses);
 				if (!hasReagents(player, reagents)) {
 					// missing reagents
-					sendMessage(player, strMissingReagents);
+					sendMessage(strMissingReagents, player, args);
 					return PostCastAction.ALREADY_HANDLED;
 				} else {
 					// has reagents, so just remove them
@@ -197,7 +197,7 @@ public class ImbueSpell extends CommandSpell {
 					int uses = Integer.parseInt(data[1]);
 					
 					if (spell != null && uses > 0) {
-						spell.castSpell(event.getPlayer(), SpellCastState.NORMAL, 1.0F, null);
+						spell.castSpell(event.getPlayer(), SpellCastState.NORMAL, 1.0F, MagicSpells.NULL_ARGS);
 						uses--;
 						if (uses <= 0) {
 							if (consumeItem) {

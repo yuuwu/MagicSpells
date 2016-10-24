@@ -89,7 +89,7 @@ public class MagicXpHandler implements Listener {
 	}
 	
 	public void showXpInfo(Player player) {
-		MagicSpells.sendMessage(player, strXpHeader);
+		MagicSpells.sendMessage(strXpHeader, player, MagicSpells.NULL_ARGS);
 		IntMap<String> playerXp = xp.get(player.getName());
 		if (playerXp != null) {
 			if (playerXp.size() > 0) {
@@ -97,14 +97,14 @@ public class MagicXpHandler implements Listener {
 					String schoolName = schools.get(school);
 					if (schoolName != null) {
 						String amt = NumberFormat.getInstance().format(playerXp.get(school));
-						MagicSpells.sendMessage(player, schoolName + ": " + amt);
+						MagicSpells.sendMessage(schoolName + ": " + amt, player, MagicSpells.NULL_ARGS);
 					}
 				}
 			} else {
-				MagicSpells.sendMessage(player, strNoXp);
+				MagicSpells.sendMessage(strNoXp, player, MagicSpells.NULL_ARGS);
 			}
 		} else {
-			MagicSpells.sendMessage(player, strNoXp);
+			MagicSpells.sendMessage(strNoXp, player, MagicSpells.NULL_ARGS);
 		}
 	}
 	
@@ -165,7 +165,7 @@ public class MagicXpHandler implements Listener {
 								Bukkit.getPluginManager().callEvent(evt);
 								if (!evt.isCancelled()) {
 									spellbook.addSpell(spell);
-									MagicSpells.sendMessage(player, spell.getStrXpLearned());
+									MagicSpells.sendMessage(spell.getStrXpLearned(), player, MagicSpells.NULL_ARGS);
 									learned = true;
 								}
 							}

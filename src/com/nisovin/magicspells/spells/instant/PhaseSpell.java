@@ -52,7 +52,7 @@ public class PhaseSpell extends InstantSpell {
 			try {
 				iter = new BlockIterator(player, distance*2);
 			} catch (IllegalStateException e) {
-				sendMessage(player, strCantPhase);
+				sendMessage(strCantPhase, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			
@@ -96,7 +96,7 @@ public class PhaseSpell extends InstantSpell {
 			// check for fail
 			if (location == null) {
 				// no location to tp to
-				sendMessage(player, strCantPhase);
+				sendMessage(strCantPhase, player, args);
 				//fizzle(player);
 				return PostCastAction.ALREADY_HANDLED;
 			}

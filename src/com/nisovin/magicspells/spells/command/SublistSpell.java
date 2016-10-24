@@ -66,7 +66,7 @@ public class SublistSpell extends CommandSpell {
 			}
 			if (spellbook == null || spellbook.getSpells().size() == 0) {
 				// no spells
-				sendMessage(player, strNoSpells);
+				sendMessage(strNoSpells, player, args);
 			} else {
 				String s = "";
 				for (Spell spell : spellbook.getSpells()) {
@@ -81,11 +81,11 @@ public class SublistSpell extends CommandSpell {
 				s = strPrefix + " " + extra + s;
 				while (s.length() > lineLength) {
 					int i = s.substring(0, lineLength).lastIndexOf(' ');
-					sendMessage(player, s.substring(0, i));
+					sendMessage(s.substring(0, i), player, args);
 					s = s.substring(i+1);
 				}
 				if (s.length() > 0) {
-					sendMessage(player, s);
+					sendMessage(s, player, args);
 				}
 			}
 		}		

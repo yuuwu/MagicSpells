@@ -95,7 +95,7 @@ public class RitualSpell extends InstantSpell {
 			if (channel != null) {
 				if (!needSpellToParticipate || hasThisSpell(event.getPlayer())) {
 					channel.addChanneler(event.getPlayer());
-					sendMessage(event.getPlayer(), strRitualJoined);
+					sendMessage(strRitualJoined, event.getPlayer(), MagicSpells.NULL_ARGS);
 				}
 			}
 		}
@@ -198,7 +198,7 @@ public class RitualSpell extends InstantSpell {
 			if (interrupted) {
 				stop(strRitualInterrupted);
 				if (spellOnInterrupt != null && caster.isValid()) {
-					spellOnInterrupt.castSpell(caster, SpellCastState.NORMAL, power, null);
+					spellOnInterrupt.castSpell(caster, SpellCastState.NORMAL, power, MagicSpells.NULL_ARGS);
 				}
 			}
 			
@@ -231,7 +231,7 @@ public class RitualSpell extends InstantSpell {
 		
 		public void stop(String message) {
 			for (Player player : channelers.keySet()) {
-				sendMessage(player, message);
+				sendMessage(message, player, MagicSpells.NULL_ARGS);
 				resetManaBar(player);
 			}
 			channelers.clear();

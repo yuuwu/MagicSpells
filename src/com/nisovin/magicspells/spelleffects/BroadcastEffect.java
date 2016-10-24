@@ -90,7 +90,7 @@ public class BroadcastEffect extends SpellEffect {
 	public Runnable playEffectEntity(Entity entity) {
 		if (targeted) {
 			if (entity != null && entity instanceof Player) {
-				MagicSpells.sendMessage((Player)entity, message);
+				MagicSpells.sendMessage(message, (Player)entity, null);
 			}
 		} else {
 			String msg = message;
@@ -105,12 +105,12 @@ public class BroadcastEffect extends SpellEffect {
 	private void broadcast(Location location, String message) {
 		if (range <= 0) {
 			for (Player player : Bukkit.getOnlinePlayers()) {
-				MagicSpells.sendMessage(player, message);
+				MagicSpells.sendMessage(message, player, null);
 			}
 		} else if (location != null) {
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				if (player.getWorld().equals(location.getWorld()) && player.getLocation().distanceSquared(location) <= rangeSq) {
-					MagicSpells.sendMessage(player, message);
+					MagicSpells.sendMessage(message, player, null);
 				}
 			}
 		}

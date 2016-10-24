@@ -102,7 +102,7 @@ public class PulserSpell extends TargetedSpell implements TargetedLocationSpell 
 					if (pulser.caster.equals(player)) {
 						count++;
 						if (count >= capPerPlayer) {
-							sendMessage(player, strAtCap);
+							sendMessage(strAtCap, player, args);
 							return PostCastAction.ALREADY_HANDLED;
 						}
 					}

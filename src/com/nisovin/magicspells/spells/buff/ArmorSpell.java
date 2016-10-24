@@ -131,7 +131,7 @@ public class ArmorSpell extends BuffSpell {
 		PlayerInventory inv = player.getInventory();
 		if (!replace && ((helmet != null && inv.getHelmet() != null) || (chestplate != null && inv.getChestplate() != null) || (leggings != null && inv.getLeggings() != null) || (boots != null && inv.getBoots() != null))) {
 			// error
-			sendMessage(player, strHasArmor);
+			sendMessage(strHasArmor, player, args);
 			return false;
 		}
 		

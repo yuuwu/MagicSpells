@@ -76,7 +76,7 @@ public final class MultiSpell extends InstantSpell {
 					for (ActionChance actionChance : this.actions) {
 						Action action = actionChance.getAction();
 						if ((action.isSpell()) && (action.getSpell().getSpell().onCooldown(player))) {
-							sendMessage(player, this.strOnCooldown);
+							sendMessage(this.strOnCooldown, player, args);
 							return Spell.PostCastAction.ALREADY_HANDLED;
 						}
 					}
@@ -111,7 +111,7 @@ public final class MultiSpell extends InstantSpell {
 					Action action = this.actions.get(Math.max(0, i - 1)).getAction();
 					if (action.isSpell()) {
 						if ((this.checkIndividualCooldowns) && (action.getSpell().getSpell().onCooldown(player))) {
-							sendMessage(player, this.strOnCooldown);
+							sendMessage(this.strOnCooldown, player, args);
 							return Spell.PostCastAction.ALREADY_HANDLED;
 						}
 						action.getSpell().cast(player, power);
@@ -122,7 +122,7 @@ public final class MultiSpell extends InstantSpell {
 						if ((actionChance.getChance() / 100.0D > chance) && (actionChance.getAction().isSpell())) {
 							Action action = actionChance.getAction();
 							if ((this.checkIndividualCooldowns) && (action.getSpell().getSpell().onCooldown(player))) {
-								sendMessage(player, this.strOnCooldown);
+								sendMessage(this.strOnCooldown, player, args);
 								return Spell.PostCastAction.ALREADY_HANDLED;
 							}
 							action.getSpell().cast(player, power);
@@ -131,7 +131,7 @@ public final class MultiSpell extends InstantSpell {
 				} else {
 					Action action = this.actions.get(this.random.nextInt(this.actions.size())).getAction();
 					if ((this.checkIndividualCooldowns) && (action.getSpell().getSpell().onCooldown(player))) {
-						sendMessage(player, this.strOnCooldown);
+						sendMessage(this.strOnCooldown, player, args);
 						return Spell.PostCastAction.ALREADY_HANDLED;
 					}
 					action.getSpell().cast(player, power);

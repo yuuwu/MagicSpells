@@ -103,7 +103,7 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 			if (requirePlayerTarget) {
 				TargetInfo<Player> targetInfo = getTargetedPlayer(player, power);
 				if (targetInfo == null) {
-					sendMessage(player, strNoTarget);
+					sendMessage(strNoTarget, player, args);
 					return PostCastAction.ALREADY_HANDLED;
 				} else {
 					target = targetInfo.getTarget();
@@ -168,7 +168,7 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 				for (String comm : commandToExecute) {
 					if (comm != null && !comm.isEmpty()) {
 						if (doVariableReplacement) {
-							comm = MagicSpells.doVariableReplacements(varOwner, comm);
+							comm = MagicSpells.doArgumentAndVariableSubstitution(comm,varOwner, args);
 						}
 						if (args != null && args.length > 0) {
 							for (int i = 0; i < args.length; i++) {
@@ -233,7 +233,7 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 	@Override
 	public boolean castAtEntity(Player caster, LivingEntity target, float power) {
 		if (requirePlayerTarget && target instanceof Player) {
-			process(caster, (Player)target, null);
+			process(caster, (Player)target, MagicSpells.NULL_ARGS);
 			return true;
 		} else {
 			return false;
@@ -243,7 +243,7 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 	@Override
 	public boolean castAtEntity(LivingEntity target, float power) {
 		if (requirePlayerTarget && target instanceof Player) {
-			process(null, (Player)target, null);
+			process(null, (Player)target, MagicSpells.NULL_ARGS);
 			return true;
 		} else {
 			return false;
@@ -268,7 +268,7 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 				comm = comm.trim();
 				if (!comm.equals("") && msg.startsWith("/" + commandToBlock)) {
 					event.setCancelled(true);
-					sendMessage(event.getPlayer(), strCantUseCommand);
+					sendMessage(strCantUseCommand, event.getPlayer(), MagicSpells.NULL_ARGS);
 					return;
 				}
 			}
