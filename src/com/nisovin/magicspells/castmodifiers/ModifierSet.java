@@ -11,6 +11,10 @@ import com.nisovin.magicspells.events.*;
 
 public class ModifierSet {
 
+	public static CastListener castListener = null;
+	public static TargetListener targetListener = null;
+	public static ManaListener manaListener = null;
+	
 	public static void initializeModifierListeners() {
 		boolean modifiers = false;
 		boolean targetModifiers = false;		
@@ -25,13 +29,16 @@ public class ModifierSet {
 		}
 		
 		if (modifiers) {
-			MagicSpells.registerEvents(new CastListener());
+			castListener = new CastListener();
+			MagicSpells.registerEvents(castListener);
 		}
 		if (targetModifiers) {
-			MagicSpells.registerEvents(new TargetListener());
+			targetListener = new TargetListener();
+			MagicSpells.registerEvents(targetListener);
 		}
 		if (MagicSpells.getManaHandler() != null && MagicSpells.getManaHandler().getModifiers() != null) {
-			MagicSpells.registerEvents(new ManaListener());
+			manaListener = new ManaListener();
+			MagicSpells.registerEvents(manaListener);
 		}
 	}
 

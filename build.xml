@@ -207,7 +207,7 @@
 				<fileset dir="${lib.dir}">
 					<include name="bukkit*.jar"/>
 					<include name="Factions.jar"/>
-					<include name="mcore.jar"/>
+					<include name="MassiveCore.jar"/>
 				</fileset>
 				<filelist dir="${dist.dir}" files="MagicSpells.jar"/>
 			</classpath>

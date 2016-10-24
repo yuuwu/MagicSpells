@@ -27,6 +27,7 @@ import com.palmergames.bukkit.towny.utils.CombatUtil;
 public class MagicSpellsTowny extends JavaPlugin implements Listener {
 	
 	private Set<Spell> disallowedInTowns = new HashSet<Spell>();
+	//TODO add spell filter to control what is allowed
 	private Towny towny;
 	
 	@Override
