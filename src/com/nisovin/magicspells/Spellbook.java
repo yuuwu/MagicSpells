@@ -338,7 +338,7 @@ public class Spellbook {
 						if (plugin.allowCycleToNoSpell) {
 							activeSpells.put(castItem, -1);
 							Bukkit.getPluginManager().callEvent(new SpellSelectionChangedEvent(null, player, castItem, this));
-							MagicSpells.sendMessage(plugin.strSpellChangeEmpty, player, null);
+							MagicSpells.sendMessage(plugin.strSpellChangeEmpty, player, MagicSpells.NULL_ARGS);
 							return null;
 						} else {
 							i = 0;
@@ -379,7 +379,7 @@ public class Spellbook {
 						if (plugin.allowCycleToNoSpell && i == -1) {
 							activeSpells.put(castItem, -1);
 							Bukkit.getPluginManager().callEvent(new SpellSelectionChangedEvent(null, player, castItem, this));
-							MagicSpells.sendMessage(plugin.strSpellChangeEmpty, player, null);
+							MagicSpells.sendMessage(plugin.strSpellChangeEmpty, player, MagicSpells.NULL_ARGS);
 							return null;
 						} else {
 							i = spells.size() - 1;

@@ -41,6 +41,22 @@ public class ModifierSet {
 			MagicSpells.registerEvents(manaListener);
 		}
 	}
+	
+	public static void unload() {
+		if (castListener != null) {
+			castListener.unload();
+			castListener = null;
+		}
+		if (targetListener != null) {
+			targetListener.unload();
+			targetListener = null;
+		}
+		
+		if (manaListener != null) {
+			manaListener.unload();
+			manaListener = null;
+		}
+	}
 
 	private List<Modifier> modifiers;
 	

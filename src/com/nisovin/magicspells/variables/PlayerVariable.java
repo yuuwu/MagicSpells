@@ -55,5 +55,4 @@ public class PlayerVariable extends Variable {
 			objective.getScore(Bukkit.getOfflinePlayer(player)).setScore((int)defaultValue);
 		}
 	}
-
 }

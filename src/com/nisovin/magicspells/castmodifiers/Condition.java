@@ -28,6 +28,10 @@ public abstract class Condition {
 	static Condition getConditionByName(String name) {
 		Class<? extends Condition> clazz = conditions.get(name.toLowerCase());
 		if (clazz == null) {
+			if (name.toLowerCase().startsWith("addon")) {
+				//if it starts with addon, then load it as an addon provided condition
+				return new ProxyCondition(name.replaceFirst("addon:", ""));
+			}
 			return null;
 		}
 		try {
@@ -140,6 +144,8 @@ public abstract class Condition {
 		conditions.put("powerlessthan", PowerLessThanCondition.class);
 		conditions.put("powergreaterthan", PowerGreaterThanCondition.class);
 		conditions.put("powerequals", PowerEqualsCondition.class);
+		conditions.put("spelltag", SpellTagCondition.class);
+		conditions.put("beneficial", SpellBeneficialCondition.class);
 	}
 	
 }

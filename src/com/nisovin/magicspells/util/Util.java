@@ -323,7 +323,9 @@ public class Util {
 						e = Enchantment.getById(id);
 					} catch (NumberFormatException ex) {
 						e = Enchantment.getByName(data[0].toUpperCase());
-						DebugHandler.debugNumberFormat(ex);
+					}
+					if (e == null) {
+						MagicSpells.error("'" + data[0] + "' could not be connected to an enchantment");
 					}
 					if (e != null) {
 						int level = 0;
@@ -352,6 +354,8 @@ public class Util {
 					int color = Integer.parseInt(config.getString("color").replace("#", ""), 16);
 					((LeatherArmorMeta)meta).setColor(Color.fromRGB(color));
 				} catch (NumberFormatException e) {
+					//TODO try processing by rgb
+					//TODO try processing by name if rgb fails
 					DebugHandler.debugNumberFormat(e);
 				}
 			}
@@ -368,7 +372,9 @@ public class Util {
 						t = PotionEffectType.getById(id);
 					} catch (NumberFormatException e) {
 						t = PotionEffectType.getByName(data[0].toUpperCase());
-						DebugHandler.debugNumberFormat(e);
+					}
+					if (t == null) {
+						MagicSpells.error("'" + data[0] + "' could not be connected to a potion effect type");
 					}
 					if (t != null) {
 						int level = 0;
@@ -419,7 +425,7 @@ public class Util {
 				if (texture != null) {
 					MagicSpells.getVolatileCodeHandler().setTexture((SkullMeta)meta, texture, signature, uuid, ((SkullMeta) meta).getOwner());
 				}
-				}
+			}
 			// flower pot
 			/*if (config.contains("flower") && item.getType() == Material.FLOWER_POT && meta instanceof BlockStateMeta) {
 				MagicMaterial flower = MagicSpells.getItemNameResolver().resolveBlock(config.getString("flower"));

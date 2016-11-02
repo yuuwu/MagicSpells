@@ -1039,7 +1039,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	 * This method is called immediately after all spells have been loaded.
 	 */
 	protected void initialize() {
-		// modifiers		
+		// modifiers
 		if (modifierStrings != null && modifierStrings.size() > 0) {
 			debug(2, "Adding modifiers to " + internalName + " spell");
 			modifiers = new ModifierSet(modifierStrings);

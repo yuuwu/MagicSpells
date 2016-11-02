@@ -60,4 +60,11 @@ public class TargetListener implements Listener {
 		}
 	}
 	
+	public void unload() {
+		preModifierHooks.clear();
+		preModifierHooks = null;
+		postModifierHooks.clear();
+		postModifierHooks = null;
+	}
+	
 }

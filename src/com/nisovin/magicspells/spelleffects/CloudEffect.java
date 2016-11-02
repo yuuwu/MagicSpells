@@ -45,11 +45,13 @@ public class CloudEffect extends SpellEffect {
 	
 	@Override
 	public void loadFromString(String string) {
-		try {
-			radius = Integer.parseInt(string);
-		} catch (NumberFormatException e) {
-			radius = 3;
-			DebugHandler.debugNumberFormat(e); //TODO make this a warning
+		if (string != null && !string.equals("")) {
+			try {
+				radius = Integer.parseInt(string);
+			} catch (NumberFormatException e) {
+				radius = 3;
+				DebugHandler.debugNumberFormat(e);
+			}
 		}
 	}
 

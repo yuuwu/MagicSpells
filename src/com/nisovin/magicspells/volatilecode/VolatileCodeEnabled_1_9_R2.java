@@ -460,7 +460,7 @@ public class VolatileCodeEnabled_1_9_R2 implements VolatileCodeHandle {
 	public IDisguiseManager getDisguiseManager(MagicConfig config) {
 		if (Bukkit.getPluginManager().isPluginEnabled("LibsDisguises")) {
 			try {
-			return new DisguiseManagerLibsDisguises(config);
+				return new DisguiseManagerLibsDisguises(config);
 			} catch (Exception e) {
 				return new DisguiseManagerEmpty(config);
 			}

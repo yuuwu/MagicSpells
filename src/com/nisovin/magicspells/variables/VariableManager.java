@@ -101,6 +101,8 @@ public class VariableManager implements Listener {
 			loadExpBar(player);
 		}
 		
+		variables.putAll(SpecialVariables.getSpecialVariables());
+		
 		// start save task
 		MagicSpells.scheduleRepeatingTask(new Runnable() {
 			@Override

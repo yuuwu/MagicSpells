@@ -144,7 +144,6 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 		MagicSpells.sendMessage(MagicSpells.formatMessage(strPurchased, "%s", spellName, "%c", cost+""), player, null);
 	}
 	
-	@SuppressWarnings("deprecation")
 	private void processScrollShopSign(Player player, String[] lines) {
 		// get spell
 		String spellName = lines[1];

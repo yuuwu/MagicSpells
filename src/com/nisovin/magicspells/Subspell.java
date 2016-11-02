@@ -27,7 +27,7 @@ public class Subspell {
 	private CastMode mode = CastMode.PARTIAL;
 	private float subPower = 1F;
 	private int delay = 0;
-	private double chance = -1;
+	private double chance = -1D;
 	
 	private boolean isTargetedEntity = false;
 	private boolean isTargetedLocation = false;
@@ -70,7 +70,7 @@ public class Subspell {
 						}
 					} else if (keyval[0].equalsIgnoreCase("chance")) {
 						try {
-							chance = Double.parseDouble(keyval[1]) / 100;
+							chance = Double.parseDouble(keyval[1]) / 100D;
 						} catch (NumberFormatException e) {
 							DebugHandler.debugNumberFormat(e);
 						}
@@ -278,11 +278,11 @@ public class Subspell {
 		boolean ret = false;
 		if (isTargetedEntityFromLocation) {
 			if (mode == CastMode.HARD && player != null) {
-				SpellCastResult result = spell.cast(player, power, null);
+				SpellCastResult result = spell.cast(player, power, MagicSpells.NULL_ARGS);
 				return result.state == SpellCastState.NORMAL && result.action == PostCastAction.HANDLE_NORMALLY;
 			} else if (mode == CastMode.FULL && player != null) {
 				boolean success = false;
-				SpellCastEvent spellCast = spell.preCast(player, power * subPower, null);
+				SpellCastEvent spellCast = spell.preCast(player, power * subPower, MagicSpells.NULL_ARGS);
 				if (spellCast != null && spellCast.getSpellCastState() == SpellCastState.NORMAL) {
 					success = ((TargetedEntityFromLocationSpell)spell).castAtEntityFromLocation(player, from, target, spellCast.getPower());
 					spell.postCast(spellCast, success ? PostCastAction.HANDLE_NORMALLY : PostCastAction.ALREADY_HANDLED);

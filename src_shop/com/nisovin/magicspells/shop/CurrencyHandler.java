@@ -81,7 +81,6 @@ public class CurrencyHandler {
 		remove(player, amount, defaultCurrency);
 	}
 	
-	@SuppressWarnings("deprecation")
 	public void remove(Player player, double amount, String currency) {
 		String c = currency == null ? null : currencies.get(currency.toLowerCase());
 		if (c == null) c = currencies.get(defaultCurrency);

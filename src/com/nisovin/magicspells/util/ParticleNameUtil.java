@@ -2,6 +2,8 @@ package com.nisovin.magicspells.util;
 
 import org.bukkit.Material;
 
+import com.nisovin.magicspells.MagicSpells;
+
 import de.slikey.effectlib.util.ParticleEffect;
 import de.slikey.effectlib.util.ParticleEffect.BlockData;
 import de.slikey.effectlib.util.ParticleEffect.ItemData;
@@ -24,7 +26,15 @@ public class ParticleNameUtil {
 		effect = ParticleEffect.fromName(splits[0]);
 		
 		if (splits.length > 1) {
-			Material mat = Material.getMaterial(Integer.parseInt(splits[1]));
+			Material mat = null;
+			try {
+				mat = Material.getMaterial(Integer.parseInt(splits[1]));
+			} catch (Exception e) {
+				//no op
+			}
+			if (mat == null) {
+				mat = MagicSpells.getItemNameResolver().resolveItem(splits[1]).getMaterial();
+			}
 			int materialData = 0;
 			if (splits.length > 2) {
 				materialData = Integer.parseInt(splits[2]);

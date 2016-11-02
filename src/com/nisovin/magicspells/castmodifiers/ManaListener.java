@@ -37,4 +37,11 @@ public class ManaListener implements Listener {
 		}
 	}
 	
+	public void unload() {
+		preModifierHooks.clear();
+		preModifierHooks = null;
+		postModifierHooks.clear();
+		postModifierHooks = null;
+	}
+	
 }

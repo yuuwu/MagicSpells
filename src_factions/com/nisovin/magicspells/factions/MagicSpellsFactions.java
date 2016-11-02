@@ -12,6 +12,8 @@ import com.massivecraft.factions.entity.Faction;
 import com.massivecraft.factions.entity.MFlag;
 import com.massivecraft.factions.entity.MPlayer;
 import com.massivecraft.massivecore.ps.PS;
+import com.nisovin.magicspells.castmodifiers.ProxyCondition;
+import com.nisovin.magicspells.events.MagicSpellsLoadedEvent;
 import com.nisovin.magicspells.events.SpellTargetEvent;
 
 public class MagicSpellsFactions extends JavaPlugin implements Listener {
@@ -19,6 +21,7 @@ public class MagicSpellsFactions extends JavaPlugin implements Listener {
 	@Override
 	public void onEnable() {
 		Bukkit.getPluginManager().registerEvents(this, this);
+		registerCustomConditions();
 	}
 	
 	@EventHandler
@@ -45,6 +48,15 @@ public class MagicSpellsFactions extends JavaPlugin implements Listener {
 		if (faction != null && !faction.getFlag(MFlag.ID_PVP)) {
 			event.setCancelled(true);
 		}
+	}
+	
+	@EventHandler
+	public void onMagicSpellsLoad(MagicSpellsLoadedEvent event) {
+		registerCustomConditions();
+	}
+	
+	public void registerCustomConditions() {
+		ProxyCondition.loadBackends(FactionsConditions.conditions);
 	}
 	
 }
