@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
@@ -61,7 +62,7 @@ public class MagicSpellsTeams extends JavaPlugin implements Listener {
 		for (Team team : teams) {
 			team.initialize(this);
 		}
-		
+		getCommand("magicspellsteams").setExecutor(new MagicSpellsTeamsCommand(this));
 		// register events
 		getServer().getPluginManager().registerEvents(this, this);
 	}
@@ -71,6 +72,7 @@ public class MagicSpellsTeams extends JavaPlugin implements Listener {
 		teams = null;
 		teamNames = null;
 		playerTeams = null;
+		getCommand("magicspellsteams").setExecutor(null);
 		HandlerList.unregisterAll((Plugin)this);
 	}
 	
@@ -148,6 +150,10 @@ public class MagicSpellsTeams extends JavaPlugin implements Listener {
 	
 	public Team getTeamByName(String name) {
 		return teamNames.get(name);
+	}
+	
+	public Set<String> getTeamNames() {
+		return new TreeSet<String>(teamNames.keySet());
 	}
 	
 }

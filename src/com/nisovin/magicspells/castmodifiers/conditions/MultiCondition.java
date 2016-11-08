@@ -32,7 +32,7 @@ import com.nisovin.magicspells.util.MagicConfig;
  *             checks:
  *                 - condition condition_var action action_var
  *                 - condition condition_var action action_var
- *             pass-condition: a string value that can be one of the following ANY, ALL
+ *             pass-condition: a string value that can be one of the following ANY, ALL, XOR
  * 
  * You can also define some in the spell*.yml files as follows
  * 
@@ -41,7 +41,7 @@ import com.nisovin.magicspells.util.MagicConfig;
  *         checks:
  *             - condition condition_var action action_var
  *             - condition condition_var action action_var
- *         pass-condition: a string value that can be one of the following ANY, ALL
+ *         pass-condition: a string value that can be one of the following ANY, ALL, XOR
  *
  * to reference the modifier collection, you just slip this into your modifiers listed on a spell
  * - collection <modifier_name> action action_var
@@ -227,6 +227,20 @@ public class MultiCondition extends Condition implements IModifier {
 			public boolean shouldContinue(int passes, int fails) {
 				return passes == 0;
 			}
+		},
+		
+		XOR {
+
+			@Override
+			public boolean hasPassed(int passes, int fails) {
+				return passes == 1;
+			}
+
+			@Override
+			public boolean shouldContinue(int passes, int fails) {
+				return passes <= 1;
+			}
+			
 		}
 		
 		;

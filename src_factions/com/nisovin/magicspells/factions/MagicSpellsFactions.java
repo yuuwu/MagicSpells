@@ -33,19 +33,25 @@ public class MagicSpellsFactions extends JavaPlugin implements Listener {
 		MPlayer caster = MPlayer.get(event.getCaster());
 		MPlayer target = MPlayer.get(event.getTarget());
 		
+		Faction faction = BoardColl.get().getFactionAt(PS.valueOf(event.getCaster().getLocation()));
+		Faction targetFaction = BoardColl.get().getFactionAt(PS.valueOf(event.getTarget().getLocation()));
+		
 		Rel rel = caster.getRelationTo(target);
-		if (rel.isFriend() && !beneficial) {
-			event.setCancelled(true);
-		} else if (!rel.isFriend() && beneficial) {
+		
+		//make only check relations if friendly fire is disabled
+		if ((faction == null || !faction.getFlag(MFlag.ID_FRIENDLYFIRE)) || (targetFaction == null || !targetFaction.getFlag(MFlag.ID_FRIENDLYFIRE))) {
+			if (rel.isFriend() && !beneficial) {
+				event.setCancelled(true);
+			} else if (!rel.isFriend() && beneficial) {
+				event.setCancelled(true);
+			}
+		}
+		
+		if (faction != null && !faction.getFlag(MFlag.ID_PVP)) {
 			event.setCancelled(true);
 		}
 		
-		Faction faction = BoardColl.get().getFactionAt(PS.valueOf(event.getCaster().getLocation()));
-		if (faction != null && !faction.getFlag(MFlag.ID_PVP)) {
-			event.setCancelled(true);
-		}
-		faction = BoardColl.get().getFactionAt(PS.valueOf(event.getTarget().getLocation()));
-		if (faction != null && !faction.getFlag(MFlag.ID_PVP)) {
+		if (targetFaction != null && !targetFaction.getFlag(MFlag.ID_PVP)) {
 			event.setCancelled(true);
 		}
 	}

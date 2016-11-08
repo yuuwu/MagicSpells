@@ -9,6 +9,17 @@ import com.nisovin.magicspells.variables.meta.CoordXVariable;
 import com.nisovin.magicspells.variables.meta.CoordYVariable;
 import com.nisovin.magicspells.variables.meta.CoordYawVariable;
 import com.nisovin.magicspells.variables.meta.CoordZVariable;
+import com.nisovin.magicspells.variables.meta.EntityIDVariable;
+import com.nisovin.magicspells.variables.meta.ExperienceLevelVariable;
+import com.nisovin.magicspells.variables.meta.ExperienceVariable;
+import com.nisovin.magicspells.variables.meta.FallDistanceVariable;
+import com.nisovin.magicspells.variables.meta.FireTicksVariable;
+import com.nisovin.magicspells.variables.meta.FlySpeedVariable;
+import com.nisovin.magicspells.variables.meta.FoodLevelVariable;
+import com.nisovin.magicspells.variables.meta.PlayersOnlineVariable;
+import com.nisovin.magicspells.variables.meta.RemainingAirVariable;
+import com.nisovin.magicspells.variables.meta.SaturationVariable;
+import com.nisovin.magicspells.variables.meta.WalkSpeedVariable;
 
 public class SpecialVariables {
 
@@ -21,6 +32,17 @@ public class SpecialVariables {
 		specialVariables.put("meta_location_z", new CoordZVariable());
 		specialVariables.put("meta_location_pitch", new CoordPitchVariable());
 		specialVariables.put("meta_location_yaw", new CoordYawVariable());
+		specialVariables.put("meta_saturation", new SaturationVariable());
+		specialVariables.put("meta_experience_level", new ExperienceLevelVariable());
+		specialVariables.put("meta_experience_points", new ExperienceVariable());
+		specialVariables.put("meta_remaining_air", new RemainingAirVariable());
+		specialVariables.put("meta_fly_speed", new FlySpeedVariable());
+		specialVariables.put("meta_walk_speed", new WalkSpeedVariable());
+		specialVariables.put("meta_food_level", new FoodLevelVariable());
+		specialVariables.put("meta_entity_id", new EntityIDVariable());
+		specialVariables.put("meta_fire_ticks", new FireTicksVariable());
+		specialVariables.put("meta_fall_distance", new FallDistanceVariable());
+		specialVariables.put("meta_players_online", new PlayersOnlineVariable());
 	}
 	
 	public static Map<String, Variable> getSpecialVariables() {

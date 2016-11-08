@@ -2,6 +2,8 @@ package com.nisovin.magicspells.teams;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -10,6 +12,7 @@ import com.nisovin.magicspells.MagicSpells;
 
 public class Team {
 
+	private String name;
 	private String permissionNode;
 	private boolean friendlyFire;
 	
@@ -19,6 +22,7 @@ public class Team {
 	private List<Team> cantTargetTeams;
 	
 	public Team(ConfigurationSection config, String name) {
+		this.name = name;
 		permissionNode = config.getString("permission", "magicspells.team." + name);
 		friendlyFire = config.getBoolean("friendly-fire", false);
 		canTargetNames = config.getStringList("can-target");
@@ -70,6 +74,22 @@ public class Team {
 		if (canTargetTeams != null && !canTargetTeams.contains(team)) return false;
 		if (cantTargetTeams != null && cantTargetTeams.contains(team)) return false;
 		return true;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public String getPermission() {
+		return permissionNode;
+	}
+	
+	public Set<String> getCanTarget() {
+		return new TreeSet<String>(canTargetNames);
+	}
+	
+	public Set<String> getCantTarget() {
+		return new TreeSet<String>(cantTargetNames);
 	}
 	
 }
