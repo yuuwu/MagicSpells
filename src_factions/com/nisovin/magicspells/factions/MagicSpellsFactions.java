@@ -1,26 +1,23 @@
 package com.nisovin.magicspells.factions;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import com.massivecraft.factions.Rel;
 import com.massivecraft.factions.entity.BoardColl;
 import com.massivecraft.factions.entity.Faction;
 import com.massivecraft.factions.entity.MFlag;
 import com.massivecraft.factions.entity.MPlayer;
+import com.massivecraft.massivecore.MassivePlugin;
 import com.massivecraft.massivecore.ps.PS;
 import com.nisovin.magicspells.castmodifiers.ProxyCondition;
 import com.nisovin.magicspells.events.MagicSpellsLoadedEvent;
 import com.nisovin.magicspells.events.SpellTargetEvent;
 
-public class MagicSpellsFactions extends JavaPlugin implements Listener {
+public class MagicSpellsFactions extends MassivePlugin {
 
 	@Override
-	public void onEnable() {
-		Bukkit.getPluginManager().registerEvents(this, this);
+	public void onEnableInner() {
 		registerCustomConditions();
 	}
 	

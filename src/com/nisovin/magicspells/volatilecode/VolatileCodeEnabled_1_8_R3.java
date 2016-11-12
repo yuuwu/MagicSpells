@@ -52,6 +52,9 @@ public class VolatileCodeEnabled_1_8_R3 implements VolatileCodeHandle {
 	EntityInsentient bossBarEntity;
 	VolatileCodeDisabled fallback = new VolatileCodeDisabled();
 	
+	private Class<?> craftMetaSkullClass = null;
+	private Field craftMetaSkullProfileField = null;
+	
 	private static NBTTagCompound getTag(ItemStack item) {
 		if (item instanceof CraftItemStack) {
 			try {
@@ -116,6 +119,10 @@ public class VolatileCodeEnabled_1_8_R3 implements VolatileCodeHandle {
 			for (int i = 0; i <= 10; i++) {
 				packet63Fields[i].setAccessible(true);
 			}
+			
+			craftMetaSkullClass = Class.forName("org.bukkit.craftbukkit.v1_8_R3.inventory.CraftMetaSkull");
+			craftMetaSkullProfileField = craftMetaSkullClass.getField("profile");
+			craftMetaSkullProfileField.setAccessible(true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -803,13 +810,9 @@ public class VolatileCodeEnabled_1_8_R3 implements VolatileCodeHandle {
 	@Override
 	public void setTexture(SkullMeta meta, String texture, String signature) {
 		try {
-			Field profileField = meta.getClass().getField("profile");
-			profileField.setAccessible(true);
-			GameProfile profile = (GameProfile) profileField.get(meta);
+			GameProfile profile = (GameProfile) craftMetaSkullProfileField.get(meta);
 			setTexture(profile, texture, signature);
-			profileField.set(meta, profile);
-		} catch (NoSuchFieldException e) {
-			MagicSpells.handleException(e);
+			craftMetaSkullProfileField.set(meta, profile);
 		} catch (SecurityException e) {
 			MagicSpells.handleException(e);
 		} catch (IllegalArgumentException e) {
@@ -838,13 +841,9 @@ public class VolatileCodeEnabled_1_8_R3 implements VolatileCodeHandle {
 	public void setTexture(SkullMeta meta, String texture, String signature,
 			String uuid, String name) {
 		try {
-			Field profileField = meta.getClass().getField("profile");
-			profileField.setAccessible(true);
-			GameProfile profile = new GameProfile(UUID.fromString(uuid), name);
+			GameProfile profile = new GameProfile(uuid != null ? UUID.fromString(uuid): null, name);
 			setTexture(profile, texture, signature);
-			profileField.set(meta, profile);
-		} catch (NoSuchFieldException e) {
-			MagicSpells.handleException(e);
+			craftMetaSkullProfileField.set(meta, profile);
 		} catch (SecurityException e) {
 			MagicSpells.handleException(e);
 		} catch (IllegalArgumentException e) {

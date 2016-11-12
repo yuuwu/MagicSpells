@@ -55,52 +55,13 @@ public class VolatileCodeEnabled_1_9_R2 implements VolatileCodeHandle {
 
 	VolatileCodeDisabled fallback = new VolatileCodeDisabled();
 	
-	private static NBTTagCompound getTag(ItemStack item) {
-		if (item instanceof CraftItemStack) {
-			try {
-				Field field = CraftItemStack.class.getDeclaredField("handle");
-				field.setAccessible(true);
-				return ((net.minecraft.server.v1_9_R2.ItemStack)field.get(item)).getTag();
-			} catch (Exception e) {
-				//no op currently
-			}
-		}
-		return null;
-	}
-	
-	private static ItemStack setTag(ItemStack item, NBTTagCompound tag) {
-		CraftItemStack craftItem = null;
-		if (item instanceof CraftItemStack) {
-			craftItem = (CraftItemStack)item;
-		} else {
-			craftItem = CraftItemStack.asCraftCopy(item);
-		}
-		
-		net.minecraft.server.v1_9_R2.ItemStack nmsItem = null;
-		try {
-			Field field = CraftItemStack.class.getDeclaredField("handle");
-			field.setAccessible(true);
-			nmsItem = ((net.minecraft.server.v1_9_R2.ItemStack)field.get(item));
-		} catch (Exception e) {
-			//no op currently
-		}
-		if (nmsItem == null) {
-			nmsItem = CraftItemStack.asNMSCopy(craftItem);
-		}
-		
-		if (nmsItem != null) {
-			nmsItem.setTag(tag);
-			try {
-				Field field = CraftItemStack.class.getDeclaredField("handle");
-				field.setAccessible(true);
-				field.set(craftItem, nmsItem);
-			} catch (Exception e) {
-				//no op currently
-			}
-		}
-		
-		return craftItem;
-	}
+	private Field craftItemStackHandleField = null;
+	private Field entityFallingBlockHurtEntitiesField = null;
+	private Field entityFallingBlockFallHurtAmountField = null;
+	private Field entityFallingBlockFallHurtMaxField = null;
+	private Field entityInsentientGoalsField = null;
+	private Class<?> craftMetaSkullClass = null;
+	private Field craftMetaSkullProfileField = null;
 	
 	public VolatileCodeEnabled_1_9_R2() {
 		try {
@@ -118,6 +79,25 @@ public class VolatileCodeEnabled_1_9_R2 implements VolatileCodeHandle {
 			for (int i = 0; i <= 10; i++) {
 				packet63Fields[i].setAccessible(true);
 			}
+			
+			craftItemStackHandleField = CraftItemStack.class.getDeclaredField("handle");
+			craftItemStackHandleField.setAccessible(true);
+			
+			entityFallingBlockHurtEntitiesField = EntityFallingBlock.class.getDeclaredField("hurtEntities");
+			entityFallingBlockHurtEntitiesField.setAccessible(true);
+			
+			entityFallingBlockFallHurtAmountField = EntityFallingBlock.class.getDeclaredField("fallHurtAmount");
+			entityFallingBlockFallHurtAmountField.setAccessible(true);
+			
+			entityFallingBlockFallHurtMaxField = EntityFallingBlock.class.getDeclaredField("fallHurtMax");
+			entityFallingBlockFallHurtMaxField.setAccessible(true);
+			
+			entityInsentientGoalsField = EntityInsentient.class.getDeclaredField("goalSelector");
+			entityInsentientGoalsField.setAccessible(true);
+			
+			craftMetaSkullClass = Class.forName("org.bukkit.craftbukkit.v1_9_R2.inventory.CraftMetaSkull");
+			craftMetaSkullProfileField = craftMetaSkullClass.getField("profile");
+			craftMetaSkullProfileField.setAccessible(true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -128,6 +108,47 @@ public class VolatileCodeEnabled_1_9_R2 implements VolatileCodeHandle {
 			}
 		}
 				
+	}
+	
+	private NBTTagCompound getTag(ItemStack item) {
+		if (item instanceof CraftItemStack) {
+			try {
+				return ((net.minecraft.server.v1_9_R2.ItemStack)craftItemStackHandleField.get(item)).getTag();
+			} catch (Exception e) {
+				//no op currently
+			}
+		}
+		return null;
+	}
+	
+	private ItemStack setTag(ItemStack item, NBTTagCompound tag) {
+		CraftItemStack craftItem = null;
+		if (item instanceof CraftItemStack) {
+			craftItem = (CraftItemStack)item;
+		} else {
+			craftItem = CraftItemStack.asCraftCopy(item);
+		}
+		
+		net.minecraft.server.v1_9_R2.ItemStack nmsItem = null;
+		try {
+			nmsItem = ((net.minecraft.server.v1_9_R2.ItemStack)craftItemStackHandleField.get(item));
+		} catch (Exception e) {
+			//no op currently
+		}
+		if (nmsItem == null) {
+			nmsItem = CraftItemStack.asNMSCopy(craftItem);
+		}
+		
+		if (nmsItem != null) {
+			nmsItem.setTag(tag);
+			try {
+				craftItemStackHandleField.set(craftItem, nmsItem);
+			} catch (Exception e) {
+				//no op currently
+			}
+		}
+		
+		return craftItem;
 	}
 	
 	@Override
@@ -276,17 +297,9 @@ public class VolatileCodeEnabled_1_9_R2 implements VolatileCodeHandle {
 	public void setFallingBlockHurtEntities(FallingBlock block, float damage, int max) {
 		EntityFallingBlock efb = ((CraftFallingSand)block).getHandle();
 		try {
-			Field field = EntityFallingBlock.class.getDeclaredField("hurtEntities");
-			field.setAccessible(true);
-			field.setBoolean(efb, true);
-			
-			field = EntityFallingBlock.class.getDeclaredField("fallHurtAmount");
-			field.setAccessible(true);
-			field.setFloat(efb, damage);
-			
-			field = EntityFallingBlock.class.getDeclaredField("fallHurtMax");
-			field.setAccessible(true);
-			field.setInt(efb, max);
+			entityFallingBlockHurtEntitiesField.setBoolean(efb, true);
+			entityFallingBlockFallHurtAmountField.setFloat(efb, damage);
+			entityFallingBlockFallHurtMaxField.setInt(efb, max);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -577,9 +590,7 @@ public class VolatileCodeEnabled_1_9_R2 implements VolatileCodeHandle {
         try {
         	EntityInsentient ev = (EntityInsentient)((CraftLivingEntity)entity).getHandle();
                
-            Field goalsField = EntityInsentient.class.getDeclaredField("goalSelector");
-            goalsField.setAccessible(true);
-            PathfinderGoalSelector goals = (PathfinderGoalSelector) goalsField.get(ev);
+            PathfinderGoalSelector goals = (PathfinderGoalSelector) entityInsentientGoalsField.get(ev);
            
             Field listField = PathfinderGoalSelector.class.getDeclaredField("b");
             listField.setAccessible(true);
@@ -600,10 +611,7 @@ public class VolatileCodeEnabled_1_9_R2 implements VolatileCodeHandle {
 	public void addAILookAtPlayer(LivingEntity entity, int range) {
         try {
         	EntityInsentient ev = (EntityInsentient)((CraftLivingEntity)entity).getHandle();
-               
-            Field goalsField = EntityInsentient.class.getDeclaredField("goalSelector");
-            goalsField.setAccessible(true);
-            PathfinderGoalSelector goals = (PathfinderGoalSelector) goalsField.get(ev);
+            PathfinderGoalSelector goals = (PathfinderGoalSelector) entityInsentientGoalsField.get(ev);
 
             goals.a(1, new PathfinderGoalLookAtPlayer(ev, EntityHuman.class, range, 1.0F));
         } catch (Exception e) {
@@ -808,13 +816,9 @@ public class VolatileCodeEnabled_1_9_R2 implements VolatileCodeHandle {
 	@Override
 	public void setTexture(SkullMeta meta, String texture, String signature) {
 		try {
-			Field profileField = meta.getClass().getField("profile");
-			profileField.setAccessible(true);
-			GameProfile profile = (GameProfile) profileField.get(meta);
+			GameProfile profile = (GameProfile) craftMetaSkullProfileField.get(meta);
 			setTexture(profile, texture, signature);
-			profileField.set(meta, profile);
-		} catch (NoSuchFieldException e) {
-			MagicSpells.handleException(e);
+			craftMetaSkullProfileField.set(meta, profile);
 		} catch (SecurityException e) {
 			MagicSpells.handleException(e);
 		} catch (IllegalArgumentException e) {
@@ -823,7 +827,7 @@ public class VolatileCodeEnabled_1_9_R2 implements VolatileCodeHandle {
 			MagicSpells.handleException(e);
 		}
 	}
-
+	
 	@Override
 	public void setSkin(Player player, String skin, String signature) {
 		CraftPlayer craftPlayer = (CraftPlayer)player;
@@ -838,18 +842,14 @@ public class VolatileCodeEnabled_1_9_R2 implements VolatileCodeHandle {
 		}
 		return profile;
 	}
-
+	
 	@Override
 	public void setTexture(SkullMeta meta, String texture, String signature,
 			String uuid, String name) {
 		try {
-			Field profileField = meta.getClass().getField("profile");
-			profileField.setAccessible(true);
-			GameProfile profile = new GameProfile(UUID.fromString(uuid), name);
+			GameProfile profile = new GameProfile(uuid != null ? UUID.fromString(uuid): null, name);
 			setTexture(profile, texture, signature);
-			profileField.set(meta, profile);
-		} catch (NoSuchFieldException e) {
-			MagicSpells.handleException(e);
+			craftMetaSkullProfileField.set(meta, profile);
 		} catch (SecurityException e) {
 			MagicSpells.handleException(e);
 		} catch (IllegalArgumentException e) {
