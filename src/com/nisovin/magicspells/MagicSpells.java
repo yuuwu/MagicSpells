@@ -60,6 +60,7 @@ import com.nisovin.magicspells.util.Util;
 import com.nisovin.magicspells.variables.VariableManager;
 import com.nisovin.magicspells.volatilecode.VolatileCodeDisabled;
 import com.nisovin.magicspells.volatilecode.VolatileCodeEnabled_1_10_R1;
+import com.nisovin.magicspells.volatilecode.VolatileCodeEnabled_1_11_R1;
 import com.nisovin.magicspells.volatilecode.VolatileCodeEnabled_1_8_R1;
 import com.nisovin.magicspells.volatilecode.VolatileCodeEnabled_1_8_R3;
 import com.nisovin.magicspells.volatilecode.VolatileCodeEnabled_1_9_R1;
@@ -211,36 +212,42 @@ public class MagicSpells extends JavaPlugin {
 		boolean v1_9 = false;
 		if (config.getBoolean("general.enable-volatile-features", true)) {
 			try {
-				Class.forName("net.minecraft.server.v1_10_R1.MinecraftServer");
-				volatileCodeHandle = new VolatileCodeEnabled_1_10_R1(config);
+				Class.forName("net.minecraft.server.v1_11_R1.MinecraftServer");
 				v1_9 = true;
-			} catch (ClassNotFoundException e_1_10_1) {
+				volatileCodeHandle = new VolatileCodeEnabled_1_11_R1(config);
+			} catch (ClassNotFoundException e_1_11_1) {
 				try {
-					Class.forName("net.minecraft.server.v1_9_R2.MinecraftServer");
-					volatileCodeHandle = new VolatileCodeEnabled_1_9_R2();
+					Class.forName("net.minecraft.server.v1_10_R1.MinecraftServer");
+					volatileCodeHandle = new VolatileCodeEnabled_1_10_R1(config);
 					v1_9 = true;
-				} catch (ClassNotFoundException e_1_9_2) {
+				} catch (ClassNotFoundException e_1_10_1) {
 					try {
-						Class.forName("net.minecraft.server.v1_9_R1.MinecraftServer");
-						volatileCodeHandle = new VolatileCodeEnabled_1_9_R1();
+						Class.forName("net.minecraft.server.v1_9_R2.MinecraftServer");
+						volatileCodeHandle = new VolatileCodeEnabled_1_9_R2();
 						v1_9 = true;
-					} catch (ClassNotFoundException e_1_9_r1) {
+					} catch (ClassNotFoundException e_1_9_2) {
 						try {
-							Class.forName("net.minecraft.server.v1_8_R3.MinecraftServer");
-							volatileCodeHandle = new VolatileCodeEnabled_1_8_R3();
-						} catch (ClassNotFoundException e_1_8_r3) {
+							Class.forName("net.minecraft.server.v1_9_R1.MinecraftServer");
+							volatileCodeHandle = new VolatileCodeEnabled_1_9_R1();
+							v1_9 = true;
+						} catch (ClassNotFoundException e_1_9_r1) {
 							try {
-								Class.forName("net.minecraft.server.v1_8_R1.MinecraftServer");
-								volatileCodeHandle = new VolatileCodeEnabled_1_8_R1();
-							} catch (ClassNotFoundException e_1_8_r1) {
-								error("This MagicSpells version is not fully compatible with this server version.");
-								error("Some features have been disabled.");
-								error("See http://nisovin.com/magicspells/volatilefeatures for more information.");
-								if (getServer().getPluginManager().isPluginEnabled("ProtocolLib")) {
-									error("ProtocolLib found: some compatibility re-enabled");
-									volatileCodeHandle = new VolatileCodeProtocolLib();
-								} else {
-									volatileCodeHandle = new VolatileCodeDisabled();
+								Class.forName("net.minecraft.server.v1_8_R3.MinecraftServer");
+								volatileCodeHandle = new VolatileCodeEnabled_1_8_R3();
+							} catch (ClassNotFoundException e_1_8_r3) {
+								try {
+									Class.forName("net.minecraft.server.v1_8_R1.MinecraftServer");
+									volatileCodeHandle = new VolatileCodeEnabled_1_8_R1();
+								} catch (ClassNotFoundException e_1_8_r1) {
+									error("This MagicSpells version is not fully compatible with this server version.");
+									error("Some features have been disabled.");
+									error("See http://nisovin.com/magicspells/volatilefeatures for more information.");
+									if (getServer().getPluginManager().isPluginEnabled("ProtocolLib")) {
+										error("ProtocolLib found: some compatibility re-enabled");
+										volatileCodeHandle = new VolatileCodeProtocolLib();
+									} else {
+										volatileCodeHandle = new VolatileCodeDisabled();
+									}
 								}
 							}
 						}
