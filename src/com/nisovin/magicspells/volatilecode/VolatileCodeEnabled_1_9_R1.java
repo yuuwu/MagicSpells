@@ -122,7 +122,7 @@ public class VolatileCodeEnabled_1_9_R1 implements VolatileCodeHandle {
 			}
 			
 			craftMetaSkullClass = Class.forName("org.bukkit.craftbukkit.v1_9_R1.inventory.CraftMetaSkull");
-			craftMetaSkullProfileField = craftMetaSkullClass.getField("profile");
+			craftMetaSkullProfileField = craftMetaSkullClass.getDeclaredField("profile");
 			craftMetaSkullProfileField.setAccessible(true);
 		} catch (Exception e) {
 			e.printStackTrace();

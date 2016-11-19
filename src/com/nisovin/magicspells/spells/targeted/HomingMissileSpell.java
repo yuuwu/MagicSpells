@@ -52,6 +52,8 @@ public class HomingMissileSpell extends TargetedSpell implements TargetedEntityS
 	ParticleData data;
 	
 	boolean useParticles = false;
+	
+	int intermediateSpecialEffects = 0;
 
 	public HomingMissileSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -75,6 +77,11 @@ public class HomingMissileSpell extends TargetedSpell implements TargetedEntityS
 		hitSpellName = getConfigString("spell", "");
 		useParticles = getConfigBoolean("use-particles", false);
 		changeCasterOnReflect = getConfigBoolean("change-caster-on-reflect", true);
+		
+		intermediateSpecialEffects = getConfigInt("intermediate-special-effect-locations", 0);
+		if (intermediateSpecialEffects < 0) {
+			intermediateSpecialEffects = 0;
+		}
 		
 		EffectPackage pkg = ParticleNameUtil.findEffectPackage(particleName);
 		effect = pkg.effect;
@@ -206,22 +213,20 @@ public class HomingMissileSpell extends TargetedSpell implements TargetedEntityS
 				stop();
 				return;
 			}
-
+			Location oldLocation = currentLocation.clone();
 			// move projectile and calculate new vector
 			currentLocation.add(currentVelocity);
+			Vector oldVelocity = new Vector(currentVelocity.getX(), currentVelocity.getY(), currentVelocity.getZ());
 			currentVelocity.multiply(projectileInertia);
 			currentVelocity.add(target.getLocation().add(0, yOffset, 0).subtract(currentLocation).toVector().normalize());
 			currentVelocity.normalize().multiply(velocityPerTick);
 
-			// show particle
-			if (useParticles) {
-				//MagicSpells.getVolatileCodeHandler().playParticleEffect(currentLocation, particleName, particleHorizontalSpread, particleVerticalSpread, particleSpeed, particleCount, renderDistance, 0F);
-				
-				effect.display(data, currentLocation, null, renderDistance, particleHorizontalSpread, particleVerticalSpread, particleHorizontalSpread, particleSpeed, particleCount);
-				//ParticleData data, Location center, Color color, double range, float offsetX, float offsetY, float offsetZ, float speed, int amount
-			} else {
-				playSpellEffects(EffectPosition.SPECIAL, currentLocation);
+			if (intermediateSpecialEffects > 0) {
+				//time to put extra effects in between
+				playIntermediateEffectLocations(oldLocation, oldVelocity);
 			}
+			// show particle
+			playMissileEffect(currentLocation);
 
 			// play effects
 			if (specialEffectInterval > 0 && counter % specialEffectInterval == 0) {
@@ -253,6 +258,29 @@ public class HomingMissileSpell extends TargetedSpell implements TargetedEntityS
 						
 					}
 				}
+			}
+		}
+		
+		private void playIntermediateEffectLocations(Location old, Vector movement) {
+			int divideFactor = (intermediateSpecialEffects + 1);
+			movement.setX(movement.getX()/divideFactor);
+			movement.setY(movement.getY()/divideFactor);
+			movement.setZ(movement.getZ()/divideFactor);
+			for (int i = 0; i < intermediateSpecialEffects; i++) {
+				old = old.add(movement).setDirection(movement);
+				playMissileEffect(old);
+			}
+		}
+		
+		private void playMissileEffect(Location loc) {
+			// show particle
+			if (useParticles) {
+				//MagicSpells.getVolatileCodeHandler().playParticleEffect(currentLocation, particleName, particleHorizontalSpread, particleVerticalSpread, particleSpeed, particleCount, renderDistance, 0F);
+				
+				effect.display(data, loc, null, renderDistance, particleHorizontalSpread, particleVerticalSpread, particleHorizontalSpread, particleSpeed, particleCount);
+				//ParticleData data, Location center, Color color, double range, float offsetX, float offsetY, float offsetZ, float speed, int amount
+			} else {
+				playSpellEffects(EffectPosition.SPECIAL, loc);
 			}
 		}
 		
