@@ -19,6 +19,7 @@ import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spells.PassiveSpell;
 
+// optional trigger variable of comma separated list of blocks to accept
 public class BlockPlaceListener extends PassiveListener {
 
 	Set<Material> materials = new HashSet<Material>();

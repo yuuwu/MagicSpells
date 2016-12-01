@@ -15,6 +15,7 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.spells.PassiveSpell;
 
+// optional trigger variable of comma separated list of teleport causes to accept
 public class TeleportListener extends PassiveListener {
 
 	Map<TeleportCause, List<PassiveSpell>> types = new HashMap<PlayerTeleportEvent.TeleportCause, List<PassiveSpell>>();

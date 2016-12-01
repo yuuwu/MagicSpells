@@ -26,6 +26,8 @@ import com.nisovin.magicspells.materials.MagicItemWithNameMaterial;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spells.PassiveSpell;
 
+// optional trigger variable of a comma separated list that can contain
+// damage causes to accept or damaging weapons to accept
 public class TakeDamageListener extends PassiveListener {
 
 	Map<DamageCause, List<PassiveSpell>> damageCauses = new HashMap<EntityDamageEvent.DamageCause, List<PassiveSpell>>();

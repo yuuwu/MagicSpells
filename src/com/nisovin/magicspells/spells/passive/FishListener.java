@@ -19,6 +19,10 @@ import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.spells.PassiveSpell;
 import com.nisovin.magicspells.util.Util;
 
+// trigger variable is optional
+// if not specified, it triggers in all forms
+// the trigger variable may be a comma separated list containing any of the following
+// ground, fish, fail, <entity type>
 public class FishListener extends PassiveListener {
 
 	Map<EntityType, List<PassiveSpell>> types = new HashMap<EntityType, List<PassiveSpell>>();

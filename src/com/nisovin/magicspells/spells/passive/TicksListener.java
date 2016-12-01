@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -21,6 +20,11 @@ import com.nisovin.magicspells.events.SpellForgetEvent;
 import com.nisovin.magicspells.events.SpellLearnEvent;
 import com.nisovin.magicspells.spells.PassiveSpell;
 
+// trigger argument is required
+// must be an integer.
+// the value reflects how often the trigger runs
+// where the value of the trigger variable is x
+// the trigger will activate every x ticks
 public class TicksListener extends PassiveListener {
 
 	

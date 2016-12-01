@@ -14,6 +14,11 @@ import com.comphenix.protocol.wrappers.EnumWrappers.ResourcePackStatus;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spells.PassiveSpell;
 
+// trigger variable should be set to one of the following
+// loaded
+// declined
+// failed
+// accepted
 public class ResourcePackListener extends PassiveListener {
 
 	PacketListener listener;

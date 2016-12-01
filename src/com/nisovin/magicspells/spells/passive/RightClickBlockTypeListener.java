@@ -20,6 +20,7 @@ import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spells.PassiveSpell;
 
+// trigger variable accepts a comma separated list of blocks to accept
 public class RightClickBlockTypeListener extends PassiveListener {
 
 	Set<Material> materials = new HashSet<Material>();

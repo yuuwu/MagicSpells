@@ -21,6 +21,7 @@ import com.nisovin.magicspells.events.SpellLearnEvent;
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.spells.PassiveSpell;
 
+// no trigger variable currently used
 public class BuffListener extends PassiveListener {
 
 	List<PassiveSpell> spells = new ArrayList<PassiveSpell>();

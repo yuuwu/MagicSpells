@@ -10,6 +10,7 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.spells.PassiveSpell;
 
+// no trigger variable is used here
 public class SprintListener extends PassiveListener {
 
 	List<PassiveSpell> sprint = null;

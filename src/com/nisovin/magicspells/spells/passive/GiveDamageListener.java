@@ -23,6 +23,8 @@ import com.nisovin.magicspells.materials.MagicItemWithNameMaterial;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spells.PassiveSpell;
 
+// optional trigger variable that may contain a comma separated list
+// of weapons to trigger on
 public class GiveDamageListener extends PassiveListener {
 
 	Set<Material> types = new HashSet<Material>();

@@ -15,6 +15,7 @@ import com.nisovin.magicspells.Spell.SpellCastState;
 import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.spells.PassiveSpell;
 
+// optional trigger variable of comma separated list of internal spell names to accept
 public class SpellCastListener extends PassiveListener {
 
 	Map<Spell, List<PassiveSpell>> spells = new HashMap<Spell, List<PassiveSpell>>();

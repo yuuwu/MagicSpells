@@ -14,6 +14,9 @@ import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.spells.PassiveSpell;
 import com.nisovin.magicspells.util.MagicLocation;
 
+// trigger variable is a semicolon separated list of locations to accept
+// locations follow the format of world,x,y,z
+// where "world" is a string and x, y, and z are integers
 public class RightClickBlockCoordListener extends PassiveListener {
 
 	Map<MagicLocation, PassiveSpell> locs = new HashMap<MagicLocation, PassiveSpell>();

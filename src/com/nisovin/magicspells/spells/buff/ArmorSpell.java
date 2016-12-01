@@ -209,9 +209,11 @@ public class ArmorSpell extends BuffSpell {
 			Iterator<ItemStack> drops = event.getDrops().iterator();
 			while (drops.hasNext()) {
 				ItemStack drop = drops.next();
-				List<String> lore = drop.getItemMeta().getLore();
-				if (lore != null && lore.size() > 0 && lore.get(lore.size()-1).equals(strLoreText)) {
-					drops.remove();
+				if (drop.hasItemMeta() && drop.getItemMeta() != null) {
+					List<String> lore = drop.getItemMeta().getLore();
+					if (lore != null && lore.size() > 0 && lore.get(lore.size()-1).equals(strLoreText)) {
+						drops.remove();
+					}
 				}
 			}
 		}

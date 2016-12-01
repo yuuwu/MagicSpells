@@ -19,6 +19,7 @@ import com.nisovin.magicspells.materials.MagicItemWithNameMaterial;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spells.PassiveSpell;
 
+// optional trigger variable that is a comma separated list of items to accept
 public class PickupItemListener extends PassiveListener {
 
 	Set<Material> materials = new HashSet<Material>();

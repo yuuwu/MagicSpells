@@ -16,6 +16,9 @@ import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.spells.PassiveSpell;
 import com.nisovin.magicspells.util.Util;
 
+// trigger variable option is optional
+// if not defined, it will trigger regardless of entity type
+// if specified, it should be a comma separated list of entity types to accept
 public class RightClickEntityListener extends PassiveListener {
 
 	Map<EntityType, List<PassiveSpell>> types = new HashMap<EntityType, List<PassiveSpell>>();

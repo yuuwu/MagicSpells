@@ -50,6 +50,7 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.util.BoundingBox;
 import com.nisovin.magicspells.util.IDisguiseManager;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.SafetyCheckUtils;
 
 public class VolatileCodeEnabled_1_11_R1 implements VolatileCodeHandle {
 
@@ -95,6 +96,7 @@ public class VolatileCodeEnabled_1_11_R1 implements VolatileCodeHandle {
 			craftMetaSkullProfileField = craftMetaSkullClass.getDeclaredField("profile");
 			craftMetaSkullProfileField.setAccessible(true);
 		} catch (Exception e) {
+			MagicSpells.error("THIS OCCURRED WHEN CREATING THE VOLATILE CODE HANDLE FOR 1.11, THE FOLLOWING ERROR IS MOST LIKELY USEFUL IF YOU'RE RUNNING THE LATEST VERSION OF MAGICSPELLS.");
 			e.printStackTrace();
 		}
 
@@ -106,6 +108,9 @@ public class VolatileCodeEnabled_1_11_R1 implements VolatileCodeHandle {
 	}
 	
 	private NBTTagCompound getTag(ItemStack item) {
+		//don't spam the user with errors, just stop
+		if (SafetyCheckUtils.areAnyNull(craftItemStackHandleField)) return null;
+		
 		if (item instanceof CraftItemStack) {
 			try {
 				return ((net.minecraft.server.v1_11_R1.ItemStack)craftItemStackHandleField.get(item)).getTag();
@@ -818,6 +823,9 @@ public class VolatileCodeEnabled_1_11_R1 implements VolatileCodeHandle {
 	
 	@Override
 	public void setTexture(SkullMeta meta, String texture, String signature) {
+		//don't spam the user with errors, just stop
+		if (SafetyCheckUtils.areAnyNull(craftMetaSkullProfileField)) return;
+		
 		try {
 			GameProfile profile = (GameProfile) craftMetaSkullProfileField.get(meta);
 			setTexture(profile, texture, signature);
@@ -849,6 +857,9 @@ public class VolatileCodeEnabled_1_11_R1 implements VolatileCodeHandle {
 	@Override
 	public void setTexture(SkullMeta meta, String texture, String signature,
 			String uuid, String name) {
+		//don't spam the user with errors, just stop
+		if (SafetyCheckUtils.areAnyNull(craftMetaSkullProfileField)) return;
+		
 		try {
 			GameProfile profile = new GameProfile(uuid != null ? UUID.fromString(uuid): null, name);
 			setTexture(profile, texture, signature);

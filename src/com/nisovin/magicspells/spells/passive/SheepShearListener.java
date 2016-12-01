@@ -14,6 +14,7 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.spells.PassiveSpell;
 
+// optional trigger variable that can either be set to a dye color to accept or "all"
 public class SheepShearListener extends PassiveListener {
 
 	EnumMap<DyeColor, List<PassiveSpell>> spellMap = new EnumMap<DyeColor, List<PassiveSpell>>(DyeColor.class);

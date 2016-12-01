@@ -12,6 +12,7 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.spells.PassiveSpell;
 
+// no trigger variable is currently used
 public class JoinListener extends PassiveListener {
 
 	List<PassiveSpell> spells = new ArrayList<PassiveSpell>();

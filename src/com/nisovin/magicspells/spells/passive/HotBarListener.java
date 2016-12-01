@@ -19,6 +19,7 @@ import com.nisovin.magicspells.materials.MagicItemWithNameMaterial;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spells.PassiveSpell;
 
+// trigger variable is the item to trigger on
 public class HotBarListener extends PassiveListener {
 
 	Set<Material> materials = new HashSet<Material>();

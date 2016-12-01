@@ -16,6 +16,9 @@ import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.spells.PassiveSpell;
 import com.nisovin.magicspells.util.Util;
 
+// trigger variable is optional
+// if not specified, it will trigger on any entity type
+// if specified, it should be a comma separated list of entity types to trigger on
 public class KillListener extends PassiveListener {
 
 	Map<EntityType, List<PassiveSpell>> entityTypes = new HashMap<EntityType, List<PassiveSpell>>();
