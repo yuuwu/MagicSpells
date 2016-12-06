@@ -97,6 +97,8 @@ public class MagicSpells extends JavaPlugin {
 	boolean ignoreGrantPerms;
 	boolean ignoreCastPerms;
 	
+	boolean enableTempGrantPerms = true;
+	
 	boolean separatePlayerSpellsPerWorld;
 	boolean allowCycleToNoSpell;
 	boolean alwaysShowMessageOnCycle;
@@ -272,6 +274,7 @@ public class MagicSpells extends JavaPlugin {
 		defaultAllPermsFalse = config.getBoolean("general.default-all-perms-false", false);
 		ignoreGrantPerms = config.getBoolean("general.ignore-grant-perms", false);
 		ignoreCastPerms = config.getBoolean("general.ignore-cast-perms", false);
+		enableTempGrantPerms = config.getBoolean("general.enable-tempgrant-perms", true);
 
 		separatePlayerSpellsPerWorld = config.getBoolean("general.separate-player-spells-per-world", false);
 		allowCycleToNoSpell = config.getBoolean("general.allow-cycle-to-no-spell", false);
@@ -652,7 +655,9 @@ public class MagicSpells extends JavaPlugin {
 						addPermission(pm, "learn." + permName, defaultAllPermsFalse ? PermissionDefault.FALSE : PermissionDefault.TRUE);
 						addPermission(pm, "cast." + permName, defaultAllPermsFalse ? PermissionDefault.FALSE : PermissionDefault.TRUE);
 						addPermission(pm, "teach." + permName, defaultAllPermsFalse ? PermissionDefault.FALSE : PermissionDefault.TRUE);
-						addPermission(pm, "tempgrant." + permName, PermissionDefault.FALSE);
+						if (this.enableTempGrantPerms) {
+							addPermission(pm, "tempgrant." + permName, PermissionDefault.FALSE);
+						}
 						permLearnChildren.put("magicspells.learn." + permName, true);
 						permCastChildren.put("magicspells.cast." + permName, true);
 						permTeachChildren.put("magicspells.teach." + permName, true);

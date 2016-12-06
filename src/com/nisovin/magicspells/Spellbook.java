@@ -428,7 +428,7 @@ public class Spellbook {
 			addSpell(spell);
 			save();
 			return true;
-		} else if (player.hasPermission("magicspells.tempgrant." + spell.getPermissionName())) {
+		} else if (MagicSpells.plugin.enableTempGrantPerms && player.hasPermission("magicspells.tempgrant." + spell.getPermissionName())) {
 			return true;
 		} else {
 			return false;

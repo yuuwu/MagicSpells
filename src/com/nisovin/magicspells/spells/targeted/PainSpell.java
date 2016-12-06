@@ -38,6 +38,7 @@ public class PainSpell extends TargetedSpell implements TargetedEntitySpell, Spe
 	private boolean checkPlugins;
 	private DamageCause damageType;
 	private boolean avoidDamageModification;
+	private boolean tryAvoidingAntiCheatPlugins;
 	
 	public PainSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -54,6 +55,8 @@ public class PainSpell extends TargetedSpell implements TargetedEntitySpell, Spe
 		spellDamageType = getConfigString("spell-damage-type", "");
 		ignoreArmor = getConfigBoolean("ignore-armor", false);
 		checkPlugins = getConfigBoolean("check-plugins", true);
+		
+		tryAvoidingAntiCheatPlugins = getConfigBoolean("try-avoiding-anticheat-plugins", false);
 		
 		String type = getConfigString("damage-type", "ENTITY_ATTACK");
 		for (DamageCause cause : DamageCause.values()) {
@@ -128,7 +131,11 @@ public class PainSpell extends TargetedSpell implements TargetedEntitySpell, Spe
 			target.setHealth(health);
 			target.playEffect(EntityEffect.HURT);
 		} else {
-			target.damage(localDamage, player);
+			if (tryAvoidingAntiCheatPlugins) {
+				target.damage(localDamage);
+			} else {
+				target.damage(localDamage, player);
+			}
 		}
 		if (player != null) {
 			playSpellEffects(player, target);
