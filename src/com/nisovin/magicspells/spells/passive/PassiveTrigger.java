@@ -20,11 +20,14 @@ public class PassiveTrigger {
 	public static PassiveTrigger BLOCK_BREAK = addTrigger("blockbreak", BlockBreakListener.class);
 	public static PassiveTrigger BLOCK_PLACE = addTrigger("blockplace", BlockPlaceListener.class);
 	public static PassiveTrigger RIGHT_CLICK = addTrigger("rightclick", RightClickItemListener.class);
+	public static PassiveTrigger RIGHT_CLICK_OFFHAND = addTrigger("rightclickoffhand", RightClickItemListener.class);
 	public static PassiveTrigger RIGHT_CLICK_BLOCK_TYPE = addTrigger("rightclickblocktype", RightClickBlockTypeListener.class);
 	public static PassiveTrigger RIGHT_CLICK_BLOCK_COORD = addTrigger("rightclickblockcoord", RightClickBlockCoordListener.class);
+	public static PassiveTrigger RIGHT_CLICK_BLOCK_COORD_OFFHAND = addTrigger("rightclickblockcoordoffhand", RightClickBlockCoordListener.class);
 	public static PassiveTrigger LEFT_CLICK_BLOCK_TYPE = addTrigger("leftclickblocktype", LeftClickBlockTypeListener.class);
 	public static PassiveTrigger LEFT_CLICK_BLOCK_COORD = addTrigger("leftclickblockcoord", LeftClickBlockCoordListener.class);
 	public static PassiveTrigger RIGHT_CLICK_ENTITY = addTrigger("rightclickentity", RightClickEntityListener.class);
+	public static PassiveTrigger RIGHT_CLICK_ENTITY_OFFHAND = addTrigger("rightclickentityoffhand", RightClickEntityListener.class);
 	public static PassiveTrigger SPELL_CAST = addTrigger("spellcast", SpellCastListener.class);
 	public static PassiveTrigger SPELL_CASTED = addTrigger("spellcasted", SpellCastedListener.class);
 	public static PassiveTrigger SPELL_TARGET = addTrigger("spelltarget", SpellTargetListener.class);

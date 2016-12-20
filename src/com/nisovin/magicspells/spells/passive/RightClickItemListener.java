@@ -19,6 +19,7 @@ import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.materials.MagicItemWithNameMaterial;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spells.PassiveSpell;
+import com.nisovin.magicspells.util.HandHandler;
 
 // trigger variable of a comma separated list of items to accept
 public class RightClickItemListener extends PassiveListener {
@@ -26,8 +27,21 @@ public class RightClickItemListener extends PassiveListener {
 	Set<Material> materials = new HashSet<Material>();
 	Map<MagicMaterial, List<PassiveSpell>> types = new LinkedHashMap<MagicMaterial, List<PassiveSpell>>();
 	
+	Set<Material> materialsOffhand = new HashSet<Material>();
+	Map<MagicMaterial, List<PassiveSpell>> typesOffhand = new LinkedHashMap<MagicMaterial, List<PassiveSpell>>();
+	
 	@Override
 	public void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var) {
+		Set<Material> materialSetAddTo = null;
+		Map<MagicMaterial, List<PassiveSpell>> typesMapAddTo = null;
+		if (isMainHand(trigger)) {
+			materialSetAddTo = materials;
+			typesMapAddTo = types;
+		} else {
+			materialSetAddTo = materialsOffhand;
+			typesMapAddTo = typesOffhand;
+		}
+		
 		String[] split = var.split(",");
 		for (String s : split) {
 			s = s.trim();
@@ -42,13 +56,13 @@ public class RightClickItemListener extends PassiveListener {
 				mat = MagicSpells.getItemNameResolver().resolveItem(s);
 			}
 			if (mat != null) {
-				List<PassiveSpell> list = types.get(mat);
+				List<PassiveSpell> list = typesMapAddTo.get(mat);
 				if (list == null) {
 					list = new ArrayList<PassiveSpell>();
-					types.put(mat, list);
+					typesMapAddTo.put(mat, list);
 				}
 				list.add(spell);
-				materials.add(mat.getMaterial());
+				materialSetAddTo.add(mat.getMaterial());
 			}
 		}
 	}
@@ -60,7 +74,7 @@ public class RightClickItemListener extends PassiveListener {
 		
 		ItemStack item = event.getItem();
 		if (item == null || item.getType() == Material.AIR) return;
-		List<PassiveSpell> list = getSpells(item);
+		List<PassiveSpell> list = getSpells(item, HandHandler.isMainHand(event));
 		if (list != null) {
 			Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());
 			for (PassiveSpell spell : list) {
@@ -74,15 +88,30 @@ public class RightClickItemListener extends PassiveListener {
 		}
 	}
 	
-	private List<PassiveSpell> getSpells(ItemStack item) {
-		if (materials.contains(item.getType())) {
-			for (MagicMaterial m : types.keySet()) {
+	private List<PassiveSpell> getSpells(ItemStack item, boolean mainHand) {
+		Set<Material> materialSet;
+		Map<MagicMaterial, List<PassiveSpell>> spellMap;
+		if (mainHand) {
+			materialSet = materials;
+			spellMap = types;
+		} else {
+			materialSet = materialsOffhand;
+			spellMap = typesOffhand;
+		}
+		
+		
+		if (materialSet.contains(item.getType())) {
+			for (MagicMaterial m : spellMap.keySet()) {
 				if (m.equals(item)) {
-					return types.get(m);
+					return spellMap.get(m);
 				}
 			}
 		}
 		return null;
+	}
+	
+	private boolean isMainHand(PassiveTrigger trigger) {
+		return trigger == PassiveTrigger.RIGHT_CLICK;
 	}
 
 }

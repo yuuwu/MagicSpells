@@ -53,6 +53,7 @@ import com.nisovin.magicspells.util.BossBarManager;
 import com.nisovin.magicspells.util.BossBarManager_V1_8;
 import com.nisovin.magicspells.util.BossBarManager_V1_9;
 import com.nisovin.magicspells.util.ExperienceBarManager;
+import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.MoneyHandler;
 import com.nisovin.magicspells.util.RegexUtil;
@@ -259,6 +260,7 @@ public class MagicSpells extends JavaPlugin {
 		} else {
 			volatileCodeHandle = new VolatileCodeDisabled();
 		}
+		HandHandler.initialize();
 		
 		debug = config.getBoolean("general.debug", false);
 		debugNull = config.getBoolean("general.debug-null", true);

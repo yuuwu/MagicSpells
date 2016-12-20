@@ -12,6 +12,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.spells.PassiveSpell;
+import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicLocation;
 
 // trigger variable is a semicolon separated list of locations to accept
@@ -20,9 +21,16 @@ import com.nisovin.magicspells.util.MagicLocation;
 public class RightClickBlockCoordListener extends PassiveListener {
 
 	Map<MagicLocation, PassiveSpell> locs = new HashMap<MagicLocation, PassiveSpell>();
+	Map<MagicLocation, PassiveSpell> offhandLocs = new HashMap<MagicLocation, PassiveSpell>();
 	
 	@Override
 	public void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var) {
+		Map<MagicLocation, PassiveSpell> addTo;
+		if (isMainHandListener(trigger)) {
+			addTo = locs;
+		} else {
+			addTo = offhandLocs;
+		}
 		String[] split = var.split(";");
 		for (String s : split) {
 			try {
@@ -31,11 +39,15 @@ public class RightClickBlockCoordListener extends PassiveListener {
 				int x = Integer.parseInt(data[1]);
 				int y = Integer.parseInt(data[2]);
 				int z = Integer.parseInt(data[3]);				
-				locs.put(new MagicLocation(world, x, y, z), spell);
+				addTo.put(new MagicLocation(world, x, y, z), spell);
 			} catch (NumberFormatException e) {
 				MagicSpells.error("Invalid coords on rightclickblockcoord trigger for spell '" + spell.getInternalName() + "'");
 			}
 		}
+	}
+	
+	public boolean isMainHandListener(PassiveTrigger trigger) {
+		return PassiveTrigger.RIGHT_CLICK_BLOCK_COORD == trigger;
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR)
@@ -43,7 +55,14 @@ public class RightClickBlockCoordListener extends PassiveListener {
 		if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 		Location location = event.getClickedBlock().getLocation();
 		MagicLocation loc = new MagicLocation(location.getWorld().getName(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
-		PassiveSpell spell = locs.get(loc);
+		
+		PassiveSpell spell = null;
+		if (HandHandler.isMainHand(event)) {
+			spell = locs.get(loc);
+		} else {
+			spell = offhandLocs.get(loc);
+		}
+		
 		if (spell != null) {
 			if (!spell.ignoreCancelled() && event.isCancelled()) return;
 			Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());

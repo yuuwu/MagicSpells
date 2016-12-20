@@ -14,6 +14,7 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.spells.PassiveSpell;
+import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.Util;
 
 // trigger variable option is optional
@@ -23,22 +24,38 @@ public class RightClickEntityListener extends PassiveListener {
 
 	Map<EntityType, List<PassiveSpell>> types = new HashMap<EntityType, List<PassiveSpell>>();
 	List<PassiveSpell> allTypes = new ArrayList<PassiveSpell>();
+	
+	Map<EntityType, List<PassiveSpell>> typesOffhand = new HashMap<EntityType, List<PassiveSpell>>();
+	List<PassiveSpell> allTypesOffhand = new ArrayList<PassiveSpell>();
+	
 	boolean ignoreCancelled = true;
 	
 	@Override
 	public void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var) {
 		ignoreCancelled = spell.ignoreCancelled();
+		
+		Map<EntityType, List<PassiveSpell>> typeMapLocal;
+		List<PassiveSpell> allTypesLocal;
+		
+		if (isMainHand(trigger)) {
+			typeMapLocal = types;
+			allTypesLocal = allTypes;
+		} else {
+			typeMapLocal = typesOffhand;
+			allTypesLocal = allTypesOffhand;
+		}
+		
 		if (var == null || var.isEmpty()) {
-			allTypes.add(spell);
+			allTypesLocal.add(spell);
 		} else {
 			String[] split = var.replace(" ", "").toUpperCase().split(",");
 			for (String s : split) {
 				EntityType t = Util.getEntityType(s);
 				if (t != null) {
-					List<PassiveSpell> list = types.get(t);
+					List<PassiveSpell> list = typeMapLocal.get(t);
 					if (list == null) {
 						list = new ArrayList<PassiveSpell>();
-						types.put(t, list);
+						typeMapLocal.put(t, list);
 					}
 					list.add(spell);
 				}
@@ -50,9 +67,21 @@ public class RightClickEntityListener extends PassiveListener {
 	public void onRightClickEntity(PlayerInteractEntityEvent event) {
 		if (ignoreCancelled && event.isCancelled()) return;
 		if (!(event.getRightClicked() instanceof LivingEntity)) return;
-		if (!allTypes.isEmpty()) {
+		
+		Map<EntityType, List<PassiveSpell>> typeMapLocal;
+		List<PassiveSpell> allTypesLocal;
+		
+		if (HandHandler.isMainHand(event)) {
+			typeMapLocal = types;
+			allTypesLocal = allTypes;
+		} else {
+			typeMapLocal = typesOffhand;
+			allTypesLocal = allTypesOffhand;
+		}
+		
+		if (!allTypesLocal.isEmpty()) {
 			Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());
-			for (PassiveSpell spell : allTypes) {
+			for (PassiveSpell spell : allTypesLocal) {
 				if (spellbook.hasSpell(spell)) {
 					boolean casted = spell.activate(event.getPlayer(), (LivingEntity)event.getRightClicked());
 					if (casted && spell.cancelDefaultAction()) {
@@ -61,9 +90,9 @@ public class RightClickEntityListener extends PassiveListener {
 				}
 			}
 		}
-		if (types.containsKey(event.getRightClicked().getType())) {
+		if (typeMapLocal.containsKey(event.getRightClicked().getType())) {
 			Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());
-			List<PassiveSpell> list = types.get(event.getRightClicked().getType());
+			List<PassiveSpell> list = typeMapLocal.get(event.getRightClicked().getType());
 			for (PassiveSpell spell : list) {
 				if (spellbook.hasSpell(spell)) {
 					boolean casted = spell.activate(event.getPlayer(), (LivingEntity)event.getRightClicked());
@@ -73,6 +102,10 @@ public class RightClickEntityListener extends PassiveListener {
 				}
 			}
 		}
+	}
+	
+	public boolean isMainHand(PassiveTrigger trigger) {
+		return trigger == PassiveTrigger.RIGHT_CLICK_ENTITY;
 	}
 
 	
