@@ -174,6 +174,7 @@ public class MagicSpells extends JavaPlugin {
 	
 	public EffectManager effectManager;
 	
+	public boolean cycleSpellsOnOffhandAction;
 	
 	@Override
 	public void onEnable() {
@@ -286,6 +287,7 @@ public class MagicSpells extends JavaPlugin {
 		allowCastWithFist = config.getBoolean("general.allow-cast-with-fist", false);
 		castWithLeftClick = config.getBoolean("general.cast-with-left-click", true);
 		castWithRightClick = config.getBoolean("general.cast-with-right-click", false);
+		cycleSpellsOnOffhandAction = config.getBoolean("general.cycle-spells-with-offhand-action", false);
 		ignoreDefaultBindings = config.getBoolean("general.ignore-default-bindings", false);
 		ignoreCastItemEnchants = config.getBoolean("general.ignore-cast-item-enchants", true);
 		ignoreCastItemNames = config.getBoolean("general.ignore-cast-item-names", false);

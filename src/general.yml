@@ -25,6 +25,7 @@ only-cycle-to-castable-spells: true
 allow-cast-with-fist: false
 cast-with-left-click: true
 cast-with-right-click: false
+cycle-spells-with-offhand-action: false
 ops-have-all-spells: true
 ops-ignore-reagents: true
 ops-ignore-cooldowns: true

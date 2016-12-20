@@ -16,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import com.nisovin.magicspells.mana.ManaChangeReason;
+import com.nisovin.magicspells.util.HandHandler;
 
 public class CastListener implements Listener {
 
@@ -66,7 +67,7 @@ public class CastListener implements Listener {
 			if (!plugin.castOnAnimate) {
 				castSpell(event.getPlayer());
 			}
-		} else if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+		} else if ((event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) && (plugin.cycleSpellsOnOffhandAction || HandHandler.isMainHand(event))) {
 			// right click -- cycle spell and/or process mana pots
 			ItemStack inHand = MagicSpells.getVolatileCodeHandler().getItemInMainHand(player);
 			

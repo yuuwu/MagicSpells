@@ -40,7 +40,7 @@ public class RightClickListener implements Listener {
 	@EventHandler
 	public void onRightClick(final PlayerInteractEvent event) {
 	    if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
-	    if (!event.hasItem()) return;	    
+	    if (!event.hasItem()) return;
 
 	    CastItem castItem = new CastItem(event.getItem());
 	    final Spell spell = this.rightClickCastItems.get(castItem);
