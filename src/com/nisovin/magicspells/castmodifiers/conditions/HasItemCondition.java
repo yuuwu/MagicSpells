@@ -3,8 +3,12 @@ package com.nisovin.magicspells.castmodifiers.conditions;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import com.nisovin.magicspells.DebugHandler;
@@ -54,8 +58,13 @@ public class HasItemCondition extends Condition {
 
 	@Override
 	public boolean check(Player player) {
+		return check(player.getInventory());
+	}
+	
+	private boolean check(Inventory inventory) {
+		if (inventory == null) return false;
 		if (checkData || checkName) {
-			for (ItemStack item : player.getInventory().getContents()) {
+			for (ItemStack item : inventory.getContents()) {
 				if (item != null) {
 					String thisname = null;
 					try {
@@ -72,7 +81,7 @@ public class HasItemCondition extends Condition {
 			}
 			return false;
 		} else {
-			return player.getInventory().contains(Material.getMaterial(id));
+			return inventory.contains(Material.getMaterial(id));
 		}
 	}
 	
@@ -84,8 +93,10 @@ public class HasItemCondition extends Condition {
 	
 	@Override
 	public boolean check(Player player, LivingEntity target) {
-		if (target instanceof Player) {
-			return check((Player)target);
+		if (target == null) return false;
+		
+		if (target instanceof InventoryHolder) {
+			return check(((InventoryHolder)target).getInventory());
 		} else {
 			return false;
 		}
@@ -93,6 +104,16 @@ public class HasItemCondition extends Condition {
 	
 	@Override
 	public boolean check(Player player, Location location) {
+		Block target = location.getBlock();
+		if (target == null) return false;
+		
+		BlockState targetState = target.getState();
+		if (targetState == null) return false;
+		
+		if (targetState instanceof InventoryHolder) {
+			return check(((InventoryHolder)targetState).getInventory());
+		}
+		
 		return false;
 	}
 

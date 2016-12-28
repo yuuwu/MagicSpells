@@ -1,8 +1,12 @@
 package com.nisovin.magicspells.castmodifiers.conditions;
 
 import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import com.nisovin.magicspells.DebugHandler;
@@ -30,8 +34,14 @@ public class HasItemMoreThanCondition extends Condition {
 
 	@Override
 	public boolean check(Player player) {
+		return check(player.getInventory());
+	}
+	
+	private boolean check(Inventory inventory) {
+		if (inventory == null) return false;
+		
 		int c = 0;
-		for (ItemStack i : player.getInventory().getContents()) {
+		for (ItemStack i : inventory.getContents()) {
 			if (i != null && i.isSimilar(item)) {
 				c += i.getAmount();
 			}
@@ -41,8 +51,10 @@ public class HasItemMoreThanCondition extends Condition {
 
 	@Override
 	public boolean check(Player player, LivingEntity target) {
-		if (target instanceof Player) {
-			return check((Player)target);
+		if (target == null) return false;
+		
+		if (target instanceof InventoryHolder) {
+			return check(((InventoryHolder)target).getInventory());
 		} else {
 			return false;
 		}
@@ -50,6 +62,16 @@ public class HasItemMoreThanCondition extends Condition {
 
 	@Override
 	public boolean check(Player player, Location location) {
+		Block target = location.getBlock();
+		if (target == null) return false;
+		
+		BlockState targetState = target.getState();
+		if (targetState == null) return false;
+		
+		if (targetState instanceof InventoryHolder) {
+			return check(((InventoryHolder)targetState).getInventory());
+		}
+		
 		return false;
 	}
 
