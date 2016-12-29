@@ -146,6 +146,8 @@ public abstract class Condition {
 		conditions.put("powerequals", PowerEqualsCondition.class);
 		conditions.put("spelltag", SpellTagCondition.class);
 		conditions.put("beneficial", SpellBeneficialCondition.class);
+		conditions.put("customnamevisible", CustomNameVisibleCondition.class);
+		conditions.put("canpickupitems", CanPickupItemsCondition.class);
 	}
 	
 }
