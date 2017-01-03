@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.util.BooleanUtils;
 import com.nisovin.magicspells.util.ConfigData;
 
 /**
@@ -43,10 +44,10 @@ public class FireworksEffect extends SpellEffect {
 	public void loadFromString(String string) {
 		if (string != null && !string.isEmpty()) {
 			String[] data = string.split(" ");
-			if (data.length >= 1 && data[0].equalsIgnoreCase("yes")) {
+			if (data.length >= 1 && BooleanUtils.isYes(data[0])) {
 				flicker = true;
 			}
-			if (data.length >= 2 && data[1].equalsIgnoreCase("yes")) {
+			if (data.length >= 2 && BooleanUtils.isYes(data[1])) {
 				trail = true;
 			}
 			if (data.length >= 3) {

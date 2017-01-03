@@ -19,18 +19,61 @@ import com.nisovin.magicspells.Spell;
 
 public class ValidTargetList {
 	
+	public static enum TargetingElement {
+		TARGET_SELF,
+		TARGET_PLAYERS,
+		TARGET_INVISIBLES,
+		TARGET_NONPLAYERS,
+		TARGET_MONSTERS,
+		TARGET_ANIMALS,
+		TARGET_NONLIVING_ENTITIES,
+	}
+	
 	boolean targetSelf = false;
 	boolean targetPlayers = false;
 	boolean targetInvisibles = false;
 	boolean targetNonPlayers = false;
 	boolean targetMonsters = false;
 	boolean targetAnimals = false;
+	boolean targetNonLivingEntities = false; // this will be kept as false for now during restructuring
 	Set<EntityType> types = new HashSet<EntityType>();
 	
 	public ValidTargetList(Spell spell, String list) {
 		if (list != null) {
 			String[] ss = list.replace(" ", "").split(",");
 			init(spell, Arrays.asList(ss));
+		}
+	}
+	
+	public void enforce(TargetingElement element, boolean value) {
+		switch (element) {
+		case TARGET_SELF:
+			targetSelf = value;
+			break;
+		case TARGET_ANIMALS:
+			targetAnimals = value;
+			break;
+		case TARGET_INVISIBLES:
+			targetInvisibles = value;
+			break;
+		case TARGET_MONSTERS:
+			targetMonsters = value;
+			break;
+		case TARGET_NONLIVING_ENTITIES:
+			targetNonLivingEntities = value;
+			break;
+		case TARGET_NONPLAYERS:
+			targetNonPlayers = value;
+			break;
+		case TARGET_PLAYERS:
+			targetPlayers = value;
+			break;
+		}
+	}
+	
+	public void enforce(TargetingElement[] elements, boolean value) {
+		for (TargetingElement e: elements) {
+			enforce(e, value);
 		}
 	}
 	
@@ -71,12 +114,14 @@ public class ValidTargetList {
 		this.targetNonPlayers = targetNonPlayers;
 	}
 	
-	public boolean canTarget(Player caster, LivingEntity target) {
+	public boolean canTarget(Player caster, Entity target) {
 		return canTarget(caster, target, targetPlayers);
 	}
 	
-	public boolean canTarget(Player caster, LivingEntity target, boolean targetPlayers) {
-		if (target instanceof Player && ((Player)target).getGameMode() == GameMode.CREATIVE) {
+	public boolean canTarget(Player caster, Entity target, boolean targetPlayers) {
+		if (!(target instanceof LivingEntity) && !targetNonLivingEntities) {
+			return false;
+		} else if (target instanceof Player && ((Player)target).getGameMode() == GameMode.CREATIVE) {
 			return false;
 		} else if (targetSelf && target.equals(caster)) {
 			return true;
@@ -99,8 +144,10 @@ public class ValidTargetList {
 		}
 	}
 	
-	public boolean canTarget(LivingEntity target) {
-		if (target instanceof Player && ((Player)target).getGameMode() == GameMode.CREATIVE) {
+	public boolean canTarget(Entity target) {
+		if (!(target instanceof LivingEntity) && !targetNonLivingEntities) {
+			return false;
+		} else if (target instanceof Player && ((Player)target).getGameMode() == GameMode.CREATIVE) {
 			return false;
 		} else if (targetPlayers && target instanceof Player) {
 			return true;
@@ -117,14 +164,14 @@ public class ValidTargetList {
 		}
 	}
 	
-	public List<LivingEntity> filterTargetList(Player caster, List<Entity> targets) {
-		return filterTargetList(caster, targets, targetPlayers);
+	public List<LivingEntity> filterTargetListCastingAsLivingEntities(Player caster, List<Entity> targets) {
+		return filterTargetListCastingAsLivingEntities(caster, targets, targetPlayers);
 	}
 	
-	public List<LivingEntity> filterTargetList(Player caster, List<Entity> targets, boolean targetPlayers) {
+	public List<LivingEntity> filterTargetListCastingAsLivingEntities(Player caster, List<Entity> targets, boolean targetPlayers) {
 		List<LivingEntity> realTargets = new ArrayList<LivingEntity>();
 		for (Entity e : targets) {
-			if (e instanceof LivingEntity && canTarget(caster, (LivingEntity)e, targetPlayers)) {
+			if (canTarget(caster, e, targetPlayers)) {
 				realTargets.add((LivingEntity)e);
 			}
 		}
@@ -133,6 +180,10 @@ public class ValidTargetList {
 	
 	public boolean canTargetPlayers() {
 		return targetPlayers;
+	}
+	
+	public boolean canTargetNonLivingEntities() {
+		return targetNonLivingEntities;
 	}
 	
 	@Override
@@ -145,6 +196,7 @@ public class ValidTargetList {
 			+ ",targetMonsters=" + targetMonsters
 			+ ",targetAnimals=" + targetAnimals
 			+ ",types=" + types
+			+ ",targetNonLivingEntities=" + targetNonLivingEntities
 			+ "]";
 	}
 	

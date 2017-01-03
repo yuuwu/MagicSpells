@@ -31,7 +31,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.*;
 import org.bukkit.material.*;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
@@ -41,6 +40,14 @@ import com.nisovin.magicspells.Spell;
 import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.materials.ItemNameResolver.ItemTypeAndData;
 import com.nisovin.magicspells.materials.MagicMaterial;
+import com.nisovin.magicspells.util.itemreader.BannerHandler;
+import com.nisovin.magicspells.util.itemreader.LeatherArmorHandler;
+import com.nisovin.magicspells.util.itemreader.LoreHandler;
+import com.nisovin.magicspells.util.itemreader.NameHandler;
+import com.nisovin.magicspells.util.itemreader.PotionHandler;
+import com.nisovin.magicspells.util.itemreader.RepairableHandler;
+import com.nisovin.magicspells.util.itemreader.SkullHandler;
+import com.nisovin.magicspells.util.itemreader.WrittenBookHandler;
 
 import de.slikey.effectlib.util.VectorUtils;
 
@@ -294,22 +301,8 @@ public class Util {
 			ItemMeta meta = item.getItemMeta();
 			
 			// name and lore
-			if (config.contains("name") && config.isString("name")) {
-				meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', config.getString("name")));
-			}
-			if (config.contains("lore")) {
-				if (config.isList("lore")) {
-					List<String> lore = config.getStringList("lore");
-					for (int i = 0; i < lore.size(); i++) {
-						lore.set(i, ChatColor.translateAlternateColorCodes('&', lore.get(i)));
-					}
-					meta.setLore(lore);
-				} else if (config.isString("lore")) {
-					List<String> lore = new ArrayList<String>();
-					lore.add(ChatColor.translateAlternateColorCodes('&', config.getString("lore")));
-					meta.setLore(lore);
-				}
-			}
+			meta = NameHandler.process(config, meta);
+			meta = LoreHandler.process(config, meta);
 			
 			// enchants
 			boolean emptyEnchants = false;
@@ -349,83 +342,15 @@ public class Util {
 			}
 			
 			// armor color
-			if (config.contains("color") && config.isString("color") && meta instanceof LeatherArmorMeta) {
-				try {
-					int color = Integer.parseInt(config.getString("color").replace("#", ""), 16);
-					((LeatherArmorMeta)meta).setColor(Color.fromRGB(color));
-				} catch (NumberFormatException e) {
-					//TODO try processing by rgb
-					//TODO try processing by name if rgb fails
-					DebugHandler.debugNumberFormat(e);
-				}
-			}
+			meta = LeatherArmorHandler.process(config, meta);
 			
-			// potion effects
-			if (config.contains("potioneffects") && config.isList("potioneffects") && meta instanceof PotionMeta) {
-				((PotionMeta)meta).clearCustomEffects();
-				List<String> potionEffects = config.getStringList("potioneffects");
-				for (String potionEffect : potionEffects) {
-					String[] data = potionEffect.split(" ");
-					PotionEffectType t = null;
-					try {
-						int id = Integer.parseInt(data[0]);
-						t = PotionEffectType.getById(id);
-					} catch (NumberFormatException e) {
-						t = PotionEffectType.getByName(data[0].toUpperCase());
-					}
-					if (t == null) {
-						MagicSpells.error("'" + data[0] + "' could not be connected to a potion effect type");
-					}
-					if (t != null) {
-						int level = 0;
-						if (data.length > 1) {
-							try {
-								level = Integer.parseInt(data[1]);
-							} catch (NumberFormatException ex) {
-								DebugHandler.debugNumberFormat(ex);
-							}
-						}
-						int duration = 600;
-						if (data.length > 2) {
-							try {
-								duration = Integer.parseInt(data[2]);
-							} catch (NumberFormatException ex) {
-								DebugHandler.debugNumberFormat(ex);
-							}
-						}
-						boolean ambient = false;
-						if (data.length > 3 && (data[3].equalsIgnoreCase("true") || data[3].equalsIgnoreCase("yes") || data[3].equalsIgnoreCase("ambient"))) {
-							ambient = true;
-						}
-						((PotionMeta)meta).addCustomEffect(new PotionEffect(t, duration, level, ambient), true);
-					}
-				}
-			}
+			// potioneffects
+			// potioncolor
+			meta = PotionHandler.process(config, meta);
 			
 			// skull owner
-			if (meta instanceof SkullMeta) {
-				if (config.contains("skullowner") && config.isString("skullowner")) {
-					((SkullMeta)meta).setOwner(config.getString("skullowner"));
-				}
-				
-				String uuid = null;
-				if (config.contains("uuid") && config.isString("uuid")) {
-					uuid = config.getString("uuid");
-				}
-				
-				String texture = null;
-				if (config.contains("texture") && config.isString("texture")) {
-					texture = config.getString("texture");
-				}
-				
-				String signature = null;
-				if (config.contains("signature") && config.isString("signature")) {
-					signature = config.getString("signature");
-				}
-				if (texture != null) {
-					MagicSpells.getVolatileCodeHandler().setTexture((SkullMeta)meta, texture, signature, uuid, ((SkullMeta) meta).getOwner());
-				}
-			}
+			meta = SkullHandler.process(config, meta);
+			
 			// flower pot
 			/*if (config.contains("flower") && item.getType() == Material.FLOWER_POT && meta instanceof BlockStateMeta) {
 				MagicMaterial flower = MagicSpells.getItemNameResolver().resolveBlock(config.getString("flower"));
@@ -439,66 +364,13 @@ public class Util {
 			}*/
 			
 			// repair cost
-			if (config.contains("repaircost") && config.isInt("repaircost") && meta instanceof Repairable) {
-				((Repairable)meta).setRepairCost(config.getInt("repaircost"));
-			}
+			meta = RepairableHandler.process(config, meta);
 			
 			// written book
-			if (meta instanceof BookMeta) {
-				if (config.contains("title") && config.isString("title")) {
-					((BookMeta)meta).setTitle(ChatColor.translateAlternateColorCodes('&', config.getString("title")));
-				}
-				if (config.contains("author") && config.isString("author")) {
-					((BookMeta)meta).setAuthor(ChatColor.translateAlternateColorCodes('&', config.getString("author")));
-				}
-				if (config.contains("pages") && config.isList("pages")) {
-					List<String> pages = config.getStringList("pages");
-					for (int i = 0; i < pages.size(); i++) {
-						pages.set(i, ChatColor.translateAlternateColorCodes('&', pages.get(i)));
-					}
-					((BookMeta)meta).setPages(pages);
-				}
-			}
+			meta = WrittenBookHandler.process(config, meta);
 			
 			// banner
-			if (meta instanceof BannerMeta) {
-				if (config.contains("color") && config.isString("color")) {
-					String s = config.getString("color").toLowerCase();
-					for (DyeColor c : DyeColor.values()) {
-						if (c != null && c.name().replace("_", "").toLowerCase().equals(s)) {
-							((BannerMeta)meta).setBaseColor(c);
-							break;
-						}
-					}
-				}
-				if (config.contains("patterns") && config.isList("patterns")) {
-					List<String> patterns = config.getStringList("patterns");
-					for (String patternData : patterns) {
-						if (patternData.contains(" ")) {
-							String[] split = patternData.split(" ");
-							DyeColor color = null;
-							for (DyeColor c : DyeColor.values()) {
-								if (c != null && c.name().replace("_", "").toLowerCase().equals(split[0].toLowerCase())) {
-									color = c;
-									break;
-								}
-							}
-							PatternType pattern = PatternType.getByIdentifier(split[1]);
-							if (pattern == null) {
-								for (PatternType p : PatternType.values()) {
-									if (p != null && p.name().equalsIgnoreCase(split[1])) {
-										pattern = p;
-										break;
-									}
-								}
-							}
-							if (color != null && pattern != null) {
-								((BannerMeta)meta).addPattern(new Pattern(color, pattern));
-							}
-						}
-					}
-				}
-			}
+			meta = BannerHandler.process(config, meta);
 			
 			// set meta
 			item.setItemMeta(meta);
@@ -966,6 +838,7 @@ public class Util {
 	}
 	
 	public static ItemStack getEggItemForEntityType(EntityType type) {
+		//TODO fix this
 		return new ItemStack(Material.MONSTER_EGG, 1, type.getTypeId());
 	}
 	

@@ -66,6 +66,9 @@
 		<javac srcdir="${core.src.dir}" destdir="${core.build.dir}" debug="true" source="${java.core.version}" target="${java.core.version}">
 			<classpath>
 				<fileset dir="${lib.dir}">
+					<include name="spigot-1.11.2.jar"/>
+				</fileset>
+				<fileset dir="${lib.dir}">
 					<include name="spigot-1.10.2.jar"/>
 				</fileset>
 				<fileset dir="${lib.dir}">

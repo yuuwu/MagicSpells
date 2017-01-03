@@ -1800,11 +1800,11 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		// get valid targets
 		List<LivingEntity> entities;
 		if (MagicSpells.plugin.checkWorldPvpFlag && validTargetList.canTargetPlayers() && !isBeneficial() && !player.getWorld().getPVP()) {
-			entities = validTargetList.filterTargetList(player, ne, false);
+			entities = validTargetList.filterTargetListCastingAsLivingEntities(player, ne, false);
 		} else if (forceTargetPlayers) {
-			entities = validTargetList.filterTargetList(player, ne, true);
+			entities = validTargetList.filterTargetListCastingAsLivingEntities(player, ne, true);
 		} else {
-			entities = validTargetList.filterTargetList(player, ne);
+			entities = validTargetList.filterTargetListCastingAsLivingEntities(player, ne);
 		}
 		
 		// find target
