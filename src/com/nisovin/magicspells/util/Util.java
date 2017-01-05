@@ -16,12 +16,9 @@ import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
-import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.banner.Pattern;
-import org.bukkit.block.banner.PatternType;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
@@ -397,6 +394,7 @@ public class Util {
 				String[] attrTypes = new String[attrs.size()];
 				double[] attrAmounts = new double[attrs.size()];
 				int[] attrOperations = new int[attrs.size()];
+				String[] slots = new String[attrs.size()];
 				int i = 0;
 				for (String attrName : attrs) {
 					String[] attrData = config.getString("attributes." + attrName).split(" ");
@@ -415,15 +413,20 @@ public class Util {
 							attrOp = 2; // add percent
 						}
 					}
+					String slot = null;
+					if (attrData.length > 3) {
+						slot = attrData[3];
+					}
 					if (attrType != null) {
 						attrNames[i] = attrName;
 						attrTypes[i] = attrType;
 						attrAmounts[i] = attrAmt;
 						attrOperations[i] = attrOp;
+						slots[i] = slot;
 					}
 					i++;
 				}
-				item = MagicSpells.getVolatileCodeHandler().addAttributes(item, attrNames, attrTypes, attrAmounts, attrOperations);
+				item = MagicSpells.getVolatileCodeHandler().addAttributes(item, attrNames, attrTypes, attrAmounts, attrOperations, slots);
 			}
 			
 			return item;

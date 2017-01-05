@@ -26,11 +26,14 @@ public class ConjureBookSpell extends InstantSpell implements TargetedLocationSp
 	boolean addToInventory;
 	ItemStack book;
 	private boolean projectileHasGravity;
+	private int pickupDelay;
 	
 	public ConjureBookSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
 		addToInventory = getConfigBoolean("add-to-inventory", true);
+		pickupDelay = getConfigInt("pickup-delay", 0);
+		pickupDelay = Math.max(pickupDelay, 0);
 		
 		String title = getConfigString("title", "Book");
 		String author = getConfigString("author", "Steve");
@@ -118,6 +121,7 @@ public class ConjureBookSpell extends InstantSpell implements TargetedLocationSp
 			if (!added) {
 				Item dropped = player.getWorld().dropItem(player.getLocation(), item);
 				dropped.setItemStack(item);
+				dropped.setPickupDelay(pickupDelay);
 				MagicSpells.getVolatileCodeHandler().setGravity(dropped, projectileHasGravity);
 				playSpellEffects(EffectPosition.SPECIAL, dropped);
 				//player.getWorld().dropItem(player.getLocation(), item).setItemStack(item);
@@ -136,6 +140,7 @@ public class ConjureBookSpell extends InstantSpell implements TargetedLocationSp
 		ItemStack item = book.clone();
 		Item dropped = target.getWorld().dropItem(target, item);
 		dropped.setItemStack(item);
+		dropped.setPickupDelay(pickupDelay);
 		MagicSpells.getVolatileCodeHandler().setGravity(dropped, projectileHasGravity);
 		playSpellEffects(EffectPosition.SPECIAL, dropped);
 		//target.getWorld().dropItem(target, item).setItemStack(item);

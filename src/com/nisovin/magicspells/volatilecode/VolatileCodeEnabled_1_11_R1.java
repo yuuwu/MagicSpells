@@ -38,6 +38,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -486,7 +487,7 @@ public class VolatileCodeEnabled_1_11_R1 implements VolatileCodeHandle {
 	}
 
 	@Override
-	public ItemStack addAttributes(ItemStack item, String[] names, String[] types, double[] amounts, int[] operations) {
+	public ItemStack addAttributes(ItemStack item, String[] names, String[] types, double[] amounts, int[] operations, String[] slots) {
 		if (!(item instanceof CraftItemStack)) {
 			item = CraftItemStack.asCraftCopy(item);
 		}
@@ -495,14 +496,8 @@ public class VolatileCodeEnabled_1_11_R1 implements VolatileCodeHandle {
 		NBTTagList list = new NBTTagList();
 		for (int i = 0; i < names.length; i++) {
 			if (names[i] != null) {
-				NBTTagCompound attr = new NBTTagCompound();
-				attr.setString("Name", names[i]);
-				attr.setString("AttributeName", types[i]);
-				attr.setDouble("Amount", amounts[i]);
-				attr.setInt("Operation", operations[i]);
 				UUID uuid = UUID.randomUUID();
-				attr.setLong("UUIDLeast", uuid.getLeastSignificantBits());
-				attr.setLong("UUIDMost", uuid.getMostSignificantBits());
+				NBTTagCompound attr = buildAttributeTag(names[i], types[i], amounts[i], operations[i], uuid, slots[i]);
 				list.add(attr);
 			}
 		}
@@ -511,6 +506,24 @@ public class VolatileCodeEnabled_1_11_R1 implements VolatileCodeHandle {
 		
 		setTag(item, tag);
 		return item;
+	}
+	
+	private NBTTagCompound buildAttributeTag(String name, String attributeName,
+			double amount, int operation, UUID uuid, String slot) {
+		
+		NBTTagCompound tag = new NBTTagCompound();
+		
+		tag.setString("Name", name);
+		tag.setString("AttributeName", attributeName);
+		tag.setDouble("Amount", amount);
+		tag.setInt("Operation", operation);
+		tag.setLong("UUIDLeast", uuid.getLeastSignificantBits());
+		tag.setLong("UUIDMost", uuid.getMostSignificantBits());
+		if (slot != null) {
+			tag.setString("Slot", slot);
+		}
+		
+		return tag;
 	}
 	
 	@Override

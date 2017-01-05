@@ -19,6 +19,7 @@ anvil:
         - mana 25
         - anvil
     str-cost: 25 mana and 1 anvil
+
 armor:
     spell-class: ".buff.ArmorSpell"
     name: armor
@@ -36,6 +37,7 @@ armor:
     str-cost: 25 mana and 1 golden nugget
     str-cast-self: You have conjured some magic armor!
     str-has-armor: You cannot cast this spell if you are already wearing armor.
+
 blind:
     spell-class: ".targeted.PotionEffectSpell"
     name: blind
@@ -55,6 +57,7 @@ blind:
     str-cost: 10 mana
     str-cast-self: You have blinded %t!
     str-no-target: No target found.
+
 blink:
     spell-class: ".targeted.BlinkSpell"
     name: blink
@@ -74,6 +77,7 @@ blink:
     str-cast-self: You blink away!
     str-cast-others: "%a blinks away!"
     str-cant-blink: You cannot blink there.
+
 build:
     spell-class: ".targeted.BuildSpell"
     name: build
@@ -93,6 +97,7 @@ build:
     str-cost: 5 mana
     str-invalid-block: You can't build that block.
     str-cant-build: You can't build there.
+
 carpet:
     spell-class: ".buff.CarpetSpell"
     name: carpet
@@ -114,6 +119,7 @@ carpet:
     str-cast-self: You are now walking on a platform of glass!
     str-cast-others: "%a is now walking on a platform of glass!"
     str-fade: Your magical glass platform disappears.
+
 clarity:
     spell-class: ".buff.ManaRegenSpell"
     name: clarity
@@ -128,6 +134,7 @@ clarity:
     str-cost: 10 mana
     str-cast-self: Your thoughts race and flow with ease!
     str-fade: Your mind returns to normal.
+
 cleanse:
     spell-class: ".targeted.CleanseSpell"
     name: cleanse
@@ -146,6 +153,7 @@ cleanse:
         - mana 30
     str-cost: 30 mana
     str-cast-self: You cleanse yourself of negative effects.
+
 combust:
     spell-class: ".targeted.CombustSpell"
     name: combust
@@ -164,6 +172,7 @@ combust:
         - mana 10
     str-cost: 10 mana
     str-no-target: No target found.
+
 confusion:
     spell-class: ".instant.ConfusionSpell"
     name: confusion
@@ -178,6 +187,7 @@ confusion:
     str-cost: 30 mana
     str-cast-self: You cause nearby monsters to become confused and attack each other.
     str-cast-others: "%a causes nearby monsters to attack each other."
+
 conjure:
     spell-class: ".instant.ConjureSpell"
     name: conjure
@@ -197,6 +207,7 @@ conjure:
     add-to-inventory: false
     str-cost: free
     str-cast-self: You have conjured some potion reagents!
+
 cripple:
     spell-class: ".targeted.CrippleSpell"
     name: cripple
@@ -213,6 +224,7 @@ cripple:
     str-cost: 10 mana
     str-cast-self: You have crippled %t.
     str-no-target: No target found.
+
 disarm:
     spell-class: ".targeted.DisarmSpell"
     name: disarm
@@ -242,6 +254,7 @@ disarm:
     str-invalid-item: Your target could not be disarmed.
     str-cast-self: You have disarmed %t.
     str-cast-target: "%a has disarmed you."
+
 dowse:
     spell-class: ".instant.DowseSpell"
     name: dowse
@@ -260,6 +273,7 @@ dowse:
     str-cost: 35 mana and 2 stone blocks
     str-cast-self: There is iron ore nearby.
     str-not-found: No iron ore found nearby.
+
 drainlife:
     spell-class: ".targeted.DrainlifeSpell"
     name: drainlife
@@ -281,6 +295,7 @@ drainlife:
     str-cost: 10 mana
     str-cast-self: You drain life from your enemy.
     str-no-target: No target found.
+
 empower:
     spell-class: ".buff.EmpowerSpell"
     name: empower
@@ -300,6 +315,7 @@ empower:
     str-cast-self: You begin to glow with magical energy.
     str-cast-others: "%a begins to glow with magical energy."
     str-fade: You are no longer glowing with magical energy.        
+
 enderchest:
     spell-class: ".instant.EnderchestSpell"
     name: enderchest
@@ -311,6 +327,7 @@ enderchest:
         - mana 50
         - ender_pearl 1
     str-cost: 50 mana and 1 ender pearl
+
 entomb:
     spell-class: ".targeted.EntombSpell"
     name: entomb
@@ -326,6 +343,30 @@ entomb:
         - mana 15
     str-cost: 15 mana
     str-no-target: No target found.
+    effects:
+        midblock:
+            position: special # entomb plays this in the middle of each tomb block
+            effect: effectlib
+            effectlib:
+                class: SphereEffect
+                iterations: 18
+                period: 1
+                radius: .1
+                particles: 20
+                particle: SPELL_MOB
+        tombdown:
+            position: blockdestruction # when the tomb blocks are removed
+            effect: effectlib
+            effectlib:
+                class: SphereEffect
+                iterations: 20
+                period: 1
+                particles: 10
+                radius: .1
+                particle: BLOCK_CRACK # yep, the block crack
+                material: TNT # breaking tnt blocks
+                materialData: 0 # tnt doesn't really have much in terms of damage value data
+
 explode:
     spell-class: ".targeted.ExplodeSpell"
     name: explode
@@ -349,6 +390,7 @@ explode:
     str-no-target: You cannot create an explosion there.
     str-cast-self: Boom!
     str-cast-others: Boom!
+
 explosivearrow:
     spell-class: ".instant.ProjectileSpell"
     name: explosivearrow
@@ -369,6 +411,7 @@ explosivearrow:
         - arrow 1
     str-cost: 25 mana, 1 gunpowder, and 1 arrow
     str-cast-self: You fire an explosive arrow.
+
 farm:
     spell-class: ".targeted.FarmSpell"
     name: farm
@@ -385,6 +428,7 @@ farm:
     str-cost: 75 mana and 2 seeds
     str-cast-self: The crops around you grow quickly.
     str-no-target: There are no crops nearby.
+
 fireball:
     spell-class: ".targeted.FireballSpell"
     name: fireball
@@ -409,6 +453,47 @@ fireball:
     str-no-target: You cannot throw a fireball there.
     str-cast-self: You throw a fiery ball of destruction!
     str-cast-others: "%a throws a fiery ball of destruction!"
+
+firebomb: # some fun features of the fireball spell
+    spell-class: ".targeted.FireballSpell"
+    name: firebomb
+    spell-icon: fireball
+    description: Throw a fiery ball of destruction. (Cast this out in the open sky)
+    cast-item: blaze_rod
+    cooldown: 5
+    range: 30
+    require-entity-target: true # we need something to shoot at for this
+    use-relative-cast-location-offset: true # let's have a little fun
+    relative-cast-position-offset: 0,10,0 # death from above?
+    do-offset-targeting-corrections: true # death from above, or from anywhere
+    can-target: players,monsters
+    check-plugins: true
+    damage-multiplier: 3
+    small-fireball: false
+    no-fire: false
+    no-explosion: false
+    no-explosion-effect: true
+    no-explosion-damage: 5
+    no-explosion-damage-range: 3
+    cost: 
+        - mana 10
+    str-cost: 10 mana
+    str-no-target: You cannot throw a fireball there.
+    str-cast-self: You throw a fiery ball of destruction!
+    str-cast-others: "%a throws a fiery ball of destruction!"
+    effects:
+        projectile:
+            effect: effectlibentity
+            position: projectile
+            effectlib:
+                class: SphereEffect
+                iterations: 40
+                disappearWithOriginEntity: true
+                particle: FLAME
+                radius: 2.0
+                particles: 20
+                period: 2
+
 firenova:
     spell-class: ".instant.FirenovaSpell"
     name: firenova
@@ -425,6 +510,39 @@ firenova:
     str-cost: 15 mana
     str-cast-self: You summon an expanding ring of fire.
     str-cast-others: "%a summons an expanding ring of fire."
+
+earth-nova:
+    spell-class: ".instant.FirenovaSpell"
+    name: earth-nova
+    spell-icon: blaze_powder
+    description: Summon an earthen shockwave.
+    cast-item: bone
+    cooldown: 10
+    range: 9
+    expanding-radius-change: 3 # we can change how many rings are skipped now!
+    tick-speed: 10
+    burn-tall-grass: true
+    check-plugins: true
+    block-type: grass
+    cost:
+        - mana 15
+    str-cost: 15 mana
+    str-cast-self: You summon an earthen shockwave.
+    str-cast-others: "%a summons an earthen shockwave."
+    effects:
+        eff1:
+            position: special # firenova spell plays this on each block it creates
+            effect: effectlib
+            effectlib:
+                class: SphereEffect
+                iterations: 20
+                period: 1
+                radius: 2
+                particle: BLOCK_CRACK
+                particles: 20
+                material: GRASS
+                materialData: 0
+
 flamewalk:
     spell-class: ".buff.FlamewalkSpell"
     name: flamewalk
@@ -446,6 +564,7 @@ flamewalk:
     str-cost: 25 mana, 2 coal, plus 10 mana occasionally
     str-cast-self: You begin to burn your enemies around you.
     str-fade: You are no longer burning your enemies.
+
 food:
     spell-class: ".instant.FoodSpell"
     name: food
@@ -459,6 +578,7 @@ food:
         - mana 25
     str-cost: 25 mana
     str-cast-self: You feel less hungry.
+
 forcebomb:
     spell-class: ".targeted.ForcebombSpell"
     name: forcebomb
@@ -477,6 +597,7 @@ forcebomb:
     str-cost: 30 mana
     str-cast-self: An explosion of energy pushes your enemies around.
     str-no-target: No target found.
+
 forcepush:
     spell-class: ".instant.ForcepushSpell"
     name: forcepush
@@ -494,6 +615,7 @@ forcepush:
     str-cost: 30 mana
     str-cast-self: You push back your enemies!
     str-cast-others: "%a pushes back his enemies."
+
 forcetoss:
     spell-class: ".targeted.ForcetossSpell"
     name: forcetoss
@@ -513,6 +635,7 @@ forcetoss:
     str-no-target: No target found.
     str-cast-self: You push back your enemy!
     str-cast-others: "%a pushes back his enemy."
+
 freeze:
     spell-class: ".instant.FreezeSpell"
     name: freeze
@@ -531,6 +654,20 @@ freeze:
         - mana 10
         - snow_ball 1
     str-cost: 10 mana and 1 snowball
+    effects:
+        projectile:
+            effect: effectlibentity # this tells effectlib to do the entity tracking for us
+            position: projectile # this will play it on the snowballs
+            effectlib:
+                class: SphereEffect
+                iterations: 100
+                disappearWithOriginEntity: true
+                particle: REDSTONE
+                color: 21FFFF
+                radius: .1
+                particles: 5
+                period: 2
+
 frostwalk:
     spell-class: ".buff.FrostwalkSpell"
     name: frostwalk
@@ -549,6 +686,7 @@ frostwalk:
     str-cast-self: You can now walk on water!
     str-cast-others: "%a can now walk on water!"
     str-fade: You can no longer walk on water.
+
 gate:
     spell-class: ".instant.GateSpell"
     name: gate
@@ -567,6 +705,7 @@ gate:
     str-cast-self: You have teleported to spawn.
     str-cast-others: "%a teleports!"
     str-gate-failed: Unable to teleport.
+
 geyser:
     spell-class: ".targeted.GeyserSpell"
     name: geyser
@@ -587,6 +726,7 @@ geyser:
     str-cost: 10 mana
     str-cast-self: You create a geyser at your enemy's feet.
     str-no-target: No target found.
+
 gills:
     spell-class: ".buff.GillsSpell"
     name: gills
@@ -606,6 +746,7 @@ gills:
     str-cost: 50 mana and 1 sugar cane, plus 1 sugar cane few seconds
     str-cast-self: You form gills on your neck!
     str-fade: Your gills disappear.
+
 haste:
     spell-class: ".buff.HasteSpell"
     name: haste
@@ -621,6 +762,7 @@ haste:
     str-cast-self: You gain unnatural speed!
     str-cast-others: "%a gains unnatural speed!"
     str-fade: You lose your unnatural speed.
+
 haze:
     spell-class: ".targeted.PotionEffectSpell"
     name: haze
@@ -640,6 +782,7 @@ haze:
     str-cost: 10 mana
     str-cast-self: You have confuzzled your target!
     str-no-target: No target found.
+
 heal:
     spell-class: ".targeted.HealSpell"
     name: heal
@@ -661,6 +804,7 @@ heal:
     str-cast-target: "%a has healed you."
     str-no-target: No target to heal.
     str-max-health: "%t is already at max health."
+
 invisibility:
     spell-class: ".buff.InvisibilitySpell"
     name: invisibility
@@ -685,6 +829,7 @@ invisibility:
     str-cast-self: You vanish!
     str-cast-others: "%a vanishes!"
     str-fade: You are visible again.
+
 invulnerability:
     spell-class: ".buff.InvulnerabilitySpell"
     name: invulnerability
@@ -721,6 +866,7 @@ invulnerability:
     str-cast-self: You feel your skin harden.
     str-cast-others: "%a's skin hardens."
     str-fade: You feel your skin return to normal.
+
 leap:
     spell-class: ".instant.LeapSpell"
     name: leap
@@ -736,6 +882,7 @@ leap:
     str-cost: mana 15
     str-cast-self: You leap forward.
     str-cast-others: "%a leaps forward."
+
 levitate:
     spell-class: ".targeted.LevitateSpell"
     name: levitate
@@ -756,6 +903,7 @@ levitate:
     str-cast-self: You are levitating %t!
     str-cast-target: "%a is levitating you!"
     str-no-target: No target found.
+
 lifewalk:
     spell-class: ".buff.LifewalkSpell"
     name: lifewalk
@@ -779,6 +927,7 @@ lifewalk:
     str-cast-self: Flowers grow in your footsteps!
     str-cast-others: Flowers grow in %a's footsteps!
     str-fade: Flowers no longer grow in your footsteps.
+
 lightning:
     spell-class: ".targeted.LightningSpell"
     name: lightning
@@ -797,6 +946,7 @@ lightning:
     str-cast-self: You call down lightning.
     str-cast-others: "%a calls down lightning."
     str-no-target: No target found.
+
 lightwalk:
     spell-class: ".buff.LightwalkSpell"
     name: lightwalk
@@ -812,6 +962,7 @@ lightwalk:
     str-cost: 25 mana and 3 torches, plus 1 torch occasionally
     str-cast-self: Light appears at your feet.
     str-fade: The light at your feet goes out.
+
 lilywalk:
     spell-class: ".buff.LilywalkSpell"
     name: lilywalk
@@ -829,6 +980,7 @@ lilywalk:
     str-cast-self: You can now walk on water!
     str-cast-others: "%a can now walk on water!"
     str-fade: You can no longer walk on water.
+
 mana:
     spell-class: ".instant.ManaSpell"
     name: lifetap
@@ -841,6 +993,7 @@ mana:
         - health 4
     str-cost: 2 hearts
     str-cast-self: You restore 25 mana.
+
 mark:
     spell-class: ".instant.MarkSpell"
     name: mark
@@ -855,6 +1008,7 @@ mark:
         - iron_ingot 5
     str-cost: 75 mana, 5 redstone dust and 5 iron bars
     str-cast-self: You have marked your location.
+
 minion:
     spell-class: ".buff.MinionSpell"
     name: minion
@@ -875,6 +1029,7 @@ minion:
     str-cast-self: You summon an undead minion.
     str-cast-others: "%a has summoned an undead minion."
     str-fade: Your undead minion dies.
+
 pain:
     spell-class: ".targeted.PainSpell"
     name: pain
@@ -892,6 +1047,7 @@ pain:
         - health 1
     str-cost: 10 mana and a half heart
     str-no-target: No target found.
+
 phase:
     spell-class: ".instant.PhaseSpell"
     name: phase
@@ -906,6 +1062,7 @@ phase:
         - mana 15
     str-cost: 15 mana
     str-cant-phase: Unable to find place to phase to.
+
 poison:
     spell-class: ".targeted.PotionEffectSpell"
     name: poison
@@ -924,6 +1081,7 @@ poison:
     str-cost: 12 mana
     str-cast-self: You have poisoned your target!
     str-no-target: No target found.
+
 prayer:
     spell-class: ".instant.PrayerSpell"
     name: prayer
@@ -937,6 +1095,7 @@ prayer:
     str-cost: 10 mana
     str-cast-self: You have healed yourself.
     str-at-full-health: You are already at full health.
+
 purge:
     spell-class: ".instant.PurgeSpell"
     name: purge
@@ -951,6 +1110,7 @@ purge:
     str-cost: 50 mana
     str-cast-self: You purge all life around you.
     str-cast-others: "%a purges all nearby life."
+
 reach:
     spell-class: ".buff.ReachSpell"
     name: reach
@@ -969,6 +1129,7 @@ reach:
     str-cost: 50 mana
     str-cast-self: You gain the ability to manipulate the world around you.
     str-fade: You can no longer manipulate the world around you.        
+
 recall:
     spell-class: ".instant.RecallSpell"
     name: recall
@@ -989,6 +1150,7 @@ recall:
     str-other-world: You cannot recall to another world.
     str-too-far: Your marked location is too far away.
     str-cast-others: "%a disappears!"
+
 reflect:
     spell-class: ".buff.ReflectSpell"
     name: reflect
@@ -1005,6 +1167,7 @@ reflect:
     str-cast-self: You feel a magical barrier surround you.
     str-cast-others: A magical barrier surrounds %a.
     str-fade: Your magical barrier fades.
+
 repair:
     spell-class: ".instant.RepairSpell"
     name: repair
@@ -1030,6 +1193,7 @@ repair:
     str-cost: 50 mana and 2 iron bars
     str-cast-self: You've repaired your gear!
     str-nothing-to-repair: You have nothing to repair.
+
 roar:
     spell-class: ".instant.RoarSpell"
     name: roar
@@ -1044,6 +1208,7 @@ roar:
     str-cost: 10 mana
     str-cast-self: "You roar, causing nearby enemies to attack you."
     str-cast-others: "%a roars loudly!"
+
 safefall:
     spell-class: ".buff.InvulnerabilitySpell"
     name: safefall
@@ -1063,6 +1228,7 @@ safefall:
     str-cost: 20 mana, plus 1 feather each time you fall
     str-cast-self: You feel lighter.
     str-fade: Your normal weight returns.
+
 shadowstep:
     spell-class: ".targeted.ShadowstepSpell"
     name: shadowstep
@@ -1078,6 +1244,7 @@ shadowstep:
     str-cost: 10 mana
     str-no-target: No target found.
     str-no-landing-spot: Cannot shadowstep there.
+
 silence:
     spell-class: ".targeted.SilenceSpell"
     name: silence
@@ -1099,6 +1266,7 @@ silence:
     str-cast-target: "%a has silenced you."
     str-silenced: You are silenced.
     str-no-target: No target found.
+
 spellhaste:
     spell-class: ".buff.SpellHasteSpell"
     name: spellhaste
@@ -1114,6 +1282,7 @@ spellhaste:
     str-cost: 25 mana
     str-cast-self: Your mind quickens, allowing you to cast faster!
     str-fade: Your mind slows again.
+
 stealth:
     spell-class: ".buff.StealthSpell"
     name: stealth
@@ -1127,6 +1296,7 @@ stealth:
     str-cost: 15 mana
     str-cast-self: You become invisble to monsters.
     str-fade: You are no longer invisible to monsters.
+
 stonevision:
     spell-class: ".buff.StonevisionSpell"
     name: stonevision
@@ -1145,6 +1315,7 @@ stonevision:
     str-cost: 50 mana, 2 stone, and 2 glass
     str-cast-self: You can see through stone!
     str-fade: You can no longer see through stone.
+
 storm:
     spell-class: ".targeted.AreaEffectSpell"
     name: storm
@@ -1164,6 +1335,7 @@ storm:
     str-cost: 35 mana
     str-cast-self: You call down a lightning storm!
     str-no-target: No target found.
+
 stormblock:
     spell-class: ".targeted.PulserSpell"
     name: stormblock
@@ -1184,6 +1356,33 @@ stormblock:
     str-cast-others: "%a has summoned a storm block!"
     str-at-cap: You have too many effects at once.
     str-no-target: No target found.
+    effects:
+        target:
+            position: target # a nice center for the storm
+            effect: effectlib
+            effectlib:
+                class: FountainEffect
+                particle: WATER_SPLASH
+                strands: 10
+                particlesStrand: 150
+                particlesSpout: 200
+                radius: 5
+                radiusSpout: .1
+                height: 3
+                heightSpout: 7
+                iterations: 40
+                period: 2
+        blockdestruction: # aiming for a voidish feel on end
+            position: blockdestruction
+            effect: effectlib
+            effectlib:
+                class: SphereEffect
+                particle: SUSPENDED_DEPTH
+                particles: 100
+                radius: 10
+                iterations: 10
+                period: 3
+
 summon_helper:
     spell-class: ".targeted.SummonSpell"
     can-cast-with-item: false
@@ -1199,6 +1398,7 @@ summon_helper:
     str-summon-pending: You are being summoned! Type /accept to teleport.
     str-summon-accepted: You have been summoned.
     str-summon-expired: The summon has expired.
+
 summon:
     spell-class: ".instant.RitualSpell"
     name: summon
@@ -1225,6 +1425,7 @@ summon:
     str-ritual-success: The summoning ritual is a success!
     str-ritual-interrupted: The summoning ritual has been interrupted.
     str-ritual-failed: The summoning ritual has failed.
+
 sun:
     spell-class: ".instant.TimeSpell"
     name: sun
@@ -1239,6 +1440,7 @@ sun:
     str-cost: 75 mana, 5 redstone dust and a clock
     time-to-set: 0
     str-announce: The sun has suddenly appeared in the sky!
+
 switch:
     spell-class: ".targeted.SwitchSpell"
     name: switch
@@ -1254,6 +1456,7 @@ switch:
     str-cast-self: You have switched places with %t.
     str-cast-target: "%a has switched places with you."
     str-no-target: No target found.
+
 telekinesis:
     spell-class: ".targeted.TelekinesisSpell"
     name: telekinesis
@@ -1266,6 +1469,7 @@ telekinesis:
         - mana 5
     str-cost: 5 mana
     str-no-target: You must target a switch or button.
+
 tree:
     spell-class: ".targeted.TreeSpell"
     name: tree
@@ -1279,6 +1483,7 @@ tree:
         - sapling 1
     str-cost: 10 mana and 1 sapling
     str-no-target: You cannot grow a tree there.
+
 volley:
     spell-class: ".targeted.VolleySpell"
     name: volley
@@ -1298,6 +1503,53 @@ volley:
     str-cast-self: You fire a volley of magic arrows.
     str-cast-others: "%a fires a volley of arrows."
     str-no-target: No target found.
+
+fire-volley:
+    spell-class: ".targeted.VolleySpell"
+    name: fire-volley
+    spell-icon: bow
+    description: Send a volley of arrows at your targeted location.
+    cast-item: blaze_rod
+    cooldown: 45
+    range: 30
+    arrows: 10
+    speed: 20
+    spread: 75
+    shoot-interval: 0
+    cost:
+        - mana 20
+        - arrow 2
+    str-cost: 20 mana and 2 arrows
+    str-cast-self: You fire a volley of magic arrows.
+    str-cast-others: "%a fires a volley of arrows."
+    str-no-target: No target found.
+    gravity: false # arrows don't need gravity, see?
+    effects:
+        projectile:
+            effect: effectlibentity # this tells effectlib to do the entity tracking for us
+            position: projectile # this will play it on the arrows
+            effectlib:
+                class: SphereEffect
+                iterations: 100
+                disappearWithOriginEntity: true
+                particle: FLAME
+                radius: .1
+                particles: 5
+                period: 2
+        heavy-tracers:
+            position: casterprojectileline
+            effect: effectlibline
+            effectlib:
+                class: ArcEffect
+                particles: 20
+                particle: FLAME
+                period: 1
+                iterations: 50
+                disappearWithOriginEntity: false
+                static-origin-location: true
+                disappearWithTargetEntity: true
+                
+
 walkway:
     spell-class: ".buff.WalkwaySpell"
     name: walkway
@@ -1319,6 +1571,7 @@ walkway:
     str-cost: 50 mana, plus 15 mana and 1 wood every 15 blocks
     str-cast-self: You summon a magical walkway.
     str-fade: Your magical walkway disappears.
+
 wall:
     spell-class: ".instant.WallSpell"
     name: wall
@@ -1336,6 +1589,7 @@ wall:
         - stone 2
     str-cost: 12 mana and 2 stone
     str-no-target: Unable to create a wall.
+
 water:
     spell-class: ".targeted.MaterializeSpell"
     name: water
@@ -1353,6 +1607,7 @@ water:
     str-cost: 10 mana
     str-no-target: No target found.
     str-failed: ""
+
 waterwalk:
     spell-class: ".buff.WaterwalkSpell"
     name: waterwalk
@@ -1372,6 +1627,7 @@ waterwalk:
     str-cost: 25 mana and 1 boat, plus 1 water lily every 50 blocks moved
     str-cast-self: You can now walk on water!
     str-fade: You can no longer walk on water.
+
 windwalk:
     spell-class: ".buff.WindwalkSpell"
     name: windwalk
@@ -1397,6 +1653,7 @@ windwalk:
     str-cast-self: You can now walk on the wind!
     str-cast-others: "%a is now walking on the wind!"
     str-fade: You are no longer walking on the wind.
+
 zap:
     spell-class: ".targeted.ZapSpell"
     name: zap
@@ -1418,7 +1675,7 @@ zap:
     str-cast-self: You zapped a block.
     str-cant-zap: You can't zap that.
     str-no-target: No target found.
-    
+
 gianttree:
     spell-class: ".ExternalCommandSpell"
     name: gianttree
@@ -1444,7 +1701,7 @@ gianttree:
     str-cost: 50 mana and 5 saplings
     str-cast-self: You grow a tree!
     str-cant-use-command: "&4You don't have permission to do that."
-    
+
 torcharrow:
     spell-class: ".PermissionSpell"
     name: torcharrow
@@ -1463,7 +1720,7 @@ torcharrow:
         - torch 3
     str-cost: 25 mana and 3 torches
     str-cast-self: You can now fire torch arrows.
-    
+
 zeus:
     spell-class: ".MultiSpell"
     name: zeus
@@ -1478,4 +1735,3 @@ zeus:
         - lightning
         - DELAY 5
         - explode
-        

@@ -66,6 +66,7 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 	private float randomVelocity;
 	private int delay;
 	private boolean itemHasGravity;
+	private int pickupDelay;
 	
 	public ConjureSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -89,6 +90,8 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 		randomVelocity = getConfigFloat("random-velocity", 0);
 		itemHasGravity = getConfigBoolean("gravity", true);
 		delay = getConfigInt("delay", -1);
+		pickupDelay = getConfigInt("pickup-delay", 0);
+		pickupDelay = Math.max(pickupDelay, 0);
 	}
 	
 	@Override
@@ -233,6 +236,7 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 				if (!added && (dropIfInventoryFull || !addToInventory)) {
 					Item i = player.getWorld().dropItem(loc, item);
 					i.setItemStack(item);
+					i.setPickupDelay(pickupDelay);
 					MagicSpells.getVolatileCodeHandler().setGravity(i, itemHasGravity);
 					playSpellEffects(EffectPosition.SPECIAL, i);
 					//player.getWorld().dropItem(loc, item).setItemStack(item);
@@ -312,6 +316,7 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 		for (ItemStack item : items) {
 			Item dropped = loc.getWorld().dropItem(loc, item);
 			dropped.setItemStack(item);
+			dropped.setPickupDelay(pickupDelay);
 			if (randomVelocity > 0) {
 				Vector v = new Vector(rand.nextDouble() - .5, rand.nextDouble() / 2, rand.nextDouble() - .5);
 				v.normalize().multiply(randomVelocity);
