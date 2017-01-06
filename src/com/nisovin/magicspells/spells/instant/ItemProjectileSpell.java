@@ -104,7 +104,7 @@ public class ItemProjectileSpell extends InstantSpell {
 		@Override
 		public void run() {
 			for (Entity e : entity.getNearbyEntities(hitRadius, hitRadius + 0.5, hitRadius)) {
-				if (e instanceof LivingEntity && validTargetList.canTarget(caster, (LivingEntity)e)) {
+				if (e instanceof LivingEntity && validTargetList.canTarget(caster, e)) {
 					SpellTargetEvent event = new SpellTargetEvent(ItemProjectileSpell.this, caster, (LivingEntity)e, power);
 					Bukkit.getPluginManager().callEvent(event);
 					if (!event.isCancelled()) {

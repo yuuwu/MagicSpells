@@ -974,6 +974,10 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		return tags.contains(tag);
 	}
 	
+	public String getLoggingSpellPrefix() {
+		return "[" + internalName + "]";
+	}
+	
 	protected SpellReagents getConfigReagents(String option) {
 		SpellReagents reagents = null;
 		List<String> costList = config.getStringList("spells." + internalName + "." + option, null);

@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -26,6 +27,10 @@ public class MarkSpell extends InstantSpell {
 	
 	private HashMap<String,MagicLocation> marks;
 
+	private boolean enableDefaultMarks;
+	private MagicLocation defaultMark = null;
+	
+	
 	public MarkSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
@@ -33,6 +38,30 @@ public class MarkSpell extends InstantSpell {
 		useAsRespawnLocation = getConfigBoolean("use-as-respawn-location", false);
 		
 		marks = new HashMap<String,MagicLocation>();
+		
+		enableDefaultMarks = getConfigBoolean("enable-default-marks", false);
+		
+		if (enableDefaultMarks) {
+			String s = getConfigString("default-mark", "world,0,0,0");
+			try {
+				String[] split = s.split(",");
+				String world = split[0];
+				double x = Double.parseDouble(split[1]);
+				double y = Double.parseDouble(split[2]);
+				double z = Double.parseDouble(split[3]);
+				float yaw = 0;
+				float pitch = 0;
+				if (split.length > 4) {
+					yaw = Float.parseFloat(split[4]);
+				}
+				if (split.length > 5) {
+					pitch = Float.parseFloat(split[5]);
+				}
+				defaultMark = new MagicLocation(world, x, y, z, yaw, pitch);
+			} catch (Exception e) {
+				MagicSpells.error("Invalid default mark on MarkSpell '" + spellName + "'");
+			}
+		}
 		
 		if (permanentMarks) {
 			loadMarks();
@@ -42,7 +71,7 @@ public class MarkSpell extends InstantSpell {
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
-			marks.put(player.getName().toLowerCase(), new MagicLocation(player.getLocation()));
+			marks.put(getPlayerKey(player), new MagicLocation(player.getLocation()));
 			if (permanentMarks) {
 				saveMarks();
 			}
@@ -54,16 +83,18 @@ public class MarkSpell extends InstantSpell {
 	@EventHandler(priority=EventPriority.MONITOR)
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		if (!permanentMarks) {
-			marks.remove(event.getPlayer().getName().toLowerCase());
+			marks.remove(getPlayerKey(event.getPlayer()));
 		}
 	}
 	
 	@EventHandler
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
 		if (useAsRespawnLocation) {
-			MagicLocation loc = marks.get(event.getPlayer().getName().toLowerCase());
+			MagicLocation loc = marks.get(getPlayerKey(event.getPlayer()));
 			if (loc != null) {
 				event.setRespawnLocation(loc.getLocation());
+			} else if (enableDefaultMarks && defaultMark != null) {
+				event.setRespawnLocation(defaultMark.getLocation());
 			}
 		}
 	}
@@ -112,6 +143,40 @@ public class MarkSpell extends InstantSpell {
 		} catch (Exception e) {
 			MagicSpells.plugin.getServer().getLogger().severe("MagicSpells: Error saving marks");
 		}		
+	}
+	
+	public String getPlayerKey(Player player) {
+		if (player == null) return null;
+		
+		return player.getName().toLowerCase();
+	}
+	
+	public boolean usesDefaultMark() {
+		return enableDefaultMarks;
+	}
+	
+	public Location getEffectiveMark(Player player) {
+		MagicLocation m = marks.get(getPlayerKey(player));
+		if (m == null) {
+			if (enableDefaultMarks) {
+				return defaultMark.getLocation();
+			}
+			return null;
+		}
+		
+		return m.getLocation();
+	}
+	
+	public Location getEffectiveMark(String player) {
+		MagicLocation m = marks.get(player.toLowerCase());
+		if (m == null) {
+			if (enableDefaultMarks) {
+				return defaultMark.getLocation();
+			}
+			return null;
+		}
+		
+		return m.getLocation();
 	}
 
 }

@@ -18,7 +18,6 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.util.BoundingBox;
 import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.MagicLocation;
 import com.nisovin.magicspells.util.SpellReagents;
 
 public class PortalSpell extends InstantSpell {
@@ -39,8 +38,8 @@ public class PortalSpell extends InstantSpell {
 	String strTeleportCostFail;
 	String strTeleportCooldownFail;
 	
-	private HashMap<String, MagicLocation> marks;
-	
+	private MarkSpell mark;
+		
 	public PortalSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
@@ -68,7 +67,7 @@ public class PortalSpell extends InstantSpell {
 		super.initialize();
 		Spell spell = MagicSpells.getSpellByInternalName(markSpellName);
 		if (spell != null && spell instanceof MarkSpell) {
-			marks = ((MarkSpell)spell).getMarks();
+			mark = (MarkSpell)spell;
 		} else {
 			MagicSpells.error("Failed to get marks list for '" + internalName + "' spell");
 		}
@@ -77,11 +76,7 @@ public class PortalSpell extends InstantSpell {
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
-			Location loc = null;
-			MagicLocation mark = marks.get(player.getName().toLowerCase());
-			if (mark != null) {
-				loc = mark.getLocation();
-			}
+			Location loc = mark.getEffectiveMark(player);
 			if (loc == null) {
 				// no mark
 				sendMessage(strNoMark, player, args);

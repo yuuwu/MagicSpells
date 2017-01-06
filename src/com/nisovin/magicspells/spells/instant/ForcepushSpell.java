@@ -42,7 +42,7 @@ public class ForcepushSpell extends InstantSpell {
 		List<Entity> entities = player.getNearbyEntities(range, range, range);
 		Vector e, v;
 		for (Entity entity : entities) {
-			if (entity instanceof LivingEntity && validTargetList.canTarget(player, (LivingEntity)entity)) {
+			if (entity instanceof LivingEntity && validTargetList.canTarget(player, entity)) {
 				LivingEntity target = (LivingEntity)entity;
 				float power = basePower;
 				SpellTargetEvent event = new SpellTargetEvent(this, player, target, power);

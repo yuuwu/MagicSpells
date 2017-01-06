@@ -74,13 +74,13 @@ public class GateSpell extends InstantSpell {
 				sendMessage(strGateFailed, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
-			location.setX(location.getX()+.5);
-			location.setZ(location.getZ()+.5);
+			location.setX(location.getX() + .5);
+			location.setZ(location.getZ() + .5);
 			MagicSpells.debug(3, "Gate location: " + location.toString());
 			
 			// check for landing point
 			Block b = location.getBlock();
-			if (!BlockUtils.isPathable(b) || !BlockUtils.isPathable(b.getRelative(0,1,0))) {
+			if (!BlockUtils.isPathable(b) || !BlockUtils.isPathable(b.getRelative(0, 1, 0))) {
 				// fail -- blocked
 				MagicSpells.error(name + ": landing spot blocked");
 				sendMessage(strGateFailed, player, args);

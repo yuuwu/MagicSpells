@@ -78,11 +78,11 @@ public class PurgeSpell extends InstantSpell implements TargetedLocationSpell {
 			if (box.contains(e) && (entities == null || entities.contains(e.getType()))) {
 				if (e instanceof LivingEntity) {
 					if (caster != null) {
-						if (!validTargetList.canTarget(caster, (LivingEntity)e)) {
+						if (!validTargetList.canTarget(caster, e)) {
 							continue;
 						}
 					} else {
-						if (!validTargetList.canTarget((LivingEntity)e)) {
+						if (!validTargetList.canTarget(e)) {
 							continue;
 						}
 					}

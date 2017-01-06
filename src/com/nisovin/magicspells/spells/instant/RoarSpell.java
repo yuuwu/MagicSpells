@@ -31,7 +31,7 @@ public class RoarSpell extends InstantSpell {
 			int count = 0;
 			List<Entity> entities = player.getNearbyEntities(radius, radius, radius);
 			for (Entity entity : entities) {
-				if (entity instanceof LivingEntity && !(entity instanceof Player) && validTargetList.canTarget(player, (LivingEntity)entity)) {
+				if (entity instanceof LivingEntity && !(entity instanceof Player) && validTargetList.canTarget(player, entity)) {
 					MagicSpells.getVolatileCodeHandler().setTarget((LivingEntity)entity, player);
 					count++;
 					playSpellEffects(EffectPosition.TARGET, entity);
