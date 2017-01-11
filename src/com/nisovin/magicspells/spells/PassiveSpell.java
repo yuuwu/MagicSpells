@@ -43,10 +43,13 @@ public class PassiveSpell extends Spell {
 	@ConfigData(field="delay", dataType="int", defaultValue="-1")
 	private int delay;
 	
-	@ConfigData(field="cancel-default-action", dataType="boolean", defaultValue="false")
+	@ConfigData(field="cancel-default-action", dataType="boolean", defaultValue="false", description="Cancel if the cast is successful")
 	private boolean cancelDefaultAction;
 	
-	@ConfigData(field="ignore-cancelled", dataType="boolean", defaultValue="true")
+	@ConfigData(field="cancel-default-action-when-cast-fails", dataType="boolean", defaultValue="false", description="An addition to the cancel-default-action field. Also cancels the default action when the trigger tried casting the spell but the spell was unsuccessful.")
+	private boolean cancelDefaultActionWhenCastFails;
+	
+	@ConfigData(field="ignore-cancelled", dataType="boolean", defaultValue="true", description="Don't cast if the event has been canceled")
 	private boolean ignoreCancelled;
 	
 	@ConfigData(field="send-failure-messages", dataType="boolean", defaultValue="false")
@@ -67,6 +70,7 @@ public class PassiveSpell extends Spell {
 		castWithoutTarget = getConfigBoolean("cast-without-target", false);
 		delay = getConfigInt("delay", -1);
 		cancelDefaultAction = getConfigBoolean("cancel-default-action", false);
+		cancelDefaultActionWhenCastFails = getConfigBoolean("cancel-default-action-when-cast-fails", false);
 		ignoreCancelled = getConfigBoolean("ignore-cancelled", true);
 		sendFailureMessages = getConfigBoolean("send-failure-messages", false);
 		
@@ -291,6 +295,10 @@ public class PassiveSpell extends Spell {
 	
 	public boolean cancelDefaultAction() {
 		return cancelDefaultAction;
+	}
+	
+	public boolean cancelDefaultActionWhenCastFails() {
+		return cancelDefaultActionWhenCastFails;
 	}
 	
 	public boolean ignoreCancelled() {

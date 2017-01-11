@@ -9,7 +9,6 @@ import java.util.Set;
 
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -20,6 +19,7 @@ import com.nisovin.magicspells.materials.MagicItemWithNameMaterial;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spells.PassiveSpell;
 import com.nisovin.magicspells.util.HandHandler;
+import com.nisovin.magicspells.util.OverridePriority;
 
 // trigger variable of a comma separated list of items to accept
 public class RightClickItemListener extends PassiveListener {
@@ -67,7 +67,8 @@ public class RightClickItemListener extends PassiveListener {
 		}
 	}
 	
-	@EventHandler(priority = EventPriority.MONITOR)
+	@OverridePriority
+	@EventHandler
 	public void onRightClick(PlayerInteractEvent event) {
 		if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 		if (!event.hasItem()) return;
@@ -80,7 +81,7 @@ public class RightClickItemListener extends PassiveListener {
 			for (PassiveSpell spell : list) {
 				if (spellbook.hasSpell(spell, false)) {
 					boolean casted = spell.activate(event.getPlayer());
-					if (casted && spell.cancelDefaultAction()) {
+					if (PassiveListener.cancelDefaultAction(spell, casted)) {
 						event.setCancelled(true);
 					}
 				}
@@ -111,7 +112,7 @@ public class RightClickItemListener extends PassiveListener {
 	}
 	
 	private boolean isMainHand(PassiveTrigger trigger) {
-		return trigger == PassiveTrigger.RIGHT_CLICK;
+		return PassiveTrigger.RIGHT_CLICK.contains(trigger);
 	}
 
 }

@@ -9,7 +9,6 @@ import java.util.Set;
 
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -18,6 +17,7 @@ import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.materials.MagicItemWithNameMaterial;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spells.PassiveSpell;
+import com.nisovin.magicspells.util.OverridePriority;
 
 // optional trigger variable that is a comma separated list of items to accept
 public class PickupItemListener extends PassiveListener {
@@ -57,14 +57,15 @@ public class PickupItemListener extends PassiveListener {
 		}		
 	}
 	
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	@OverridePriority
+	@EventHandler
 	public void onPickup(PlayerPickupItemEvent event) {
 		if (allTypes.size() > 0) {
 			Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());
 			for (PassiveSpell spell : allTypes) {
 				if (spellbook.hasSpell(spell)) {
 					boolean casted = spell.activate(event.getPlayer());
-					if (casted && spell.cancelDefaultAction()) {
+					if (PassiveListener.cancelDefaultAction(spell, casted)) {
 						event.setCancelled(true);
 					}
 				}
@@ -78,7 +79,7 @@ public class PickupItemListener extends PassiveListener {
 				for (PassiveSpell spell : list) {
 					if (spellbook.hasSpell(spell)) {
 						boolean casted = spell.activate(event.getPlayer());
-						if (casted && spell.cancelDefaultAction()) {
+						if (PassiveListener.cancelDefaultAction(spell, casted)) {
 							event.setCancelled(true);
 						}
 					}

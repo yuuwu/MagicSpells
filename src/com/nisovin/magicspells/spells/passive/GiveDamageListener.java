@@ -13,7 +13,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -22,6 +21,7 @@ import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.materials.MagicItemWithNameMaterial;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spells.PassiveSpell;
+import com.nisovin.magicspells.util.OverridePriority;
 
 // optional trigger variable that may contain a comma separated list
 // of weapons to trigger on
@@ -62,7 +62,8 @@ public class GiveDamageListener extends PassiveListener {
 		}
 	}
 	
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	@OverridePriority
+	@EventHandler
 	public void onDamage(EntityDamageByEntityEvent event) {
 		Player player = getPlayerAttacker(event);
 		if (player == null || !(event.getEntity() instanceof LivingEntity)) return;
@@ -74,7 +75,7 @@ public class GiveDamageListener extends PassiveListener {
 			for (PassiveSpell spell : always) {
 				if (spellbook.hasSpell(spell, false)) {
 					boolean casted = spell.activate(player, attacked);
-					if (casted && spell.cancelDefaultAction()) {
+					if (PassiveListener.cancelDefaultAction(spell, casted)) {
 						event.setCancelled(true);
 					}
 				}
@@ -90,7 +91,7 @@ public class GiveDamageListener extends PassiveListener {
 					for (PassiveSpell spell : list) {
 						if (spellbook.hasSpell(spell, false)) {
 							boolean casted = spell.activate(player, attacked);
-							if (casted && spell.cancelDefaultAction()) {
+							if (PassiveListener.cancelDefaultAction(spell, casted)) {
 								event.setCancelled(true);
 							}
 						}

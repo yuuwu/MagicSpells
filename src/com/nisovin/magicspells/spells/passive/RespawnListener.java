@@ -10,6 +10,7 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.spells.PassiveSpell;
+import com.nisovin.magicspells.util.OverridePriority;
 
 // no trigger variable is used here
 public class RespawnListener extends PassiveListener {
@@ -21,6 +22,7 @@ public class RespawnListener extends PassiveListener {
 		spells.add(spell);
 	}
 	
+	@OverridePriority
 	@EventHandler
 	public void onRespawn(PlayerRespawnEvent event) {
 		if (spells.size() > 0) {

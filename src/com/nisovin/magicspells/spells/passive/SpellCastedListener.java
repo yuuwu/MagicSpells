@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spell;
@@ -15,6 +14,7 @@ import com.nisovin.magicspells.Spell.SpellCastState;
 import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.events.SpellCastedEvent;
 import com.nisovin.magicspells.spells.PassiveSpell;
+import com.nisovin.magicspells.util.OverridePriority;
 
 // optional trigger variable of comma separated list of internal spell names to accept
 public class SpellCastedListener extends PassiveListener {
@@ -42,7 +42,8 @@ public class SpellCastedListener extends PassiveListener {
 		}
 	}
 	
-	@EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
+	@OverridePriority
+	@EventHandler
 	public void onSpellCast(SpellCastedEvent event) {
 		if (event.getSpellCastState() == SpellCastState.NORMAL && event.getPostCastAction() != PostCastAction.ALREADY_HANDLED && event.getCaster() != null) {
 			Spellbook spellbook = MagicSpells.getSpellbook(event.getCaster());

@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
@@ -13,6 +12,7 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.spells.PassiveSpell;
 import com.nisovin.magicspells.util.MagicLocation;
+import com.nisovin.magicspells.util.OverridePriority;
 
 // trigger variable is a semicolon separated list of locations to accept
 // the format of locations is world,x,y,z
@@ -39,7 +39,8 @@ public class LeftClickBlockCoordListener extends PassiveListener {
 		}
 	}
 	
-	@EventHandler(priority = EventPriority.MONITOR)
+	@OverridePriority
+	@EventHandler
 	public void onRightClick(PlayerInteractEvent event) {
 		if (event.getAction() != Action.LEFT_CLICK_BLOCK) return;
 		Location location = event.getClickedBlock().getLocation();
@@ -50,7 +51,7 @@ public class LeftClickBlockCoordListener extends PassiveListener {
 			Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());
 			if (spellbook.hasSpell(spell, false)) {
 				boolean casted = spell.activate(event.getPlayer(), location.add(0.5, 0.5, 0.5));
-				if (casted && spell.cancelDefaultAction()) {
+				if (PassiveListener.cancelDefaultAction(spell, casted)) {
 					event.setCancelled(true);
 				}
 			}

@@ -9,6 +9,7 @@ import org.bukkit.event.player.PlayerToggleSprintEvent;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.spells.PassiveSpell;
+import com.nisovin.magicspells.util.OverridePriority;
 
 // no trigger variable is used here
 public class SprintListener extends PassiveListener {
@@ -18,15 +19,16 @@ public class SprintListener extends PassiveListener {
 	
 	@Override
 	public void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var) {
-		if (trigger == PassiveTrigger.SPRINT) {
+		if (PassiveTrigger.SPRINT.contains(trigger)) {
 			if (sprint == null) sprint = new ArrayList<PassiveSpell>();
 			sprint.add(spell);
-		} else if (trigger == PassiveTrigger.STOP_SPRINT) {
+		} else if (PassiveTrigger.STOP_SPRINT.contains(trigger)) {
 			if (sprint == null) stopSprint = new ArrayList<PassiveSpell>();
 			stopSprint.add(spell);
 		}
 	}
 	
+	@OverridePriority
 	@EventHandler
 	public void onSprint(PlayerToggleSprintEvent event) {
 		if (event.isSprinting()) {
@@ -35,7 +37,7 @@ public class SprintListener extends PassiveListener {
 				for (PassiveSpell spell : sprint) {
 					if (spellbook.hasSpell(spell, false)) {
 						boolean casted = spell.activate(event.getPlayer());
-						if (casted && spell.cancelDefaultAction()) {
+						if (PassiveListener.cancelDefaultAction(spell, casted)) {
 							event.setCancelled(true);
 						}
 					}
@@ -47,7 +49,7 @@ public class SprintListener extends PassiveListener {
 				for (PassiveSpell spell : stopSprint) {
 					if (spellbook.hasSpell(spell, false)) {
 						boolean casted = spell.activate(event.getPlayer());
-						if (casted && spell.cancelDefaultAction()) {
+						if (PassiveListener.cancelDefaultAction(spell, casted)) {
 							event.setCancelled(true);
 						}
 					}

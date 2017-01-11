@@ -13,6 +13,7 @@ import org.bukkit.event.player.PlayerShearEntityEvent;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.spells.PassiveSpell;
+import com.nisovin.magicspells.util.OverridePriority;
 
 // optional trigger variable that can either be set to a dye color to accept or "all"
 public class SheepShearListener extends PassiveListener {
@@ -46,6 +47,7 @@ public class SheepShearListener extends PassiveListener {
 		}
 	}
 	
+	@OverridePriority
 	@EventHandler
 	public void onSheepShear(PlayerShearEntityEvent event) {
 		if (!(event.getEntity() instanceof Sheep)) return;
@@ -55,12 +57,18 @@ public class SheepShearListener extends PassiveListener {
 		Spellbook spellbook = MagicSpells.getSpellbook(p);
 		for (PassiveSpell spell : spells) {
 			if (spellbook.hasSpell(spell)) {
-				spell.activate(p);
+				boolean casted = spell.activate(p);
+				if (PassiveListener.cancelDefaultAction(spell, casted)) {
+					event.setCancelled(true);
+				}
 			}
 		}
 		for (PassiveSpell spell: allColorSpells) {
 			if (spellbook.hasSpell(spell)) {
-				spell.activate(p);
+				boolean casted = spell.activate(p);
+				if (PassiveListener.cancelDefaultAction(spell, casted)) {
+					event.setCancelled(true);
+				}
 			}
 		}
 	}

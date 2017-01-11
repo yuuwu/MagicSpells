@@ -10,7 +10,6 @@ import java.util.Set;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.material.MaterialData;
 
@@ -18,6 +17,7 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spells.PassiveSpell;
+import com.nisovin.magicspells.util.OverridePriority;
 
 // optional trigger variable of comma separated list of blocks to accept
 public class BlockPlaceListener extends PassiveListener {
@@ -48,14 +48,15 @@ public class BlockPlaceListener extends PassiveListener {
 		}
 	}
 	
-	@EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
+	@OverridePriority
+	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
 		Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());
 		if (allTypes.size() > 0) {
 			for (PassiveSpell spell : allTypes) {
 				if (spellbook.hasSpell(spell, false)) {
 					boolean casted = spell.activate(event.getPlayer(), event.getBlock().getLocation().add(0.5, 0.5, 0.5));
-					if (casted && spell.cancelDefaultAction()) {
+					if (PassiveListener.cancelDefaultAction(spell, casted)) {
 						event.setCancelled(true);
 					}
 				}
@@ -67,7 +68,7 @@ public class BlockPlaceListener extends PassiveListener {
 				for (PassiveSpell spell : list) {
 					if (spellbook.hasSpell(spell, false)) {
 						boolean casted = spell.activate(event.getPlayer(), event.getBlock().getLocation().add(0.5, 0.5, 0.5));
-						if (casted && spell.cancelDefaultAction()) {
+						if (PassiveListener.cancelDefaultAction(spell, casted)) {
 							event.setCancelled(true);
 						}
 					}

@@ -5,12 +5,12 @@ import java.util.List;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.spells.PassiveSpell;
+import com.nisovin.magicspells.util.OverridePriority;
 
 // no trigger variable is used here
 public class FatalDamageListener extends PassiveListener {
@@ -22,7 +22,8 @@ public class FatalDamageListener extends PassiveListener {
 		spells.add(spell);
 	}
 
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	@OverridePriority
+	@EventHandler
 	void onDamage(EntityDamageEvent event) {
 		if (!(event.getEntity() instanceof Player)) return;
 		Player player = (Player)event.getEntity();
@@ -31,7 +32,7 @@ public class FatalDamageListener extends PassiveListener {
 			for (PassiveSpell spell : spells) {
 				if (spellbook.hasSpell(spell)) {
 					boolean casted = spell.activate(player);
-					if (casted && spell.cancelDefaultAction()) {
+					if (PassiveListener.cancelDefaultAction(spell, casted)) {
 						event.setCancelled(true);
 					}
 				}

@@ -10,13 +10,13 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerFishEvent.State;
 
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.spells.PassiveSpell;
+import com.nisovin.magicspells.util.OverridePriority;
 import com.nisovin.magicspells.util.Util;
 
 // trigger variable is optional
@@ -59,7 +59,8 @@ public class FishListener extends PassiveListener {
 		}
 	}
 	
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	@OverridePriority
+	@EventHandler
 	public void onFish(PlayerFishEvent event) {
 		PlayerFishEvent.State state = event.getState();
 		Player player = event.getPlayer();
@@ -70,7 +71,7 @@ public class FishListener extends PassiveListener {
 			for (PassiveSpell spell : allTypes) {
 				if (spellbook.hasSpell(spell)) {
 					boolean casted = spell.activate(player, entity instanceof LivingEntity ? (LivingEntity)entity : null);
-					if (casted && spell.cancelDefaultAction()) {
+					if (PassiveListener.cancelDefaultAction(spell, casted)) {
 						event.setCancelled(true);
 					}
 				}
@@ -82,7 +83,7 @@ public class FishListener extends PassiveListener {
 			for (PassiveSpell spell : ground) {
 				if (spellbook.hasSpell(spell)) {
 					boolean casted = spell.activate(player, event.getHook().getLocation());
-					if (casted && spell.cancelDefaultAction()) {
+					if (PassiveListener.cancelDefaultAction(spell, casted)) {
 						event.setCancelled(true);
 					}
 				}
@@ -92,7 +93,7 @@ public class FishListener extends PassiveListener {
 			for (PassiveSpell spell : fish) {
 				if (spellbook.hasSpell(spell)) {
 					boolean casted = spell.activate(player, event.getHook().getLocation());
-					if (casted && spell.cancelDefaultAction()) {
+					if (PassiveListener.cancelDefaultAction(spell, casted)) {
 						event.setCancelled(true);
 					}
 				}
@@ -102,7 +103,7 @@ public class FishListener extends PassiveListener {
 			for (PassiveSpell spell : fail) {
 				if (spellbook.hasSpell(spell)) {
 					boolean casted = spell.activate(player, event.getHook().getLocation());
-					if (casted && spell.cancelDefaultAction()) {
+					if (PassiveListener.cancelDefaultAction(spell, casted)) {
 						event.setCancelled(true);
 					}
 				}
@@ -114,7 +115,7 @@ public class FishListener extends PassiveListener {
 				for (PassiveSpell spell : fail) {
 					if (spellbook.hasSpell(spell)) {
 						boolean casted = spell.activate(player, entity instanceof LivingEntity ? (LivingEntity)entity : null);
-						if (casted && spell.cancelDefaultAction()) {
+						if (PassiveListener.cancelDefaultAction(spell, casted)) {
 							event.setCancelled(true);
 						}
 					}

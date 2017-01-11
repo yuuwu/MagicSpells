@@ -9,6 +9,7 @@ import org.bukkit.event.player.PlayerBedEnterEvent;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.spells.PassiveSpell;
+import com.nisovin.magicspells.util.OverridePriority;
 
 // no trigger variable is currently used
 public class EnterBedListener extends PassiveListener {
@@ -20,12 +21,13 @@ public class EnterBedListener extends PassiveListener {
 		spells.add(spell);
 	}
 	
+	@OverridePriority
 	@EventHandler
 	public void onDeath(PlayerBedEnterEvent event) {
 		Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());
 		for (PassiveSpell spell : spells) {
 			if (spellbook.hasSpell(spell)) {
-				spell.activate(event.getPlayer());
+				spell.activate(event.getPlayer()); // TODO is this safe to cancel?
 			}
 		}
 	}

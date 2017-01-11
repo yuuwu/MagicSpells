@@ -7,13 +7,13 @@ import java.util.Map;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spell;
 import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.events.SpellTargetEvent;
 import com.nisovin.magicspells.spells.PassiveSpell;
+import com.nisovin.magicspells.util.OverridePriority;
 
 // optional trigger variable of comma separated list of internal spell names to accept
 public class SpellTargetedListener extends PassiveListener {
@@ -41,7 +41,8 @@ public class SpellTargetedListener extends PassiveListener {
 		}
 	}
 	
-	@EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
+	@OverridePriority
+	@EventHandler
 	public void onSpellTarget(SpellTargetEvent event) {
 		if (!(event.getTarget() instanceof Player)) return;
 		Player player = (Player)event.getTarget();
@@ -49,7 +50,7 @@ public class SpellTargetedListener extends PassiveListener {
 		for (PassiveSpell spell : anySpell) {
 			if (spellbook.hasSpell(spell, false)) {
 				boolean casted = spell.activate(player, event.getCaster());
-				if (casted && spell.cancelDefaultAction()) {
+				if (PassiveListener.cancelDefaultAction(spell, casted)) {
 					event.setCancelled(true);
 				}
 			}
@@ -59,7 +60,7 @@ public class SpellTargetedListener extends PassiveListener {
 			for (PassiveSpell spell : list) {
 				if (spellbook.hasSpell(spell, false)) {
 					boolean casted = spell.activate(player, event.getCaster());
-					if (casted && spell.cancelDefaultAction()) {
+					if (PassiveListener.cancelDefaultAction(spell, casted)) {
 						event.setCancelled(true);
 					}
 				}

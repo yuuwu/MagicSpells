@@ -7,13 +7,13 @@ import java.util.Map;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.spells.PassiveSpell;
+import com.nisovin.magicspells.util.OverridePriority;
 
 // optional trigger variable of comma separated list of teleport causes to accept
 public class TeleportListener extends PassiveListener {
@@ -44,7 +44,8 @@ public class TeleportListener extends PassiveListener {
 		}
 	}
 	
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	@OverridePriority
+	@EventHandler
 	public void onTeleport(PlayerTeleportEvent event) {
 		Player player = event.getPlayer();
 		
@@ -53,7 +54,7 @@ public class TeleportListener extends PassiveListener {
 			for (PassiveSpell spell : allTypes) {
 				if (spellbook.hasSpell(spell)) {
 					boolean casted = spell.activate(player);
-					if (casted && spell.cancelDefaultAction()) {
+					if (PassiveListener.cancelDefaultAction(spell, casted)) {
 						event.setCancelled(true);
 					}
 				}
@@ -65,7 +66,7 @@ public class TeleportListener extends PassiveListener {
 			for (PassiveSpell spell : types.get(event.getCause())) {
 				if (spellbook.hasSpell(spell)) {
 					boolean casted = spell.activate(player);
-					if (casted && spell.cancelDefaultAction()) {
+					if (PassiveListener.cancelDefaultAction(spell, casted)) {
 						event.setCancelled(true);
 					}
 				}

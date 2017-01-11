@@ -18,6 +18,7 @@ import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.materials.MagicItemWithNameMaterial;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spells.PassiveSpell;
+import com.nisovin.magicspells.util.OverridePriority;
 
 // optional trigger variable of a comma separated list of items to accept as the result
 public class CraftListener extends PassiveListener {
@@ -57,6 +58,7 @@ public class CraftListener extends PassiveListener {
 		}		
 	}
 	
+	@OverridePriority
 	@EventHandler
 	public void onCraft(CraftItemEvent event) {
 		if (event.getCurrentItem() == null && event.getCurrentItem().getType() == Material.AIR) return;
@@ -68,7 +70,7 @@ public class CraftListener extends PassiveListener {
 				if (spell.ignoreCancelled() || !event.isCancelled()) {
 					if (spellbook.hasSpell(spell)) {
 						boolean casted = spell.activate(player);
-						if (casted && spell.cancelDefaultAction()) {
+						if (PassiveListener.cancelDefaultAction(spell, casted)) {
 							event.setCancelled(true);
 						}
 					}
@@ -84,7 +86,7 @@ public class CraftListener extends PassiveListener {
 					if (spell.ignoreCancelled() || !event.isCancelled()) {
 						if (spellbook.hasSpell(spell)) {
 							boolean casted = spell.activate(player);
-							if (casted && spell.cancelDefaultAction()) {
+							if (PassiveListener.cancelDefaultAction(spell, casted)) {
 								event.setCancelled(true);
 							}
 						}

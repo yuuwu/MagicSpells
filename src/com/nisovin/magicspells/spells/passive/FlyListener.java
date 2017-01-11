@@ -9,6 +9,7 @@ import org.bukkit.event.player.PlayerToggleFlightEvent;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.spells.PassiveSpell;
+import com.nisovin.magicspells.util.OverridePriority;
 
 // no trigger variable is currently used
 public class FlyListener extends PassiveListener {
@@ -18,15 +19,16 @@ public class FlyListener extends PassiveListener {
 	
 	@Override
 	public void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var) {
-		if (trigger == PassiveTrigger.FLY) {
+		if (PassiveTrigger.FLY.contains(trigger)) {
 			if (fly == null) fly = new ArrayList<PassiveSpell>();
 			fly.add(spell);
-		} else if (trigger == PassiveTrigger.STOP_FLY) {
+		} else if (PassiveTrigger.STOP_FLY.contains(trigger)) {
 			if (stopFly == null) stopFly = new ArrayList<PassiveSpell>();
 			stopFly.add(spell);
 		}
 	}
 	
+	@OverridePriority
 	@EventHandler
 	public void onFly(PlayerToggleFlightEvent event) {
 		if (event.isFlying()) {
@@ -35,7 +37,7 @@ public class FlyListener extends PassiveListener {
 				for (PassiveSpell spell : fly) {
 					if (spellbook.hasSpell(spell, false)) {
 						boolean casted = spell.activate(event.getPlayer());
-						if (casted && spell.cancelDefaultAction()) {
+						if (PassiveListener.cancelDefaultAction(spell, casted)) {
 							event.setCancelled(true);
 						}
 					}
@@ -47,7 +49,7 @@ public class FlyListener extends PassiveListener {
 				for (PassiveSpell spell : stopFly) {
 					if (spellbook.hasSpell(spell, false)) {
 						boolean casted = spell.activate(event.getPlayer());
-						if (casted && spell.cancelDefaultAction()) {
+						if (PassiveListener.cancelDefaultAction(spell, casted)) {
 							event.setCancelled(true);
 						}
 					}

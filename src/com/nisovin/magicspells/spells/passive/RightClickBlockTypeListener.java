@@ -10,7 +10,6 @@ import java.util.Set;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.material.MaterialData;
@@ -19,6 +18,7 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spells.PassiveSpell;
+import com.nisovin.magicspells.util.OverridePriority;
 
 // trigger variable accepts a comma separated list of blocks to accept
 public class RightClickBlockTypeListener extends PassiveListener {
@@ -46,7 +46,8 @@ public class RightClickBlockTypeListener extends PassiveListener {
 		}
 	}
 	
-	@EventHandler(priority = EventPriority.MONITOR)
+	@OverridePriority
+	@EventHandler
 	public void onRightClick(PlayerInteractEvent event) {
 		if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 		List<PassiveSpell> list = getSpells(event.getClickedBlock());
@@ -56,7 +57,7 @@ public class RightClickBlockTypeListener extends PassiveListener {
 				if (spell.ignoreCancelled() && event.isCancelled()) continue;
 				if (spellbook.hasSpell(spell, false)) {
 					boolean casted = spell.activate(event.getPlayer(), event.getClickedBlock().getLocation().add(0.5, 0.5, 0.5));
-					if (casted && spell.cancelDefaultAction()) {
+					if (PassiveListener.cancelDefaultAction(spell, casted)) {
 						event.setCancelled(true);
 					}
 				}

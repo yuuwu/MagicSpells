@@ -19,6 +19,7 @@ import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.events.SpellForgetEvent;
 import com.nisovin.magicspells.events.SpellLearnEvent;
 import com.nisovin.magicspells.spells.PassiveSpell;
+import com.nisovin.magicspells.util.OverridePriority;
 
 // trigger argument is required
 // must be an integer.
@@ -64,6 +65,7 @@ public class TicksListener extends PassiveListener {
 		tickers.clear();
 	}
 	
+	@OverridePriority
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
 		for (Ticker ticker : tickers.values()) {
@@ -71,6 +73,7 @@ public class TicksListener extends PassiveListener {
 		}
 	}
 	
+	@OverridePriority
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
 		for (Ticker ticker : tickers.values()) {
@@ -78,6 +81,7 @@ public class TicksListener extends PassiveListener {
 		}
 	}
 	
+	@OverridePriority
 	@EventHandler
 	public void onDeath(PlayerDeathEvent event) {
 		for (Ticker ticker : tickers.values()) {
@@ -85,6 +89,7 @@ public class TicksListener extends PassiveListener {
 		}
 	}
 	
+	@OverridePriority
 	@EventHandler
 	public void onRespawn(PlayerRespawnEvent event) {
 		for (Ticker ticker : tickers.values()) {
@@ -92,6 +97,7 @@ public class TicksListener extends PassiveListener {
 		}
 	}
 	
+	@OverridePriority
 	@EventHandler
 	public void onLearn(SpellLearnEvent event) {
 		if (event.getSpell() instanceof PassiveSpell) {
@@ -103,6 +109,7 @@ public class TicksListener extends PassiveListener {
 		}
 	}
 	
+	@OverridePriority
 	@EventHandler
 	public void onForget(SpellForgetEvent event) {
 		if (event.getSpell() instanceof PassiveSpell) {

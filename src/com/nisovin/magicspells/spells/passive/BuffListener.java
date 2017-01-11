@@ -6,7 +6,6 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -20,6 +19,7 @@ import com.nisovin.magicspells.events.SpellForgetEvent;
 import com.nisovin.magicspells.events.SpellLearnEvent;
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.spells.PassiveSpell;
+import com.nisovin.magicspells.util.OverridePriority;
 
 // no trigger variable currently used
 public class BuffListener extends PassiveListener {
@@ -44,21 +44,25 @@ public class BuffListener extends PassiveListener {
 		}
 	}
 	
+	@OverridePriority
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		on(event.getPlayer());
 	}
 	
+	@OverridePriority
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		off(event.getPlayer());
 	}
 	
+	@OverridePriority
 	@EventHandler
 	public void onPlayerDeath(PlayerDeathEvent event) {
 		off(event.getEntity());
 	}
 	
+	@OverridePriority
 	@EventHandler
 	public void onPlayerRespawn(final PlayerRespawnEvent event) {
 		Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
@@ -69,7 +73,8 @@ public class BuffListener extends PassiveListener {
 		}, 1);
 	}
 	
-	@EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
+	@OverridePriority
+	@EventHandler
 	public void onSpellLearn(final SpellLearnEvent event) {
 		if (event.getSpell() instanceof PassiveSpell && spells.contains(event.getSpell())) {
 			Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
@@ -81,7 +86,8 @@ public class BuffListener extends PassiveListener {
 		}
 	}
 	
-	@EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
+	@OverridePriority
+	@EventHandler
 	public void onSpellForget(SpellForgetEvent event) {
 		if (event.getSpell() instanceof PassiveSpell && spells.contains(event.getSpell())) {
 			off(event.getForgetter(), (PassiveSpell)event.getSpell());

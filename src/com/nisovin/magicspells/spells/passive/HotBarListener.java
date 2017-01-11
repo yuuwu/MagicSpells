@@ -9,7 +9,6 @@ import java.util.Set;
 
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -18,6 +17,7 @@ import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.materials.MagicItemWithNameMaterial;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spells.PassiveSpell;
+import com.nisovin.magicspells.util.OverridePriority;
 
 // trigger variable is the item to trigger on
 public class HotBarListener extends PassiveListener {
@@ -41,13 +41,13 @@ public class HotBarListener extends PassiveListener {
 		if (mat != null) {
 			materials.add(mat.getMaterial());
 			List<PassiveSpell> list = null;
-			if (trigger == PassiveTrigger.HOT_BAR_SELECT) {
+			if (PassiveTrigger.HOT_BAR_SELECT.contains(trigger)) {
 				list = select.get(mat);
 				if (list == null) {
 					list = new ArrayList<PassiveSpell>();
 					select.put(mat, list);
 				}
-			} else if (trigger == PassiveTrigger.HOT_BAR_DESELECT) {
+			} else if (PassiveTrigger.HOT_BAR_DESELECT.contains(trigger)) {
 				list = deselect.get(mat);
 				if (list == null) {
 					list = new ArrayList<PassiveSpell>();
@@ -60,7 +60,8 @@ public class HotBarListener extends PassiveListener {
 		}
 	}
 	
-	@EventHandler(priority=EventPriority.MONITOR)
+	@OverridePriority
+	@EventHandler
 	public void onPlayerScroll(PlayerItemHeldEvent event) {
 		if (deselect.size() > 0) {
 			ItemStack item = event.getPlayer().getInventory().getItem(event.getPreviousSlot());
@@ -70,7 +71,10 @@ public class HotBarListener extends PassiveListener {
 					Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());
 					for (PassiveSpell spell : list) {
 						if (spellbook.hasSpell(spell, false)) {
-							spell.activate(event.getPlayer());
+							boolean casted = spell.activate(event.getPlayer());
+							if (PassiveListener.cancelDefaultAction(spell, casted)) {
+								event.setCancelled(true);
+							}
 						}
 					}
 				}
@@ -84,7 +88,10 @@ public class HotBarListener extends PassiveListener {
 					Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());
 					for (PassiveSpell spell : list) {
 						if (spellbook.hasSpell(spell, false)) {
-							spell.activate(event.getPlayer());
+							boolean casted = spell.activate(event.getPlayer());
+							if (PassiveListener.cancelDefaultAction(spell, casted)) {
+								event.setCancelled(true);
+							}
 						}
 					}
 				}

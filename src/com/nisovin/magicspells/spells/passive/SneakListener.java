@@ -9,6 +9,7 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.spells.PassiveSpell;
+import com.nisovin.magicspells.util.OverridePriority;
 
 // no trigger variable is currently used
 public class SneakListener extends PassiveListener {
@@ -18,15 +19,16 @@ public class SneakListener extends PassiveListener {
 		
 	@Override
 	public void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var) {
-		if (trigger == PassiveTrigger.SNEAK) {
+		if (PassiveTrigger.SNEAK.contains(trigger)) {
 			if (sneak == null) sneak = new ArrayList<PassiveSpell>();
 			sneak.add(spell);
-		} else if (trigger == PassiveTrigger.STOP_SNEAK) {
+		} else if (PassiveTrigger.STOP_SNEAK.contains(trigger)) {
 			if (stopSneak == null) stopSneak = new ArrayList<PassiveSpell>();
 			stopSneak.add(spell);
 		}
 	}
 	
+	@OverridePriority
 	@EventHandler
 	public void onSneak(PlayerToggleSneakEvent event) {
 		if (event.isSneaking()) {
@@ -34,7 +36,10 @@ public class SneakListener extends PassiveListener {
 				Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());
 				for (PassiveSpell spell : sneak) {
 					if (spellbook.hasSpell(spell, false)) {
-						spell.activate(event.getPlayer());
+						boolean casted = spell.activate(event.getPlayer());
+						if (PassiveListener.cancelDefaultAction(spell, casted)) {
+							event.setCancelled(true);
+						}
 					}
 				}
 			}
@@ -43,7 +48,10 @@ public class SneakListener extends PassiveListener {
 				Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());
 				for (PassiveSpell spell : stopSneak) {
 					if (spellbook.hasSpell(spell, false)) {
-						spell.activate(event.getPlayer());
+						boolean casted = spell.activate(event.getPlayer());
+						if (PassiveListener.cancelDefaultAction(spell, casted)) {
+							event.setCancelled(true);
+						}
 					}
 				}
 			}

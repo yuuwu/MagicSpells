@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -29,6 +30,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
@@ -56,6 +58,7 @@ import com.nisovin.magicspells.util.ExperienceBarManager;
 import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.MoneyHandler;
+import com.nisovin.magicspells.util.OverridePriority;
 import com.nisovin.magicspells.util.RegexUtil;
 import com.nisovin.magicspells.util.Util;
 import com.nisovin.magicspells.variables.VariableManager;
@@ -987,6 +990,11 @@ public class MagicSpells extends JavaPlugin {
 	}
 	
 	public static void registerEvents(final Listener listener) {
+		registerEvents(listener, EventPriority.NORMAL);
+	}
+	
+	public static void registerEvents(final Listener listener, EventPriority customPriority) {
+		if (customPriority == null) customPriority = EventPriority.NORMAL;
 		Method[] methods;
         try {
             methods = listener.getClass().getDeclaredMethods();
@@ -998,6 +1006,10 @@ public class MagicSpells extends JavaPlugin {
             final Method method = methods[i];
             final EventHandler eh = method.getAnnotation(EventHandler.class);
             if (eh == null) continue;
+            EventPriority priority = eh.priority();
+            
+            if (hasAnnotation(method, OverridePriority.class)) priority = customPriority;
+            
             final Class<?> checkClass = method.getParameterTypes()[0];
             if (!Event.class.isAssignableFrom(checkClass) || method.getParameterTypes().length != 1) {
                 plugin.getLogger().severe("Wrong method arguments used for event type registered");
@@ -1031,8 +1043,12 @@ public class MagicSpells extends JavaPlugin {
                     }
                 }
             };
-            plugin.getServer().getPluginManager().registerEvent(eventClass, listener, eh.priority(), executor, plugin, eh.ignoreCancelled());
+            plugin.getServer().getPluginManager().registerEvent(eventClass, listener, priority, executor, plugin, eh.ignoreCancelled());
         }
+	}
+	
+	private static boolean hasAnnotation(Method m, Class<? extends Annotation> clazz) {
+		return m.getAnnotation(clazz) != null;
 	}
 	
 	public static int scheduleDelayedTask(final Runnable task, int delay) {

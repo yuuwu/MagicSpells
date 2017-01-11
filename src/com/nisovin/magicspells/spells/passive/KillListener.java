@@ -8,12 +8,12 @@ import java.util.Map;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDeathEvent;
 
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.spells.PassiveSpell;
+import com.nisovin.magicspells.util.OverridePriority;
 import com.nisovin.magicspells.util.Util;
 
 // trigger variable is optional
@@ -44,7 +44,8 @@ public class KillListener extends PassiveListener {
 		}
 	}
 	
-	@EventHandler(priority=EventPriority.HIGHEST, ignoreCancelled=true)
+	@OverridePriority
+	@EventHandler
 	public void onDeath(EntityDeathEvent event) {
 		Player killer = event.getEntity().getKiller();
 		if (killer != null) {

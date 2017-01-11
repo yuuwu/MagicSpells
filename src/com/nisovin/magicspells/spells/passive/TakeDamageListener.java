@@ -14,7 +14,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -25,6 +24,7 @@ import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.materials.MagicItemWithNameMaterial;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spells.PassiveSpell;
+import com.nisovin.magicspells.util.OverridePriority;
 
 // optional trigger variable of a comma separated list that can contain
 // damage causes to accept or damaging weapons to accept
@@ -81,7 +81,8 @@ public class TakeDamageListener extends PassiveListener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	@OverridePriority
+	@EventHandler
 	public void onDamage(EntityDamageEvent event) {
 		if (!(event.getEntity() instanceof Player)) return;
 		Player player = (Player)event.getEntity();
@@ -93,7 +94,7 @@ public class TakeDamageListener extends PassiveListener {
 			for (PassiveSpell spell : always) {
 				if (spellbook.hasSpell(spell, false)) {
 					boolean casted = spell.activate(player, attacker);
-					if (casted && spell.cancelDefaultAction()) {
+					if (PassiveListener.cancelDefaultAction(spell, casted)) {
 						event.setCancelled(true);
 					}
 				}
@@ -108,7 +109,7 @@ public class TakeDamageListener extends PassiveListener {
 				for (PassiveSpell spell : causeSpells) {
 					if (spellbook.hasSpell(spell, false)) {
 						boolean casted = spell.activate(player, attacker);
-						if (casted && spell.cancelDefaultAction()) {
+						if (PassiveListener.cancelDefaultAction(spell, casted)) {
 							event.setCancelled(true);
 						}
 					}
@@ -128,7 +129,7 @@ public class TakeDamageListener extends PassiveListener {
 						for (PassiveSpell spell : list) {
 							if (spellbook.hasSpell(spell, false)) {
 								boolean casted = spell.activate(player, attacker);
-								if (casted && spell.cancelDefaultAction()) {
+								if (PassiveListener.cancelDefaultAction(spell, casted)) {
 									event.setCancelled(true);
 								}
 							}

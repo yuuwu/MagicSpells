@@ -9,6 +9,7 @@ import org.bukkit.event.player.PlayerBedLeaveEvent;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.spells.PassiveSpell;
+import com.nisovin.magicspells.util.OverridePriority;
 
 // no trigger variable is used here
 public class LeaveBedListener extends PassiveListener {
@@ -20,6 +21,7 @@ public class LeaveBedListener extends PassiveListener {
 		spells.add(spell);
 	}
 	
+	@OverridePriority
 	@EventHandler
 	public void onDeath(PlayerBedLeaveEvent event) {
 		Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());
