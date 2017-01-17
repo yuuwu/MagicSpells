@@ -35,6 +35,7 @@ public class FlyListener extends PassiveListener {
 			if (fly != null) {
 				Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());
 				for (PassiveSpell spell : fly) {
+					if (!isCancelStateOk(spell, event.isCancelled())) continue;
 					if (spellbook.hasSpell(spell, false)) {
 						boolean casted = spell.activate(event.getPlayer());
 						if (PassiveListener.cancelDefaultAction(spell, casted)) {
@@ -47,6 +48,7 @@ public class FlyListener extends PassiveListener {
 			if (stopFly != null) {
 				Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());
 				for (PassiveSpell spell : stopFly) {
+					if (!isCancelStateOk(spell, event.isCancelled())) continue;
 					if (spellbook.hasSpell(spell, false)) {
 						boolean casted = spell.activate(event.getPlayer());
 						if (PassiveListener.cancelDefaultAction(spell, casted)) {

@@ -938,7 +938,7 @@ public class MagicSpells extends JavaPlugin {
 			while (matcher.find()) {
 				String varText = matcher.group();
 				String[] varData = varText.substring(5, varText.length() - 1).split(":");
-				double val = plugin.variableManager.getValue(varData[0], player);
+				String val = plugin.variableManager.getStringValue(varData[0], player);
 				String sval = varData.length == 1 ? Util.getStringNumber(val, -1) : Util.getStringNumber(val, Integer.parseInt(varData[1]));
 				string = string.replace(varText, sval);
 			}
@@ -956,7 +956,7 @@ public class MagicSpells extends JavaPlugin {
 				String varText = matcher.group();
 				String[] varData = varText.substring(11, varText.length() - 1).split(":");
 				String variableOwnerName = varData[0];
-				double val = plugin.variableManager.getValue(varData[1], variableOwnerName);
+				String val = plugin.variableManager.getStringValue(varData[1], variableOwnerName);
 				String sval = varData.length == 2 ? Util.getStringNumber(val, -1) : Util.getStringNumber(val, Integer.parseInt(varData[2]));
 				string = string.replace(varText, sval);
 			}

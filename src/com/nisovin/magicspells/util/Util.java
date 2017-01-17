@@ -852,6 +852,17 @@ public class Util {
 		return ((double)Math.round(number * x) / x) + "";
 	}
 	
+	public static String getStringNumber(String textNumber, int places) {
+		String ret = "";
+		try {
+			ret = getStringNumber(Double.parseDouble(textNumber), places);
+		} catch (NumberFormatException nfe) {
+			ret = textNumber;
+		}
+		
+		return ret;
+	}
+	
 	private static Map<String, String> uniqueIds = new HashMap<String, String>();
 	
 	public static String getUniqueId(Player player) {
@@ -871,4 +882,7 @@ public class Util {
 		return null;
 	}
 	
+	public static String flattenLineBreaks(String raw) {
+		return raw.replaceAll("\n", "\\n");
+	}
 }

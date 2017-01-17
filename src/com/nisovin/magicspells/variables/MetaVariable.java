@@ -1,6 +1,5 @@
-package com.nisovin.magicspells.variables.meta;
+package com.nisovin.magicspells.variables;
 
-import com.nisovin.magicspells.variables.Variable;
 
 public abstract class MetaVariable extends Variable {
 
@@ -10,6 +9,11 @@ public abstract class MetaVariable extends Variable {
 		expBar = false;
 		objective = null;
 		minValue = Double.MIN_VALUE;
+	}
+	
+	@Override
+	protected void init() {
+		permanent = false;
 	}
 	
 	@Override

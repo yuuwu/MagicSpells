@@ -44,17 +44,15 @@ public class VariableManager implements Listener {
 	public VariableManager(MagicSpells plugin, ConfigurationSection section) {
 		if (section != null) {
 			for (String var : section.getKeys(false)) {
+				ConfigurationSection varSection = section.getConfigurationSection(var);
 				String type = section.getString(var + ".type", "global");
 				double def = section.getDouble(var + ".default", 0);
 				double min = section.getDouble(var + ".min", 0);
 				double max = section.getDouble(var + ".max", Double.MAX_VALUE);
 				boolean perm = section.getBoolean(var + ".permanent", true);
-				Variable variable;
-				if (type.equalsIgnoreCase("player")) {
-					variable = new PlayerVariable();
-				} else {
-					variable = new GlobalVariable();
-				}
+				
+				Variable variable = VariableType.getType(type).newInstance();
+				
 				String scoreName = section.getString(var + ".scoreboard-title", null);
 				String scorePos = section.getString(var + ".scoreboard-position", null);
 				Objective objective = null;
@@ -79,6 +77,7 @@ public class VariableManager implements Listener {
 				String bossBar = section.getString(var + ".boss-bar", null);
 				boolean expBar = section.getBoolean(var + ".exp-bar", false);
 				variable.init(def, min, max, perm, objective, bossBar, expBar);
+				variable.loadExtraData(varSection);
 				variables.put(var, variable);
 				MagicSpells.debug(2, "Loaded variable " + var);
 			}
@@ -176,7 +175,16 @@ public class VariableManager implements Listener {
 		if (var != null) {
 			return var.getValue(player);
 		} else {
-			return 0;
+			return 0D;
+		}
+	}
+	
+	public String getStringValue(String variable, Player player) {
+		Variable var = variables.get(variable);
+		if (var != null) {
+			return var.getStringValue(player);
+		} else {
+			return 0D + "";
 		}
 	}
 	
@@ -186,6 +194,15 @@ public class VariableManager implements Listener {
 			return var.getValue(player);
 		} else {
 			return 0;
+		}
+	}
+	
+	public String getStringValue(String variable, String player) {
+		Variable var = variables.get(variable);
+		if (var != null) {
+			return var.getStringValue(player);
+		} else {
+			return 0D + "";
 		}
 	}
 	
@@ -249,10 +266,10 @@ public class VariableManager implements Listener {
 				while (scanner.hasNext()) {
 					String line = scanner.nextLine().trim();
 					if (!line.isEmpty()) {
-						String[] s = line.split("=");
+						String[] s = line.split("=", 2);
 						Variable variable = variables.get(s[0]);
 						if (variable != null && variable instanceof GlobalVariable && variable.permanent) {
-							variable.set("", Double.parseDouble(s[1]));
+							variable.parseAndSet("", s[1]);
 						}
 					}
 				}
@@ -274,9 +291,9 @@ public class VariableManager implements Listener {
 		for (String variableName : variables.keySet()) {
 			Variable variable = variables.get(variableName);
 			if (variable instanceof GlobalVariable && variable.permanent) {
-				double val = variable.getValue("");
-				if (val != variable.defaultValue) {
-					lines.add(variableName + "=" + val);
+				String val = variable.getStringValue("");
+				if (!val.equals(variable.defaultStringValue)) {
+					lines.add(variableName + "=" + Util.flattenLineBreaks(val));
 				}
 			}
 		}
@@ -321,10 +338,10 @@ public class VariableManager implements Listener {
 				while (scanner.hasNext()) {
 					String line = scanner.nextLine().trim();
 					if (!line.isEmpty()) {
-						String[] s = line.split("=");
+						String[] s = line.split("=", 2);
 						Variable variable = variables.get(s[0]);
 						if (variable != null && variable instanceof PlayerVariable && variable.permanent) {
-							variable.set(player, Double.parseDouble(s[1]));
+							variable.parseAndSet(player, s[1]);
 						}
 					}
 				}
@@ -348,9 +365,9 @@ public class VariableManager implements Listener {
 		for (String variableName : variables.keySet()) {
 			Variable variable = variables.get(variableName);
 			if (variable instanceof PlayerVariable && variable.permanent) {
-				double val = variable.getValue(player);
-				if (val != variable.defaultValue) {
-					lines.add(variableName + "=" + val);
+				String val = variable.getStringValue(player);
+				if (!val.equals(variable.defaultStringValue)) {
+					lines.add(variableName + "=" + Util.flattenLineBreaks(val));
 				}
 			}
 		}
@@ -546,5 +563,4 @@ public class VariableManager implements Listener {
 			}
 		}
 	}
-	
 }

@@ -54,7 +54,7 @@ public class RightClickBlockTypeListener extends PassiveListener {
 		if (list != null) {
 			Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());
 			for (PassiveSpell spell : list) {
-				if (spell.ignoreCancelled() && event.isCancelled()) continue;
+				if (!PassiveListener.isCancelStateOk(spell, event.isCancelled())) continue;
 				if (spellbook.hasSpell(spell, false)) {
 					boolean casted = spell.activate(event.getPlayer(), event.getClickedBlock().getLocation().add(0.5, 0.5, 0.5));
 					if (PassiveListener.cancelDefaultAction(spell, casted)) {

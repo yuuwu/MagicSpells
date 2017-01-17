@@ -34,6 +34,7 @@ public class OffhandSwapListener extends PassiveListener {
 		if (spellbook == null) return;
 		
 		for (PassiveSpell spell: spells) {
+			if (!isCancelStateOk(spell, event.isCancelled())) continue;
 			if (spellbook.hasSpell(spell)) {
 				boolean casted = spell.activate(player);
 				if (PassiveListener.cancelDefaultAction(spell, casted)) {

@@ -52,6 +52,7 @@ public class TeleportListener extends PassiveListener {
 		if (allTypes.size() > 0) {
 			Spellbook spellbook = MagicSpells.getSpellbook(player);
 			for (PassiveSpell spell : allTypes) {
+				if (!isCancelStateOk(spell, event.isCancelled())) continue;
 				if (spellbook.hasSpell(spell)) {
 					boolean casted = spell.activate(player);
 					if (PassiveListener.cancelDefaultAction(spell, casted)) {
@@ -64,6 +65,7 @@ public class TeleportListener extends PassiveListener {
 		if (types.size() > 0 && types.containsKey(event.getCause())) {
 			Spellbook spellbook = MagicSpells.getSpellbook(player);
 			for (PassiveSpell spell : types.get(event.getCause())) {
+				if (!isCancelStateOk(spell, event.isCancelled())) continue;
 				if (spellbook.hasSpell(spell)) {
 					boolean casted = spell.activate(player);
 					if (PassiveListener.cancelDefaultAction(spell, casted)) {

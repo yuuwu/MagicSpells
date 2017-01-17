@@ -26,6 +26,7 @@ public class EnterBedListener extends PassiveListener {
 	public void onDeath(PlayerBedEnterEvent event) {
 		Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());
 		for (PassiveSpell spell : spells) {
+			if (!isCancelStateOk(spell, event.isCancelled())) continue;
 			if (spellbook.hasSpell(spell)) {
 				spell.activate(event.getPlayer()); // TODO is this safe to cancel?
 			}

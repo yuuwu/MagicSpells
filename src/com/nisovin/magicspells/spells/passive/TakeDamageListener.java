@@ -92,6 +92,7 @@ public class TakeDamageListener extends PassiveListener {
 		if (!always.isEmpty()) {
 			spellbook = MagicSpells.getSpellbook(player);
 			for (PassiveSpell spell : always) {
+				if (!isCancelStateOk(spell, event.isCancelled())) continue;
 				if (spellbook.hasSpell(spell, false)) {
 					boolean casted = spell.activate(player, attacker);
 					if (PassiveListener.cancelDefaultAction(spell, casted)) {
@@ -107,6 +108,7 @@ public class TakeDamageListener extends PassiveListener {
 				attacker = getAttacker(event);
 				if (spellbook == null) spellbook = MagicSpells.getSpellbook(player);
 				for (PassiveSpell spell : causeSpells) {
+					if (!isCancelStateOk(spell, event.isCancelled())) continue;
 					if (spellbook.hasSpell(spell, false)) {
 						boolean casted = spell.activate(player, attacker);
 						if (PassiveListener.cancelDefaultAction(spell, casted)) {
@@ -127,6 +129,7 @@ public class TakeDamageListener extends PassiveListener {
 					if (list != null) {
 						if (spellbook == null) spellbook = MagicSpells.getSpellbook(player);
 						for (PassiveSpell spell : list) {
+							if (!isCancelStateOk(spell, event.isCancelled())) continue;
 							if (spellbook.hasSpell(spell, false)) {
 								boolean casted = spell.activate(player, attacker);
 								if (PassiveListener.cancelDefaultAction(spell, casted)) {

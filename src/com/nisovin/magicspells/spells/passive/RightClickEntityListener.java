@@ -65,7 +65,6 @@ public class RightClickEntityListener extends PassiveListener {
 	public void onRightClickEntity(PlayerInteractEntityEvent event) {
 		if (!(event.getRightClicked() instanceof LivingEntity)) return;
 		
-		boolean isCanceled = event.isCancelled();
 		Map<EntityType, List<PassiveSpell>> typeMapLocal;
 		List<PassiveSpell> allTypesLocal;
 		
@@ -80,7 +79,8 @@ public class RightClickEntityListener extends PassiveListener {
 		if (!allTypesLocal.isEmpty()) {
 			Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());
 			for (PassiveSpell spell : allTypesLocal) {
-				if (spellbook.hasSpell(spell) && (!isCanceled || !spell.ignoreCancelled())) {
+				if (!isCancelStateOk(spell, event.isCancelled())) continue;
+				if (spellbook.hasSpell(spell)) {
 					boolean casted = spell.activate(event.getPlayer(), (LivingEntity)event.getRightClicked());
 					if (PassiveListener.cancelDefaultAction(spell, casted)) {
 						event.setCancelled(true);
@@ -92,7 +92,8 @@ public class RightClickEntityListener extends PassiveListener {
 			Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());
 			List<PassiveSpell> list = typeMapLocal.get(event.getRightClicked().getType());
 			for (PassiveSpell spell : list) {
-				if (spellbook.hasSpell(spell) && (!isCanceled || !spell.ignoreCancelled())) {
+				if (!isCancelStateOk(spell, event.isCancelled())) continue;
+				if (spellbook.hasSpell(spell)) {
 					boolean casted = spell.activate(event.getPlayer(), (LivingEntity)event.getRightClicked());
 					if (PassiveListener.cancelDefaultAction(spell, casted)) {
 						event.setCancelled(true);

@@ -29,6 +29,7 @@ public class ShootListener extends PassiveListener {
 			Player player = (Player)event.getEntity();
 			Spellbook spellbook = MagicSpells.getSpellbook(player);
 			for (PassiveSpell spell : spells) {
+				if (!isCancelStateOk(spell, event.isCancelled())) continue;
 				if (spellbook.hasSpell(spell)) {
 					boolean casted = spell.activate(player, event.getForce());
 					if (PassiveListener.cancelDefaultAction(spell, casted)) {

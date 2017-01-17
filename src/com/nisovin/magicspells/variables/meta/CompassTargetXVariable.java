@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.util.PlayerNameUtils;
+import com.nisovin.magicspells.variables.MetaVariable;
 
 public class CompassTargetXVariable extends MetaVariable {
 	

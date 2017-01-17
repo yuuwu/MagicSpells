@@ -48,6 +48,7 @@ public class SpellTargetedListener extends PassiveListener {
 		Player player = (Player)event.getTarget();
 		Spellbook spellbook = MagicSpells.getSpellbook(player);
 		for (PassiveSpell spell : anySpell) {
+			if (!isCancelStateOk(spell, event.isCancelled())) continue;
 			if (spellbook.hasSpell(spell, false)) {
 				boolean casted = spell.activate(player, event.getCaster());
 				if (PassiveListener.cancelDefaultAction(spell, casted)) {
@@ -58,6 +59,7 @@ public class SpellTargetedListener extends PassiveListener {
 		List<PassiveSpell> list = spells.get(event.getSpell());
 		if (list != null) {
 			for (PassiveSpell spell : list) {
+				if (!isCancelStateOk(spell, event.isCancelled())) continue;
 				if (spellbook.hasSpell(spell, false)) {
 					boolean casted = spell.activate(player, event.getCaster());
 					if (PassiveListener.cancelDefaultAction(spell, casted)) {

@@ -83,7 +83,7 @@ public abstract class TargetedSpell extends InstantSpell {
 				while (matcher.find()) {
 					String varText = matcher.group();
 					String[] varData = varText.substring(5, varText.length() - 1).split(":");
-					double val = MagicSpells.getVariableManager().getValue(varData[0], playerTarget);
+					String val = MagicSpells.getVariableManager().getStringValue(varData[0], playerTarget);
 					String sval = varData.length == 1 ? Util.getStringNumber(val, -1) : Util.getStringNumber(val, Integer.parseInt(varData[1]));
 					message = message.replace(varText, sval);
 				}
@@ -93,7 +93,7 @@ public abstract class TargetedSpell extends InstantSpell {
 				while (matcher.find()) {
 					String varText = matcher.group();
 					String[] varData = varText.substring(5, varText.length() - 1).split(":");
-					double val = MagicSpells.getVariableManager().getValue(varData[0], caster);
+					String val = MagicSpells.getVariableManager().getStringValue(varData[0], caster);
 					String sval = varData.length == 1 ? Util.getStringNumber(val, -1) : Util.getStringNumber(val, Integer.parseInt(varData[1]));
 					message = message.replace(varText, sval); //TODO make an alternative to overriding the parameter
 				}

@@ -35,6 +35,7 @@ public class SprintListener extends PassiveListener {
 			if (sprint != null) {
 				Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());
 				for (PassiveSpell spell : sprint) {
+					if (!isCancelStateOk(spell, event.isCancelled())) continue;
 					if (spellbook.hasSpell(spell, false)) {
 						boolean casted = spell.activate(event.getPlayer());
 						if (PassiveListener.cancelDefaultAction(spell, casted)) {
@@ -47,6 +48,7 @@ public class SprintListener extends PassiveListener {
 			if (stopSprint != null) {
 				Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());
 				for (PassiveSpell spell : stopSprint) {
+					if (!isCancelStateOk(spell, event.isCancelled())) continue;
 					if (spellbook.hasSpell(spell, false)) {
 						boolean casted = spell.activate(event.getPlayer());
 						if (PassiveListener.cancelDefaultAction(spell, casted)) {

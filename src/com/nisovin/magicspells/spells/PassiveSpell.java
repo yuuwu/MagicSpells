@@ -52,6 +52,9 @@ public class PassiveSpell extends Spell {
 	@ConfigData(field="ignore-cancelled", dataType="boolean", defaultValue="true", description="Don't cast if the event has been canceled")
 	private boolean ignoreCancelled;
 	
+	@ConfigData(field="require-cancelled-event", dataType="boolean", defaultValue="false", description="Don't cast if the event hasn't been cancelled.")
+	private boolean requireCancelledEvent;
+	
 	@ConfigData(field="send-failure-messages", dataType="boolean", defaultValue="false")
 	private boolean sendFailureMessages;
 	
@@ -72,6 +75,7 @@ public class PassiveSpell extends Spell {
 		cancelDefaultAction = getConfigBoolean("cancel-default-action", false);
 		cancelDefaultActionWhenCastFails = getConfigBoolean("cancel-default-action-when-cast-fails", false);
 		ignoreCancelled = getConfigBoolean("ignore-cancelled", true);
+		requireCancelledEvent = getConfigBoolean("require-cancelled-event", false);
 		sendFailureMessages = getConfigBoolean("send-failure-messages", false);
 		
 		spellNames = getConfigStringList("spells", null);
@@ -303,6 +307,10 @@ public class PassiveSpell extends Spell {
 	
 	public boolean ignoreCancelled() {
 		return ignoreCancelled;
+	}
+	
+	public boolean requireCancelledEvent() {
+		return requireCancelledEvent;
 	}
 	
 	@Override

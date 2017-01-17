@@ -19,6 +19,12 @@ public abstract class PassiveListener implements Listener {
 		return false;
 	}
 	
+	public static boolean isCancelStateOk(PassiveSpell spell, boolean cancelled) {
+		if (spell.ignoreCancelled() && cancelled) return false;
+		if (spell.requireCancelledEvent() && !cancelled) return false;
+		return true;
+	}
+	
 	public abstract void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var);
 	
 	public void initialize() {

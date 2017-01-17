@@ -67,12 +67,11 @@ public class CraftListener extends PassiveListener {
 		if (allTypes.size() > 0) {
 			Spellbook spellbook = MagicSpells.getSpellbook(player);
 			for (PassiveSpell spell : allTypes) {
-				if (spell.ignoreCancelled() || !event.isCancelled()) {
-					if (spellbook.hasSpell(spell)) {
-						boolean casted = spell.activate(player);
-						if (PassiveListener.cancelDefaultAction(spell, casted)) {
-							event.setCancelled(true);
-						}
+				if (!isCancelStateOk(spell, event.isCancelled())) continue;
+				if (spellbook.hasSpell(spell)) {
+					boolean casted = spell.activate(player);
+					if (PassiveListener.cancelDefaultAction(spell, casted)) {
+						event.setCancelled(true);
 					}
 				}
 			}
@@ -83,12 +82,11 @@ public class CraftListener extends PassiveListener {
 			if (list != null) {
 				Spellbook spellbook = MagicSpells.getSpellbook(player);
 				for (PassiveSpell spell : list) {
-					if (spell.ignoreCancelled() || !event.isCancelled()) {
-						if (spellbook.hasSpell(spell)) {
-							boolean casted = spell.activate(player);
-							if (PassiveListener.cancelDefaultAction(spell, casted)) {
-								event.setCancelled(true);
-							}
+					if (!isCancelStateOk(spell, event.isCancelled())) continue;
+					if (spellbook.hasSpell(spell)) {
+						boolean casted = spell.activate(player);
+						if (PassiveListener.cancelDefaultAction(spell, casted)) {
+							event.setCancelled(true);
 						}
 					}
 				}

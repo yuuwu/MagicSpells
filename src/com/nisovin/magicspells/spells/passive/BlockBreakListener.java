@@ -54,6 +54,7 @@ public class BlockBreakListener extends PassiveListener {
 		Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());
 		if (allTypes.size() > 0) {
 			for (PassiveSpell spell : allTypes) {
+				if (!isCancelStateOk(spell, event.isCancelled())) continue;
 				if (spellbook.hasSpell(spell, false)) {
 					boolean casted = spell.activate(event.getPlayer(), event.getBlock().getLocation().add(0.5, 0.5, 0.5));
 					if (PassiveListener.cancelDefaultAction(spell, casted)) {
@@ -66,6 +67,7 @@ public class BlockBreakListener extends PassiveListener {
 			List<PassiveSpell> list = getSpells(event.getBlock());
 			if (list != null) {
 				for (PassiveSpell spell : list) {
+					if (!isCancelStateOk(spell, event.isCancelled())) continue;
 					if (spellbook.hasSpell(spell, false)) {
 						boolean casted = spell.activate(event.getPlayer(), event.getBlock().getLocation().add(0.5, 0.5, 0.5));
 						if (PassiveListener.cancelDefaultAction(spell, casted)) {

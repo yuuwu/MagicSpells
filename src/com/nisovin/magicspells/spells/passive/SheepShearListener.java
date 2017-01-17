@@ -56,6 +56,7 @@ public class SheepShearListener extends PassiveListener {
 		List<PassiveSpell> spells = spellMap.get(s.getColor());
 		Spellbook spellbook = MagicSpells.getSpellbook(p);
 		for (PassiveSpell spell : spells) {
+			if (!isCancelStateOk(spell, event.isCancelled())) continue;
 			if (spellbook.hasSpell(spell)) {
 				boolean casted = spell.activate(p);
 				if (PassiveListener.cancelDefaultAction(spell, casted)) {
@@ -64,6 +65,7 @@ public class SheepShearListener extends PassiveListener {
 			}
 		}
 		for (PassiveSpell spell: allColorSpells) {
+			if (!isCancelStateOk(spell, event.isCancelled())) continue;
 			if (spellbook.hasSpell(spell)) {
 				boolean casted = spell.activate(p);
 				if (PassiveListener.cancelDefaultAction(spell, casted)) {

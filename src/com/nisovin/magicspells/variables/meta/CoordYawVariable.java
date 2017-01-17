@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import com.nisovin.magicspells.util.PlayerNameUtils;
+import com.nisovin.magicspells.variables.MetaVariable;
 
 public class CoordYawVariable extends MetaVariable {
 

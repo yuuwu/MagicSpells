@@ -70,6 +70,7 @@ public class HotBarListener extends PassiveListener {
 				if (list != null) {
 					Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());
 					for (PassiveSpell spell : list) {
+						if (!isCancelStateOk(spell, event.isCancelled())) continue;
 						if (spellbook.hasSpell(spell, false)) {
 							boolean casted = spell.activate(event.getPlayer());
 							if (PassiveListener.cancelDefaultAction(spell, casted)) {
@@ -87,6 +88,7 @@ public class HotBarListener extends PassiveListener {
 				if (list != null) {
 					Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());
 					for (PassiveSpell spell : list) {
+						if (!isCancelStateOk(spell, event.isCancelled())) continue;
 						if (spellbook.hasSpell(spell, false)) {
 							boolean casted = spell.activate(event.getPlayer());
 							if (PassiveListener.cancelDefaultAction(spell, casted)) {

@@ -35,6 +35,7 @@ public class SneakListener extends PassiveListener {
 			if (sneak != null) {
 				Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());
 				for (PassiveSpell spell : sneak) {
+					if (!isCancelStateOk(spell, event.isCancelled())) continue;
 					if (spellbook.hasSpell(spell, false)) {
 						boolean casted = spell.activate(event.getPlayer());
 						if (PassiveListener.cancelDefaultAction(spell, casted)) {
@@ -47,6 +48,7 @@ public class SneakListener extends PassiveListener {
 			if (stopSneak != null) {
 				Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());
 				for (PassiveSpell spell : stopSneak) {
+					if (!isCancelStateOk(spell, event.isCancelled())) continue;
 					if (spellbook.hasSpell(spell, false)) {
 						boolean casted = spell.activate(event.getPlayer());
 						if (PassiveListener.cancelDefaultAction(spell, casted)) {
