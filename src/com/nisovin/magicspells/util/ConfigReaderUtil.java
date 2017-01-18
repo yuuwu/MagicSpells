@@ -1,6 +1,11 @@
 package com.nisovin.magicspells.util;
 
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.conversations.ConversationFactory;
+import org.bukkit.conversations.Prompt;
+
+import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.util.prompt.PromptType;
 
 public class ConfigReaderUtil {
 
@@ -30,6 +35,55 @@ public class ConfigReaderUtil {
 		} catch (Exception e) {
 			return null;
 		}
+		return ret;
+	}
+	
+	public static Prompt readPrompt(ConfigurationSection section) {
+		return readPrompt(section, Prompt.END_OF_CONVERSATION);
+	}
+	
+	public static Prompt readPrompt(ConfigurationSection section, Prompt defaultPrompt) {
+		if (section == null) return defaultPrompt;
+		String type = section.getString("prompt-type");
+		PromptType promptType = PromptType.getPromptType(type);
+		if (promptType == null) return defaultPrompt;
+		
+		return promptType.constructPrompt(section);
+	}
+	
+	
+	// prefix accepts a string and defaults to null
+	// local-echo accepts a boolean and defaults to true
+	// first-prompt accepts a configuration section in prompt format
+	// timeout-seconds accepts an integer and defaults to 30
+	// escape-sequence accepts a string and defaults to null
+	public static ConversationFactory readConversationFactory(ConfigurationSection section) {
+		ConversationFactory ret = new ConversationFactory(MagicSpells.plugin);
+		
+		// handle the prefix
+		String prefix = section.getString("prefix", null);
+		if (prefix != null && !prefix.isEmpty()) {
+			ret = ret.withPrefix(new MagicConversationPrefix(prefix));
+		}
+		
+		// handle local echo
+		boolean localEcho = section.getBoolean("local-echo", true);
+		ret = ret.withLocalEcho(localEcho);
+		
+		// handle first prompt loading
+		Prompt firstPrompt = readPrompt(section.getConfigurationSection("first-prompt"));
+		ret = ret.withFirstPrompt(firstPrompt);
+		
+		// handle timeout
+		int timeoutSeconds = section.getInt("timeout-seconds", 30);
+		ret = ret.withTimeout(timeoutSeconds);
+		
+		// handle escape sequence
+		String escapeSequence = section.getString("escape-sequence", null);
+		if (escapeSequence != null && !escapeSequence.isEmpty()) {
+			ret = ret.withEscapeSequence("");
+		}
+		
 		return ret;
 	}
 	
