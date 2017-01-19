@@ -10,14 +10,32 @@ Prompt
 --------
 - `prompt-type` accepts a `string` and will fail if not set. Current valid values are
   - `regex`
+  - `fixed-set`
+  - `enum`
 
 In addition to any additional options specified by the format of the specific prompt type.
 
 RegexPrompt
 --------
+- Everything that MagicPromptResponder has
 - `regexp` accepts a `string` and fails if not set to a valid regular expression.
-- `variable-name` accepts a `string` of the variable name to save the validated prompt response to.
 - `prompt-text` accepts a `string` to use as the prompt's message to the player.
+
+FixedSetPrompt
+--------
+- Everything that MagicPromptResponder has
+- `options` accepts a `list` of strings and fails if not set.
+- `prompt-text` accepts a `string` to use as the prompt's message to the player.
+
+EnumSetPrompt
+--------
+- Everything that MagicPromptResponder has
+- `enum-class` accepts a `string` of the class to load the value options from.
+- `prompt-text` accepts a `string` to use as the prompt's message to the player.
+
+MagicPromptResponder
+--------
+- `variable-name` accepts a `string` of the variable name to save the validated prompt response to.
 
 ConversationFactory
 --------

@@ -3,20 +3,15 @@ package com.nisovin.magicspells.util.prompt;
 import java.util.regex.Pattern;
 
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.conversations.Conversable;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.RegexPrompt;
-import org.bukkit.entity.Player;
-
-import com.nisovin.magicspells.MagicSpells;
 
 public class MagicRegexPrompt extends RegexPrompt {
 	
-	private boolean saveToVariable;
-	private String variableName;
-	
 	private String promptText;
+	
+	private MagicPromptResponder responder;
 	
 	public MagicRegexPrompt(String pattern) {
 		super(pattern);
@@ -34,16 +29,7 @@ public class MagicRegexPrompt extends RegexPrompt {
 	@Override
 	protected Prompt acceptValidatedInput(
 			ConversationContext paramConversationContext, String paramString) {
-		String playerName = null;
-		Conversable who = ConversationContextUtil.getConversable(paramConversationContext.getAllSessionData());
-		if (who != null && who instanceof Player) {
-			playerName = ((Player)who).getName();
-		}
-		
-		if (saveToVariable) {
-			MagicSpells.getVariableManager().set(variableName, playerName, paramString);
-		}
-		return Prompt.END_OF_CONVERSATION;
+		return responder.acceptValidatedInput(paramConversationContext, paramString);
 	}
 	
 	
@@ -53,12 +39,7 @@ public class MagicRegexPrompt extends RegexPrompt {
 		if (regexp == null || regexp.isEmpty()) return null;
 		MagicRegexPrompt ret = new MagicRegexPrompt(regexp);
 		
-		// handle the variable name
-		String variableName = section.getString("variable-name", null);
-		
-		ret.variableName = variableName;
-		
-		ret.saveToVariable = MagicSpells.getVariableManager().getVariable(variableName) != null;
+		ret.responder = new MagicPromptResponder(section);
 		
 		String promptText = section.getString("prompt-text", "");
 		ret.promptText = promptText;

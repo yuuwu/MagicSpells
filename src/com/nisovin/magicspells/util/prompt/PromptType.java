@@ -15,6 +15,24 @@ public enum PromptType {
 			return MagicRegexPrompt.fromConfigSection(section);
 		}
 		
+	},
+	
+	FIXED_SET_PROMOT(new String[] { "fixed-set" }) {
+
+		@Override
+		public Prompt constructPrompt(ConfigurationSection section) {
+			return MagicFixedSetPrompt.fromConfigSection(section);
+		}
+		
+	},
+	
+	ENUM_SET_PROMPT(new String[] { "enum" }) {
+
+		@Override
+		public Prompt constructPrompt(ConfigurationSection section) {
+			return MagicEnumSetPrompt.fromConfigSection(section);
+		}
+		
 	}
 	
 	;
