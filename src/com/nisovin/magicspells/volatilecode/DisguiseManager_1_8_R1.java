@@ -36,6 +36,7 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spells.targeted.DisguiseSpell;
 import com.nisovin.magicspells.spells.targeted.DisguiseSpell.PlayerDisguiseData;
 import com.nisovin.magicspells.util.DisguiseManager;
+import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.ReflectionHelper;
 
@@ -784,7 +785,7 @@ public class DisguiseManager_1_8_R1 extends DisguiseManager {
 	}
 	
 	private void addEquipmentPackets(Player disguised, List<Packet> packets) {
-		ItemStack inHand = MagicSpells.getVolatileCodeHandler().getItemInMainHand(disguised);
+		ItemStack inHand = HandHandler.getItemInMainHand(disguised);
 		if (inHand != null && inHand.getType() != Material.AIR) {
 			PacketPlayOutEntityEquipment packet5 = new PacketPlayOutEntityEquipment(disguised.getEntityId(), 0, CraftItemStack.asNMSCopy(inHand));
 			packets.add(packet5);

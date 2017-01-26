@@ -8,7 +8,6 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.util.Vector;
@@ -102,18 +101,8 @@ public interface VolatileCodeHandle {
 	
 	public double getAbsorptionHearts(LivingEntity entity);
 	
-	public void setOffhand(Player player, ItemStack item);
-	
-	public ItemStack getOffhand(Player player);
-	
-	public void setItemInMainHand(Player player, ItemStack item);
-	
-	public ItemStack getItemInMainHand(Player player);
-	
 	public void showItemCooldown(Player player, ItemStack item, int duration);
-	
-	public ItemStack getItemInMainHand(EntityEquipment equip);
-	
+		
 	public boolean hasGravity(Entity entity);
 	
 	public void setGravity(Entity entity, boolean gravity);

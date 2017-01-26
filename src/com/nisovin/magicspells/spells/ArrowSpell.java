@@ -27,6 +27,7 @@ import com.nisovin.magicspells.Subspell;
 import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.events.SpellTargetEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
+import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellReagents;
 
@@ -215,7 +216,7 @@ public class ArrowSpell extends Spell {
 		public void onArrowLaunch(EntityShootBowEvent event) {
 			if (event.getEntity().getType() != EntityType.PLAYER) return;
 			Player shooter = (Player)event.getEntity();
-			ItemStack inHand = MagicSpells.getVolatileCodeHandler().getItemInMainHand(shooter);
+			ItemStack inHand = HandHandler.getItemInMainHand(shooter);
 			if (inHand == null || inHand.getType() != Material.BOW) return;
 			String bowName = inHand.getItemMeta().getDisplayName();
 			if (bowName != null && !bowName.isEmpty()) {
@@ -250,11 +251,11 @@ public class ArrowSpell extends Spell {
 						@Override
 						public void run() {
 							Player shooter = (Player)arrow.getShooter();
-							if (!data.casted && !data.spell.onCooldown(shooter) && data.spell.hasReagents(shooter, data.reagents)) {
+							if (!data.casted && !data.spell.onCooldown(shooter) && data.spell.hasReagents(shooter, data.arrowSpellDataReagents)) {
 								boolean success = data.spell.spellOnHitGround.castAtLocation(shooter, arrow.getLocation(), data.power);
 								if (success) {
 									data.spell.setCooldown(shooter, data.spell.cooldown);
-									data.spell.removeReagents(shooter, data.reagents);
+									data.spell.removeReagents(shooter, data.arrowSpellDataReagents);
 								}
 								data.casted = true;
 								arrow.removeMetadata(METADATA_KEY, MagicSpells.plugin);
@@ -305,11 +306,11 @@ public class ArrowSpell extends Spell {
 		ArrowSpell spell;
 		boolean casted = false;
 		float power = 1.0F;
-		SpellReagents reagents;
+		SpellReagents arrowSpellDataReagents;
 		public ArrowSpellData(ArrowSpell spell, float power, SpellReagents reagents) {
 			this.spell = spell;
 			this.power = power;
-			this.reagents = reagents;
+			this.arrowSpellDataReagents = reagents;
 		}
 	}
 

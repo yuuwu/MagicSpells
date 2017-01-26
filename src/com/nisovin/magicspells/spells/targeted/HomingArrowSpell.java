@@ -53,7 +53,7 @@ public class HomingArrowSpell extends TargetedSpell implements TargetedEntitySpe
 		Vector v = null;
 		if (from != null) {
 			v = target.getLocation().toVector().subtract(from.toVector()).normalize();
-			from = from.clone().setDirection(v); //TODO make an alternative to overriding the parameter
+			from = from.clone().setDirection(v);
 			projectile = from.getWorld().spawn(from, projectileType);
 			if (player != null) {
 				projectile.setShooter(player);

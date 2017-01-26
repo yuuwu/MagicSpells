@@ -33,6 +33,11 @@ public enum PromptType {
 			return MagicEnumSetPrompt.fromConfigSection(section);
 		}
 		
+		@Override
+		public void unload() {
+			MagicEnumSetPrompt.unload();
+		}
+		
 	}
 	
 	;
@@ -49,6 +54,15 @@ public enum PromptType {
 	
 	public abstract Prompt constructPrompt(ConfigurationSection section);
 	
+	public void unload() {
+		// instances may override
+	}
+	
+	public static void unloadDestructPromptData() {
+		for (PromptType type: PromptType.values()) {
+			type.unload();
+		}
+	}
 	
 	private static void initialize() {
 		if (initialized) return;

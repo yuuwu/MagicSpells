@@ -19,6 +19,7 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
+import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
 import com.nisovin.magicspells.util.Util;
@@ -125,25 +126,17 @@ public class DisarmSpell extends TargetedSpell implements TargetedEntitySpell {
 	}
 	
 	ItemStack getItemInHand(LivingEntity entity) {
-		if (entity instanceof Player) {
-			return MagicSpells.getVolatileCodeHandler().getItemInMainHand(((Player)entity));
-		} else {
-			EntityEquipment equip = entity.getEquipment();
-			if (equip != null) {
-				return MagicSpells.getVolatileCodeHandler().getItemInMainHand(equip);
-			}
+		EntityEquipment equip = entity.getEquipment();
+		if (equip != null) {
+			return HandHandler.getItemInMainHand(equip);
 		}
 		return null;
 	}
 	
 	void setItemInHand(LivingEntity entity, ItemStack item) {
-		if (entity instanceof Player) {
-			MagicSpells.getVolatileCodeHandler().setItemInMainHand(((Player)entity), item);
-		} else {
-			EntityEquipment equip = entity.getEquipment();
-			if (equip != null) {
-				equip.setItemInHand(item);
-			}
+		EntityEquipment equip = entity.getEquipment();
+		if (equip != null) {
+			HandHandler.setItemInMainHand(equip, item);
 		}
 	}
 

@@ -102,12 +102,12 @@ public class FireballSpell extends TargetedSpell implements TargetedEntityFromLo
 					return noTarget(player);
 				}
 				LivingEntity entity = targetInfo.getTarget();
-				power = targetInfo.getPower(); //TODO make an alternative to overriding the parameter
+				power = targetInfo.getPower();
 				if (entity == null) {
 					return noTarget(player);
 				} else if (entity instanceof Player && checkPlugins) {
 					// run a pvp damage check
-					MagicSpellsEntityDamageByEntityEvent event = new MagicSpellsEntityDamageByEntityEvent(player, entity, DamageCause.ENTITY_ATTACK, (double)1);
+					MagicSpellsEntityDamageByEntityEvent event = new MagicSpellsEntityDamageByEntityEvent(player, entity, DamageCause.ENTITY_ATTACK, 1D);
 					Bukkit.getServer().getPluginManager().callEvent(event);
 					if (event.isCancelled()) {
 						return noTarget(player);

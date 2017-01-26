@@ -26,7 +26,7 @@ public class RemoveMarksSpell extends TargetedSpell implements TargetedLocationS
 	
 	public RemoveMarksSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
-		radius = getConfigFloat("radius", 10);
+		radius = getConfigFloat("radius", 10F);
 		pointBlank = getConfigBoolean("point-blank", false);
 		markSpellName = getConfigString("mark-spell", "mark");
 	}

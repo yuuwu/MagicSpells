@@ -2,9 +2,11 @@ package com.nisovin.magicspells.util;
 
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
@@ -46,6 +48,98 @@ public class HandHandler {
 		return !isMainHand(event);
 	}
 	
+	public static ItemStack getItemInMainHand(Player equip) {
+		return getItemInMainHand(equip.getEquipment());
+	}
 	
+	public static ItemStack getItemInMainHand(EntityEquipment equip) {
+		if (offhandExists) {
+			return equip.getItemInMainHand();
+		}
+		return equip.getItemInHand();
+	}
 	
+	public static void setItemInMainHand(Player equip, ItemStack item) {
+		setItemInMainHand(equip.getEquipment(), item);
+	}
+	
+	public static void setItemInMainHand(EntityEquipment equip, ItemStack item) {
+		if (offhandExists) {
+			equip.setItemInMainHand(item);
+		} else {
+			equip.setItemInHand(item);
+		}
+	}
+	
+	public static void setItemInMainHandDropChance(Player equip, float chance) {
+		setItemInMainHandDropChance(equip.getEquipment(), chance);
+	}
+	
+	public static void setItemInMainHandDropChance(EntityEquipment equip, float chance) {
+		if (offhandExists) {
+			equip.setItemInMainHandDropChance(chance);
+		} else {
+			equip.setItemInHandDropChance(chance);
+		}
+	}
+	
+	public static float getItemInMainHandDropChance(Player equip) {
+		return getItemInMainHandDropChance(equip.getEquipment());
+	}
+	
+	public static float getItemInMainHandDropChance(EntityEquipment equip) {
+		if (offhandExists) {
+			return equip.getItemInMainHandDropChance();
+		} else {
+			return equip.getItemInHandDropChance();
+		}
+	}
+	
+	public static ItemStack getItemInOffHand(Player equip) {
+		return getItemInOffHand(equip.getEquipment());
+	}
+	
+	public static ItemStack getItemInOffHand(EntityEquipment equip) {
+		if (offhandExists) {
+			return equip.getItemInOffHand();
+		}
+		// no offhand to get from
+		return null;
+	}
+	
+	public static void setItemInOffHand(Player equip, ItemStack item) {
+		setItemInOffHand(equip.getEquipment(), item);
+	}
+	
+	public static void setItemInOffHand(EntityEquipment equip, ItemStack item) {
+		if (offhandExists) {
+			equip.setItemInOffHand(item);
+		} else {
+			// no op
+		}
+	}
+	
+	public static void setItemInOffHandDropChance(Player equip, float chance) {
+		setItemInOffHandDropChance(equip.getEquipment(), chance);
+	}
+	
+	public static void setItemInOffHandDropChance(EntityEquipment equip, float chance) {
+		if (offhandExists) {
+			equip.setItemInOffHandDropChance(chance);
+		} else {
+			// no op
+		}
+	}
+	
+	public static float getItemInOffHandDropChance(Player player) {
+		return getItemInOffHandDropChance(player.getEquipment());
+	}
+	
+	public static float getItemInOffHandDropChance(EntityEquipment equip) {
+		if (offhandExists) {
+			return equip.getItemInOffHandDropChance();
+		} else {
+			return 0F;
+		}
+	}
 }

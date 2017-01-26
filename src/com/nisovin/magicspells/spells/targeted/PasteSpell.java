@@ -65,7 +65,7 @@ public class PasteSpell extends TargetedSpell implements TargetedLocationSpell {
 		
 		playBlockBreakEffect = getConfigBoolean("play-block-break-effect", true);
 		
-		float blocksPerSecond = getConfigFloat("blocks-per-second", 0);
+		float blocksPerSecond = getConfigFloat("blocks-per-second", 0F);
 		if (blocksPerSecond == 0) {
 			tickInterval = 0;
 			blocksPerTick = 0;

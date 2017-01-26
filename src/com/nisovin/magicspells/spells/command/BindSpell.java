@@ -13,6 +13,7 @@ import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.CommandSpell;
 import com.nisovin.magicspells.util.CastItem;
+import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.Util;
 
@@ -83,7 +84,7 @@ public class BindSpell extends CommandSpell {
 					sendMessage(strSpellCantBind, player, args);
 					return PostCastAction.ALREADY_HANDLED;
 				} else {
-					CastItem castItem = new CastItem(MagicSpells.getVolatileCodeHandler().getItemInMainHand(player));
+					CastItem castItem = new CastItem(HandHandler.getItemInMainHand(player));
 					MagicSpells.debug(3, "Trying to bind spell '" + spell.getInternalName() + "' to cast item " + castItem.toString() + "...");
 					if (castItem.getItemTypeId() == 0 && !allowBindToFist) {
 						sendMessage(strCantBindItem, player, args);

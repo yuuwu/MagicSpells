@@ -33,6 +33,7 @@ import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.command.ScrollSpell;
 import com.nisovin.magicspells.spells.command.TomeSpell;
+import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.Util;
 
@@ -210,7 +211,7 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 				}
 				if (!added && addToInventory) {
 					if (offhand) {
-						MagicSpells.getVolatileCodeHandler().setOffhand(player, item);
+						HandHandler.setItemInOffHand(player, item);
 					} else if (requiredSlot >= 0) {
 						ItemStack old = inv.getItem(requiredSlot);
 						if (old != null && old.isSimilar(item)) {
@@ -387,11 +388,11 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 		@EventHandler(priority = EventPriority.LOWEST)
 		void onRightClick(PlayerInteractEvent event) {
 			if (event.hasItem()) {
-				ItemStack item = MagicSpells.getVolatileCodeHandler().getItemInMainHand(event.getPlayer());
+				ItemStack item = HandHandler.getItemInMainHand(event.getPlayer());
 				ExpirationResult result = updateExpiresLineIfNeeded(item);
 				if (result == ExpirationResult.EXPIRED) {
 					
-					MagicSpells.getVolatileCodeHandler().setItemInMainHand(event.getPlayer(), null);
+					HandHandler.setItemInMainHand(event.getPlayer(), null);
 					event.setCancelled(true);
 				}
 			}

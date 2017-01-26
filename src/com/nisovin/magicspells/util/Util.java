@@ -104,11 +104,7 @@ public class Util {
 					for (int i = 0; i < split.length; i++) {
 						String[] enchantData = split[i].split("-");
 						Enchantment ench;
-						if (enchantData[0].matches("[0-9]+")) {
-							ench = Enchantment.getById(Integer.parseInt(enchantData[0]));
-						} else {
-							ench = Enchantment.getByName(enchantData[0].toUpperCase());
-						}
+						ench = MagicValues.Enchantments.getEnchantmentType(enchantData[0]);
 						if (ench != null && enchantData[1].matches("[0-9]+")) {
 							enchants.put(ench, Integer.parseInt(enchantData[1]));
 						}
@@ -308,12 +304,7 @@ public class Util {
 				for (String enchant : enchants) {
 					String[] data = enchant.split(" ");
 					Enchantment e = null;
-					try {
-						int id = Integer.parseInt(data[0]);
-						e = Enchantment.getById(id);
-					} catch (NumberFormatException ex) {
-						e = Enchantment.getByName(data[0].toUpperCase());
-					}
+					e = MagicValues.Enchantments.getEnchantmentType(data[0]);
 					if (e == null) {
 						MagicSpells.error("'" + data[0] + "' could not be connected to an enchantment");
 					}
@@ -436,6 +427,13 @@ public class Util {
 		}
 	}
 	
+	// just checks to see if the passed string could be lore data
+	public static boolean isLoreData(String line) {
+		if (line == null) return false;
+		line = ChatColor.stripColor(line);
+		return line.startsWith("MS$:");
+	}
+	
 	public static void setLoreData(ItemStack item, String data) {
 		ItemMeta meta = item.getItemMeta();
 		List<String> lore;
@@ -443,8 +441,7 @@ public class Util {
 			lore = meta.getLore();
 			if (lore.size() > 0) {
 				for (int i = 0; i < lore.size(); i++) {
-					String s = ChatColor.stripColor(lore.get(i));
-					if (s.startsWith("MS$:")) {
+					if (isLoreData(lore.get(i))) {
 						lore.remove(i);
 						break;
 					}
@@ -531,19 +528,11 @@ public class Util {
 	}
 	
 	public static PotionEffectType getPotionEffectType(String type) {
-		if (type.matches("^[0-9]+$")) {
-			return PotionEffectType.getById(Integer.parseInt(type));
-		} else {
-			return PotionEffectType.getByName(type);
-		}
+		return MagicValues.PotionEffect.getPotionEffectType(type.trim());
 	}
 	
 	public static Enchantment getEnchantmentType(String type) {
-		if (type.matches("^[0-9]+$")) {
-			return Enchantment.getById(Integer.parseInt(type));
-		} else {
-			return Enchantment.getByName(type.toUpperCase());
-		}
+		return MagicValues.Enchantments.getEnchantmentType(type);
 	}
 	
 	public static void sendFakeBlockChange(Player player, Block block, MagicMaterial mat) {
@@ -841,8 +830,13 @@ public class Util {
 	}
 	
 	public static ItemStack getEggItemForEntityType(EntityType type) {
-		//TODO fix this
-		return new ItemStack(Material.MONSTER_EGG, 1, type.getTypeId());
+		ItemStack ret = new ItemStack(Material.MONSTER_EGG, 1);
+		ItemMeta meta = ret.getItemMeta();
+		if (meta instanceof SpawnEggMeta) {
+			((SpawnEggMeta) meta).setSpawnedType(type);
+			ret.setItemMeta(meta);
+		}
+		return ret;
 	}
 	
 	public static String getStringNumber(double number, int places) {

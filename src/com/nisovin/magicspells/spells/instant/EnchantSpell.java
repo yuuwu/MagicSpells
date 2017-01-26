@@ -8,8 +8,8 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spells.InstantSpell;
+import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 
 public class EnchantSpell extends InstantSpell {
@@ -32,7 +32,7 @@ public class EnchantSpell extends InstantSpell {
 
 	@Override
 	public PostCastAction castSpell(final Player player, SpellCastState state, final float power, String[] args) {
-		ItemStack targetItem = MagicSpells.getVolatileCodeHandler().getItemInMainHand(player);
+		ItemStack targetItem = HandHandler.getItemInMainHand(player);
 		if (targetItem == null) return PostCastAction.ALREADY_HANDLED;
 		enchant(targetItem);
 		return PostCastAction.HANDLE_NORMALLY;

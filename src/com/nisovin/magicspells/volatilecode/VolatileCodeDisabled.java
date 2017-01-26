@@ -18,7 +18,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.SmallFireball;
-import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -280,34 +279,8 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 	}
 
 	@Override
-	public void setOffhand(Player player, ItemStack item) {
-		//no op
-	}
-
-	@Override
-	public ItemStack getOffhand(Player player) {
-		// no op
-		return null;
-	}
-
-	@Override
 	public void showItemCooldown(Player player, ItemStack item, int duration) {
 		//no op
-	}
-
-	@Override
-	public void setItemInMainHand(Player player, ItemStack item) {
-		player.setItemInHand(item);
-	}
-
-	@Override
-	public ItemStack getItemInMainHand(Player player) {
-		return player.getItemInHand();
-	}
-
-	@Override
-	public ItemStack getItemInMainHand(EntityEquipment equip) {
-		return equip.getItemInHand();
 	}
 
 	@Override

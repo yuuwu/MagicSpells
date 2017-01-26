@@ -2,11 +2,9 @@ package com.nisovin.magicspells.util;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -218,6 +216,7 @@ public class MagicConfig {
 		File[] files = folder.listFiles();
 		for (File file : files) {
 			if (file.isDirectory()) {
+				// recurse into folders
 				loadSpellConfigs(file);
 			} else if (file.getName().endsWith(".yml")) {
 				name = file.getName().replace(".yml", "");

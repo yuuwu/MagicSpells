@@ -69,7 +69,7 @@ public class CastListener implements Listener {
 			}
 		} else if ((event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) && (plugin.cycleSpellsOnOffhandAction || HandHandler.isMainHand(event))) {
 			// right click -- cycle spell and/or process mana pots
-			ItemStack inHand = MagicSpells.getVolatileCodeHandler().getItemInMainHand(player);
+			ItemStack inHand = HandHandler.getItemInMainHand(player);
 			
 			if ((inHand != null && inHand.getType() != Material.AIR) || plugin.allowCastWithFist) {
 			
@@ -135,7 +135,7 @@ public class CastListener implements Listener {
 							} else {
 								inHand.setAmount(inHand.getAmount()-1);
 							}
-							MagicSpells.getVolatileCodeHandler().setItemInMainHand(player, inHand);
+							HandHandler.setItemInMainHand(player, inHand);
 							player.updateInventory();
 						}
 					}
@@ -171,7 +171,7 @@ public class CastListener implements Listener {
 	}
 	
 	private void castSpell(Player player) {		
-		ItemStack inHand = MagicSpells.getVolatileCodeHandler().getItemInMainHand(player);
+		ItemStack inHand = HandHandler.getItemInMainHand(player);
 		if (!plugin.allowCastWithFist && (inHand == null || inHand.getType() == Material.AIR)) return;
 		
 		Spell spell = MagicSpells.getSpellbook(player).getActiveSpell(inHand);
@@ -187,7 +187,7 @@ public class CastListener implements Listener {
 	}
 	
 	private void showIcon(Player player, int slot, ItemStack icon) {
-		if (icon == null) icon = player.getInventory().getItem(plugin.spellIconSlot); //TODO find an alternative to reassigning the parameter
+		if (icon == null) icon = player.getInventory().getItem(plugin.spellIconSlot);
 		MagicSpells.getVolatileCodeHandler().sendFakeSlotUpdate(player, slot, icon);
 	}
 

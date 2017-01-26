@@ -49,8 +49,8 @@ public class OrbitSpell extends TargetedSpell implements TargetedEntitySpell {
 	public OrbitSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		orbitRadius = getConfigFloat("orbit-radius", 1);
-		secondsPerRevolution = getConfigFloat("seconds-per-revolution", 3);
+		orbitRadius = getConfigFloat("orbit-radius", 1F);
+		secondsPerRevolution = getConfigFloat("seconds-per-revolution", 3F);
 		counterClockwise = getConfigBoolean("counter-clockwise", false);
 		
 		particleName = getConfigString("particle-name", "reddust");

@@ -18,9 +18,10 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 
-import com.nisovin.magicspells.spells.CommandSpell;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spell;
+import com.nisovin.magicspells.spells.CommandSpell;
+import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.Util;
 
@@ -104,7 +105,7 @@ public class KeybindSpell extends CommandSpell {
 			}
 			
 			int slot = player.getInventory().getHeldItemSlot();
-			ItemStack item = MagicSpells.getVolatileCodeHandler().getItemInMainHand(player);
+			ItemStack item = HandHandler.getItemInMainHand(player);
 			
 			if (args[0].equalsIgnoreCase("clear")) {
 				keybinds.clearKeybind(slot);

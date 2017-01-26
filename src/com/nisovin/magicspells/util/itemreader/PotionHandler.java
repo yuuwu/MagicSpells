@@ -12,6 +12,7 @@ import org.bukkit.potion.PotionEffectType;
 import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.util.BooleanUtils;
+import com.nisovin.magicspells.util.MagicValues;
 
 public class PotionHandler {
 
@@ -47,13 +48,8 @@ public class PotionHandler {
 	
 	private static PotionEffect buildPotionEffect(String effectString) {
 			String[] data = effectString.split(" ");
-			PotionEffectType t = null;
-			try {
-				int id = Integer.parseInt(data[0]);
-				t = PotionEffectType.getById(id);
-			} catch (NumberFormatException e) {
-				t = PotionEffectType.getByName(data[0].toUpperCase());
-			}
+			PotionEffectType t = MagicValues.PotionEffect.getPotionEffectType(data[0]);
+			
 			if (t == null) {
 				MagicSpells.error("'" + data[0] + "' could not be connected to a potion effect type");
 			}

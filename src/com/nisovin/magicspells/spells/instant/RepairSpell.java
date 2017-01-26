@@ -15,6 +15,7 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
+import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 
 public class RepairSpell extends InstantSpell {
@@ -80,10 +81,10 @@ public class RepairSpell extends InstantSpell {
 			int repaired = 0;
 			for (String s : toRepair) {
 				if (s.equals("held")) {
-					ItemStack item = MagicSpells.getVolatileCodeHandler().getItemInMainHand(player);
+					ItemStack item = HandHandler.getItemInMainHand(player);
 					if (item != null && isRepairable(item.getType()) && item.getDurability() > 0) {
 						item.setDurability(newDura(item));
-						MagicSpells.getVolatileCodeHandler().setItemInMainHand(player, item);
+						HandHandler.setItemInMainHand(player, item);
 						repaired++;
 					}
 				} else if (s.equals("hotbar") || s.equals("inventory")) {

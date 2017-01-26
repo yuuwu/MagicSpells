@@ -35,8 +35,8 @@ public class HoldRightSpell extends TargetedSpell implements TargetedEntitySpell
 		targetEntity = getConfigBoolean("target-entity", true);
 		targetLocation = getConfigBoolean("target-location", false);
 		resetTime = getConfigInt("reset-time", 250);
-		maxDuration = getConfigFloat("max-duration", 0);
-		maxDistance = getConfigFloat("max-distance", 0);
+		maxDuration = getConfigFloat("max-duration", 0F);
+		maxDistance = getConfigFloat("max-distance", 0F);
 	}
 	
 	@Override

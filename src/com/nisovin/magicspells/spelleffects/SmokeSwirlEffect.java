@@ -77,9 +77,9 @@ public class SmokeSwirlEffect extends SpellEffect {
 		private Entity entity;
 		private Location location;
 		private int interval;
-		private int duration;
+		private int animatorDuration;
 		private int iteration;
-		private int taskId;
+		private int animatorTaskId;
 		
 		public Animator(Location location, int interval, int duration) {
 			this(interval, duration);
@@ -93,15 +93,15 @@ public class SmokeSwirlEffect extends SpellEffect {
 		
 		public Animator(int interval, int duration) {
 			this.interval = interval;
-			this.duration = duration;
+			this.animatorDuration = duration;
 			this.iteration = 0;
-			this.taskId = MagicSpells.scheduleRepeatingTask(this, 0, interval);
+			this.animatorTaskId = MagicSpells.scheduleRepeatingTask(this, 0, interval);
 		}
 		
 		@Override
 		public void run() {
-			if (iteration * interval > duration) {
-				Bukkit.getScheduler().cancelTask(taskId);
+			if (iteration * interval > animatorDuration) {
+				Bukkit.getScheduler().cancelTask(animatorTaskId);
 			} else {
 				int i = iteration % 8;
 				Location loc;

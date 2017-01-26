@@ -80,6 +80,8 @@ public class NovaEffect extends SpellEffect {
 	
 	int novaTickInterval = 5;
 	int expandingRadiusChange = 1;
+	
+	double range = 20;
 
 	@Override
 	public void loadFromString(String string) {
@@ -126,6 +128,8 @@ public class NovaEffect extends SpellEffect {
 		novaTickInterval = config.getInt("expand-interval", novaTickInterval);
 		expandingRadiusChange = config.getInt("expanding-radius-change", expandingRadiusChange);
 		if (expandingRadiusChange < 1) expandingRadiusChange = 1;
+		
+		range = Math.max(config.getDouble("range", range), 1);
 	}
 
 	@Override
@@ -134,7 +138,7 @@ public class NovaEffect extends SpellEffect {
 		
 		// get nearby players
 		Item item = location.getWorld().dropItem(location, new ItemStack(Material.STONE, 0));
-		List<Entity> nearbyEntities = item.getNearbyEntities(20, 20, 20);
+		List<Entity> nearbyEntities = item.getNearbyEntities(range, range, range);
 		item.remove();
 		List<Player> nearby = new ArrayList<Player>();
 		for (Entity e : nearbyEntities) {

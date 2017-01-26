@@ -41,9 +41,8 @@ public class MagicItemNameResolver implements ItemNameResolver {
 			config.load(file);
 			for (String s : config.getKeys(false)) {
 				Material m = materialMap.get(config.getString(s).toLowerCase());
-				if (m != null) {
-					materialMap.put(s.toLowerCase(), m);
-				}
+				if (m == null) continue;
+				materialMap.put(s.toLowerCase(), m);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -181,9 +180,8 @@ public class MagicItemNameResolver implements ItemNameResolver {
 		String[] strings = string.split("\\|");
 		for (String s : strings) {
 			MagicMaterial mat = resolveBlock(s.trim());
-			if (mat != null) {
-				materials.add(mat);
-			}
+			if (mat == null) continue;
+			materials.add(mat);
 		}
 		return new MagicBlockRandomMaterial(materials.toArray(new MagicMaterial[materials.size()]));
 	}

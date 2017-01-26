@@ -22,6 +22,7 @@ import com.nisovin.magicspells.Spell;
 import com.nisovin.magicspells.materials.ItemNameResolver;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spells.CommandSpell;
+import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellReagents;
 import com.nisovin.magicspells.util.Util;
@@ -95,7 +96,7 @@ public class ImbueSpell extends CommandSpell {
 			}
 			
 			// get item
-			ItemStack inHand = MagicSpells.getVolatileCodeHandler().getItemInMainHand(player);
+			ItemStack inHand = HandHandler.getItemInMainHand(player);
 			if (!allowedItemTypes.contains(inHand.getType())) {
 				// disallowed item
 				sendMessage(strCantImbueItem, player, args);
@@ -168,7 +169,7 @@ public class ImbueSpell extends CommandSpell {
 			// imbue item
 			setItemNameAndLore(inHand, spell, uses);
 			setImbueData(inHand, spell.getInternalName() + "," + uses);
-			MagicSpells.getVolatileCodeHandler().setItemInMainHand(player, inHand);
+			HandHandler.setItemInMainHand(player, inHand);
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}
@@ -201,7 +202,7 @@ public class ImbueSpell extends CommandSpell {
 						uses--;
 						if (uses <= 0) {
 							if (consumeItem) {
-								MagicSpells.getVolatileCodeHandler().setItemInMainHand(event.getPlayer(), null);
+								HandHandler.setItemInMainHand(event.getPlayer(), null);
 							} else {
 								Util.removeLoreData(item);
 								if (nameAndLoreHasUses) {

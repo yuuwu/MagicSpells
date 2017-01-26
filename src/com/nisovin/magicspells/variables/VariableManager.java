@@ -238,7 +238,7 @@ public class VariableManager implements Listener {
 			updateExpBar(var, player != null ? player.getName() : "");
 			if (var.permanent) {
 				if (var instanceof PlayerVariable) {
-					dirtyPlayerVars.add(player.getName());
+					dirtyPlayerVars.add(player != null ? player.getName() : "");
 				} else if (var instanceof GlobalVariable) {
 					dirtyGlobalVars = true;
 				}

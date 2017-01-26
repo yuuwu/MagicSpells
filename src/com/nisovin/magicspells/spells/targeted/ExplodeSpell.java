@@ -67,7 +67,7 @@ public class ExplodeSpell extends TargetedSpell implements TargetedLocationSpell
 					target = null;
 				} else {
 					target = event.getTargetLocation().getBlock();
-					power = event.getPower(); //TODO make an alternative to overriding the parameter
+					power = event.getPower();
 				}
 			}
 			if (target == null || target.getType() == Material.AIR) {

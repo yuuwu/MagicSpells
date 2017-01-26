@@ -266,7 +266,9 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 			String msg = event.getMessage();
 			for (String comm : commandToBlock) {
 				comm = comm.trim();
-				if (!comm.equals("") && msg.startsWith("/" + commandToBlock)) {
+				if (comm.equals("")) continue;
+				
+				if (msg.startsWith("/" + commandToBlock)) {
 					event.setCancelled(true);
 					sendMessage(strCantUseCommand, event.getPlayer(), MagicSpells.NULL_ARGS);
 					return;

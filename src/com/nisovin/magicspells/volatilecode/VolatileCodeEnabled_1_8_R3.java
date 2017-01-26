@@ -34,7 +34,6 @@ import org.bukkit.entity.Fireball;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
-import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.util.Vector;
@@ -777,37 +776,8 @@ public class VolatileCodeEnabled_1_8_R3 implements VolatileCodeHandle {
 	}
 
 	@Override
-	public void setOffhand(Player player, ItemStack item) {
-		// no offhand in 1.8
-	}
-
-	@Override
-	public ItemStack getOffhand(Player player) {
-		// no offhand in 1.8
-		return null;
-	}
-
-	@Override
 	public void showItemCooldown(Player player, ItemStack item, int duration) {
 		// no op
-	}
-
-	@SuppressWarnings("deprecation")
-	@Override
-	public void setItemInMainHand(Player player, ItemStack item) {
-		player.setItemInHand(item);
-	}
-
-	@SuppressWarnings("deprecation")
-	@Override
-	public ItemStack getItemInMainHand(Player player) {
-		return player.getItemInHand();
-	}
-
-	@SuppressWarnings("deprecation")
-	@Override
-	public ItemStack getItemInMainHand(EntityEquipment equip) {
-		return equip.getItemInHand();
 	}
 
 	@Override

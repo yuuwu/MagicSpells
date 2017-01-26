@@ -104,7 +104,7 @@ public final class TargetedMultiSpell extends TargetedSpell implements TargetedE
 				TargetInfo<LivingEntity> info = getTargetedEntity(player, power);
 				if (info != null) {
 					entTarget = info.getTarget();
-					power = info.getPower(); //TODO make an alternative to overriding the parameter
+					power = info.getPower();
 				}
 			} else if (pointBlank) {
 				locTarget = player.getLocation();

@@ -37,8 +37,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
-import org.bukkit.inventory.EntityEquipment;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -780,7 +778,7 @@ public class VolatileCodeEnabled_1_11_R1 implements VolatileCodeHandle {
 
 	@Override
 	public void setNoAIFlag(LivingEntity entity) {
-		//no op yet
+		entity.setAI(false);
 	}
 
 	@Override
@@ -794,34 +792,9 @@ public class VolatileCodeEnabled_1_11_R1 implements VolatileCodeHandle {
 	}
 
 	@Override
-	public void setOffhand(Player player, ItemStack item) {
-		player.getInventory().setItemInOffHand(item);
-	}
-
-	@Override
-	public ItemStack getOffhand(Player player) {
-		return player.getInventory().getItemInOffHand();
-	}
-
-	@Override
 	public void showItemCooldown(Player player, ItemStack item, int duration) {
 		PacketPlayOutSetCooldown packet = new PacketPlayOutSetCooldown(Item.getById(item.getTypeId()), duration);
 		((CraftPlayer)player).getHandle().playerConnection.sendPacket(packet);
-	}
-
-	@Override
-	public void setItemInMainHand(Player player, ItemStack item) {
-		player.getInventory().setItemInMainHand(item);
-	}
-
-	@Override
-	public ItemStack getItemInMainHand(Player player) {
-		return player.getInventory().getItemInMainHand();
-	}
-
-	@Override
-	public ItemStack getItemInMainHand(EntityEquipment equip) {
-		return equip.getItemInMainHand();
 	}
 
 	@Override

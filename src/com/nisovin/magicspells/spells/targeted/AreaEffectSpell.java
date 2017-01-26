@@ -116,7 +116,7 @@ public class AreaEffectSpell extends TargetedSpell implements TargetedLocationSp
 					loc = null;
 				} else {
 					loc = event.getTargetLocation();
-					power = event.getPower(); //TODO make an alternative to overriding the parameter
+					power = event.getPower();
 				}
 			}
 			if (loc == null) {

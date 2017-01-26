@@ -95,12 +95,12 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 			int optionQuantity = getConfigInt("options." + optionName + ".quantity", 1);
 			List<String> modifierList = getConfigStringList("options." + optionName + ".modifiers", null);
 			boolean optionStayOpen = getConfigBoolean("options." + optionName + ".stay-open", false);
-			if (optionSlot >= 0 && !optionSpellName.isEmpty() && optionItem != null) {
+			if (optionSlot >= 0 && !optionSpellName.isEmpty() && optionItem != null) { //TODO flatten this a bit
 				optionItem.setAmount(optionQuantity);
 				Util.setLoreData(optionItem, optionName);
 				MenuOption option = new MenuOption();
 				option.slot = optionSlot;
-				option.name = optionName;
+				option.menuOptionName = optionName;
 				option.spellName = optionSpellName;
 				option.power = optionPower;
 				option.item = optionItem;
@@ -130,10 +130,10 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 			if (spell.process()) {
 				option.spell = spell;
 				if (option.modifierList != null) {
-					option.modifiers = new ModifierSet(option.modifierList);
+					option.menuOptionModifiers = new ModifierSet(option.modifierList);
 				}
 			} else {
-				MagicSpells.error("The MenuSpell '" + internalName + "' has an invalid spell listed on '" + option.name + "'");
+				MagicSpells.error("The MenuSpell '" + internalName + "' has an invalid spell listed on '" + option.menuOptionName + "'");
 			}
 		}
 	}
@@ -226,9 +226,9 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 		inv.clear();
 		for (MenuOption option : options.values()) {
 			if (option.spell != null && inv.getItem(option.slot) == null) {
-				if (option.modifiers != null) {
+				if (option.menuOptionModifiers != null) {
 					MagicSpellsGenericPlayerEvent event = new MagicSpellsGenericPlayerEvent(opener);
-					option.modifiers.apply(event);
+					option.menuOptionModifiers.apply(event);
 					if (event.isCancelled()) continue;
 				}
 				ItemStack item = option.item.clone();
@@ -312,7 +312,7 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 		if (targetOpensMenuInstead) {
 			if (target instanceof Player) {
 				opener = (Player)target;
-				target = null; //TODO make an alternative to overriding the parameter
+				target = null;
 			} else {
 				return false;
 			}
@@ -358,14 +358,14 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 	}
 	
 	class MenuOption {
-		String name;
+		String menuOptionName;
 		int slot;
 		ItemStack item;
 		String spellName;
 		Subspell spell;
 		float power;
 		List<String> modifierList;
-		ModifierSet modifiers;
+		ModifierSet menuOptionModifiers;
 		boolean stayOpen;
 	}
 

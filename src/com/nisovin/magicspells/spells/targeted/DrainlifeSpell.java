@@ -57,6 +57,7 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 	private boolean ignoreArmor;
 	private boolean checkPlugins;
 	private boolean avoidDamageModification;
+	private boolean useSmoke;
 	
 	private static final String STR_GIVE_TAKE_TYPE_HEALTH = "health";
 	private static final String STR_GIVE_TAKE_TYPE_MANA = "mana";
@@ -77,6 +78,7 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 		ignoreArmor = getConfigBoolean("ignore-armor", false);
 		checkPlugins = getConfigBoolean("check-plugins", true);
 		avoidDamageModification = getConfigBoolean("avoid-damage-modification", false);
+		useSmoke = getConfigBoolean("smoke", true);
 	}
 	
 	@Override
@@ -234,7 +236,11 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 			Vector tempVector = current.clone();
 			tempVector.subtract(caster.getLocation().toVector()).normalize();
 			current.subtract(tempVector);
-			world.playEffect(current.toLocation(world), Effect.SMOKE, 4);
+			Location playAt = current.toLocation(world);
+			if (useSmoke) {
+				world.playEffect(playAt, Effect.SMOKE, 4);
+			}
+			playSpellEffects(EffectPosition.SPECIAL, playAt);
 			if (current.distanceSquared(targetVector) < 4 || tick > range * 1.5) {
 				stop();
 				if (!instant) {

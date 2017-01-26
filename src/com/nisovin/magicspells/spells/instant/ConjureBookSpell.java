@@ -14,6 +14,7 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
+import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.Util;
 
@@ -111,8 +112,8 @@ public class ConjureBookSpell extends InstantSpell implements TargetedLocationSp
 			boolean added = false;
 			ItemStack item = getBook(player, args);
 			if (addToInventory) {
-				if (MagicSpells.getVolatileCodeHandler().getItemInMainHand(player) == null || MagicSpells.getVolatileCodeHandler().getItemInMainHand(player).getType() == Material.AIR) {
-					MagicSpells.getVolatileCodeHandler().setItemInMainHand(player, item);
+				if (HandHandler.getItemInMainHand(player) == null || HandHandler.getItemInMainHand(player).getType() == Material.AIR) {
+					HandHandler.setItemInMainHand(player, item);
 					added = true;
 				} else {
 					added = Util.addToInventory(player.getInventory(), item, false, false);

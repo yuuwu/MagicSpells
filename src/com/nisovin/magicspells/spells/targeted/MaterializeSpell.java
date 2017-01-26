@@ -19,6 +19,7 @@ import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
+import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 public class MaterializeSpell extends TargetedSpell implements TargetedLocationSpell {
 
@@ -82,7 +83,7 @@ public class MaterializeSpell extends TargetedSpell implements TargetedLocationS
 		
 		if (checkPlugins && player != null) {
 			material.setBlock(block, false);
-			MagicSpellsBlockPlaceEvent event = new MagicSpellsBlockPlaceEvent(block, blockState, against, MagicSpells.getVolatileCodeHandler().getItemInMainHand(player), player, true);
+			MagicSpellsBlockPlaceEvent event = new MagicSpellsBlockPlaceEvent(block, blockState, against, HandHandler.getItemInMainHand(player), player, true);
 			Bukkit.getPluginManager().callEvent(event);
 			blockState.update(true);
 			if (event.isCancelled()) {

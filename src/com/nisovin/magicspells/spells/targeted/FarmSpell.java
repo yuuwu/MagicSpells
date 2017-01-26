@@ -56,7 +56,7 @@ public class FarmSpell extends TargetedSpell implements TargetedLocationSpell {
 					block = null;
 				} else {
 					block = event.getTargetLocation().getBlock();
-					power = event.getPower(); //TODO make an alternative to overriding the parameter
+					power = event.getPower();
 				}
 			}
 			if (block != null) {

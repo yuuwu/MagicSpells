@@ -19,6 +19,7 @@ import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.util.BlockUtils;
+import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TemporaryBlockSet;
 import com.nisovin.magicspells.util.TemporaryBlockSet.BlockSetRemovalCallback;
@@ -84,7 +85,7 @@ public class WallSpell extends InstantSpell {
 				if (checkPlugins) {
 					BlockState eventBlockState = target.getState();
 					wallMaterial.setBlock(target, false);
-					MagicSpellsBlockPlaceEvent event = new MagicSpellsBlockPlaceEvent(target, eventBlockState, target, MagicSpells.getVolatileCodeHandler().getItemInMainHand(player), player, true);
+					MagicSpellsBlockPlaceEvent event = new MagicSpellsBlockPlaceEvent(target, eventBlockState, target, HandHandler.getItemInMainHand(player), player, true);
 					Bukkit.getPluginManager().callEvent(event);
 					BlockUtils.setTypeAndData(target, Material.AIR, (byte)0, false);
 					if (event.isCancelled()) {

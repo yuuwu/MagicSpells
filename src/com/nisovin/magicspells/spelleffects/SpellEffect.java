@@ -221,7 +221,7 @@ public abstract class SpellEffect {
 		Entity entity;
 		SpellEffectActiveChecker checker;
 		Vector currentPosition;
-		int taskId;
+		int orbitTrackerTaskId;
 		
 		int counter = 0;
 		
@@ -229,7 +229,7 @@ public abstract class SpellEffect {
 			this.entity = entity;
 			this.checker = checker;
 			this.currentPosition = entity.getLocation().getDirection().setY(0);
-			this.taskId = MagicSpells.scheduleRepeatingTask(this, 0, tickInterval);
+			this.orbitTrackerTaskId = MagicSpells.scheduleRepeatingTask(this, 0, tickInterval);
 		}
 		
 		@Override
@@ -266,7 +266,7 @@ public abstract class SpellEffect {
 		}
 		
 		public void stop() {
-			MagicSpells.cancelTask(taskId);
+			MagicSpells.cancelTask(orbitTrackerTaskId);
 			entity = null;
 			currentPosition = null;
 		}

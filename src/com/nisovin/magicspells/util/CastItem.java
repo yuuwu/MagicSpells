@@ -176,7 +176,7 @@ public class CastItem {
 				int[][] enchants = new int[enchantments.size()][];
 				int i = 0;
 				for (Enchantment e : enchantments.keySet()) {
-					enchants[i] = new int[] { e.getId(), enchantments.get(e) };
+					enchants[i] = new int[] { MagicValues.Enchantments.getId(e), enchantments.get(e) };
 					i++;
 				}
 				sortEnchants(enchants);

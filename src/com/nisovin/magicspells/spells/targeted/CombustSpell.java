@@ -60,7 +60,7 @@ public class CombustSpell extends TargetedSpell implements TargetedEntitySpell {
 	private boolean combust(Player player, final LivingEntity target, float power) {
 		if (target instanceof Player && checkPlugins && player != null) {
 			// call other plugins
-			MagicSpellsEntityDamageByEntityEvent event = new MagicSpellsEntityDamageByEntityEvent(player, target, DamageCause.ENTITY_ATTACK, (double)1);
+			MagicSpellsEntityDamageByEntityEvent event = new MagicSpellsEntityDamageByEntityEvent(player, target, DamageCause.ENTITY_ATTACK, 1D);
 			Bukkit.getServer().getPluginManager().callEvent(event);
 			if (event.isCancelled()) {
 				return false;

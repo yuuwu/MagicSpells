@@ -6,8 +6,8 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.castmodifiers.Condition;
+import com.nisovin.magicspells.util.HandHandler;
 
 public class OffhandCondition extends Condition {
 
@@ -61,7 +61,7 @@ public class OffhandCondition extends Condition {
 
 	@Override
 	public boolean check(Player player) {
-		ItemStack item = MagicSpells.getVolatileCodeHandler().getOffhand(player);
+		ItemStack item = HandHandler.getItemInOffHand(player);
 		return check(item);
 	}
 	

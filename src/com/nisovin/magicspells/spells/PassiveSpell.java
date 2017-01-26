@@ -188,7 +188,7 @@ public class PassiveSpell extends Spell {
 					return false;
 				}
 				setCooldown(caster, event.getCooldown());
-				basePower = event.getPower(); //TODO make an alternative to overriding the parameter
+				basePower = event.getPower();
 				boolean spellEffectsDone = false;
 				for (Subspell spell : spells) {
 					MagicSpells.debug(3, "    Casting spell effect '" + spell.getSpell().getName() + "'");
@@ -204,7 +204,7 @@ public class PassiveSpell extends Spell {
 						SpellTargetEvent targetEvent = new SpellTargetEvent(this, caster, target, basePower);
 						Bukkit.getPluginManager().callEvent(targetEvent);
 						if (!targetEvent.isCancelled()) {
-							target = targetEvent.getTarget(); //TODO make an alternative to overriding the parameter
+							target = targetEvent.getTarget();
 							spell.castAtEntity(caster, target, targetEvent.getPower());
 							if (!spellEffectsDone) {
 								playSpellEffects(caster, target);

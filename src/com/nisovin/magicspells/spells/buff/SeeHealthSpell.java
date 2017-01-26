@@ -20,6 +20,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spells.BuffSpell;
+import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
 import com.nisovin.magicspells.util.TargetInfo;
@@ -75,7 +76,7 @@ public class SeeHealthSpell extends BuffSpell {
 	void showHealthBar(Player player, LivingEntity entity) {
 		int slot = player.getInventory().getHeldItemSlot();
 		// get item
-		ItemStack item = MagicSpells.getVolatileCodeHandler().getItemInMainHand(player);
+		ItemStack item = HandHandler.getItemInMainHand(player);
 		if (item == null || item.getType() == Material.AIR) {
 			item = new ItemStack(Material.PISTON_MOVING_PIECE, 0);
 		} else {
@@ -123,7 +124,7 @@ public class SeeHealthSpell extends BuffSpell {
 	//}
 	
 	private void resetHealthBar(Player player, int slot) {
-		MagicSpells.getVolatileCodeHandler().sendFakeSlotUpdate(player, slot, MagicSpells.getVolatileCodeHandler().getItemInMainHand(player));
+		MagicSpells.getVolatileCodeHandler().sendFakeSlotUpdate(player, slot, HandHandler.getItemInMainHand(player));
 	}
 	
 	@EventHandler

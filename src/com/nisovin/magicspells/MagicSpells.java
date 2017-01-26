@@ -61,6 +61,7 @@ import com.nisovin.magicspells.util.MoneyHandler;
 import com.nisovin.magicspells.util.OverridePriority;
 import com.nisovin.magicspells.util.RegexUtil;
 import com.nisovin.magicspells.util.Util;
+import com.nisovin.magicspells.util.prompt.PromptType;
 import com.nisovin.magicspells.variables.VariableManager;
 import com.nisovin.magicspells.volatilecode.VolatileCodeDisabled;
 import com.nisovin.magicspells.volatilecode.VolatileCodeEnabled_1_10_R1;
@@ -887,12 +888,12 @@ public class MagicSpells extends JavaPlugin {
 		
 		String msg = message;
 		for (int i = 0; i < replacements.length; i+=2) {
-			if (replacements[i] != null) {
-				if (replacements[i+1] != null) {
-					msg = msg.replace(replacements[i], replacements[i+1]);
-				} else {
-					msg = msg.replace(replacements[i], "");
-				}
+			if (replacements[i] == null) continue;
+			
+			if (replacements[i+1] != null) {
+				msg = msg.replace(replacements[i], replacements[i+1]);
+			} else {
+				msg = msg.replace(replacements[i], "");
 			}
 		}
 		return msg;
@@ -1335,6 +1336,7 @@ public class MagicSpells extends JavaPlugin {
 		effectManager.dispose();
 		effectManager = null;
 		ModifierSet.unload();
+		PromptType.unloadDestructPromptData();
 	}
 	
 	@Override

@@ -42,7 +42,7 @@ public class HealSpell extends TargetedSpell implements TargetedEntitySpell {
 				return noTarget(player);
 			}
 			LivingEntity target = targetInfo.getTarget();
-			power = targetInfo.getPower(); //TODO make an alternative to overriding the parameter
+			power = targetInfo.getPower();
 			if (cancelIfFull && target.getHealth() == target.getMaxHealth()) {
 				return noTarget(player, formatMessage(strMaxHealth, "%t", getTargetName(target)));
 			} else {

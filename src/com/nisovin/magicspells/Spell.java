@@ -49,6 +49,7 @@ import com.nisovin.magicspells.spells.PassiveSpell;
 import com.nisovin.magicspells.util.BlockUtils;
 import com.nisovin.magicspells.util.CastItem;
 import com.nisovin.magicspells.util.ExperienceUtils;
+import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.IntMap;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.MoneyHandler;
@@ -1599,7 +1600,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 			return false;
 		}
 		if (durabilityCost > 0) {
-			ItemStack inHand = MagicSpells.getVolatileCodeHandler().getItemInMainHand(player);
+			ItemStack inHand = HandHandler.getItemInMainHand(player);
 			if (inHand == null || inHand.getDurability() >= inHand.getType().getMaxDurability()) {
 				return false;
 			}
@@ -1692,15 +1693,15 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 			ExperienceUtils.changeExp(player, -experienceCost);
 		}
 		if (durabilityCost != 0) {
-			ItemStack inHand = MagicSpells.getVolatileCodeHandler().getItemInMainHand(player);
+			ItemStack inHand = HandHandler.getItemInMainHand(player);
 			if (inHand != null && inHand.getType().getMaxDurability() > 0) {
 				short newDura = (short) (inHand.getDurability() + durabilityCost);
 				if (newDura < 0) newDura = 0;
 				if (newDura >= inHand.getType().getMaxDurability()) {
-					MagicSpells.getVolatileCodeHandler().setItemInMainHand(player, null);
+					HandHandler.setItemInMainHand(player, null);
 				} else {
 					inHand.setDurability(newDura);
-					MagicSpells.getVolatileCodeHandler().setItemInMainHand(player, inHand);
+					HandHandler.setItemInMainHand(player, inHand);
 				}
 			}
 		}

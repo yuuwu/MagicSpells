@@ -39,8 +39,8 @@ public class LevitateSpell extends TargetedSpell implements TargetedEntitySpell 
 		
 		tickRate = getConfigInt("tick-rate", 5);
 		duration = getConfigInt("duration", 10);
-		distanceChange = getConfigFloat("distance-change", 0);
-		minDistance = getConfigFloat("min-distance", 1);
+		distanceChange = getConfigFloat("distance-change", 0F);
+		minDistance = getConfigFloat("min-distance", 1F);
 		cancelOnItemSwitch = getConfigBoolean("cancel-on-item-switch", true);
 		cancelOnSpellCast = getConfigBoolean("cancel-on-spell-cast", false);
 		cancelOnTakeDamage = getConfigBoolean("cancel-on-take-damage", true);

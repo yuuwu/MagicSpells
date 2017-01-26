@@ -34,7 +34,7 @@ public class SpawnTntSpell extends TargetedSpell implements TargetedLocationSpel
 		super(config, spellName);
 		
 		fuse = getConfigInt("fuse", 20);
-		velocity = getConfigFloat("velocity", 0);
+		velocity = getConfigFloat("velocity", 0F);
 		upVelocity = getConfigFloat("up-velocity", velocity);
 		cancelExplosion = getConfigBoolean("cancel-explosion", false);
 		preventBlockDamage = getConfigBoolean("prevent-block-damage", false);

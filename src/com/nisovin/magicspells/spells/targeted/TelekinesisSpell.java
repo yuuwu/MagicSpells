@@ -16,6 +16,7 @@ import com.nisovin.magicspells.events.MagicSpellsPlayerInteractEvent;
 import com.nisovin.magicspells.events.SpellTargetLocationEvent;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
+import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 public class TelekinesisSpell extends TargetedSpell implements TargetedLocationSpell {
 	
@@ -81,7 +82,7 @@ public class TelekinesisSpell extends TargetedSpell implements TargetedLocationS
 	
 	private boolean checkPlugins(Player caster, Block target) {
 		if (checkPlugins) {
-			MagicSpellsPlayerInteractEvent event = new MagicSpellsPlayerInteractEvent(caster, Action.RIGHT_CLICK_BLOCK, MagicSpells.getVolatileCodeHandler().getItemInMainHand(caster), target, BlockFace.SELF);
+			MagicSpellsPlayerInteractEvent event = new MagicSpellsPlayerInteractEvent(caster, Action.RIGHT_CLICK_BLOCK, HandHandler.getItemInMainHand(caster), target, BlockFace.SELF);
 			Bukkit.getPluginManager().callEvent(event);
 			if (event.useInteractedBlock() == Result.DENY) {
 				return false;

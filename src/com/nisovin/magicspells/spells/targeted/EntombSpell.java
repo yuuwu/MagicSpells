@@ -51,7 +51,7 @@ public class EntombSpell extends TargetedSpell implements TargetedEntitySpell {
 			TargetInfo<LivingEntity> targetInfo = getTargetedEntity(player, power);
 			if (targetInfo != null) {
 				LivingEntity target = targetInfo.getTarget();
-				power = targetInfo.getPower(); //TODO make an alternative to overriding the parameter
+				power = targetInfo.getPower();
 				int x = target.getLocation().getBlockX();
 				int y = target.getLocation().getBlockY();
 				int z = target.getLocation().getBlockZ();

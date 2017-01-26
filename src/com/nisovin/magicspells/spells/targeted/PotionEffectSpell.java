@@ -38,11 +38,6 @@ public class PotionEffectSpell extends TargetedSpell implements TargetedEntitySp
 		spellPowerAffectsStrength = getConfigBoolean("spell-power-affects-strength", true);
 	}
 	
-	@Deprecated
-	public int getType() {
-		return type.getId();
-	}
-	
 	public PotionEffectType getPotionType() {
 		return type;
 	}
@@ -59,7 +54,7 @@ public class PotionEffectSpell extends TargetedSpell implements TargetedEntitySp
 				TargetInfo<LivingEntity> targetInfo = getTargetedEntity(player, power);
 				if (targetInfo != null) {
 					target = targetInfo.getTarget();
-					power = targetInfo.getPower(); //TODO make an alternative to overriding the parameter
+					power = targetInfo.getPower();
 				}
 			} else {
 				target = player;

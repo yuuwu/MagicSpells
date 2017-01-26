@@ -19,6 +19,7 @@ import com.nisovin.magicspells.events.SpellLearnEvent;
 import com.nisovin.magicspells.events.SpellLearnEvent.LearnSource;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.CommandSpell;
+import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.Util;
 
@@ -98,7 +99,7 @@ public class TomeSpell extends CommandSpell {
 				}
 			}
 			
-			ItemStack item = MagicSpells.getVolatileCodeHandler().getItemInMainHand(player);
+			ItemStack item = HandHandler.getItemInMainHand(player);
 			if (item.getType() != Material.WRITTEN_BOOK) {
 				// fail -- no book
 				sendMessage(strNoBook, player, args);
@@ -115,7 +116,7 @@ public class TomeSpell extends CommandSpell {
 					uses = Integer.parseInt(args[1]);
 				}
 				item = createTome(spell, uses, item);
-				MagicSpells.getVolatileCodeHandler().setItemInMainHand(player, item);
+				HandHandler.setItemInMainHand(player, item);
 			}
 		}
 		return PostCastAction.HANDLE_NORMALLY;
@@ -123,12 +124,12 @@ public class TomeSpell extends CommandSpell {
 	
 	public ItemStack createTome(Spell spell, int uses, ItemStack item) {
 		if (maxUses > 0 && uses > maxUses) {
-			uses = maxUses; //TODO make an alternative to overriding the parameter
+			uses = maxUses;
 		} else if (uses < 0) {
-			uses = defaultUses; //TODO make an alternative to overriding the parameter
+			uses = defaultUses;
 		}
 		if (item == null) {
-			item = new ItemStack(Material.WRITTEN_BOOK, 1); //TODO make an alternative to overriding the parameter
+			item = new ItemStack(Material.WRITTEN_BOOK, 1);
 			BookMeta bookMeta = (BookMeta)item.getItemMeta();
 			bookMeta.setTitle(getName() + ": " + spell.getName());
 			item.setItemMeta(bookMeta);
@@ -181,7 +182,7 @@ public class TomeSpell extends CommandSpell {
 				sendMessage(formatMessage(strCantLearn, "%s", spell.getName()), event.getPlayer(), MagicSpells.NULL_ARGS);
 			} else {
 				// call event
-				SpellLearnEvent learnEvent = new SpellLearnEvent(spell, event.getPlayer(), LearnSource.TOME, MagicSpells.getVolatileCodeHandler().getItemInMainHand(event.getPlayer()));
+				SpellLearnEvent learnEvent = new SpellLearnEvent(spell, event.getPlayer(), LearnSource.TOME, HandHandler.getItemInMainHand(event.getPlayer()));
 				Bukkit.getPluginManager().callEvent(learnEvent);
 				if (learnEvent.isCancelled()) {
 					// fail -- plugin cancelled
@@ -205,7 +206,7 @@ public class TomeSpell extends CommandSpell {
 					}
 					// consume
 					if (uses <= 0 && consumeBook) {
-						MagicSpells.getVolatileCodeHandler().setItemInMainHand(event.getPlayer(), null);
+						HandHandler.setItemInMainHand(event.getPlayer(), null);
 					}
 					playSpellEffects(EffectPosition.DELAYED, event.getPlayer());
 				}

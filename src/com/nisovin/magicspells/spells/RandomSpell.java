@@ -61,7 +61,7 @@ public class RandomSpell extends InstantSpell {
 			RandomOptionSet set = options;
 			if (checkIndividualCooldowns || checkIndividualModifiers) {
 				set = new RandomOptionSet();
-				for (SpellOption o : options.options) {
+				for (SpellOption o : options.randomOptionSetOptions) {
 					if (checkIndividualCooldowns) {
 						if (o.spell.getSpell().onCooldown(player)) {
 							continue;
@@ -76,7 +76,7 @@ public class RandomSpell extends InstantSpell {
 					set.add(o);
 				}
 			}
-			if (set.options.size() > 0) {
+			if (set.randomOptionSetOptions.size() > 0) {
 				Subspell spell = set.choose();
 				if (spell != null) {
 					return spell.cast(player, power);
@@ -102,11 +102,11 @@ public class RandomSpell extends InstantSpell {
 	}
 	
 	class RandomOptionSet {
-		List<SpellOption> options = new ArrayList<SpellOption>();
+		List<SpellOption> randomOptionSetOptions = new ArrayList<SpellOption>();
 		int total = 0;
 		
 		public void add(SpellOption option) {
-			options.add(option);
+			randomOptionSetOptions.add(option);
 			total += option.adjustedWeight;
 		}
 		
@@ -114,8 +114,8 @@ public class RandomSpell extends InstantSpell {
 			int r = random.nextInt(total);
 			int x = 0;
 			Subspell spell = null;
-			for (int i = 0; i < options.size(); i++) {
-				SpellOption o = options.get(i);
+			for (int i = 0; i < randomOptionSetOptions.size(); i++) {
+				SpellOption o = randomOptionSetOptions.get(i);
 				if (r < o.adjustedWeight + x && spell == null) {
 					spell = o.spell;
 					if (pseudoRandom) {

@@ -2,14 +2,21 @@ package com.nisovin.magicspells.util.prompt;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.FixedSetPrompt;
 import org.bukkit.conversations.Prompt;
 
+import com.nisovin.magicspells.MagicSpells;
+
 public class MagicEnumSetPrompt extends FixedSetPrompt {
 
+	private static Map<String, List<String>> enumToNames = null;
+	private static boolean initialized = false;
+	
 	private String promptText;
 	
 	private MagicPromptResponder responder;
@@ -21,6 +28,22 @@ public class MagicEnumSetPrompt extends FixedSetPrompt {
 	
 	public MagicEnumSetPrompt(String... options) {
 		super(options);
+	}
+	
+	private static void initializeEnumToNameMap() {
+		if (initialized) return;
+		if (enumToNames == null) {
+			enumToNames = new ConcurrentHashMap<String, List<String>>();
+		}
+		
+		initialized = true;
+	}
+	
+	public static void unload() {
+		if (!initialized) return;
+		enumToNames.clear();
+		
+		initialized = false;
 	}
 	
 	@Override
@@ -41,19 +64,18 @@ public class MagicEnumSetPrompt extends FixedSetPrompt {
 	public static MagicEnumSetPrompt fromConfigSection(ConfigurationSection section) {
 		// get the options
 		String enumClassName = section.getString("enum-class");
-		Class<? extends Enum> enumClass;
+		Class<? extends Enum<?>> enumClass;
 		try {
-			enumClass = (Class<? extends Enum>) Class.forName(enumClassName);
-		} catch (ClassNotFoundException e1) {
-			e1.printStackTrace();
+			enumClass = (Class<? extends Enum<?>>) Class.forName(enumClassName);
+			if (!enumClass.isEnum()) throw new ClassCastException(enumClass.getName() + " is not an enum!");
+		} catch (ClassNotFoundException e) {
+			MagicSpells.error("Error trying to produce MagicEnumSetPrompt");
+			e.printStackTrace();
 			return null;
 		}
-		Enum[] values =  enumClass.getEnumConstants();
-		if (values == null || values.length == 0) return null;
-		List<String> parsedValues = new ArrayList<String>();
-		for (Enum e: values) {
-			parsedValues.add(e.name());
-		}
+		
+		List<String> parsedValues = getEnumValues(enumClass);
+		
 		MagicEnumSetPrompt ret = new MagicEnumSetPrompt(parsedValues);
 		
 		ret.responder = new MagicPromptResponder(section);
@@ -62,5 +84,24 @@ public class MagicEnumSetPrompt extends FixedSetPrompt {
 		ret.promptText = promptText;
 		
 		return ret;
+	}
+	
+	private static List<String> getEnumValues(Class<? extends Enum<?>> clazz) {
+		initializeEnumToNameMap();
+		
+		if (!enumToNames.containsKey(clazz.getName())) {
+			Enum<?>[] values =  clazz.getEnumConstants();
+			if (values == null || values.length == 0) {
+				enumToNames.put(clazz.getName(), new ArrayList<String>());
+			} else {
+				List<String> parsedValues = new ArrayList<String>();
+				for (Enum<?> e: values) {
+					parsedValues.add(e.name());
+				}
+				enumToNames.put(clazz.getName(), parsedValues);
+			}
+		}
+		
+		return new ArrayList<String>(enumToNames.get(clazz.getName()));
 	}
 }

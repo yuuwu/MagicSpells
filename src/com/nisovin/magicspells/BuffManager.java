@@ -60,12 +60,11 @@ public class BuffManager {
 			if (noMagicZones != null) {
 				for (String playerName : activeBuffs.keySet()) {
 					Player p = PlayerNameUtils.getPlayerExact(playerName);
-					if (p != null) {
-						HashSet<BuffSpell> buffs = new HashSet<BuffSpell>(activeBuffs.get(playerName));
-						for (BuffSpell spell : buffs) {
-							if (noMagicZones.willFizzle(p, spell)) {
-								spell.turnOff(p);
-							}
+					if (p == null) continue;
+					HashSet<BuffSpell> buffs = new HashSet<BuffSpell>(activeBuffs.get(playerName));
+					for (BuffSpell spell : buffs) {
+						if (noMagicZones.willFizzle(p, spell)) {
+							spell.turnOff(p);
 						}
 					}
 				}

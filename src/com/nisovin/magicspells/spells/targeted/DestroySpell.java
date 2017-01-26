@@ -126,7 +126,7 @@ public class DestroySpell extends TargetedSpell implements TargetedLocationSpell
 					b = null;
 				} else {
 					b = event.getTargetLocation().getBlock();
-					power = event.getPower(); //TODO make an alternative to overriding the parameter
+					power = event.getPower();
 				}
 			}
 			if (b != null && b.getType() != Material.AIR) {

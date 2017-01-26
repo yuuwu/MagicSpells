@@ -38,6 +38,7 @@ import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.BlockUtils;
 import com.nisovin.magicspells.util.EntityData;
+import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.TargetInfo;
 import com.nisovin.magicspells.util.Util;
 import com.nisovin.magicspells.util.MagicConfig;
@@ -226,7 +227,7 @@ public class SpawnMonsterSpell extends TargetedSpell implements TargetedLocation
 					if (BlockUtils.isPathable(block)) {
 						loc = block.getLocation();
 					} else if (BlockUtils.isPathable(block.getRelative(BlockFace.UP))) {
-						loc = block.getLocation().add(0, 1, 0);
+						loc = block.getLocation().add(0D, 1D, 0D);
 					}
 				}
 			} else if (location.equalsIgnoreCase("caster")) {
@@ -236,8 +237,8 @@ public class SpawnMonsterSpell extends TargetedSpell implements TargetedLocation
 			} else if (location.startsWith("casteroffset:")) {
 				String[] split = location.split(":");
 				float y = Float.parseFloat(split[1]);
-				loc = player.getLocation().add(0, y, 0);
-				loc.setPitch(0);
+				loc = player.getLocation().add(0D, y, 0D);
+				loc.setPitch(0F);
 			}
 			
 			if (loc == null) {
@@ -375,8 +376,8 @@ public class SpawnMonsterSpell extends TargetedSpell implements TargetedLocation
 				((Enderman)entity).setCarriedMaterial(holding.getData());
 			} else if (entity instanceof Skeleton || entity instanceof Zombie) {
 				final EntityEquipment equip = ((LivingEntity)entity).getEquipment();
-				equip.setItemInHand(holding.clone());
-				equip.setItemInHandDropChance(holdingDropChance);
+				HandHandler.setItemInMainHand(equip, holding.clone());
+				HandHandler.setItemInMainHandDropChance(equip, holdingDropChance);
 			}
 		}
 		// set armor

@@ -133,7 +133,7 @@ public class PulserSpell extends TargetedSpell implements TargetedLocationSpell 
 					return noTarget(player);
 				} else {
 					target = event.getTargetLocation().getBlock();
-					power = event.getPower(); //TODO make an alternative to overriding the parameter
+					power = event.getPower();
 				}
 			}
 			createPulser(player, target, power);

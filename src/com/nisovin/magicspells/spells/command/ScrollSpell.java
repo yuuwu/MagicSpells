@@ -21,6 +21,7 @@ import com.nisovin.magicspells.Spell;
 import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spells.CommandSpell;
+import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellReagents;
 import com.nisovin.magicspells.util.Util;
@@ -141,7 +142,7 @@ public class ScrollSpell extends CommandSpell {
 			}
 			
 			// get item in hand
-			ItemStack inHand = MagicSpells.getVolatileCodeHandler().getItemInMainHand(player);
+			ItemStack inHand = HandHandler.getItemInMainHand(player);
 			if (inHand.getAmount() != 1 || !itemType.equals(inHand)) {
 				// fail -- incorrect item in hand
 				sendMessage(strUsage, player, args);
@@ -184,7 +185,7 @@ public class ScrollSpell extends CommandSpell {
 			
 			// create scroll
 			inHand = createScroll(spell, uses, inHand);
-			MagicSpells.getVolatileCodeHandler().setItemInMainHand(player, inHand);
+			HandHandler.setItemInMainHand(player, inHand);
 			
 			// done
 			sendMessage(formatMessage(strCastSelf, "%s", spell.getName()), player, args);
@@ -239,7 +240,7 @@ public class ScrollSpell extends CommandSpell {
 		if ((rightClickCast && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) ||
 			(leftClickCast && (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK))) {
 			Player player = event.getPlayer();
-			ItemStack inHand = MagicSpells.getVolatileCodeHandler().getItemInMainHand(player);
+			ItemStack inHand = HandHandler.getItemInMainHand(player);
 			if (itemType.getMaterial() != inHand.getType() || inHand.getAmount() > 1) return;
 			
 			// check for predefined scroll
@@ -248,7 +249,7 @@ public class ScrollSpell extends CommandSpell {
 				if (spell != null) {
 					int uses = predefinedScrollUses.get(Integer.valueOf(inHand.getDurability()));
 					inHand = createScroll(spell, uses, inHand);
-					MagicSpells.getVolatileCodeHandler().setItemInMainHand(player, inHand);
+					HandHandler.setItemInMainHand(player, inHand);
 				}
 			}
 			
@@ -295,13 +296,13 @@ public class ScrollSpell extends CommandSpell {
 					if (uses > 0) {
 						inHand = createScroll(spell, uses, inHand);
 						if (textContainsUses) {
-							MagicSpells.getVolatileCodeHandler().setItemInMainHand(player, inHand);
+							HandHandler.setItemInMainHand(player, inHand);
 						}
 					} else {
 						if (removeScrollWhenDepleted) {
-							MagicSpells.getVolatileCodeHandler().setItemInMainHand(player, null);
+							HandHandler.setItemInMainHand(player, null);
 						} else {
-							MagicSpells.getVolatileCodeHandler().setItemInMainHand(player, itemType.toItemStack(1));
+							HandHandler.setItemInMainHand(player, itemType.toItemStack(1));
 						}
 					}
 				}
