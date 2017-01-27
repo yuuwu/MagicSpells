@@ -60,8 +60,15 @@
 		<mkdir dir="${dist.dir}"/>
 	</target>
 
+	<!-- this just runs an echo for now, but will be used for ensuring resources -->
+	<target name="get-resources">
+		<echo>
+			Running the get resources phase
+		</echo>
+	</target>
+
 	<!-- Compile the core -->
-	<target name="core-compile" depends="clean">
+	<target name="core-compile" depends="get-resources, clean">
 		<mkdir dir="${core.build.dir}"/>
 		<javac srcdir="${core.src.dir}" destdir="${core.build.dir}" debug="true" source="${java.core.version}" target="${java.core.version}">
 			<classpath>

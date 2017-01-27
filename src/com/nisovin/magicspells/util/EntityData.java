@@ -26,9 +26,17 @@ public class EntityData {
 		if (type.equalsIgnoreCase("human") || type.equalsIgnoreCase("player")) {
 			type = "player";
 		} else if (type.equalsIgnoreCase("wither skeleton")) {
+			if (V1_11EntityTypeHandler.newEntityTypesPresent()) {
+				entityType = EntityType.WITHER_SKELETON;
+			} else {
+				entityType = EntityType.SKELETON;
+			}
 			type = "skeleton";
 			flag = true;
 		} else if (type.equalsIgnoreCase("zombie villager") || type.equalsIgnoreCase("villager zombie")) {
+			if (V1_11EntityTypeHandler.newEntityTypesPresent()) {
+				entityType = EntityType.ZOMBIE_VILLAGER;
+			}
 			type = "zombie";
 			var1 = 1;
 		} else if (type.equalsIgnoreCase("powered creeper")) {
@@ -147,14 +155,29 @@ public class EntityData {
 				String t = data.remove(0).toLowerCase();
 				if (t.equals("donkey")) {
 					var1 = 1;
+					if (V1_11EntityTypeHandler.newEntityTypesPresent()) {
+						entityType = EntityType.DONKEY;
+					}
 				} else if (t.equals("mule")) {
 					var1 = 2;
+					if (V1_11EntityTypeHandler.newEntityTypesPresent()) {
+						entityType = EntityType.MULE;
+					}
 				} else if (t.equals("skeleton") || t.equals("skeletal")) {
 					var1 = 4;
+					if (V1_11EntityTypeHandler.newEntityTypesPresent()) {
+						entityType = EntityType.SKELETON_HORSE;
+					}
 				} else if (t.equals("zombie") || t.equals("undead")) {
 					var1 = 3;
+					if (V1_11EntityTypeHandler.newEntityTypesPresent()) {
+						entityType = EntityType.ZOMBIE_HORSE;
+					}
 				} else {
 					var1 = 0;
+					if (V1_11EntityTypeHandler.newEntityTypesPresent()) {
+						entityType = EntityType.HORSE;
+					}
 				}
 				data.remove(0);
 			}
@@ -174,10 +197,16 @@ public class EntityData {
 		} else if (type.equalsIgnoreCase("mule")) {
 			var1 = 2;
 			type = "entityhorse";
+			if (V1_11EntityTypeHandler.newEntityTypesPresent()) {
+				entityType = EntityType.MULE;
+			}
 		} else if (type.equalsIgnoreCase("donkey")) {
 			var1 = 1;
 			type = "entityhorse";
 		} else if (type.equalsIgnoreCase("elder guardian")) {
+			if (V1_11EntityTypeHandler.newEntityTypesPresent()) {
+				entityType = EntityType.ELDER_GUARDIAN;
+			}
 			flag = true;
 			type = "guardian";
 		}
@@ -196,10 +225,12 @@ public class EntityData {
 			if (type.equals("magmacube")) type = "lavaslime";
 			var1 = Integer.parseInt(data[1]);
 		}
-		if (type.equals("player")) {
-			entityType = EntityType.PLAYER;
-		} else {
-			entityType = EntityType.fromName(type);
+		if (entityType == null) {
+			if (type.equals("player")) {
+				entityType = EntityType.PLAYER;
+			} else {
+				entityType = EntityType.fromName(type);
+			}
 		}
 	}
 	
@@ -224,16 +255,21 @@ public class EntityData {
 	}
 	
 	public Entity spawn(Location loc) {
+		
 		Entity entity = loc.getWorld().spawnEntity(loc, entityType);
 		if (entity instanceof Ageable && flag) {
 			((Ageable)entity).setBaby();
 		}
 		if (entityType == EntityType.ZOMBIE) {
 			((Zombie)entity).setBaby(flag);
-			((Zombie)entity).setVillager(var1 == 1);
+			if (!V1_11EntityTypeHandler.newEntityTypesPresent()) {
+				((Zombie)entity).setVillager(var1 == 1); // this is safe due to version checks
+			}
 		} else if (entityType == EntityType.SKELETON) {
-			if (flag) {
-				((Skeleton)entity).setSkeletonType(Skeleton.SkeletonType.WITHER);
+			if (!V1_11EntityTypeHandler.newEntityTypesPresent()) {
+				if (flag) {
+					((Skeleton)entity).setSkeletonType(Skeleton.SkeletonType.WITHER); // this is safe due to version checks
+				}
 			}
 		} else if (entityType == EntityType.CREEPER) {
 			if (flag) {
@@ -295,20 +331,24 @@ public class EntityData {
 				((Rabbit)entity).setRabbitType(Rabbit.Type.THE_KILLER_BUNNY);
 			}*/
 		} else if (entityType == EntityType.GUARDIAN) {
-			if (flag) {
-				((Guardian)entity).setElder(true);
+			if (!V1_11EntityTypeHandler.newEntityTypesPresent()) {
+				if (flag) {
+					((Guardian)entity).setElder(true); // this is safe due to version checks
+				}
 			}
 		} else if (entityType == EntityType.HORSE) {
-			if (var1 == 0) {
-				((Horse)entity).setVariant(Horse.Variant.HORSE);
-			} else if (var1 == 1) {
-				((Horse)entity).setVariant(Horse.Variant.DONKEY);
-			} else if (var1 == 2) {
-				((Horse)entity).setVariant(Horse.Variant.MULE);
-			} else if (var1 == 3) {
-				((Horse)entity).setVariant(Horse.Variant.UNDEAD_HORSE);
-			} else if (var1 == 4) {
-				((Horse)entity).setVariant(Horse.Variant.SKELETON_HORSE);
+			if (!V1_11EntityTypeHandler.newEntityTypesPresent()) {
+				if (var1 == 0) {
+					((Horse)entity).setVariant(Horse.Variant.HORSE); // this is safe due to version checks
+				} else if (var1 == 1) {
+					((Horse)entity).setVariant(Horse.Variant.DONKEY); // this is safe due to version checks
+				} else if (var1 == 2) {
+					((Horse)entity).setVariant(Horse.Variant.MULE); // this is safe due to version checks
+				} else if (var1 == 3) {
+					((Horse)entity).setVariant(Horse.Variant.UNDEAD_HORSE); // this is safe due to version checks
+				} else if (var1 == 4) {
+					((Horse)entity).setVariant(Horse.Variant.SKELETON_HORSE); // this is safe due to version checks
+				}
 			}
 		}		
 		return entity;

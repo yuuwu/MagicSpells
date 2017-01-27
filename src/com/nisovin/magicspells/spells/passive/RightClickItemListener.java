@@ -32,6 +32,10 @@ public class RightClickItemListener extends PassiveListener {
 	
 	@Override
 	public void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var) {
+		if (var == null) {
+			MagicSpells.error(trigger.getName() + " cannot accept a null variable");
+			return;
+		}
 		Set<Material> materialSetAddTo = null;
 		Map<MagicMaterial, List<PassiveSpell>> typesMapAddTo = null;
 		if (isMainHand(trigger)) {

@@ -526,7 +526,7 @@ public class SpawnMonsterSpell extends TargetedSpell implements TargetedLocation
 			LivingEntity t = null;
 			int r = retargetRange * retargetRange;
 			for (Entity e : monster.getNearbyEntities(retargetRange, retargetRange, retargetRange)) {
-				if (e instanceof LivingEntity && validTargetList.canTarget(caster, (LivingEntity)e) && e != caster && e != ignore) {
+				if (e instanceof LivingEntity && validTargetList.canTarget(caster, e) && e != caster && e != ignore) {
 					if (e instanceof Player) {
 						Player p = (Player)e;
 						if (p.getGameMode() == GameMode.CREATIVE || p.getGameMode() == GameMode.SPECTATOR) {
@@ -570,7 +570,7 @@ public class SpawnMonsterSpell extends TargetedSpell implements TargetedLocation
 			List<Entity> list = entity.getNearbyEntities(targetRange, targetRange, targetRange);
 			List<LivingEntity> targetable = new ArrayList<LivingEntity>();
 			for (Entity e : list) {
-				if (e instanceof LivingEntity && validTargetList.canTarget(caster, (LivingEntity)e)) {
+				if (e instanceof LivingEntity && validTargetList.canTarget(caster, e)) {
 					targetable.add((LivingEntity)e);
 				}
 			}
