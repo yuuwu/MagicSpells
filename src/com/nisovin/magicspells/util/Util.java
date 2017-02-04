@@ -714,7 +714,7 @@ public class Util {
 	public static boolean removeFromInventory(Inventory inventory, ItemStack item) {
 		int amt = item.getAmount();
 		ItemStack[] items = inventory.getContents();
-		for (int i = 0; i < 36; i++) {
+		for (int i = 0; i < items.length; i++) {
 			if (items[i] != null && item.isSimilar(items[i])) {
 				if (items[i].getAmount() > amt) {
 					items[i].setAmount(items[i].getAmount() - amt);
@@ -740,9 +740,9 @@ public class Util {
 	
 	public static boolean addToInventory(Inventory inventory, ItemStack item, boolean stackExisting, boolean ignoreMaxStack) {
 		int amt = item.getAmount();
-		ItemStack[] items = inventory.getContents();
+		ItemStack[] items = Arrays.copyOf(inventory.getContents(), inventory.getSize());
 		if (stackExisting) {
-			for (int i = 0; i < 36; i++) {
+			for (int i = 0; i < items.length; i++) {
 				if (items[i] != null && item.isSimilar(items[i])) {
 					if (items[i].getAmount() + amt <= items[i].getMaxStackSize()) {
 						items[i].setAmount(items[i].getAmount() + amt);
@@ -757,7 +757,7 @@ public class Util {
 			}
 		}
 		if (amt > 0) {
-			for (int i = 0; i < 36; i++) {
+			for (int i = 0; i < items.length; i++) {
 				if (items[i] == null) {
 					if (amt > item.getMaxStackSize() && !ignoreMaxStack) {
 						items[i] = item.clone();
