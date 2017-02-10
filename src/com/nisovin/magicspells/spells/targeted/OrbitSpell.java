@@ -78,8 +78,10 @@ public class OrbitSpell extends TargetedSpell implements TargetedEntitySpell {
 		if (!spell.process()) {
 			spell = null;
 		}
-		if (!spell.isTargetedLocationSpell()) {
-			spell = null;
+		if (spell != null) {
+			if (!spell.isTargetedLocationSpell()) {
+				spell = null;
+			}
 		}
 	}
 
