@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
+import com.nisovin.magicspells.Spell.SpellCastState;
 import com.nisovin.magicspells.castmodifiers.Condition;
 import com.nisovin.magicspells.castmodifiers.IModifier;
 import com.nisovin.magicspells.events.MagicSpellsGenericPlayerEvent;
@@ -12,34 +13,41 @@ import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.events.SpellTargetEvent;
 import com.nisovin.magicspells.events.SpellTargetLocationEvent;
 
-public class PowerLessThanCondition extends Condition implements IModifier {
+/* 
+ * Valid condition variable arguments are any of the following:
+ * NORMAL
+ * ON_COOLDOWN
+ * MISSING_REAGENTS
+ * CANT_CAST
+ * NO_MAGIC_ZONE
+ * WRONG_WORLD
+ */
+public class SpellCastStateCondition extends Condition implements IModifier {
 
-	private float power;
+	private SpellCastState state;
 	
 	@Override
 	public boolean apply(SpellCastEvent event) {
-		return event.getPower() < power;
+		return event.getSpellCastState() == this.state;
 	}
 
 	@Override
 	public boolean apply(ManaChangeEvent event) {
-		// No power to check
 		return false;
 	}
 
 	@Override
 	public boolean apply(SpellTargetEvent event) {
-		return event.getPower() < power;
+		return false;
 	}
 
 	@Override
 	public boolean apply(SpellTargetLocationEvent event) {
-		return event.getPower() < power;
+		return false;
 	}
 
 	@Override
 	public boolean apply(MagicSpellsGenericPlayerEvent event) {
-		//no power to check
 		return false;
 	}
 
@@ -50,15 +58,9 @@ public class PowerLessThanCondition extends Condition implements IModifier {
 
 	@Override
 	public boolean setVar(String var) {
-		if (var != null && !var.isEmpty()) {
-			try {
-				power = Float.parseFloat(var);
-				return true;
-			} catch (NumberFormatException e) {
-				return false;
-			}
-		}
-		return false;
+		if (var == null) return false;
+		this.state = SpellCastState.valueOf(var.trim().toUpperCase());
+		return this.state != null;
 	}
 
 	@Override

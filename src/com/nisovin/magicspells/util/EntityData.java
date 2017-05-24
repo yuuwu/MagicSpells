@@ -181,7 +181,7 @@ public class EntityData {
 				}
 				data.remove(0);
 			}
-			while (data.size() > 0) {
+			while (!data.isEmpty()) {
 				String d = data.remove(0);
 				if (d.matches("^[0-9]+$")) {
 					var2 = Integer.parseInt(d);
@@ -263,12 +263,12 @@ public class EntityData {
 		if (entityType == EntityType.ZOMBIE) {
 			((Zombie)entity).setBaby(flag);
 			if (!V1_11EntityTypeHandler.newEntityTypesPresent()) {
-				((Zombie)entity).setVillager(var1 == 1); // this is safe due to version checks
+				((Zombie)entity).setVillager(var1 == 1); // This is safe due to version checks
 			}
 		} else if (entityType == EntityType.SKELETON) {
 			if (!V1_11EntityTypeHandler.newEntityTypesPresent()) {
 				if (flag) {
-					((Skeleton)entity).setSkeletonType(Skeleton.SkeletonType.WITHER); // this is safe due to version checks
+					((Skeleton)entity).setSkeletonType(Skeleton.SkeletonType.WITHER); // This is safe due to version checks
 				}
 			}
 		} else if (entityType == EntityType.CREEPER) {

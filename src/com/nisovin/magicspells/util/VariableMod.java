@@ -9,11 +9,21 @@ import com.nisovin.magicspells.MagicSpells;
 public class VariableMod {
 	
 	public static enum VariableOwner {
-		CASTER, TARGET
+		
+		CASTER,
+		TARGET
+		
 	}
 	
 	public static enum Operation {
-		SET, ADD, MULTIPLY, DIVIDE;
+		
+		SET,
+		ADD,
+		MULTIPLY,
+		DIVIDE
+		
+		;
+		
 		static Operation fromPrefix(String s) {
 			char c = s.charAt(0);
 			switch (c) {
@@ -29,6 +39,7 @@ public class VariableMod {
 				return ADD;
 			}
 		}
+		
 	}
 	
 	private VariableOwner variableOwner = null;

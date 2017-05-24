@@ -39,11 +39,8 @@ public class BlockUtils {
 	
 	public static Block getTargetBlock(Spell spell, LivingEntity entity, int range) {
 		try {
-			if (spell != null) {
-				return entity.getTargetBlock(spell.getLosTransparentBlocks(), range);
-			} else {
-				return entity.getTargetBlock(MagicSpells.getTransparentBlocks(), range);				
-			}
+			if (spell != null) return entity.getTargetBlock(spell.getLosTransparentBlocks(), range);
+			return entity.getTargetBlock(MagicSpells.getTransparentBlocks(), range);				
 		} catch (IllegalStateException e) {
 			DebugHandler.debugIllegalState(e);
 			return null;
@@ -96,6 +93,8 @@ public class BlockUtils {
 		return isPathable(block.getType());
 	}
 	
+	// TODO during the java language level changes, make this use a string based check
+	// probably using a switch
 	public static boolean isPathable(Material material) {
 		return
 				material == Material.AIR ||
@@ -133,10 +132,9 @@ public class BlockUtils {
 	}
 	
 	public static boolean isSafeToStand(Location location) {
-		return 
-				isPathable(location.getBlock()) && 
-				isPathable(location.add(0, 1, 0).getBlock()) && 
-				(!isPathable(location.subtract(0, 2, 0).getBlock()) || !isPathable(location.subtract(0, 1, 0).getBlock()));
+		if (!isPathable(location.getBlock())) return false;
+		if (!isPathable(location.add(0, 1, 0).getBlock())) return false;
+		return !isPathable(location.subtract(0, 2, 0).getBlock()) || !isPathable(location.subtract(0, 1, 0).getBlock());
 	}
 	
 }

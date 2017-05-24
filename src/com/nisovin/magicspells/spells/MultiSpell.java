@@ -277,7 +277,7 @@ public final class MultiSpell extends InstantSpell {
 		
 	}
 
-	static class ActionChance {
+	class ActionChance {
 		
 		private MultiSpell.Action action;
 		private double chance;

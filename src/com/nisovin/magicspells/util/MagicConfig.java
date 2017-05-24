@@ -12,6 +12,15 @@ import com.nisovin.magicspells.MagicSpells;
 
 public class MagicConfig {
 
+	private static final FilenameFilter FILENAME_FILTER = new FilenameFilter() {
+		
+		@Override
+		public boolean accept(File dir, String name) {
+			return name.startsWith("spell") && name.endsWith(".yml");
+		}
+		
+	};
+	
 	private YamlConfiguration mainConfig;
 	
 	public MagicConfig(File file) {
@@ -153,12 +162,7 @@ public class MagicConfig {
 			}
 			
 			// load spell configs
-			for (File spellConfigFile : folder.listFiles(new FilenameFilter() {
-				@Override
-				public boolean accept(File dir, String name) {
-					return name.startsWith("spell") && name.endsWith(".yml");
-				}
-			})) {
+			for (File spellConfigFile : folder.listFiles(FILENAME_FILTER)) {
 				YamlConfiguration spellConfig = new YamlConfiguration();
 				try {
 					spellConfig.load(spellConfigFile);

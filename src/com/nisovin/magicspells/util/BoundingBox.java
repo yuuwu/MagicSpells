@@ -60,9 +60,7 @@ public class BoundingBox {
 	}
 	
 	public boolean contains(Location location) {
-		if (!location.getWorld().equals(world)) {
-			return false;
-		}
+		if (!location.getWorld().equals(world)) return false;
 		double x = location.getX();
 		double y = location.getY();
 		double z = location.getZ();

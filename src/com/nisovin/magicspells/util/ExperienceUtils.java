@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
  *
  */
 public class ExperienceUtils {
+	
 	public static final int MAX_LEVEL_SUPPORTED = 500;
 
 	private static final int xpRequiredForNextLevel[] = new int[MAX_LEVEL_SUPPORTED];

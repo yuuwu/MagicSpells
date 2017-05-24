@@ -20,13 +20,15 @@ import com.nisovin.magicspells.Spell;
 public class ValidTargetList {
 	
 	public static enum TargetingElement {
+		
 		TARGET_SELF,
 		TARGET_PLAYERS,
 		TARGET_INVISIBLES,
 		TARGET_NONPLAYERS,
 		TARGET_MONSTERS,
 		TARGET_ANIMALS,
-		TARGET_NONLIVING_ENTITIES,
+		TARGET_NONLIVING_ENTITIES
+		
 	}
 	
 	boolean targetSelf = false;

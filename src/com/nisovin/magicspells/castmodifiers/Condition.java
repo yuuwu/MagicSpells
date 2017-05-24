@@ -149,6 +149,8 @@ public abstract class Condition {
 		conditions.put("customnamevisible", CustomNameVisibleCondition.class);
 		conditions.put("canpickupitems", CanPickupItemsCondition.class);
 		conditions.put("gliding", GlidingCondition.class);
+		conditions.put("spellcaststate", SpellCastStateCondition.class);
+		conditions.put("pluginenabled", PluginEnabledCondition.class);
 	}
 	
 }

@@ -11,8 +11,7 @@ import de.slikey.effectlib.util.ReflectionUtils;
 
 public class SoundUtils {
 
-	public static void playSound(Player player, String sound, float volume,
-			float pitch) {
+	public static void playSound(Player player, String sound, float volume, float pitch) {
 		Location loc = player.getLocation();
 		Object packet = getSoundPacket(sound, loc, volume, pitch);
 		// PacketPlayOutNamedSoundEffect packet = new
@@ -57,8 +56,7 @@ public class SoundUtils {
 		return null;
 	}
 	
-	private static Object getSoundPacket(String name, Location loc,
-			float volume, float pitch) {
+	private static Object getSoundPacket(String name, Location loc, float volume, float pitch) {
 		try {
 			return de.slikey.effectlib.util.ReflectionUtils
 					.instantiateObject(

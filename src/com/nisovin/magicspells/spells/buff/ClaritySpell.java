@@ -11,6 +11,7 @@ import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellFilter;
+import com.nisovin.magicspells.util.SpellReagents;
 
 public class ClaritySpell extends BuffSpell {
 
@@ -53,7 +54,9 @@ public class ClaritySpell extends BuffSpell {
 			mod *= power;
 		}
 		
-		event.setReagents(event.getReagents().multiply(mod));
+		SpellReagents reagents = event.getReagents();
+		if (reagents != null) event.setReagents(reagents.multiply(mod));
+		
 		addUseAndChargeCost(caster);
 	}
 	

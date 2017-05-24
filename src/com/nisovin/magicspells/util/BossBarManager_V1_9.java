@@ -29,9 +29,7 @@ public class BossBarManager_V1_9 implements BossBarManager {
 	@Override
 	public void removePlayerBar(Player player) {
 		BossBar bar = bars.remove(player.getName());
-		if (bar != null) {
-			bar.removeAll();
-		}
+		if (bar != null) bar.removeAll();
 	}
 
 	@Override

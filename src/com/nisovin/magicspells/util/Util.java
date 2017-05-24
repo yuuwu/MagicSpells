@@ -353,34 +353,34 @@ public class Util {
 				((BlockStateMeta)meta).setBlockState(state);
 			}*/
 			
-			// repair cost
+			// Repair cost
 			meta = RepairableHandler.process(config, meta);
 			
-			// written book
+			// Written book
 			meta = WrittenBookHandler.process(config, meta);
 			
-			// banner
+			// Banner
 			meta = BannerHandler.process(config, meta);
 			
-			// set meta
+			// Set meta
 			item.setItemMeta(meta);
 			
-			// hide tooltip
+			// Hide tooltip
 			if (config.getBoolean("hide-tooltip", MagicSpells.hidePredefinedItemTooltips())) {
 				item = MagicSpells.getVolatileCodeHandler().hideTooltipCrap(item);
 			}
 			
-			// unbreakable
+			// Unbreakable
 			if (config.getBoolean("unbreakable", false)) {
 				item = MagicSpells.getVolatileCodeHandler().setUnbreakable(item);
 			}
 			
-			// empty enchant
+			// Empty enchant
 			if (emptyEnchants) {
 				item = MagicSpells.getVolatileCodeHandler().addFakeEnchantment(item);
 			}
 			
-			// attributes
+			// Attributes
 			if (config.contains("attributes")) {
 				Set<String> attrs = config.getConfigurationSection("attributes").getKeys(false);
 				int attrsSize = attrs.size();
@@ -399,13 +399,13 @@ public class Util {
 					} catch (NumberFormatException e) {
 						DebugHandler.debugNumberFormat(e);
 					}
-					int attrOp = 0; // add number
+					int attrOp = 0; // Add number
 					if (attrData.length > 2) {
 						String attrDataLowercase = attrData[2].toLowerCase();
 						if (attrDataLowercase.startsWith("mult")) {
-							attrOp = 1; // multiply percent
+							attrOp = 1; // Multiply percent
 						} else if (attrDataLowercase.contains("add") && attrDataLowercase.contains("perc")) {
-							attrOp = 2; // add percent
+							attrOp = 2; // Add percent
 						}
 					}
 					String slot = null;
@@ -431,7 +431,7 @@ public class Util {
 		}
 	}
 	
-	// just checks to see if the passed string could be lore data
+	// Just checks to see if the passed string could be lore data
 	public static boolean isLoreData(String line) {
 		if (line == null) return false;
 		line = ChatColor.stripColor(line);
@@ -862,4 +862,5 @@ public class Util {
 	public static String flattenLineBreaks(String raw) {
 		return raw.replaceAll("\n", "\\n");
 	}
+	
 }

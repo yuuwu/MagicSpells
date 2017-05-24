@@ -328,7 +328,7 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 		return false;
 	}
 	
-	static class MenuOption {
+	class MenuOption {
 		
 		String menuOptionName;
 		int slot;

@@ -22,25 +22,20 @@ public class ColorUtil {
 	public static Color getColorFromRGBString(String value) {
 		if (value == null) return null;
 		String[] splits = value.split(",");
-		if (splits.length < 3) {
-			return null;
-		}
+		if (splits.length < 3) return null;
 		
 		int red, green, blue;
 		try {
-		red = Integer.parseInt(splits[0]);
-		green = Integer.parseInt(splits[1]);
-		blue = Integer.parseInt(splits[2]);
-		return Color.fromRGB(red, green, blue);
+			red = Integer.parseInt(splits[0]);
+			green = Integer.parseInt(splits[1]);
+			blue = Integer.parseInt(splits[2]);
+			return Color.fromRGB(red, green, blue);
 		} catch (IllegalArgumentException e) {
 			DebugHandler.debugIllegalArgumentException(e);
 			//TODO determine an appropriate means of logging this
 			return null;
 		}
 		
-		
 	}
-	
-	
 	
 }

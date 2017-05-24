@@ -22,15 +22,16 @@ public class BossBarManager_V1_8 implements BossBarManager, Listener {
 		MagicSpells.registerEvents(this);
 		
 		MagicSpells.scheduleRepeatingTask(new Runnable() {
+			
 			@Override
 			public void run() {
 				for (String name : bossBarTitles.keySet()) {
 					Player player = Bukkit.getPlayerExact(name);
-					if (player != null) {
-						updateBar(player, null, 0);
-					}
+					if (player == null)  continue;
+					updateBar(player, null, 0);
 				}
 			}
+			
 		}, 8, 8);
 	}
 	
@@ -56,10 +57,10 @@ public class BossBarManager_V1_8 implements BossBarManager, Listener {
 	}
 	
 	private void showBar(Player player) {
+		if (player == null) return;
+		if (!player.isValid()) return;
 		try {
-			if (player != null && player.isValid()) {
-				MagicSpells.getVolatileCodeHandler().setBossBar(player, bossBarTitles.get(player.getName()), bossBarValues.get(player.getName()));
-			}
+			MagicSpells.getVolatileCodeHandler().setBossBar(player, bossBarTitles.get(player.getName()), bossBarValues.get(player.getName()));
 		} catch (Exception e) {
 			System.out.println("BOSS BAR EXCEPTION: " + e.getMessage());
 		}
@@ -73,10 +74,12 @@ public class BossBarManager_V1_8 implements BossBarManager, Listener {
 	public void onRespawn(final PlayerRespawnEvent event) {
 		if (bossBarTitles.containsKey(event.getPlayer().getName())) {
 			MagicSpells.scheduleDelayedTask(new Runnable() {
+				
 				@Override
 				public void run() {
 					showBar(event.getPlayer());
 				}
+				
 			}, 10);
 		}
 	}
@@ -85,26 +88,28 @@ public class BossBarManager_V1_8 implements BossBarManager, Listener {
 	public void onTeleport(final PlayerTeleportEvent event) {
 		if (bossBarTitles.containsKey(event.getPlayer().getName())) {
 			MagicSpells.scheduleDelayedTask(new Runnable() {
+				
 				@Override
 				public void run() {
 					showBar(event.getPlayer());
 				}
+				
 			}, 10);
 		}
 	}
 	
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
-		bossBarTitles.remove(event.getPlayer().getName());
-		bossBarValues.remove(event.getPlayer().getName());
+		String playerName = event.getPlayer().getName();
+		bossBarTitles.remove(playerName);
+		bossBarValues.remove(playerName);
 	}
 	
 	@Override
 	public void turnOff() {
 		for (Player player : Bukkit.getOnlinePlayers()) {
-			if (bossBarTitles.containsKey(player.getName())) {
-				MagicSpells.getVolatileCodeHandler().removeBossBar(player);
-			}
+			if (!bossBarTitles.containsKey(player.getName())) continue;
+			MagicSpells.getVolatileCodeHandler().removeBossBar(player);
 		}
 		bossBarTitles.clear();
 		bossBarValues.clear();

@@ -107,11 +107,18 @@ public class CastItem {
 	}
 	
 	public boolean equals(CastItem i) {
-		return i.type == this.type && i.data == this.data && (MagicSpells.ignoreCastItemNames() || i.name.equals(this.name)) && (MagicSpells.ignoreCastItemEnchants() || compareEnchants(this.enchants, i.enchants));
+		if (i == null) return false;
+		if (i.type != this.type) return false;
+		if (i.data != this.data) return false;
+		if (!(MagicSpells.ignoreCastItemNames() || i.name.equals(this.name))) return false;
+		return MagicSpells.ignoreCastItemEnchants() || compareEnchants(this.enchants, i.enchants);
 	}
 	
 	public boolean equals(ItemStack i) {
-		return i.getTypeId() == type && i.getDurability() == data && (MagicSpells.ignoreCastItemNames() || namesEqual(i)) && (MagicSpells.ignoreCastItemEnchants() || compareEnchants(this.enchants, getEnchants(i)));
+		if (i.getTypeId() != type) return false;
+		if (i.getDurability() != data) return false;
+		if (!(MagicSpells.ignoreCastItemNames() || namesEqual(i))) return false;
+		return MagicSpells.ignoreCastItemEnchants() || compareEnchants(this.enchants, getEnchants(i));
 	}
 	
 	private boolean namesEqual(ItemStack i) {

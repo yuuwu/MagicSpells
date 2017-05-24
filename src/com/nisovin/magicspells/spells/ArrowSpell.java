@@ -298,7 +298,7 @@ public class ArrowSpell extends Spell {
 		
 	}
 	
-	static class ArrowSpellData {
+	class ArrowSpellData {
 		
 		ArrowSpell spell;
 		boolean casted = false;
