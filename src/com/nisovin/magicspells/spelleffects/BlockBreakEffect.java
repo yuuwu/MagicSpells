@@ -58,4 +58,5 @@ public class BlockBreakEffect extends SpellEffect {
 		location.getWorld().playEffect(location, Effect.STEP_SOUND, id);
 		return null;
 	}
+	
 }

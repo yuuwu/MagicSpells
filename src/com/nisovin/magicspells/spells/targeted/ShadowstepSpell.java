@@ -12,6 +12,7 @@ import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.BlockUtils;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
+
 public class ShadowstepSpell extends TargetedSpell implements TargetedEntitySpell {
 
 	private String strNoLandingSpot;
@@ -32,13 +33,9 @@ public class ShadowstepSpell extends TargetedSpell implements TargetedEntitySpel
 			}
 			
 			boolean done = shadowstep(player, target.getTarget());
-			if (!done) {
-				return noTarget(player, strNoLandingSpot);
-			} else {
-				sendMessages(player, target.getTarget());
-				return PostCastAction.NO_MESSAGES;
-			}
-			
+			if (!done) return noTarget(player, strNoLandingSpot);
+			sendMessages(player, target.getTarget());
+			return PostCastAction.NO_MESSAGES;
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}
@@ -67,11 +64,8 @@ public class ShadowstepSpell extends TargetedSpell implements TargetedEntitySpel
 
 	@Override
 	public boolean castAtEntity(Player caster, LivingEntity target, float power) {
-		if (!validTargetList.canTarget(caster, target)) {
-			return false;
-		} else {
-			return shadowstep(caster, target);
-		}
+		if (!validTargetList.canTarget(caster, target)) return false;
+		return shadowstep(caster, target);
 	}
 
 	@Override

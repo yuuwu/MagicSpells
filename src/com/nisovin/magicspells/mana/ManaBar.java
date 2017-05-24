@@ -54,9 +54,7 @@ public class ManaBar {
 	
 	public void setMaxMana(int max) {
 		this.maxMana = max;
-		if (mana > maxMana) {
-			mana = maxMana;
-		}
+		if (mana > maxMana) mana = maxMana;
 	}
 	
 	public void setRegenAmount(int amount) {
@@ -130,9 +128,8 @@ public class ManaBar {
 			ManaChangeEvent event = new ManaChangeEvent(player, mana, newAmt, maxMana, reason);
 			Bukkit.getPluginManager().callEvent(event);
 			return event.getNewAmount();
-		} else {
-			return newAmt;
 		}
+		return newAmt;
 	}
 	
 }

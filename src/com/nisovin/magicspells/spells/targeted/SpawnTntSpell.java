@@ -17,6 +17,7 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
+
 public class SpawnTntSpell extends TargetedSpell implements TargetedLocationSpell {
 
 	int fuse;
@@ -42,15 +43,11 @@ public class SpawnTntSpell extends TargetedSpell implements TargetedLocationSpel
 	
 	@Override
 	public void initialize() {
-		if (spellName != null) {
-			Spell s = MagicSpells.getSpellByInternalName(spellName);
-			if (s instanceof TargetedLocationSpell) {
-				spell = (TargetedLocationSpell)s;
-			}
-			if (spell == null) {
-				MagicSpells.error("Invalid spell defined on SpawnTntSpell " + internalName + ": " + spellName);
-			}
-		}
+		if (spellName == null) return;
+		
+		Spell s = MagicSpells.getSpellByInternalName(spellName);
+		if (s instanceof TargetedLocationSpell) spell = (TargetedLocationSpell)s;
+		if (spell == null) MagicSpells.error("Invalid spell defined on SpawnTntSpell " + internalName + ": " + spellName);
 	}
 
 	@Override
@@ -126,13 +123,16 @@ public class SpawnTntSpell extends TargetedSpell implements TargetedLocationSpel
 		}
 	}
 	
-	class TntInfo {
+	static class TntInfo {
+		
 		Player caster;
 		float power;
+		
 		public TntInfo(Player caster, float power) {
 			this.caster = caster;
 			this.power = power;
 		}
+		
 	}
 
 }

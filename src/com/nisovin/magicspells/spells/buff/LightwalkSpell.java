@@ -37,19 +37,18 @@ public class LightwalkSpell extends BuffSpell {
 	
 	@EventHandler(priority=EventPriority.MONITOR)
 	public void onPlayerMove(PlayerMoveEvent event) {
-		if (lightwalkers.containsKey(event.getPlayer().getName())) {
-			Player p = event.getPlayer();
-			Block oldBlock = lightwalkers.get(p.getName());
+		Player p = event.getPlayer();
+		String playerName = p.getName();
+		if (lightwalkers.containsKey(playerName)) {
+			Block oldBlock = lightwalkers.get(playerName);
 			Block newBlock = p.getLocation().getBlock().getRelative(BlockFace.DOWN);
 			if ((oldBlock == null || !oldBlock.equals(newBlock)) && allowedType(newBlock.getType()) && newBlock.getType() != Material.AIR) {
 				if (isExpired(p)) {
 					turnOff(p);
 				} else {
-					if (oldBlock != null) {
-						Util.restoreFakeBlockChange(p, oldBlock);
-					}
+					if (oldBlock != null) Util.restoreFakeBlockChange(p, oldBlock);
 					Util.sendFakeBlockChange(p, newBlock, mat);
-					lightwalkers.put(p.getName(), newBlock);
+					lightwalkers.put(playerName, newBlock);
 					addUse(p);
 					chargeUseCost(p);
 				}
@@ -79,21 +78,20 @@ public class LightwalkSpell extends BuffSpell {
 	@Override
 	public void turnOffBuff(Player player) {
 		Block b = lightwalkers.remove(player.getName());
-		if (b != null) {
-			Util.restoreFakeBlockChange(player, b);
-		}
+		if (b == null) return;
+		Util.restoreFakeBlockChange(player, b);
 	}
 
 	@Override
 	protected void turnOff() {
 		for (String s : lightwalkers.keySet()) {
 			Player p = PlayerNameUtils.getPlayer(s);
-			if (p != null) {
-				Block b = lightwalkers.get(s);
-				if (b != null) {
-					Util.restoreFakeBlockChange(p, b);
-				}
-			}
+			if (p == null) continue;
+			
+			Block b = lightwalkers.get(s);
+			if (b == null) continue;
+			
+			Util.restoreFakeBlockChange(p, b);
 		}
 		lightwalkers.clear();
 	}

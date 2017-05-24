@@ -38,6 +38,8 @@ import com.nisovin.magicspells.Subspell;
 import com.nisovin.magicspells.events.SpellTargetEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
+import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.InventoryUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.Util;
 
@@ -86,7 +88,7 @@ public class ProjectileSpell extends InstantSpell {
 			projectileClass = ThrownPotion.class;
 		} else {
 			ItemStack item = Util.getItemStackFromString(projectileType);
-			if (item != null) {
+			if (!InventoryUtil.isNothing(item)) {
 				item.setAmount(0);
 				projectileItem = item;
 			}
@@ -133,7 +135,7 @@ public class ProjectileSpell extends InstantSpell {
 				}
 			}
 		}
-		if (spells.size() == 0) {
+		if (spells.isEmpty()) {
 			MagicSpells.error("Projectile spell '" + internalName + "' has no spells!");
 		}
 		
@@ -165,7 +167,7 @@ public class ProjectileSpell extends InstantSpell {
 				}
 				if (horizSpread > 0 || vertSpread > 0) {
 					Vector v = projectile.getVelocity();
-					v.add(new Vector((random.nextDouble()-.5) * horizSpread, (random.nextDouble()-.5) * vertSpread, (random.nextDouble()-.5) * horizSpread));
+					v.add(new Vector((random.nextDouble() - .5) * horizSpread, (random.nextDouble() - .5) * vertSpread, (random.nextDouble() - .5) * horizSpread));
 					projectile.setVelocity(v);
 				}
 				if (applySpellPowerToVelocity) {
@@ -179,7 +181,7 @@ public class ProjectileSpell extends InstantSpell {
 				MagicSpells.getVolatileCodeHandler().setGravity(item, projectileHasGravity);
 				Vector v = player.getLocation().getDirection().multiply(velocity > 0 ? velocity : 1);
 				if (horizSpread > 0 || vertSpread > 0) {
-					v.add(new Vector((random.nextDouble()-.5) * horizSpread, (random.nextDouble()-.5) * vertSpread, (random.nextDouble()-.5) * horizSpread));
+					v.add(new Vector((random.nextDouble() - .5) * horizSpread, (random.nextDouble() - .5) * vertSpread, (random.nextDouble() - .5) * horizSpread));
 				}
 				if (applySpellPowerToVelocity) {
 					v.multiply(power);
@@ -204,7 +206,7 @@ public class ProjectileSpell extends InstantSpell {
 				
 				// call target event
 				SpellTargetEvent evt = new SpellTargetEvent(this, info.player, target, power);
-				Bukkit.getPluginManager().callEvent(evt);
+				EventUtil.call(evt);
 				if (evt.isCancelled()) {
 					return false;
 				} else if (allowTargetChange) {
@@ -272,13 +274,15 @@ public class ProjectileSpell extends InstantSpell {
 		playSpellEffects(EffectPosition.SPECIAL, projectile.getLocation());
 		List<Entity> entities = projectile.getNearbyEntities(aoeRadius, aoeRadius, aoeRadius);
 		for (Entity entity : entities) {
-			if (entity instanceof LivingEntity && (targetPlayers || !(entity instanceof Player)) && !entity.equals(info.player)) {
+			if (!(entity instanceof LivingEntity)) continue;
+			
+			if ((targetPlayers || !(entity instanceof Player)) && !entity.equals(info.player)) {
 				LivingEntity target = (LivingEntity)entity;
 				float power = info.power;
 				
 				// call target event
 				SpellTargetEvent evt = new SpellTargetEvent(this, info.player, target, power);
-				Bukkit.getPluginManager().callEvent(evt);
+				EventUtil.call(evt);
 				if (evt.isCancelled()) {
 					continue;
 				} else if (allowTargetChange) {
@@ -350,14 +354,14 @@ public class ProjectileSpell extends InstantSpell {
 					}
 				}, 0);
 				
-				if (info.monitor != null) {
-					info.monitor.stop();
-				}
+				if (info.monitor != null) info.monitor.stop();
 			}
 		}
+		
 	}
 	
 	public class EnderTpListener implements Listener {
+		
 		@EventHandler(ignoreCancelled=true)
 		public void onPlayerTeleport(PlayerTeleportEvent event) {
 			if (event.getCause() == TeleportCause.ENDER_PEARL) {
@@ -369,9 +373,11 @@ public class ProjectileSpell extends InstantSpell {
 				}
 			}
 		}
+		
 	}
 	
 	public class EggListener implements Listener {
+		
 		@EventHandler(ignoreCancelled=true)
 		public void onCreatureSpawn(CreatureSpawnEvent event) {
 			if (event.getSpawnReason() == SpawnReason.EGG) {
@@ -383,18 +389,22 @@ public class ProjectileSpell extends InstantSpell {
 				}
 			}
 		}
+		
 	}
 	
 	public class PotionListener implements Listener {
+		
 		@EventHandler(ignoreCancelled=true)
 		public void onPotionSplash(PotionSplashEvent event) {
 			if (projectiles.containsKey(event.getPotion())) {
 				event.setCancelled(true);
 			}
 		}
+		
 	}
 	
 	public class PickupListener implements Listener {
+		
 		@EventHandler(ignoreCancelled=true)
 		public void onPickupItem(PlayerPickupItemEvent event) {
 			Item item = event.getItem();
@@ -407,6 +417,7 @@ public class ProjectileSpell extends InstantSpell {
 				info.monitor.stop();
 			}
 		}
+		
 	}
 	
 	boolean locationsEqual(Location loc1, Location loc2) {
@@ -417,6 +428,7 @@ public class ProjectileSpell extends InstantSpell {
 	}
 	
 	private class ProjectileInfo {
+		
 		Player player;
 		Location start;
 		float power;
@@ -435,6 +447,7 @@ public class ProjectileSpell extends InstantSpell {
 			this(player, power);
 			this.monitor = monitor;
 		}
+		
 	}
 	
 	private interface ProjectileMonitor {
@@ -498,13 +511,9 @@ public class ProjectileSpell extends InstantSpell {
 			playSpellEffects(EffectPosition.SPECIAL, prevLoc);
 			prevLoc = projectile.getLocation();
 			
-			if (!projectile.isValid() || projectile.isOnGround()) {
-				stop();
-			}
+			if (!projectile.isValid() || projectile.isOnGround()) stop();
 			
-			if (count++ > 100) {
-				stop();
-			}
+			if (count++ > 100) stop();
 		}
 		
 		@Override

@@ -11,6 +11,7 @@ import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellFilter;
+
 /**
  * SpellHasteSpell<br>
  * <table border=1>
@@ -117,4 +118,5 @@ public class SpellHasteSpell extends BuffSpell {
     protected void turnOff() {
         spellTimersModified.clear();
     }
+    
 }

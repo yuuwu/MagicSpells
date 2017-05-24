@@ -34,7 +34,7 @@ public class RightClickListener implements Listener {
 	}
 	
 	public boolean hasRightClickCastItems() {
-		return rightClickCastItems.size() > 0;
+		return !rightClickCastItems.isEmpty();
 	}
 	
 	@EventHandler

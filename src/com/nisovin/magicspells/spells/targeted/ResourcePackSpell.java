@@ -16,14 +16,11 @@ public class ResourcePackSpell extends TargetedSpell {
 	}
 	
 	@Override
-	public PostCastAction castSpell(Player player, SpellCastState state,
-			float power, String[] args) {
+	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			TargetInfo<Player> target = getTargetedPlayer(player, power);
 			Player targetPlayer = target.getTarget();
-			if (targetPlayer == null) {
-				return noTarget(player);
-			}
+			if (targetPlayer == null) return noTarget(player);
 			targetPlayer.setResourcePack(url);
 			return PostCastAction.HANDLE_NORMALLY;
 		}

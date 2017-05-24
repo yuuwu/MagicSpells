@@ -64,9 +64,7 @@ public class RitualSpell extends InstantSpell {
 	public void initialize() {
 		super.initialize();
 		spell = MagicSpells.getSpellByInternalName(theSpellName);
-		if (spell == null) {
-			MagicSpells.error("RitualSpell '" + internalName + "' does not have a spell defined (" + theSpellName + ")!");
-		}
+		if (spell == null) MagicSpells.error("RitualSpell '" + internalName + "' does not have a spell defined (" + theSpellName + ")!");
 	}
 
 	@Override
@@ -92,11 +90,10 @@ public class RitualSpell extends InstantSpell {
 	public void onPlayerInteract(PlayerInteractEntityEvent event) {
 		if (event.getRightClicked() instanceof Player) {
 			ActiveRitual channel = activeRituals.get(event.getRightClicked());
-			if (channel != null) {
-				if (!needSpellToParticipate || hasThisSpell(event.getPlayer())) {
-					channel.addChanneler(event.getPlayer());
-					sendMessage(strRitualJoined, event.getPlayer(), MagicSpells.NULL_ARGS);
-				}
+			if (channel == null) return;
+			if (!needSpellToParticipate || hasThisSpell(event.getPlayer())) {
+				channel.addChanneler(event.getPlayer());
+				sendMessage(strRitualJoined, event.getPlayer(), MagicSpells.NULL_ARGS);
 			}
 		}
 	}
@@ -104,18 +101,16 @@ public class RitualSpell extends InstantSpell {
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		for (ActiveRitual ritual : activeRituals.values()) {
-			if (ritual.isChanneler(event.getPlayer())) {
-				ritual.stop(strInterrupted);
-			}
+			if (!ritual.isChanneler(event.getPlayer())) continue;
+			ritual.stop(strInterrupted);
 		}
 	}
 	
 	@EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
 	public void onPlayerDeath(PlayerDeathEvent event) {
 		for (ActiveRitual ritual : activeRituals.values()) {
-			if (ritual.isChanneler(event.getEntity())) {
-				ritual.stop(strInterrupted);
-			}
+			if (!ritual.isChanneler(event.getEntity())) continue;
+			ritual.stop(strInterrupted);
 		}
 	}
 	
@@ -138,20 +133,15 @@ public class RitualSpell extends InstantSpell {
 			this.caster = caster;
 			this.channelers.put(caster, caster.getLocation().clone());
 			this.taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(MagicSpells.plugin, this, tickInterval, tickInterval);
-			if (showProgressOnExpBar) {
-				MagicSpells.getExpBarManager().lock(caster, this);
-			}
+			if (showProgressOnExpBar) MagicSpells.getExpBarManager().lock(caster, this);
 			playSpellEffects(EffectPosition.CASTER, caster);
 		}
 		
 		public void addChanneler(Player player) {
-			if (!channelers.containsKey(player)) {
-				channelers.put(player, player.getLocation().clone());
-				if (showProgressOnExpBar) {
-					MagicSpells.getExpBarManager().lock(player, this);
-				}
-				playSpellEffects(EffectPosition.CASTER, player);
-			}
+			if (channelers.containsKey(player)) return;
+			channelers.put(player, player.getLocation().clone());
+			if (showProgressOnExpBar) MagicSpells.getExpBarManager().lock(player, this);
+			playSpellEffects(EffectPosition.CASTER, player);
 		}
 		
 		public void removeChanneler(Player player) {

@@ -31,12 +31,10 @@ public class FatalDamageListener extends PassiveListener {
 			Spellbook spellbook = MagicSpells.getSpellbook(player);
 			for (PassiveSpell spell : spells) {
 				if (!isCancelStateOk(spell, event.isCancelled())) continue;
-				if (spellbook.hasSpell(spell)) {
-					boolean casted = spell.activate(player);
-					if (PassiveListener.cancelDefaultAction(spell, casted)) {
-						event.setCancelled(true);
-					}
-				}
+				if (!spellbook.hasSpell(spell)) continue;
+				boolean casted = spell.activate(player);
+				if (!PassiveListener.cancelDefaultAction(spell, casted)) continue;
+				event.setCancelled(true);
 			}
 		}
 	}

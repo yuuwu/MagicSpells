@@ -26,7 +26,6 @@ import com.nisovin.magicspells.util.Util_1_9;
 
 public class ParticleCloudSpell extends TargetedSpell implements TargetedLocationSpell, TargetedEntitySpell {
 
-	
 	private int color = 0xFF0000;
 	private int ticksDuration = 60;
 	private int durationOnUse = 0;
@@ -40,8 +39,6 @@ public class ParticleCloudSpell extends TargetedSpell implements TargetedLocatio
 	private boolean useGravity = false;
 	private boolean canTargetEntities = true;
 	private boolean canTargetLocation = true;
-	
-	
 	
 	public ParticleCloudSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -58,9 +55,7 @@ public class ParticleCloudSpell extends TargetedSpell implements TargetedLocatio
 		canTargetEntities = getConfigBoolean("can-target-entities", canTargetEntities);
 		canTargetLocation = getConfigBoolean("can-target-location", canTargetLocation);
 		particle = Util_1_9.getParticleFromName(particleName);
-		if (particle == null) {
-			MagicSpells.error("could not determine particle from '" + particleName + "'");
-		}
+		if (particle == null) MagicSpells.error("could not determine particle from '" + particleName + "'");
 		
 		List<String> potionEffectStrings = getConfigStringList("potion-effects", null);
 		if (potionEffectStrings == null) potionEffectStrings = new ArrayList<String>();
@@ -93,20 +88,14 @@ public class ParticleCloudSpell extends TargetedSpell implements TargetedLocatio
 			Location locToSpawn = null;
 			if (canTargetEntities) {
 				TargetInfo<LivingEntity> targetEntityInfo = getTargetedEntity(player, power);
-				if (targetEntityInfo.getTarget() != null) {
-					locToSpawn = targetEntityInfo.getTarget().getLocation();
-				}
+				if (targetEntityInfo.getTarget() != null) locToSpawn = targetEntityInfo.getTarget().getLocation();
 			}
 			if (canTargetLocation && locToSpawn == null) {
 				Block targetBlock = getTargetedBlock(player, power);
-				if (targetBlock != null) {
-					locToSpawn = targetBlock.getLocation();
-				}
+				if (targetBlock != null) locToSpawn = targetBlock.getLocation();
 			}
 			
-			if (locToSpawn == null) {
-				return noTarget(player);
-			}
+			if (locToSpawn == null) return noTarget(player);
 			
 			AreaEffectCloud cloud = spawnCloud(locToSpawn);
 			cloud.setSource(player);

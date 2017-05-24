@@ -80,12 +80,10 @@ public class RightClickEntityListener extends PassiveListener {
 			Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());
 			for (PassiveSpell spell : allTypesLocal) {
 				if (!isCancelStateOk(spell, event.isCancelled())) continue;
-				if (spellbook.hasSpell(spell)) {
-					boolean casted = spell.activate(event.getPlayer(), (LivingEntity)event.getRightClicked());
-					if (PassiveListener.cancelDefaultAction(spell, casted)) {
-						event.setCancelled(true);
-					}
-				}
+				if (!spellbook.hasSpell(spell)) continue;
+				boolean casted = spell.activate(event.getPlayer(), (LivingEntity)event.getRightClicked());
+				if (!PassiveListener.cancelDefaultAction(spell, casted)) continue;
+				event.setCancelled(true);
 			}
 		}
 		if (typeMapLocal.containsKey(event.getRightClicked().getType())) {
@@ -93,12 +91,10 @@ public class RightClickEntityListener extends PassiveListener {
 			List<PassiveSpell> list = typeMapLocal.get(event.getRightClicked().getType());
 			for (PassiveSpell spell : list) {
 				if (!isCancelStateOk(spell, event.isCancelled())) continue;
-				if (spellbook.hasSpell(spell)) {
-					boolean casted = spell.activate(event.getPlayer(), (LivingEntity)event.getRightClicked());
-					if (PassiveListener.cancelDefaultAction(spell, casted)) {
-						event.setCancelled(true);
-					}
-				}
+				if (!spellbook.hasSpell(spell)) continue;
+				boolean casted = spell.activate(event.getPlayer(), (LivingEntity)event.getRightClicked());
+				if (!PassiveListener.cancelDefaultAction(spell, casted)) continue;
+				event.setCancelled(true);
 			}
 		}
 	}
@@ -107,6 +103,4 @@ public class RightClickEntityListener extends PassiveListener {
 		return PassiveTrigger.RIGHT_CLICK_ENTITY.contains(trigger);
 	}
 
-	
-	
 }

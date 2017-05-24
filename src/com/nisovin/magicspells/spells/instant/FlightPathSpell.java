@@ -43,9 +43,7 @@ public class FlightPathSpell extends InstantSpell {
 		speed = getConfigFloat("speed", 1.5f);
 		mount = Util.getEntityType(getConfigString("mount", ""));
 		
-		if (flightHandler == null) {
-			flightHandler = new FlightHandler();
-		}
+		if (flightHandler == null) flightHandler = new FlightHandler();
 		
 	}
 	
@@ -81,23 +79,18 @@ public class FlightPathSpell extends InstantSpell {
 		public void addFlight(ActiveFlight flight) {
 			flights.put(flight.player.getName(), flight);
 			flight.start();
-			if (task < 0) {
-				task = MagicSpells.scheduleRepeatingTask(this, 0, 5);
-			}
+			if (task < 0) task = MagicSpells.scheduleRepeatingTask(this, 0, 5);
 		}
 		
 		void init() {
-			if (!inited) {
-				inited = true;
-				MagicSpells.registerEvents(this);
-			}
+			if (inited) return;
+			inited = true;
+			MagicSpells.registerEvents(this);
 		}
 
 		void cancel(Player player) {
 			ActiveFlight flight = flights.remove(player.getName());
-			if (flight != null) {
-				flight.cancel();
-			}
+			if (flight != null) flight.cancel();
 		}
 		
 		void turnOff() {
@@ -134,7 +127,7 @@ public class FlightPathSpell extends InstantSpell {
 					flight.fly();
 				}
 			}
-			if (flights.size() == 0) {
+			if (flights.isEmpty()) {
 				MagicSpells.cancelTask(task);
 				task = -1;
 			}
@@ -143,6 +136,7 @@ public class FlightPathSpell extends InstantSpell {
 	}
 	
 	class ActiveFlight {
+		
 		Player player;
 		EntityType mountType;
 		Entity mountActive;
@@ -173,9 +167,7 @@ public class FlightPathSpell extends InstantSpell {
 			} else {
 				mountActive = player.getWorld().spawnEntity(player.getLocation(), mountType);
 				entityToPush = mountActive;
-				if (player.getVehicle() != null) {
-					player.getVehicle().eject();
-				}
+				if (player.getVehicle() != null) player.getVehicle().eject();
 				mountActive.setPassenger(player);
 			}
 		}
@@ -257,12 +249,13 @@ public class FlightPathSpell extends InstantSpell {
 		
 	}
 	
-	enum FlightState {
+	static enum FlightState {
+		
 		TAKE_OFF,
 		CRUISING,
 		LANDING,
 		DONE
+		
 	}
 
-	
 }

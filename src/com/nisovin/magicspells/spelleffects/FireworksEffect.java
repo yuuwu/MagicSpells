@@ -19,7 +19,6 @@ import com.nisovin.magicspells.util.ConfigData;
  * <li>fade-colors</li>
  * </ul>
  */
-
 public class FireworksEffect extends SpellEffect {
 
 	@ConfigData(field="flicker", dataType="boolean", defaultValue="false")
@@ -44,15 +43,9 @@ public class FireworksEffect extends SpellEffect {
 	public void loadFromString(String string) {
 		if (string != null && !string.isEmpty()) {
 			String[] data = string.split(" ");
-			if (data.length >= 1 && BooleanUtils.isYes(data[0])) {
-				flicker = true;
-			}
-			if (data.length >= 2 && BooleanUtils.isYes(data[1])) {
-				trail = true;
-			}
-			if (data.length >= 3) {
-				type = Integer.parseInt(data[2]);
-			}
+			if (data.length >= 1 && BooleanUtils.isYes(data[0])) flicker = true;
+			if (data.length >= 2 && BooleanUtils.isYes(data[1])) trail = true;
+			if (data.length >= 3) type = Integer.parseInt(data[2]);
 			if (data.length >= 4) {
 				String[] c = data[3].split(",");
 				colors = new int[c.length];
@@ -67,9 +60,7 @@ public class FireworksEffect extends SpellEffect {
 					fadeColors[i] = Integer.parseInt(c[i], 16);
 				}
 			}
-			if (data.length >= 6) {
-				flightDuration = Integer.parseInt(data[5]);
-			}
+			if (data.length >= 6) flightDuration = Integer.parseInt(data[5]);
 		}
 	}
 

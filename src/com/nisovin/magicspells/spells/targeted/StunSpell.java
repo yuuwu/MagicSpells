@@ -22,6 +22,7 @@ import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
+
 public class StunSpell extends TargetedSpell implements TargetedEntitySpell {
 
 	int duration;
@@ -50,19 +51,16 @@ public class StunSpell extends TargetedSpell implements TargetedEntitySpell {
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			TargetInfo<LivingEntity> targetInfo = getTargetedEntity(player, power);
-			if (targetInfo == null) {
-				return noTarget(player);
+			if (targetInfo == null) return noTarget(player);
+			LivingEntity target = targetInfo.getTarget();
+			power = targetInfo.getPower();
+			if (target instanceof Player) {
+				stunPlayer(player, (Player)target, Math.round(duration * power));
 			} else {
-				LivingEntity target = targetInfo.getTarget();
-				power = targetInfo.getPower();
-				if (target instanceof Player) {
-					stunPlayer(player, (Player)target, Math.round(duration * power));
-				} else {
-					stunEntity(player, target, Math.round(duration * power));
-				}
-				sendMessages(player, target);
-				return PostCastAction.NO_MESSAGES;
+				stunEntity(player, target, Math.round(duration * power));
 			}
+			sendMessages(player, target);
+			return PostCastAction.NO_MESSAGES;
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}
@@ -134,50 +132,47 @@ public class StunSpell extends TargetedSpell implements TargetedEntitySpell {
 		public void onMove(PlayerMoveEvent event) {
 			String playerName = event.getPlayer().getName();
 			Long until = stunnedPlayersUntil.get(playerName);
-			if (until != null) {
-				if (until.longValue() > System.currentTimeMillis()) {
-					event.setTo(stunnedPlayersLocation.get(playerName));
-				} else {
-					removePlayer(playerName);
-				}
+			if (until == null) return;
+			
+			if (until.longValue() > System.currentTimeMillis()) {
+				event.setTo(stunnedPlayersLocation.get(playerName));
+			} else {
+				removePlayer(playerName);
 			}
 		}
 		
 		@EventHandler
 		public void onInteract(PlayerInteractEvent event) {
-			if (stunnedPlayersUntil.containsKey(event.getPlayer().getName())) {
-				event.setCancelled(true);
-			}
+			if (!stunnedPlayersUntil.containsKey(event.getPlayer().getName())) return;
+			event.setCancelled(true);
 		}
 		
 		@EventHandler
 		public void onQuit(PlayerQuitEvent event) {
 			String playerName = event.getPlayer().getName();
-			if (stunnedPlayersUntil.containsKey(playerName)) {
-				removePlayer(playerName);
-			}
+			if (!stunnedPlayersUntil.containsKey(playerName)) return;
+			removePlayer(playerName);
 		}
 		
 		@EventHandler
 		public void onDeath(PlayerDeathEvent event) {
 			String playerName = event.getEntity().getName();
-			if (stunnedPlayersUntil.containsKey(playerName)) {
-				removePlayer(playerName);
-			}
+			if (!stunnedPlayersUntil.containsKey(playerName)) return;
+			removePlayer(playerName);
 		}
 		
 		void removePlayer(String playerName) {
 			stunnedPlayersUntil.remove(playerName);
 			stunnedPlayersLocation.remove(playerName);
-			if (stunnedPlayersUntil.size() == 0) {
-				unregisterEvents(this);
-				listener = null;
-			}
+			if (!stunnedPlayersUntil.isEmpty()) return;
+			unregisterEvents(this);
+			listener = null;
 		}
 		
 	}
 	
 	class StunMonitor implements Runnable {
+		
 		@Override
 		public void run() {
 			Iterator<Map.Entry<LivingEntity, Long>> iter = stunnedEntitiesUntil.entrySet().iterator();
@@ -190,11 +185,12 @@ public class StunSpell extends TargetedSpell implements TargetedEntitySpell {
 					stunnedEntitiesLocation.remove(entry.getKey());
 				}
 			}
-			if (stunnedEntitiesUntil.size() == 0) {
+			if (stunnedEntitiesUntil.isEmpty()) {
 				MagicSpells.cancelTask(taskId);
 				taskId = -1;
 			}
 		}
+		
 	}
 
 }

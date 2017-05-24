@@ -20,16 +20,16 @@ public class SpellFilter {
 			List<String> allowedTags, List<String> disallowedTags) {
 		
 		//initialize the collections
-		if (allowedSpells != null && allowedSpells.size() > 0) {
+		if (allowedSpells != null && !allowedSpells.isEmpty()) {
 			this.allowedSpells = new HashSet<String>(allowedSpells);
 		}
-		if (blacklistedSpells != null && blacklistedSpells.size() > 0) {
+		if (blacklistedSpells != null && !blacklistedSpells.isEmpty()) {
 			this.blacklistedSpells = new HashSet<String>(blacklistedSpells);
 		}
-		if (allowedTags != null && allowedTags.size() > 0) {
+		if (allowedTags != null && !allowedTags.isEmpty()) {
 			this.allowedTags = new HashSet<String>(allowedTags);
 		}
-		if (disallowedTags != null && disallowedTags.size() > 0) {
+		if (disallowedTags != null && !disallowedTags.isEmpty()) {
 			this.disallowedTags = new HashSet<String>(disallowedTags);
 		}
 		

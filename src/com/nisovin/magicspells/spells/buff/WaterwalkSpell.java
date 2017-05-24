@@ -73,44 +73,38 @@ public class WaterwalkSpell extends BuffSpell {
 	public void turnOffBuff(Player player) {
 		if (waterwalking.remove(player.getName())) {
 			player.setFlying(false);
-			if (player.getGameMode() != GameMode.CREATIVE) {
-				player.setAllowFlight(false);
-			}
+			if (player.getGameMode() != GameMode.CREATIVE) player.setAllowFlight(false);
 		}
-		if (waterwalking.size() == 0) {
-			stopTicker();
-		}
+		if (waterwalking.isEmpty()) stopTicker();
 	}
 	
 	@Override
 	protected void turnOff() {
 		for (String playerName : waterwalking) {
 			Player player = PlayerNameUtils.getPlayerExact(playerName);
-			if (player != null && player.isValid()) {
-				player.setFlying(false);
-				if (player.getGameMode() != GameMode.CREATIVE) {
-					player.setAllowFlight(false);
-				}
-			}
+			if (player == null) continue;
+			if (!player.isValid()) continue;
+			
+			player.setFlying(false);
+			if (player.getGameMode() != GameMode.CREATIVE) player.setAllowFlight(false);
 		}
 		waterwalking.clear();
 		stopTicker();
 	}
 	
 	private void startTicker() {
-		if (ticker == null) {
-			ticker = new Ticker();
-		}
+		if (ticker != null) return;
+		ticker = new Ticker();
 	}
 	
 	private void stopTicker() {
-		if (ticker != null) {
-			ticker.stop();
-			ticker = null;
-		}
+		if (ticker == null) return;
+		ticker.stop();
+		ticker = null;
 	}
 	
 	private class Ticker implements Runnable {
+		
 		private int taskId = 0;
 		
 		private int count = 0;
@@ -127,35 +121,32 @@ public class WaterwalkSpell extends BuffSpell {
 			Block feet, underfeet;
 			for (String n : waterwalking) {
 				Player p = PlayerNameUtils.getPlayerExact(n);
-				if (p != null && p.isOnline() && p.isValid()) {
-					loc = p.getLocation();
-					feet = loc.getBlock();
-					underfeet = feet.getRelative(BlockFace.DOWN);
-					if (feet.getType() == Material.STATIONARY_WATER) {
-						loc.setY(Math.floor(loc.getY() + 1) + .1);
-						p.teleport(loc);
-					} else if (p.isFlying() && underfeet.getType() == Material.AIR) {
-						loc.setY(Math.floor(loc.getY() - 1) + .1);
-						p.teleport(loc);
+				if (p == null) continue;
+				if (!p.isOnline()) continue;
+				if (!p.isValid()) continue;
+				loc = p.getLocation();
+				feet = loc.getBlock();
+				underfeet = feet.getRelative(BlockFace.DOWN);
+				if (feet.getType() == Material.STATIONARY_WATER) {
+					loc.setY(Math.floor(loc.getY() + 1) + .1);
+					p.teleport(loc);
+				} else if (p.isFlying() && underfeet.getType() == Material.AIR) {
+					loc.setY(Math.floor(loc.getY() - 1) + .1);
+					p.teleport(loc);
+				}
+				feet = p.getLocation().getBlock();
+				underfeet = feet.getRelative(BlockFace.DOWN);
+				if (feet.getType() == Material.AIR && underfeet.getType() == Material.STATIONARY_WATER) {
+					if (!p.isFlying()) {
+						p.setAllowFlight(true);
+						p.setFlying(true);
+						p.setFlySpeed(speed);
 					}
-					feet = p.getLocation().getBlock();
-					underfeet = feet.getRelative(BlockFace.DOWN);
-					if (feet.getType() == Material.AIR && underfeet.getType() == Material.STATIONARY_WATER) {
-						if (!p.isFlying()) {
-							p.setAllowFlight(true);
-							p.setFlying(true);
-							p.setFlySpeed(speed);
-						}
-						if (count == 0) {
-							addUseAndChargeCost(p);
-						}
-					} else if (p.isFlying()) {
-						p.setFlying(false);
-						if (p.getGameMode() != GameMode.CREATIVE) {
-							p.setAllowFlight(false);
-						}
-						p.setFlySpeed(0.1F);
-					}
+					if (count == 0) addUseAndChargeCost(p);
+				} else if (p.isFlying()) {
+					p.setFlying(false);
+					if (p.getGameMode() != GameMode.CREATIVE) p.setAllowFlight(false);
+					p.setFlySpeed(0.1F);
 				}
 			}
 		}
@@ -163,6 +154,7 @@ public class WaterwalkSpell extends BuffSpell {
 		public void stop() {
 			Bukkit.getScheduler().cancelTask(taskId);
 		}
+		
 	}
 
 }

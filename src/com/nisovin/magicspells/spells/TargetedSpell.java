@@ -64,13 +64,9 @@ public abstract class TargetedSpell extends InstantSpell {
 	protected void sendMessages(Player caster, LivingEntity target) {
 		String targetName = getTargetName(target);
 		Player playerTarget = null;
-		if (target instanceof Player) {
-			playerTarget = (Player)target;
-		}
+		if (target instanceof Player) playerTarget = (Player)target;
 		sendMessage(prepareMessage(strCastSelf, caster, targetName, playerTarget), caster, MagicSpells.NULL_ARGS);
-		if (playerTarget != null) {
-			sendMessage(prepareMessage(strCastTarget, caster, targetName, playerTarget), playerTarget, MagicSpells.NULL_ARGS);
-		}
+		if (playerTarget != null) sendMessage(prepareMessage(strCastTarget, caster, targetName, playerTarget), playerTarget, MagicSpells.NULL_ARGS);
 		sendMessageNear(caster, playerTarget, prepareMessage(strCastOthers, caster, targetName, playerTarget), broadcastRange, MagicSpells.NULL_ARGS);
 	}
 	
@@ -105,16 +101,10 @@ public abstract class TargetedSpell extends InstantSpell {
 	static private Pattern chatVarTargetMatchPattern = Pattern.compile("%targetvar:[A-Za-z0-9_]+(:[0-9]+)?%", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 	
 	protected String getTargetName(LivingEntity target) {
-		if (target instanceof Player) {
-			return ((Player)target).getDisplayName();
-		} else {
-			String name = MagicSpells.getEntityNames().get(target.getType());
-			if (name != null) {
-				return name;
-			} else {
-				return "unknown";
-			}
-		}
+		if (target instanceof Player) return ((Player)target).getDisplayName();
+		String name = MagicSpells.getEntityNames().get(target.getType());
+		if (name != null) return name;
+		return "unknown";
 	}
 	
 	/**
@@ -125,25 +115,20 @@ public abstract class TargetedSpell extends InstantSpell {
 	 * @return true if the distance is less than the range, false otherwise
 	 */
 	protected boolean inRange(Location loc1, Location loc2, int range) {
-		return loc1.distanceSquared(loc2) < range*range;
+		return loc1.distanceSquared(loc2) < range * range;
 	}
 	
 	/**
 	 * Plays the fizzle sound if it is enabled for this spell.
 	 */
 	protected void fizzle(Player player) {
-		if (playFizzleSound) {
-			player.playEffect(player.getLocation(), Effect.EXTINGUISH, null);
-		}
+		if (playFizzleSound) player.playEffect(player.getLocation(), Effect.EXTINGUISH, null);
 	}
 	
 	@Override
 	protected TargetInfo<LivingEntity> getTargetedEntity(Player player, float power, boolean forceTargetPlayers, ValidTargetChecker checker) {
-		if (targetSelf) {
-			return new TargetInfo<LivingEntity>(player, power);
-		} else {
-			return super.getTargetedEntity(player, power, forceTargetPlayers, checker);
-		}
+		if (targetSelf) return new TargetInfo<LivingEntity>(player, power);
+		return super.getTargetedEntity(player, power, forceTargetPlayers, checker);
 	}
 	
 	/**
@@ -166,9 +151,7 @@ public abstract class TargetedSpell extends InstantSpell {
 	protected PostCastAction noTarget(Player player, String message) {
 		fizzle(player);
 		sendMessage(message, player, MagicSpells.NULL_ARGS);
-		if (spellOnFail != null) {
-			spellOnFail.cast(player, 1.0F);
-		}
+		if (spellOnFail != null) spellOnFail.cast(player, 1.0F);
 		return alwaysActivate ? PostCastAction.NO_MESSAGES : PostCastAction.ALREADY_HANDLED;		
 	}
 	

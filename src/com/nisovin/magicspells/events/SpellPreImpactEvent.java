@@ -85,4 +85,5 @@ public class SpellPreImpactEvent extends SpellEvent implements Cancellable {
 		String payloadSpellLabel = "Delivery Spell: " + ((deliverySpell == null)? "null": deliverySpell.toString());
 		return Arrays.deepToString(new String[]{casterLabel, targetLabel, spellLabel, payloadSpellLabel});
 	}
+	
 }

@@ -87,13 +87,11 @@ public final class TargetedMultiSpell extends TargetedSpell implements TargetedE
 			// check cooldowns
 			if (checkIndividualCooldowns) {
 				for (Action action : actions) {
-					if (action.isSpell()) {
-						if (action.getSpell().getSpell().onCooldown(player)) {
-							// a spell is on cooldown
-							sendMessage(strOnCooldown, player, args);
-							return PostCastAction.ALREADY_HANDLED;
-						}
-					}
+					if (!action.isSpell()) continue;
+					if (!action.getSpell().getSpell().onCooldown(player)) continue;
+					// a spell is on cooldown
+					sendMessage(strOnCooldown, player, args);
+					return PostCastAction.ALREADY_HANDLED;
 				}
 			}
 			
@@ -112,26 +110,18 @@ public final class TargetedMultiSpell extends TargetedSpell implements TargetedE
 				Block b = null;
 				try {
 					b = getTargetedBlock(player, power);
-					if (b != null && b.getType() != Material.AIR) {
-						locTarget = b.getLocation();
-					}
+					if (b != null && b.getType() != Material.AIR) locTarget = b.getLocation();
 				} catch (IllegalStateException e) {
 					DebugHandler.debugIllegalState(e);
 					b = null;
 				}
 			}
-			if (locTarget == null && entTarget == null) {
-				return noTarget(player);
-			}
-			if (locTarget != null) {
-				locTarget.setY(locTarget.getY() + yOffset);
-			}
+			if (locTarget == null && entTarget == null) return noTarget(player);
+			if (locTarget != null) locTarget.setY(locTarget.getY() + yOffset);
 			
 			boolean somethingWasDone = runSpells(player, entTarget, locTarget, power);
 			
-			if (!somethingWasDone) {
-				return noTarget(player);
-			}
+			if (!somethingWasDone) return noTarget(player);
 			
 			if (entTarget != null) {
 				sendMessages(player, entTarget);
@@ -178,11 +168,8 @@ public final class TargetedMultiSpell extends TargetedSpell implements TargetedE
 							somethingWasDone = true;
 						} else {
 							// spell failed - exit loop
-							if (stopOnFail) {
-								break;
-							} else {
-								continue;
-							}
+							if (stopOnFail) break;
+							continue;
 						}
 					} else {
 						DelayedSpell ds = new DelayedSpell(spell, player, entTarget, locTarget, power, delayedSpells);
@@ -235,6 +222,7 @@ public final class TargetedMultiSpell extends TargetedSpell implements TargetedE
 	}
 	
 	private class Action {
+		
 		private Subspell spell;
 		private int delay;
 		
@@ -263,9 +251,11 @@ public final class TargetedMultiSpell extends TargetedSpell implements TargetedE
 		public int getDelay() {
 			return delay;
 		}
+		
 	}
 	
-	private class DelayedSpell implements Runnable {		
+	private class DelayedSpell implements Runnable {	
+		
 		private Subspell spell;
 		private Player player;
 		private LivingEntity entTarget;
@@ -292,9 +282,8 @@ public final class TargetedMultiSpell extends TargetedSpell implements TargetedE
 		
 		public void cancelAll() {
 			for (DelayedSpell ds : delayedSpells) {
-				if (ds != this) {
-					ds.cancel();
-				}
+				if (ds == this) continue;
+				ds.cancel();
 			}
 			delayedSpells.clear();
 			cancel();
@@ -306,14 +295,14 @@ public final class TargetedMultiSpell extends TargetedSpell implements TargetedE
 				if (player == null || player.isValid()) {
 					boolean ok = castTargetedSpell(spell, player, entTarget, locTarget, power);
 					delayedSpells.remove(this);
-					if (!ok && stopOnFail) {
-						cancelAll();
-					}
+					if (!ok && stopOnFail) cancelAll();
 				} else {
 					cancelAll();
 				}
 			}
 			delayedSpells = null;
 		}
+		
 	}
+	
 }

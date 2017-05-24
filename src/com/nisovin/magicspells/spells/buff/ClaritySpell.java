@@ -39,17 +39,22 @@ public class ClaritySpell extends BuffSpell {
 	
 	@EventHandler(ignoreCancelled = true)
 	public void onSpellCast(SpellCastEvent event) {
-		if (buffed.containsKey(event.getCaster().getName()) && filter.check(event.getSpell())) {
-			float power = buffed.get(event.getCaster().getName());
-			float mod = multiplier;
-			if (multiplier < 1) {
-				mod *= (1/power);
-			} else if (multiplier > 1) {
-				mod *= power;
-			}
-			event.setReagents(event.getReagents().multiply(mod));
-			addUseAndChargeCost(event.getCaster());
+		Player caster = event.getCaster();
+		String casterName = caster.getName();
+		if (!buffed.containsKey(casterName)) return;
+		if (!filter.check(event.getSpell())) return;
+		
+		float power = buffed.get(casterName);
+		float mod = multiplier;
+		
+		if (multiplier < 1) {
+			mod *= (1/power);
+		} else if (multiplier > 1) {
+			mod *= power;
 		}
+		
+		event.setReagents(event.getReagents().multiply(mod));
+		addUseAndChargeCost(caster);
 	}
 	
 	@Override

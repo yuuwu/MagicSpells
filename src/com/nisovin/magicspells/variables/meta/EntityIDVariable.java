@@ -10,9 +10,7 @@ public class EntityIDVariable extends MetaVariable {
 	@Override
 	public double getValue(String player) {
 		Player p = PlayerNameUtils.getPlayerExact(player);
-		if (p != null) {
-			return p.getEntityId();
-		}
+		if (p != null) return p.getEntityId();
 		return 0;
 	}
 

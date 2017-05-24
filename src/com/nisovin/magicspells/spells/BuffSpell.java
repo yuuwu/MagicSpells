@@ -3,6 +3,7 @@ package com.nisovin.magicspells.spells;
 import java.util.HashMap;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -23,11 +24,11 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spelleffects.SpellEffect;
+import com.nisovin.magicspells.util.LocationUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
 import com.nisovin.magicspells.util.SpellReagents;
 import com.nisovin.magicspells.util.TargetInfo;
-
 
 /**
  * BuffSpell<br>
@@ -287,34 +288,20 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 		cancelOnChangeWorld = getConfigBoolean("cancel-on-change-world", false);
 		cancelOnSpellCast = getConfigBoolean("cancel-on-spell-cast", false);
 		cancelOnLogout = getConfigBoolean("cancel-on-logout", false);
-		if (cancelOnGiveDamage || cancelOnTakeDamage) {
-			registerEvents(new DamageListener());
-		}
-		if (cancelOnDeath) {
-			registerEvents(new DeathListener());
-		}
-		if (cancelOnTeleport) {
-			registerEvents(new TeleportListener());
-		}
-		if (cancelOnChangeWorld) {
-			registerEvents(new ChangeWorldListener());
-		}
-		if (cancelOnSpellCast) {
-			registerEvents(new SpellCastListener());
-		}
-		if (cancelOnLogout) {
-			registerEvents(new QuitListener());
-		}
+		if (cancelOnGiveDamage || cancelOnTakeDamage) registerEvents(new DamageListener());
+		if (cancelOnDeath) registerEvents(new DeathListener());
+		if (cancelOnTeleport) registerEvents(new TeleportListener());
+		if (cancelOnChangeWorld) registerEvents(new ChangeWorldListener());
+		if (cancelOnSpellCast) registerEvents(new SpellCastListener());
+		if (cancelOnLogout) registerEvents(new QuitListener());
 		
 		strFade = getConfigString("str-fade", "");
 		
 		if (numUses > 0 || (reagents != null && useCostInterval > 0)) {
 			useCounter = new HashMap<String,Integer>();
 		}
-		if (duration > 0) {
-			durationEndTime = new HashMap<String,Long>();
-		}
-				
+		if (duration > 0) durationEndTime = new HashMap<String,Long>();
+		
 		castWithItem = getConfigBoolean("can-cast-with-item", true);
 		castByCommand = getConfigBoolean("can-cast-by-command", true);
 	}
@@ -350,20 +337,14 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 
 	@Override
 	public boolean castAtEntity(Player caster, LivingEntity target, float power) {
-		if (target instanceof Player) {
-			return activate(caster, (Player)target, power, MagicSpells.NULL_ARGS, true) == PostCastAction.HANDLE_NORMALLY;
-		} else {
-			return false;
-		}
+		if (!(target instanceof Player)) return false;
+		return activate(caster, (Player)target, power, MagicSpells.NULL_ARGS, true) == PostCastAction.HANDLE_NORMALLY;
 	}
 	
 	@Override
 	public boolean castAtEntity(LivingEntity target, float power) {
-		if (target instanceof Player) {
-			return activate(null, (Player)target, power, MagicSpells.NULL_ARGS, true) == PostCastAction.HANDLE_NORMALLY;
-		} else {
-			return false;
-		}
+		if (!(target instanceof Player)) return false;
+		return activate(null, (Player)target, power, MagicSpells.NULL_ARGS, true) == PostCastAction.HANDLE_NORMALLY;
 	}
 	
 	private PostCastAction activate(Player caster, Player target, float power, String[] args, boolean normal) {
@@ -451,18 +432,11 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 	 * @return true if the spell has expired, false otherwise
 	 */
 	protected boolean isExpired(Player player) {
-		if (duration <= 0 || durationEndTime == null) {
-			return false;
-		} else {
-			Long endTime = durationEndTime.get(player.getName());
-			if (endTime == null) {
-				return false;
-			} else if (endTime > System.currentTimeMillis()) {
-				return false;
-			} else {
-				return true;
-			}			
-		}
+		if (duration <= 0 || durationEndTime == null) return false;
+		Long endTime = durationEndTime.get(player.getName());
+		if (endTime == null) return false;
+		if (endTime > System.currentTimeMillis()) return false;
+		return true;
 	}
 	
 	public boolean isActiveAndNotExpired(Player player) {
@@ -485,7 +459,8 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 	 */
 	protected int addUse(Player player) {
 		if (numUses > 0 || (reagents != null && useCostInterval > 0)) {
-			Integer uses = useCounter.get(player.getName());
+			String playerName = player.getName();
+			Integer uses = useCounter.get(playerName);
 			if (uses == null) {
 				uses = 1;
 			} else {
@@ -495,12 +470,11 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 			if (numUses > 0 && uses >= numUses) {
 				turnOff(player);
 			} else {
-				useCounter.put(player.getName(), uses);
+				useCounter.put(playerName, uses);
 			}
 			return uses;
-		} else {
-			return 0;
 		}
+		return 0;
 	}
 	
 	/**
@@ -509,16 +483,21 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 	 * @return true if the reagents were removed, or if the use cost is disabled, false otherwise
 	 */
 	protected boolean chargeUseCost(Player player) {
-		if (reagents != null && useCostInterval > 0 && useCounter != null && useCounter.containsKey(player.getName())) {
-			int uses = useCounter.get(player.getName());
-			if (uses % useCostInterval == 0) {
-				if (hasReagents(player, reagents)) {
-					removeReagents(player, reagents);
-					return true;
-				} else {
-					turnOff(player);
-					return false;
-				}
+		if (reagents == null) return true;
+		if (useCostInterval <= 0) return true;
+		if (useCounter == null) return true;
+		
+		String playerName = player.getName();
+		Integer uses = useCounter.get(playerName);
+		if (uses == null) return true;
+		
+		if (uses % useCostInterval == 0) {
+			if (hasReagents(player, reagents)) {
+				removeReagents(player, reagents);
+				return true;
+			} else {
+				turnOff(player);
+				return false;
 			}
 		}
 		return true;
@@ -542,8 +521,9 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 	 */
 	public final void turnOff(Player player) {
 		if (isActive(player)) {
-			if (useCounter != null) useCounter.remove(player.getName());
-			if (durationEndTime != null) durationEndTime.remove(player.getName());
+			String playerName = player.getName();
+			if (useCounter != null) useCounter.remove(playerName);
+			if (durationEndTime != null) durationEndTime.remove(playerName);
 			BuffManager buffman = MagicSpells.getBuffManager();
 			if (buffman != null) buffman.removeBuff(player, this);
 			sendMessage(strFade, player, null);
@@ -575,69 +555,84 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 	}
 	
 	public class DamageListener implements Listener {
+		
 		@EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
 		public void onPlayerDamage(EntityDamageEvent event) {
-			if (cancelOnTakeDamage && event.getEntity() instanceof Player && isActive((Player)event.getEntity())) {
-				turnOff((Player)event.getEntity());
+			Entity eventEntity = event.getEntity();
+			if (cancelOnTakeDamage && eventEntity instanceof Player && isActive((Player)eventEntity)) {
+				turnOff((Player)eventEntity);
 			} else if (cancelOnGiveDamage && event instanceof EntityDamageByEntityEvent) {
 				EntityDamageByEntityEvent evt = (EntityDamageByEntityEvent)event;
-				if (evt.getDamager() instanceof Player && isActive((Player)evt.getDamager())) {
-					turnOff((Player)evt.getDamager());
-				} else if (evt.getDamager() instanceof Projectile && ((Projectile)evt.getDamager()).getShooter() instanceof LivingEntity) {
-					LivingEntity shooter = (LivingEntity)((Projectile)evt.getDamager()).getShooter();
-					if (shooter instanceof Player && isActive((Player)shooter)) {
-						turnOff((Player)shooter);
-					}
+				Entity evtDamager = evt.getDamager();
+				if (evtDamager instanceof Player && isActive((Player)evtDamager)) {
+					turnOff((Player)evtDamager);
+				} else if (evtDamager instanceof Projectile && ((Projectile)evtDamager).getShooter() instanceof LivingEntity) {
+					LivingEntity shooter = (LivingEntity)((Projectile)evtDamager).getShooter();
+					if (shooter instanceof Player && isActive((Player)shooter)) turnOff((Player)shooter);
 				}
 			}
 		}
+		
 	}
 	
 	public class DeathListener implements Listener {
+		
 		@EventHandler
 		public void onPlayerDeath(PlayerDeathEvent event) {
-			if (isActive(event.getEntity())) {
-				turnOff(event.getEntity());
-			}
+			Player player = event.getEntity();
+			if (!isActive(player)) return;
+			turnOff(player);
 		}
+		
 	}
 	
 	public class TeleportListener implements Listener {
+		
 		@EventHandler(priority=EventPriority.LOWEST)
 		public void onTeleport(PlayerTeleportEvent event) {
-			if (isActive(event.getPlayer())) {
-				if (!event.getFrom().getWorld().getName().equals(event.getTo().getWorld().getName()) || event.getFrom().toVector().distanceSquared(event.getTo().toVector()) > 25) {
-					turnOff(event.getPlayer());
+			Player player = event.getPlayer();
+			if (isActive(player)) {
+				Location locationFrom = event.getFrom();
+				Location locationTo = event.getTo();
+				if (!LocationUtil.isSameWorld(locationFrom, locationTo) || locationFrom.toVector().distanceSquared(locationTo.toVector()) > 25) {
+					turnOff(player);
 				}
 			}
 		}
+		
 	}
 	
 	public class ChangeWorldListener implements Listener {
+		
 		@EventHandler(priority=EventPriority.LOWEST)
 		public void onChangeWorld(PlayerChangedWorldEvent event) {
 			if (isActive(event.getPlayer())) {
 				turnOff(event.getPlayer());
 			}
 		}
+		
 	}
 	
 	public class SpellCastListener implements Listener {
+		
 		@EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
 		public void onChangeWorld(SpellCastEvent event) {
 			if (thisSpell != event.getSpell() && event.getSpellCastState() == SpellCastState.NORMAL && isActive(event.getCaster())) {
 				turnOff(event.getCaster());
 			}
 		}
+		
 	}
 
 	public class QuitListener implements Listener {
+		
 		@EventHandler(priority=EventPriority.MONITOR)
 		public void onPlayerQuit(PlayerQuitEvent event) {
 			if (isActive(event.getPlayer())) {
 				turnOff(event.getPlayer());
 			}
 		}
+		
 	}
 	
 }

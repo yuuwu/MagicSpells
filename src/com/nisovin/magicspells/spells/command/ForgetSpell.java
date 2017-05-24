@@ -3,7 +3,6 @@ package com.nisovin.magicspells.spells.command;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -13,6 +12,7 @@ import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.events.SpellForgetEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.CommandSpell;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
 import com.nisovin.magicspells.util.Util;
@@ -165,7 +165,7 @@ public class ForgetSpell extends CommandSpell {
 						sender.sendMessage(strDoesntKnow);
 					} else {
 						SpellForgetEvent forgetEvent = new SpellForgetEvent(spell, target);
-						Bukkit.getPluginManager().callEvent(forgetEvent);
+						EventUtil.call(forgetEvent);
 						if (!forgetEvent.isCancelled()) {
 							if (!all) {
 								targetSpellbook.removeSpell(spell);
@@ -194,19 +194,16 @@ public class ForgetSpell extends CommandSpell {
 			List<String> options = new ArrayList<String>();
 			List<String> players = tabCompletePlayerName(sender, args[0]);
 			List<String> spells = tabCompleteSpellName(sender, args[0]);
-			if (players != null) {
-				options.addAll(players);
-			}
-			if (spells != null) {
-				options.addAll(spells);
-			}
-			if (options.size() > 0) {
-				return options;
-			}
-		} else if (args.length == 2) {
+			if (players != null) options.addAll(players);
+			if (spells != null) options.addAll(spells);
+			if (!options.isEmpty()) return options;
+		}
+		
+		if (args.length == 2) {
 			// matching spell name
 			return tabCompleteSpellName(sender, args[1]);
 		}
+		
 		return null;
 	}
 

@@ -3,7 +3,6 @@ package com.nisovin.magicspells.spells.targeted;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -16,8 +15,10 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedEntityFromLocationSpell;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
+
 public class ChainSpell extends TargetedSpell implements TargetedEntitySpell, TargetedEntityFromLocationSpell {
 
 	String spellNameToCast;
@@ -57,9 +58,7 @@ public class ChainSpell extends TargetedSpell implements TargetedEntitySpell, Ta
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			TargetInfo<LivingEntity> target = getTargetedEntity(player, power, checker);
-			if (target == null) {
-				return noTarget(player);
-			}
+			if (target == null) return noTarget(player);
 			chain(player, player.getLocation(), target.getTarget(), target.getPower());
 			sendMessages(player, target.getTarget());
 			return PostCastAction.NO_MESSAGES;
@@ -79,31 +78,22 @@ public class ChainSpell extends TargetedSpell implements TargetedEntitySpell, Ta
 		while (targets.size() < bounces && attempts++ < bounces * 2) {
 			List<Entity> entities = current.getNearbyEntities(bounceRange, bounceRange, bounceRange);
 			for (Entity e : entities) {
-				if (!(e instanceof LivingEntity)) {
-					continue;
-				}
-				if (targets.contains(e)) {
-					continue;
-				}
+				if (!(e instanceof LivingEntity)) continue;
+				if (targets.contains(e)) continue;
+				
 				if (e instanceof Player) {
-					if (!targetPlayers) {
-						continue;
-					}
+					if (!targetPlayers) continue;
 				} else if (!targetNonPlayers) {
 					continue;
 				}
-				if (checker != null && !checker.isValidTarget((LivingEntity)e)) {
-					continue;
-				}
+				
+				if (checker != null && !checker.isValidTarget((LivingEntity)e)) continue;
 				float thisPower = power;
 				if (player != null) {
 					SpellTargetEvent event = new SpellTargetEvent(this, player, (LivingEntity)e, thisPower);
-					Bukkit.getPluginManager().callEvent(event);
-					if (event.isCancelled()) {
-						continue;
-					} else {
-						thisPower = event.getPower();
-					}
+					EventUtil.call(event);
+					if (event.isCancelled()) continue;
+					thisPower = event.getPower();
 				}
 				
 				targets.add((LivingEntity)e);
@@ -125,7 +115,7 @@ public class ChainSpell extends TargetedSpell implements TargetedEntitySpell, Ta
 				if (i == 0) {
 					from = start;
 				} else {
-					from = targets.get(i-1).getLocation();
+					from = targets.get(i - 1).getLocation();
 				}
 				castSpellAt(player, from, targets.get(i), targetPowers.get(i));
 				if (i > 0) {
@@ -141,13 +131,9 @@ public class ChainSpell extends TargetedSpell implements TargetedEntitySpell, Ta
 	}
 	
 	boolean castSpellAt(Player caster, Location from, LivingEntity target, float power) {
-		if (spellToCast.isTargetedEntityFromLocationSpell() && from != null) {
-			return spellToCast.castAtEntityFromLocation(caster, from, target, power);
-		} else if (spellToCast.isTargetedEntitySpell()) {
-			return spellToCast.castAtEntity(caster, target, power);
-		} else if (spellToCast.isTargetedLocationSpell()) {
-			return spellToCast.castAtLocation(caster, target.getLocation(), power);
-		}
+		if (spellToCast.isTargetedEntityFromLocationSpell() && from != null) return spellToCast.castAtEntityFromLocation(caster, from, target, power);
+		if (spellToCast.isTargetedEntitySpell()) return spellToCast.castAtEntity(caster, target, power);
+		if (spellToCast.isTargetedLocationSpell()) return spellToCast.castAtLocation(caster, target.getLocation(), power);
 		return true;
 	}
 
@@ -176,6 +162,7 @@ public class ChainSpell extends TargetedSpell implements TargetedEntitySpell, Ta
 	}
 
 	class ChainBouncer implements Runnable {
+		
 		Player caster;
 		Location start;
 		List<LivingEntity> targets;
@@ -211,6 +198,7 @@ public class ChainSpell extends TargetedSpell implements TargetedEntitySpell, Ta
 				MagicSpells.cancelTask(taskId);
 			}
 		}
+		
 	}
 	
 }

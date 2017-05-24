@@ -43,10 +43,8 @@ public class MinionSpell extends BuffSpell {
 		
 		// formatted as <entity type> <chance>
 		List<String> c = getConfigStringList("mob-chances", null);
-		if (c == null) {
-			c = new ArrayList<String>();
-		}
-		if (c.size() == 0) {
+		if (c == null) c = new ArrayList<String>();
+		if (c.isEmpty()) {
 			c.add("Zombie 100");
 		}
 		creatureTypes = new EntityType[c.size()];
@@ -90,7 +88,7 @@ public class MinionSpell extends BuffSpell {
 			// get spawn location
 			Location loc = null;
 			loc = player.getLocation();
-			loc.setX(loc.getX()-1);
+			loc.setX(loc.getX() - 1);
 			
 			// spawn creature
 			LivingEntity minion = (LivingEntity)player.getWorld().spawnEntity(loc, creatureType);
@@ -112,7 +110,7 @@ public class MinionSpell extends BuffSpell {
 	
 	@EventHandler
 	public void onEntityTarget(EntityTargetEvent event) {
-		if (!event.isCancelled() && minions.size() > 0 ) {	
+		if (!event.isCancelled() && !minions.isEmpty()) {	
 			if (event.getTarget() != null && event.getTarget() instanceof Player) {
 				// a monster is trying to target a player
 				Player player = (Player)event.getTarget();
@@ -203,9 +201,7 @@ public class MinionSpell extends BuffSpell {
 	@Override
 	public void turnOffBuff(Player player) {
 		LivingEntity minion = minions.remove(player.getName());
-		if (minion != null && !minion.isDead()) {
-			minion.setHealth(0);
-		}
+		if (minion != null && !minion.isDead()) minion.setHealth(0);
 		targets.remove(player.getName());
 	}
 	

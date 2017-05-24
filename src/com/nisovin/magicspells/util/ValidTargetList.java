@@ -72,7 +72,7 @@ public class ValidTargetList {
 	}
 	
 	public void enforce(TargetingElement[] elements, boolean value) {
-		for (TargetingElement e: elements) {
+		for (TargetingElement e : elements) {
 			enforce(e, value);
 		}
 	}
@@ -119,49 +119,30 @@ public class ValidTargetList {
 	}
 	
 	public boolean canTarget(Player caster, Entity target, boolean targetPlayers) {
-		if (!(target instanceof LivingEntity) && !targetNonLivingEntities) {
-			return false;
-		} else if (target instanceof Player && ((Player)target).getGameMode() == GameMode.CREATIVE) {
-			return false;
-		} else if (targetSelf && target.equals(caster)) {
-			return true;
-		} else if (!targetSelf && target.equals(caster)) {
-			return false;
-		} else if (!targetInvisibles && target instanceof Player && !caster.canSee((Player)target)) {
-			return false;
-		} else if (targetPlayers && target instanceof Player) {
-			return true;
-		} else if (targetNonPlayers && !(target instanceof Player)) {
-			return true;
-		} else if (targetMonsters && target instanceof Monster) {
-			return true;
-		} else if (targetAnimals && target instanceof Animals) {
-			return true;
-		} else if (types.contains(target.getType())) {
-			return true;
-		} else {
-			return false;
-		}
+		if (!(target instanceof LivingEntity) && !targetNonLivingEntities) return false;
+		boolean targetIsPlayer = target instanceof Player;
+		if (targetIsPlayer && ((Player)target).getGameMode() == GameMode.CREATIVE) return false;
+		if (targetSelf && target.equals(caster)) return true;
+		if (!targetSelf && target.equals(caster)) return false;
+		if (!targetInvisibles && targetIsPlayer && !caster.canSee((Player)target)) return false;
+		if (targetPlayers && targetIsPlayer) return true;
+		if (targetNonPlayers && !targetIsPlayer) return true;
+		if (targetMonsters && target instanceof Monster) return true;
+		if (targetAnimals && target instanceof Animals) return true;
+		if (types.contains(target.getType())) return true;
+		return false;
 	}
 	
 	public boolean canTarget(Entity target) {
-		if (!(target instanceof LivingEntity) && !targetNonLivingEntities) {
-			return false;
-		} else if (target instanceof Player && ((Player)target).getGameMode() == GameMode.CREATIVE) {
-			return false;
-		} else if (targetPlayers && target instanceof Player) {
-			return true;
-		} else if (targetNonPlayers && !(target instanceof Player)) {
-			return true;
-		} else if (targetMonsters && target instanceof Monster) {
-			return true;
-		} else if (targetAnimals && target instanceof Animals) {
-			return true;
-		} else if (types.contains(target.getType())) {
-			return true;
-		} else {
-			return false;
-		}
+		if (!(target instanceof LivingEntity) && !targetNonLivingEntities) return false;
+		boolean targetIsPlayer = target instanceof Player;
+		if (targetIsPlayer && ((Player)target).getGameMode() == GameMode.CREATIVE) return false;
+		if (targetPlayers && targetIsPlayer) return true;
+		if (targetNonPlayers && !targetIsPlayer) return true;
+		if (targetMonsters && target instanceof Monster) return true;
+		if (targetAnimals && target instanceof Animals) return true;
+		if (types.contains(target.getType())) return true;
+		return false;
 	}
 	
 	public List<LivingEntity> filterTargetListCastingAsLivingEntities(Player caster, List<Entity> targets) {

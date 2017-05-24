@@ -7,4 +7,5 @@ import java.lang.annotation.RetentionPolicy;
 public @interface SpellTypesAllowed {
 
 	SpellTypes[] value() default {SpellTypes.ALL};
+	
 }

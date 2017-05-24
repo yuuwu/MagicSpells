@@ -10,6 +10,7 @@ import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
+
 public class SwitchSpell extends TargetedSpell implements TargetedEntitySpell {
 
 	private int switchBack;
@@ -25,9 +26,7 @@ public class SwitchSpell extends TargetedSpell implements TargetedEntitySpell {
 		if (state == SpellCastState.NORMAL) {
 			// get target
 			TargetInfo<LivingEntity> target = getTargetedEntity(player, power);
-			if (target == null) {
-				return noTarget(player);
-			}
+			if (target == null) return noTarget(player);
 			
 			// teleport
 			playSpellEffects(player, target.getTarget());

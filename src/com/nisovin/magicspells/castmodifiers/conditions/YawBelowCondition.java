@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.castmodifiers.Condition;
 
-public class YawBelowCondition extends Condition{
+public class YawBelowCondition extends Condition {
 	
 	float yaw;
 	
@@ -34,6 +34,5 @@ public class YawBelowCondition extends Condition{
 	public boolean check(Player player, Location location) {
 		return false;
 	}
-	
 
 }

@@ -18,7 +18,9 @@ import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
+
 /*
  * The special position for effects is implemented here to run on each nova block placed.
  */
@@ -46,17 +48,14 @@ public class FirenovaSpell extends InstantSpell implements TargetedLocationSpell
 		expandRate = getConfigInt("expanding-radius-change", expandRate);
 		if (expandRate < 1) expandRate = 1;
 		
-		if (mat.getMaterial() == Material.FIRE) {
-			fireImmunity = new HashSet<Player>();
-		}
+		// FIXME change this to map materials to immunities instead of only with the fire block
+		if (mat.getMaterial() == Material.FIRE) fireImmunity = new HashSet<Player>();
 	}
 
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
-			if (fireImmunity != null) {
-				fireImmunity.add(player);
-			}
+			if (fireImmunity != null) fireImmunity.add(player);
 			new FirenovaAnimation(player);
 			playSpellEffects(EffectPosition.CASTER, player);
 		}
@@ -77,7 +76,9 @@ public class FirenovaSpell extends InstantSpell implements TargetedLocationSpell
 	@EventHandler
 	public void onEntityDamage(EntityDamageEvent event) {
 		if (event.isCancelled() || fireImmunity == null) return;
-		if (event.getEntity() instanceof Player && (event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK) && fireImmunity.size() > 0) {
+		if (!(event.getEntity() instanceof Player)) return;
+		if (fireImmunity.isEmpty()) return;
+		if ((event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK)) {
 			Player player = (Player)event.getEntity();
 			if (fireImmunity.contains(player)) {
 				// caster is taking damage, cancel it
@@ -87,10 +88,10 @@ public class FirenovaSpell extends InstantSpell implements TargetedLocationSpell
 				// check if nearby players are taking damage
 				Location loc = player.getLocation();
 				for (Player p : fireImmunity) {
-					if (Math.abs(p.getLocation().getX() - loc.getX()) < range+2 && Math.abs(p.getLocation().getZ() - loc.getZ()) < range+2 && Math.abs(p.getLocation().getY() - loc.getY()) < range) {
+					if (Math.abs(p.getLocation().getX() - loc.getX()) < range + 2 && Math.abs(p.getLocation().getZ() - loc.getZ()) < range + 2 && Math.abs(p.getLocation().getY() - loc.getY()) < range) {
 						// nearby, check plugins for pvp
 						MagicSpellsEntityDamageByEntityEvent evt = new MagicSpellsEntityDamageByEntityEvent(p, player, DamageCause.ENTITY_ATTACK, event.getDamage());
-						Bukkit.getServer().getPluginManager().callEvent(evt);
+						EventUtil.call(evt);
 						if (evt.isCancelled()) {
 							event.setCancelled(true);
 							player.setFireTicks(0);
@@ -103,6 +104,7 @@ public class FirenovaSpell extends InstantSpell implements TargetedLocationSpell
 	}
 	
 	private class FirenovaAnimation implements Runnable {
+		
 		Player player;
 		int i = 0;
 		Block center;
@@ -124,9 +126,8 @@ public class FirenovaSpell extends InstantSpell implements TargetedLocationSpell
 		public void run() {
 			// remove old fire blocks
 			for (Block block : fireBlocks) {
-				if (block.getType() == mat.getMaterial()) {
-					block.setType(Material.AIR);
-				}
+				if (block.getType() != mat.getMaterial()) continue;
+				block.setType(Material.AIR);
 			}
 			fireBlocks.clear();
 						
@@ -138,8 +139,8 @@ public class FirenovaSpell extends InstantSpell implements TargetedLocationSpell
 				int bz = center.getZ();
 				for (int x = bx - i; x <= bx + i; x++) {
 					for (int z = bz - i; z <= bz + i; z++) {
-						if (Math.abs(x-bx) == i || Math.abs(z-bz) == i) {
-							Block b = center.getWorld().getBlockAt(x,y,z);
+						if (Math.abs(x - bx) == i || Math.abs(z - bz) == i) {
+							Block b = center.getWorld().getBlockAt(x, y, z);
 							if (b.getType() == Material.AIR || (burnTallGrass && b.getType() == Material.LONG_GRASS)) {
 								Block under = b.getRelative(BlockFace.DOWN);
 								if (under.getType() == Material.AIR || (burnTallGrass && under.getType() == Material.LONG_GRASS)) {
@@ -157,7 +158,7 @@ public class FirenovaSpell extends InstantSpell implements TargetedLocationSpell
 						}
 					}
 				}
-			} else if (i > range+1) {
+			} else if (i > range + 1) {
 				// stop if done
 				Bukkit.getServer().getScheduler().cancelTask(taskId);
 				if (fireImmunity != null && player != null) {
@@ -165,6 +166,7 @@ public class FirenovaSpell extends InstantSpell implements TargetedLocationSpell
 				}
 			}
 		}
+		
 	}
 
 }

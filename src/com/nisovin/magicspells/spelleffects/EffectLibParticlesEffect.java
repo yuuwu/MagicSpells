@@ -48,17 +48,11 @@ public class EffectLibParticlesEffect extends SpellEffect {
 		speed = (float)config.getDouble("speed", speed);
 		amount = config.getInt("amount", amount);
 		range = config.getDouble("range", range);
-		if (name != null) {
-			effect = ParticleEffect.fromName(name);
-		}
+		if (name != null) effect = ParticleEffect.fromName(name);
 		
-		if (effect == null) {
-			effect = ParticleEffect.valueOf(name);
-		}
+		if (effect == null) effect = ParticleEffect.valueOf(name);
 		
-		if (effect == null) {
-			effect = defaultEffect;
-		}
+		if (effect == null) effect = defaultEffect;
 		colorString = config.getString("color", null);
 		if (colorString != null) {
 			String[] colorData = colorString.split(",");

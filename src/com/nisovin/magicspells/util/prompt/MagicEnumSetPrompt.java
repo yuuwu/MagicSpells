@@ -32,17 +32,13 @@ public class MagicEnumSetPrompt extends FixedSetPrompt {
 	
 	private static void initializeEnumToNameMap() {
 		if (initialized) return;
-		if (enumToNames == null) {
-			enumToNames = new ConcurrentHashMap<String, List<String>>();
-		}
-		
+		if (enumToNames == null) enumToNames = new ConcurrentHashMap<String, List<String>>();
 		initialized = true;
 	}
 	
 	public static void unload() {
 		if (!initialized) return;
 		enumToNames.clear();
-		
 		initialized = false;
 	}
 	
@@ -55,11 +51,6 @@ public class MagicEnumSetPrompt extends FixedSetPrompt {
 	protected Prompt acceptValidatedInput(ConversationContext context, String input) {
 		return responder.acceptValidatedInput(context, input);
 	}
-	
-	
-	
-	
-	
 	
 	public static MagicEnumSetPrompt fromConfigSection(ConfigurationSection section) {
 		// get the options
@@ -104,4 +95,5 @@ public class MagicEnumSetPrompt extends FixedSetPrompt {
 		
 		return new ArrayList<String>(enumToNames.get(clazz.getName()));
 	}
+	
 }

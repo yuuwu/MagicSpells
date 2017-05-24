@@ -20,9 +20,8 @@ public class GlobalVariable extends Variable {
 		if (value != newvalue) {
 			value = newvalue;
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 	@Override
@@ -39,4 +38,5 @@ public class GlobalVariable extends Variable {
 	public void reset(String player) {
 		value = defaultValue;
 	}
+	
 }

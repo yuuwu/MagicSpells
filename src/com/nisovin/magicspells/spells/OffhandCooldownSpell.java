@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spell;
@@ -51,11 +52,12 @@ public class OffhandCooldownSpell extends InstantSpell {
 							if (cd > 0) {
 								amt = -(int)Math.ceil(cd);
 							}
-							ItemStack off = p.getInventory().getItemInOffHand();
+							PlayerInventory playerInventory = p.getInventory();
+							ItemStack off = playerInventory.getItemInOffHand();
 							if (off == null || !off.isSimilar(item)) {
-								p.getInventory().setItemInOffHand(item.clone());
+								playerInventory.setItemInOffHand(item.clone());
 							}
-							p.getInventory().getItemInOffHand().setAmount(amt);
+							playerInventory.getItemInOffHand().setAmount(amt);
 						}
 					}
 				}

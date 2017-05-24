@@ -42,9 +42,9 @@ public class DistanceToVariable extends Variable {
 		Location targetLoc = this.targetLocation.getLocation();
 		if (targetLoc == null) return defaultValue;
 		
-		if (!crossWorld && LocationUtil.isntSameWorld(originLocation, targetLoc)) return defaultValue;
+		if (!crossWorld && !LocationUtil.isSameWorld(originLocation, targetLoc)) return defaultValue;
 		
-		double multiplier = (LocationUtil.isntSameWorld(originLocation, targetLoc) ? crossWorldDistanceMultiplier : 1.0);
+		double multiplier = (!LocationUtil.isSameWorld(originLocation, targetLoc) ? crossWorldDistanceMultiplier : 1.0);
 		targetLoc.setWorld(originLocation.getWorld());
 		return calculateReportedDistance(multiplier, originLocation, targetLoc);
 	}

@@ -63,34 +63,27 @@ public class RandomSpell extends InstantSpell {
 				set = new RandomOptionSet();
 				for (SpellOption o : options.randomOptionSetOptions) {
 					if (checkIndividualCooldowns) {
-						if (o.spell.getSpell().onCooldown(player)) {
-							continue;
-						}
+						if (o.spell.getSpell().onCooldown(player)) continue;
 					}
 					if (checkIndividualModifiers) {
 						ModifierSet modifiers = o.spell.getSpell().getModifiers();
-						if (modifiers != null && !modifiers.check(player)) {
-							continue;
-						}
+						if (modifiers != null && !modifiers.check(player)) continue;
 					}
 					set.add(o);
 				}
 			}
-			if (set.randomOptionSetOptions.size() > 0) {
+			if (!set.randomOptionSetOptions.isEmpty()) {
 				Subspell spell = set.choose();
-				if (spell != null) {
-					return spell.cast(player, power);
-				} else {
-					return PostCastAction.ALREADY_HANDLED;
-				}
-			} else {
+				if (spell != null) return spell.cast(player, power);
 				return PostCastAction.ALREADY_HANDLED;
 			}
+			return PostCastAction.ALREADY_HANDLED;
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}
 
 	class SpellOption {
+		
 		Subspell spell;
 		int weight;
 		int adjustedWeight;
@@ -99,9 +92,11 @@ public class RandomSpell extends InstantSpell {
 			this.weight = weight;
 			this.adjustedWeight = weight;
 		}
+		
 	}
 	
 	class RandomOptionSet {
+		
 		List<SpellOption> randomOptionSetOptions = new ArrayList<SpellOption>();
 		int total = 0;
 		

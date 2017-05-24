@@ -1,6 +1,5 @@
 package com.nisovin.magicspells.spells.targeted;
 
-import org.bukkit.Bukkit;
 import org.bukkit.EntityEffect;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -14,6 +13,7 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.SpellDamageSpell;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
 import com.nisovin.magicspells.util.expression.Expression;
@@ -81,12 +81,10 @@ public class PainSpell extends TargetedSpell implements TargetedEntitySpell, Spe
 				return noTarget(player);
 			} else {
 				boolean done = causePain(player, target.getTarget(), target.getPower());
-				if (!done) {
-					return noTarget(player);
-				} else {
-					sendMessages(player, target.getTarget());
-					return PostCastAction.NO_MESSAGES;
-				}
+				if (!done) return noTarget(player);
+				
+				sendMessages(player, target.getTarget());
+				return PostCastAction.NO_MESSAGES;
 			}
 		}
 		return PostCastAction.HANDLE_NORMALLY;
@@ -106,18 +104,14 @@ public class PainSpell extends TargetedSpell implements TargetedEntitySpell, Spe
 		if (target instanceof Player && checkPlugins && player != null) {
 			// handle the event myself so I can detect cancellation properly
 			MagicSpellsEntityDamageByEntityEvent event = new MagicSpellsEntityDamageByEntityEvent(player, target, damageType, localDamage);
-			Bukkit.getServer().getPluginManager().callEvent(event);
-			if (event.isCancelled()) {
-				return false;
-			}
-			if (!avoidDamageModification) {
-				localDamage = event.getDamage();
-			}
+			EventUtil.call(event);
+			if (event.isCancelled()) return false;
+			if (!avoidDamageModification) localDamage = event.getDamage();
 			target.setLastDamageCause(event);
 		}
 		//Bukkit.getPluginManager().callEvent(new SpellApplyDamageEvent(this, player, target, localDamage, DamageCause.MAGIC));
 		SpellApplyDamageEvent event = new SpellApplyDamageEvent(this, player, target, localDamage, damageType, spellDamageType);
-		Bukkit.getPluginManager().callEvent(event);
+		EventUtil.call(event);
 		localDamage = event.getFinalDamage();
 		if (ignoreArmor) {
 			double health = target.getHealth();
@@ -125,9 +119,7 @@ public class PainSpell extends TargetedSpell implements TargetedEntitySpell, Spe
 			health = health - localDamage;
 			if (health < 0) health = 0;
 			if (health > target.getMaxHealth()) health = target.getMaxHealth();
-			if (health == 0 && player != null) {
-				MagicSpells.getVolatileCodeHandler().setKiller(target, player);
-			}
+			if (health == 0 && player != null) MagicSpells.getVolatileCodeHandler().setKiller(target, player);
 			target.setHealth(health);
 			target.playEffect(EntityEffect.HURT);
 		} else {
@@ -147,20 +139,14 @@ public class PainSpell extends TargetedSpell implements TargetedEntitySpell, Spe
 
 	@Override
 	public boolean castAtEntity(Player caster, LivingEntity target, float power) {
-		if (!validTargetList.canTarget(caster, target)) {
-			return false;
-		} else {
-			return causePain(caster, target, power);
-		}
+		if (!validTargetList.canTarget(caster, target)) return false;
+		return causePain(caster, target, power);
 	}
 
 	@Override
 	public boolean castAtEntity(LivingEntity target, float power) {
-		if (!validTargetList.canTarget(target)) {
-			return false;
-		} else {
-			return causePain(null, target, power);
-		}
+		if (!validTargetList.canTarget(target)) return false;
+		return causePain(null, target, power);
 	}
 
 }

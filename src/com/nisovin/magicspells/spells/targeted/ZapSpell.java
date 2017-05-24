@@ -5,7 +5,6 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -20,7 +19,9 @@ import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
+
 public class ZapSpell extends TargetedSpell implements TargetedLocationSpell {
 	
 	private String strCantZap;
@@ -36,16 +37,19 @@ public class ZapSpell extends TargetedSpell implements TargetedLocationSpell {
 		
 		strCantZap = getConfigString("str-cant-zap", "");
 		
-		List<String> allowed = getConfigStringList("allowed-block-types",null);
+		List<String> allowed = getConfigStringList("allowed-block-types", null);
 		if (allowed != null) {
 			allowedBlockTypes = EnumSet.noneOf(Material.class);
 			for (String s : allowed) {
-				if (!s.isEmpty()) {
-					MagicMaterial m = MagicSpells.getItemNameResolver().resolveBlock(s);
-					if (m != null && m.getMaterial() != null) {
-						allowedBlockTypes.add(m.getMaterial());
-					}
-				}
+				if (s.isEmpty()) continue;
+				
+				MagicMaterial m = MagicSpells.getItemNameResolver().resolveBlock(s);
+				if (m == null) continue;
+				
+				Material material = m.getMaterial();
+				if (material == null) continue;
+				
+				allowedBlockTypes.add(material);
 			}
 		}
 		
@@ -53,12 +57,15 @@ public class ZapSpell extends TargetedSpell implements TargetedLocationSpell {
 		if (disallowed != null) {
 			disallowedBlockTypes = EnumSet.noneOf(Material.class);
 			for (String s : disallowed) {
-				if (!s.isEmpty()) {
-					MagicMaterial m = MagicSpells.getItemNameResolver().resolveBlock(s);
-					if (m != null && m.getMaterial() != null) {
-						disallowedBlockTypes.add(m.getMaterial());
-					}
-				}
+				if (s.isEmpty()) continue;
+				
+				MagicMaterial m = MagicSpells.getItemNameResolver().resolveBlock(s);
+				if (m == null) continue;
+				
+				Material material = m.getMaterial();
+				if (material == null) continue;
+				
+				disallowedBlockTypes.add(material);
 			}
 		}
 		
@@ -80,7 +87,7 @@ public class ZapSpell extends TargetedSpell implements TargetedLocationSpell {
 			}
 			if (target != null) {
 				SpellTargetLocationEvent event = new SpellTargetLocationEvent(this, player, target.getLocation(), power);
-				Bukkit.getPluginManager().callEvent(event);
+				EventUtil.call(event);
 				if (event.isCancelled()) {
 					target = null;
 				} else {
@@ -105,8 +112,10 @@ public class ZapSpell extends TargetedSpell implements TargetedLocationSpell {
 	}
 	
 	private boolean zap(Block target, Player player) {
+		boolean playerNull = player == null;
+		
 		// check for protection
-		if (checkPlugins && player != null) {
+		if (checkPlugins && !playerNull) {
 			MagicSpellsBlockBreakEvent event = new MagicSpellsBlockBreakEvent(target, player);
 			MagicSpells.plugin.getServer().getPluginManager().callEvent(event);
 			if (event.isCancelled()) {
@@ -128,11 +137,11 @@ public class ZapSpell extends TargetedSpell implements TargetedLocationSpell {
 		if (playBreakEffect) {
 			target.getWorld().playEffect(target.getLocation(), Effect.STEP_SOUND, target.getType());
 		}
-		if (player != null) {
+		if (!playerNull) {
 			playSpellEffects(EffectPosition.CASTER, player);
 		}
 		playSpellEffects(EffectPosition.TARGET, target.getLocation());
-		if (player != null) {
+		if (!playerNull) {
 			playSpellEffectsTrail(player.getLocation(), target.getLocation());
 		}
 		
@@ -170,6 +179,10 @@ public class ZapSpell extends TargetedSpell implements TargetedLocationSpell {
 	}
 	
 	private boolean canZap(Block target) {
-		return !(disallowedBlockTypes.contains(target.getType()) || (allowedBlockTypes.size() > 0 && !allowedBlockTypes.contains(target.getType())));
+		Material type = target.getType();
+		if (disallowedBlockTypes.contains(type)) return false;
+		if (allowedBlockTypes.isEmpty()) return true;
+		return allowedBlockTypes.contains(type);
 	}
+	
 }

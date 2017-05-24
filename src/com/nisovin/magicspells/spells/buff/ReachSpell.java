@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -23,6 +22,7 @@ import com.nisovin.magicspells.events.MagicSpellsBlockBreakEvent;
 import com.nisovin.magicspells.events.MagicSpellsBlockPlaceEvent;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spells.BuffSpell;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 
@@ -48,9 +48,10 @@ public class ReachSpell extends BuffSpell {
 		if (list != null) {
 			for (String s : list) {
 				MagicMaterial m = MagicSpells.getItemNameResolver().resolveBlock(s);
-				if (m != null && m.getMaterial() != null) {
-					disallowedBreakBlocks.add(m.getMaterial());
-				}
+				if (m == null) continue;
+				Material material = m.getMaterial();
+				if (material == null) continue;
+				disallowedBreakBlocks.add(material);
 			}
 		}
 		
@@ -59,9 +60,10 @@ public class ReachSpell extends BuffSpell {
 		if (list != null) {
 			for (String s : list) {
 				MagicMaterial m = MagicSpells.getItemNameResolver().resolveBlock(s);
-				if (m != null && m.getMaterial() != null) {
-					disallowedPlaceBlocks.add(m.getMaterial());
-				}
+				if (m == null) continue;
+				Material material = m.getMaterial();
+				if (material == null) continue;
+				disallowedPlaceBlocks.add(material);
 			}
 		}
 		
@@ -96,12 +98,11 @@ public class ReachSpell extends BuffSpell {
 					// break
 					
 					// check for disallowed
-					if (disallowedBreakBlocks.contains(targetBlock.getType())) {
-						return;
-					}
+					if (disallowedBreakBlocks.contains(targetBlock.getType())) return;
+					
 					// call break event
 					MagicSpellsBlockBreakEvent evt = new MagicSpellsBlockBreakEvent(targetBlock, player);
-					Bukkit.getPluginManager().callEvent(evt);
+					EventUtil.call(evt);
 					if (!evt.isCancelled()) {
 						// remove block
 						targetBlock.getWorld().playEffect(targetBlock.getLocation(), Effect.STEP_SOUND, targetBlock.getType());
@@ -121,9 +122,7 @@ public class ReachSpell extends BuffSpell {
 					if (inHand != null && inHand.getType() != Material.AIR && inHand.getType().isBlock()) {
 						
 						// check for disallowed
-						if (disallowedPlaceBlocks.contains(inHand.getType())) {
-							return;
-						}
+						if (disallowedPlaceBlocks.contains(inHand.getType())) return;
 						
 						BlockState prevState = airBlock.getState();
 						// place block
@@ -133,7 +132,7 @@ public class ReachSpell extends BuffSpell {
 						state.update(true);
 						// call event
 						MagicSpellsBlockPlaceEvent evt = new MagicSpellsBlockPlaceEvent(airBlock, prevState, targetBlock, inHand, player, true);
-						Bukkit.getPluginManager().callEvent(evt);
+						EventUtil.call(evt);
 						if (evt.isCancelled()) {
 							// cancelled, revert
 							prevState.update(true);
@@ -170,7 +169,5 @@ public class ReachSpell extends BuffSpell {
 	public boolean isActive(Player player) {
 		return reaching.contains(player.getName());
 	}
-
-
 
 }

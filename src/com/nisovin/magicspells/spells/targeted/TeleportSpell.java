@@ -9,6 +9,7 @@ import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
+
 public class TeleportSpell extends TargetedSpell implements TargetedEntitySpell {
 
 	public TeleportSpell(MagicConfig config, String spellName) {
@@ -19,13 +20,9 @@ public class TeleportSpell extends TargetedSpell implements TargetedEntitySpell 
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			TargetInfo<LivingEntity> target = getTargetedEntity(player, power);
-			if (target == null) {
-				return noTarget(player);
-			}
+			if (target == null) return noTarget(player);
 			boolean ok = teleport(player, target.getTarget());
-			if (!ok) {
-				return noTarget(player);
-			}
+			if (!ok) return noTarget(player);
 			sendMessages(player, target.getTarget());
 			return PostCastAction.NO_MESSAGES;
 		}

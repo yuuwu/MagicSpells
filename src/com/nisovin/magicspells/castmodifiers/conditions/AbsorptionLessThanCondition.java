@@ -35,4 +35,5 @@ public class AbsorptionLessThanCondition extends Condition {
 	public boolean check(Player player, Location location) {
 		return false;
 	}
+	
 }

@@ -56,9 +56,9 @@ public class SmokeSwirlEffect extends SpellEffect {
 		duration = config.getInt("duration", duration);
 	}
 
-	int[] x = {1,1,0,-1,-1,-1,0,1};
-	int[] z = {0,1,1,1,0,-1,-1,-1};
-	int[] v = {7,6,3,0,1,2,5,8};
+	int[] x = {1, 1, 0, -1, -1, -1, 0, 1};
+	int[] z = {0, 1, 1, 1, 0, -1, -1, -1};
+	int[] v = {7, 6, 3, 0, 1, 2, 5, 8};
 	
 	@Override
 	public Runnable playEffectLocation(Location location) {		
@@ -114,6 +114,7 @@ public class SmokeSwirlEffect extends SpellEffect {
 				iteration++;
 			}
 		}
+		
 	}
 	
 }

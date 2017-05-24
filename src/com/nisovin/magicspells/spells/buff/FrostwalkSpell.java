@@ -37,35 +37,44 @@ public class FrostwalkSpell extends BuffSpell {
 
 	@Override
 	public boolean castBuff(Player player, float power, String[] args) {
-		frostwalkers.put(player.getName(), new BlockPlatform(Material.ICE, Material.STATIONARY_WATER, player.getLocation().getBlock().getRelative(0,-1,0), size, !leaveFrozen, "square"));
+		frostwalkers.put(player.getName(), new BlockPlatform(Material.ICE, Material.STATIONARY_WATER, player.getLocation().getBlock().getRelative(0, -1, 0), size, !leaveFrozen, "square"));
 		return true;
 	}
 
 	@EventHandler(priority=EventPriority.MONITOR)
 	public void onPlayerMove(PlayerMoveEvent event) {
-		if (frostwalkers.containsKey(event.getPlayer().getName())) {
-			Player player = event.getPlayer();
-			if (isExpired(player)) {
-				turnOff(player);
-			} else {
-				Block block;
-				boolean teleportUp = false;
-				if (event.getTo().getY() > event.getFrom().getY() && event.getTo().getY() % 1 > .62 && event.getTo().getBlock().getType() == Material.STATIONARY_WATER && event.getTo().getBlock().getRelative(0,1,0).getType() == Material.AIR) {
-					block = event.getTo().getBlock();
-					teleportUp = true;
-				} else {
-					block = event.getTo().getBlock().getRelative(0,-1,0);
-				}
-				boolean moved = frostwalkers.get(player.getName()).movePlatform(block);
-				if (moved) {
-					addUse(player);
-					chargeUseCost(player);
-					if (teleportUp) {
-						Location loc = player.getLocation().clone();
-						loc.setY(event.getTo().getBlockY()+1);
-						player.teleport(loc);
-					}
-				}
+		Player player = event.getPlayer();
+		String playerName = player.getName();
+		
+		if (!frostwalkers.containsKey(playerName)) return;
+		
+		if (isExpired(player)) {
+			turnOff(player);
+			return;
+		}
+		
+		Block block;
+		boolean teleportUp = false;
+		Location locationTo = event.getTo();
+		Location locationFrom = event.getFrom();
+		double locationToY = locationTo.getY();
+		double locationFromY = locationFrom.getY();
+		Block locationToBlock = locationTo.getBlock();
+		
+		if (locationToY > locationFromY && locationToY % 1 > .62 && locationToBlock.getType() == Material.STATIONARY_WATER && locationToBlock.getRelative(0, 1, 0).getType() == Material.AIR) {
+			block = locationToBlock;
+			teleportUp = true;
+		} else {
+			block = locationToBlock.getRelative(0, -1, 0);
+		}
+		boolean moved = frostwalkers.get(playerName).movePlatform(block);
+		if (moved) {
+			addUse(player);
+			chargeUseCost(player);
+			if (teleportUp) {
+				Location loc = player.getLocation().clone();
+				loc.setY(locationTo.getBlockY() + 1);
+				player.teleport(loc);
 			}
 		}
 	}
@@ -73,23 +82,26 @@ public class FrostwalkSpell extends BuffSpell {
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
 		if (event.isCancelled()) return;
-		if (frostwalkers.size() > 0 && event.getBlock().getType() == Material.ICE) {
-			for (BlockPlatform platform : frostwalkers.values()) {
-				if (platform.blockInPlatform(event.getBlock())) {
-					event.setCancelled(true);
-					break;
-				}
-			}
+		if (frostwalkers.isEmpty()) return;
+		
+		Block block = event.getBlock();
+		if (block.getType() != Material.ICE) return;
+		
+		for (BlockPlatform platform : frostwalkers.values()) {
+			if (!platform.blockInPlatform(block)) continue;
+			event.setCancelled(true);
+			break;
 		}
 	}
 	
 	@Override
 	public void turnOffBuff(Player player) {
-		BlockPlatform platform = frostwalkers.get(player.getName());
-		if (platform != null) {
-			platform.destroyPlatform();
-			frostwalkers.remove(player.getName());
-		}
+		String playerName = player.getName();
+		BlockPlatform platform = frostwalkers.get(playerName);
+		if (platform == null) return;
+		
+		platform.destroyPlatform();
+		frostwalkers.remove(playerName);
 	}
 	
 	@Override

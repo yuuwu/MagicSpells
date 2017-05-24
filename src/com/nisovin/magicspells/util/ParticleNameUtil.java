@@ -10,12 +10,11 @@ import de.slikey.effectlib.util.ParticleEffect.ItemData;
 import de.slikey.effectlib.util.ParticleEffect.ParticleData;
 
 public class ParticleNameUtil {
+	
 	public static ParticleEffect findEffect(String name) {
 		ParticleEffect effect = null;
 		effect = ParticleEffect.fromName(name);
-		if (effect == null) {
-			throw new NullPointerException("No particle could be found from: \"" + name + "\"");
-		}
+		if (effect == null) throw new NullPointerException("No particle could be found from: \"" + name + "\"");
 		return effect;
 	}
 	
@@ -32,24 +31,19 @@ public class ParticleNameUtil {
 			} catch (Exception e) {
 				//no op
 			}
-			if (mat == null) {
-				mat = MagicSpells.getItemNameResolver().resolveItem(splits[1]).getMaterial();
-			}
+			if (mat == null) mat = MagicSpells.getItemNameResolver().resolveItem(splits[1]).getMaterial();
 			int materialData = 0;
-			if (splits.length > 2) {
-				materialData = Integer.parseInt(splits[2]);
-			}
+			if (splits.length > 2) materialData = Integer.parseInt(splits[2]);
 			if (effect == ParticleEffect.BLOCK_CRACK || effect == ParticleEffect.BLOCK_DUST) {
 				data = new BlockData(mat, (byte) materialData);
 			} else {
 				data = new ItemData(mat, (byte) materialData);
 			}
 		}
-		if (effect == null) {
-			throw new NullPointerException("No particle could be found from: \"" + splits[0] + "\" + from \"" + name + "\"");
-		}
+		if (effect == null) throw new NullPointerException("No particle could be found from: \"" + splits[0] + "\" + from \"" + name + "\"");
 		
 		return new EffectPackage(effect, data);
 		
 	}
+	
 }

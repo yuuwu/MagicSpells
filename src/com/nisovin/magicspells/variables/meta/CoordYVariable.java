@@ -12,9 +12,7 @@ public class CoordYVariable extends MetaVariable {
 	@Override
 	public double getValue(String player) {
 		Player p = PlayerNameUtils.getPlayerExact(player);
-		if (p != null) {
-			return p.getLocation().getY();
-		}
+		if (p != null) return p.getLocation().getY();
 		return 0D;
 	}
 	

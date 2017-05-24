@@ -40,12 +40,10 @@ public class ConjureFireworkSpell extends InstantSpell implements TargetedLocati
 		
 		meta.setPower(getConfigInt("flight", 2));
 		String name = getConfigString("firework-name", "");
-		if (!name.isEmpty()) {
-			meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
-		}
+		if (!name.isEmpty()) meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
 		
 		List<String> effects = getConfigStringList("firework-effects", null);
-		if (effects != null && effects.size() > 0) {
+		if (effects != null && !effects.isEmpty()) {
 			for (String e : effects) {
 				FireworkEffect.Type type = Type.BALL;
 				boolean trail = false;
@@ -110,9 +108,7 @@ public class ConjureFireworkSpell extends InstantSpell implements TargetedLocati
 		if (state == SpellCastState.NORMAL) {
 			boolean added = false;
 			ItemStack item = firework.clone();
-			if (addToInventory) {
-				added = Util.addToInventory(player.getInventory(), item, true, false);
-			}
+			if (addToInventory) added = Util.addToInventory(player.getInventory(), item, true, false);
 			if (!added) {
 				Item dropped = player.getWorld().dropItem(player.getLocation(), item);
 				dropped.setItemStack(item);

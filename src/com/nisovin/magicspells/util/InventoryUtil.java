@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -49,7 +50,6 @@ public class InventoryUtil {
 			if (currentItem == null) continue;
 			serialized.put(currentSlot, currentItem.serialize());
 		}
-		
 		return serialized;
 	}
 	
@@ -86,6 +86,11 @@ public class InventoryUtil {
 		return ret;
 	}
 	
-	
+	public static boolean isNothing(ItemStack itemStack) {
+		if (itemStack == null) return true;
+		if (itemStack.getType() == Material.AIR) return true;
+		if (itemStack.getAmount() == 0) return true;
+		return false;
+	}
 	
 }

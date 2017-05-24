@@ -10,18 +10,14 @@ public class HealthScaleVariable extends MetaVariable {
 	@Override
 	public double getValue(String player) {
 		Player p = PlayerNameUtils.getPlayerExact(player);
-		if (p != null) {
-			return p.getHealthScale();
-		}
+		if (p != null) return p.getHealthScale();
 		return 0;
 	}
 	
 	@Override
 	public void set(String player, double amount) {
 		Player p = PlayerNameUtils.getPlayerExact(player);
-		if (p != null) {
-			p.setHealthScale(amount);
-		}
+		if (p != null) p.setHealthScale(amount);
 	}
 	
 	@Override
@@ -33,4 +29,5 @@ public class HealthScaleVariable extends MetaVariable {
 		}
 		return false;
 	}
+	
 }

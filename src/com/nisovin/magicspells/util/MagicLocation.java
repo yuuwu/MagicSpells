@@ -1,5 +1,7 @@
 package com.nisovin.magicspells.util;
 
+import java.util.Objects;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 
@@ -33,11 +35,8 @@ public class MagicLocation {
 	
 	public Location getLocation() {
 		World realWorld = MagicSpells.plugin.getServer().getWorld(world);
-		if (realWorld == null) {
-			return null;
-		} else {
-			return new Location(realWorld, x, y, z, yaw, pitch);
-		}
+		if (realWorld == null) return null;
+		return new Location(realWorld, x, y, z, yaw, pitch);
 	}
 	
 	public String getWorld() {
@@ -66,14 +65,14 @@ public class MagicLocation {
 	
 	@Override
 	public int hashCode() {
-		int hash = 3;
-	    hash = 19 * hash + this.world.hashCode();
-	    hash = 19 * hash + (int) (Double.doubleToLongBits(this.x) ^ (Double.doubleToLongBits(this.x) >>> 32));
-	    hash = 19 * hash + (int) (Double.doubleToLongBits(this.y) ^ (Double.doubleToLongBits(this.y) >>> 32));
-	    hash = 19 * hash + (int) (Double.doubleToLongBits(this.z) ^ (Double.doubleToLongBits(this.z) >>> 32));
-	    hash = 19 * hash + Float.floatToIntBits(this.pitch);
-	    hash = 19 * hash + Float.floatToIntBits(this.yaw);
-	    return hash;
+		return Objects.hash(
+			this.world,
+			this.x,
+			this.y,
+			this.z,
+			this.pitch,
+			this.yaw
+		);
 	}
 	
 	@Override
@@ -82,19 +81,19 @@ public class MagicLocation {
 			MagicLocation loc = (MagicLocation)o;
 			if (loc.world.equals(this.world) && loc.x == this.x && loc.y == this.y && loc.z == this.z && loc.yaw == this.yaw && loc.pitch == this.pitch) {
 				return true;
-			} else {
-				return false;
 			}
+			return false;
 		} else if (o instanceof Location) {
 			Location loc = (Location)o;
-			if (loc.getWorld().getName().equals(this.world) && loc.getX() == this.x && loc.getY() == this.y && loc.getZ() == this.z && loc.getYaw() == this.yaw && loc.getPitch() == this.pitch){
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			return false;
+			if (!LocationUtil.isSameWorld(loc, this.world)) return false;
+			if (loc.getX() != this.x) return false;
+			if (loc.getY() != this.y) return false;
+			if (loc.getZ() != this.z) return false;
+			if (loc.getYaw() != this.yaw) return false;
+			if (loc.getPitch() != this.pitch) return false;
+			return true;
 		}
+		return false;
 	}
 	
 }

@@ -24,7 +24,9 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedEntityFromLocationSpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
+
 public class VolleySpell extends TargetedSpell implements TargetedLocationSpell, TargetedEntityFromLocationSpell {
 
 	private static final String METADATA_KEY = "MagicSpellsSource";
@@ -71,11 +73,8 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 				} catch (IllegalStateException e) {
 					target = null;
 				}
-				if (target == null || target.getType() == Material.AIR) {
-					return noTarget(player);
-				} else {
-					volley(player, player.getLocation(), target.getLocation(), power);
-				}
+				if (target == null || target.getType() == Material.AIR) return noTarget(player);
+				volley(player, player.getLocation(), target.getLocation(), power);
 			}
 		}
 		return PostCastAction.HANDLE_NORMALLY;
@@ -94,19 +93,15 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 		if (shootInterval <= 0) {
 			final ArrayList<Arrow> arrowList = new ArrayList<Arrow>();
 			
-			int arrows = powerAffectsArrowCount ? Math.round(this.arrows*power) : this.arrows;
+			int arrows = powerAffectsArrowCount ? Math.round(this.arrows * power) : this.arrows;
 			for (int i = 0; i < arrows; i++) {
 				float speed = this.speed / 10F;
 				if (powerAffectsSpeed) speed *= power;
 				Arrow a = from.getWorld().spawnArrow(spawn, v, speed, (spread/10.0F));
 				a.setVelocity(a.getVelocity());
 				MagicSpells.getVolatileCodeHandler().setGravity(a, arrowsHaveGravity);
-				if (player != null) {
-					a.setShooter(player);
-				}
-				if (fire > 0) {
-					a.setFireTicks(fire);
-				}
+				if (player != null) a.setShooter(player);
+				if (fire > 0) a.setFireTicks(fire);
 				a.setMetadata(METADATA_KEY, new FixedMetadataValue(MagicSpells.plugin, "VolleySpell" + internalName));
 				if (removeDelay > 0) arrowList.add(a);
 				playSpellEffects(EffectPosition.PROJECTILE, a);
@@ -115,6 +110,7 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 			
 			if (removeDelay > 0) {
 				Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
+					
 					@Override
 					public void run() {
 						for (Arrow a : arrowList) {
@@ -122,6 +118,7 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 						}
 						arrowList.clear();
 					}
+					
 				}, removeDelay);
 			}
 			
@@ -139,9 +136,7 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 			if (from != null) { //TODO check null checks
 				playSpellEffects(EffectPosition.CASTER, from);
 			}
-			if (target != null) {
-				playSpellEffects(EffectPosition.TARGET, target);
-			}
+			if (target != null) playSpellEffects(EffectPosition.TARGET, target);
 		}
 	}
 	
@@ -150,9 +145,8 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 		if (!noTarget) {
 			volley(caster, caster.getLocation(), target, power);
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 	@Override
@@ -165,9 +159,8 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 		if (!noTarget) {
 			volley(caster, from, target.getLocation(), power);
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 	@Override
@@ -175,9 +168,8 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 		if (!noTarget) {
 			volley(null, from, target.getLocation(), power);
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 	
 	@EventHandler
@@ -195,7 +187,7 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 		Player p = (Player) event.getEntity();
 		Arrow a = (Arrow)damagerEntity;
 		SpellPreImpactEvent preImpactEvent = new SpellPreImpactEvent(thisSpell, thisSpell, (Player) a.getShooter(), p, 1);
-		Bukkit.getPluginManager().callEvent(preImpactEvent);
+		EventUtil.call(preImpactEvent);
 		//let's see if this can redirect it
 		if (preImpactEvent.getRedirected()) {
 			event.setCancelled(true);
@@ -206,6 +198,7 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 	}
 	
 	private class ArrowShooter implements Runnable {
+		
 		Player player;
 		Location spawn;
 		Vector dir;
@@ -224,9 +217,7 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 			if (powerAffectsSpeed) this.speedShooter *= power;
 			this.count = 0;
 			
-			if (removeDelay > 0) {
-				this.arrowMap = new HashMap<Integer, Arrow>();
-			}
+			if (removeDelay > 0) this.arrowMap = new HashMap<Integer, Arrow>();
 			
 			this.taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(MagicSpells.plugin, this, 0, shootInterval);
 		}
@@ -240,16 +231,10 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 				playSpellEffects(EffectPosition.PROJECTILE, a);
 				playTrackingLinePatterns(EffectPosition.DYNAMIC_CASTER_PROJECTILE_LINE, player.getLocation(), a.getLocation(), player, a);
 				a.setVelocity(a.getVelocity());
-				if (player != null) {
-					a.setShooter(player);
-				}
-				if (fire > 0) {
-					a.setFireTicks(fire);
-				}
+				if (player != null) a.setShooter(player);
+				if (fire > 0) a.setFireTicks(fire);
 				a.setMetadata(METADATA_KEY, new FixedMetadataValue(MagicSpells.plugin, "VolleySpell" + internalName));
-				if (removeDelay > 0) {
-					arrowMap.put(count, a);
-				}
+				if (removeDelay > 0) arrowMap.put(count, a);
 			}
 			
 			// remove old arrow
@@ -257,21 +242,16 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 				int old = count - removeDelay;
 				if (old > 0) {
 					Arrow a = arrowMap.remove(old);
-					if (a != null) {
-						a.remove();
-					}
+					if (a != null) a.remove();
 				}
 			}
 			
 			// end if it's done
-			if (count >= arrowsShooter + removeDelay) {
-				Bukkit.getScheduler().cancelTask(taskId);
-			}
+			if (count >= arrowsShooter + removeDelay) Bukkit.getScheduler().cancelTask(taskId);
 
 			count++;
 		}
+		
 	}
 	
-	
-
 }

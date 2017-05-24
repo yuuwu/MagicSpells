@@ -67,5 +67,4 @@ public class LifeLengthTracker implements Listener {
 		lastSpawn.put(event.getPlayer().getName(), System.currentTimeMillis());
 	}
 	
-	
 }

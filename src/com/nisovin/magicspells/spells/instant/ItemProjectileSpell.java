@@ -1,6 +1,5 @@
 package com.nisovin.magicspells.spells.instant;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -14,6 +13,7 @@ import com.nisovin.magicspells.Subspell;
 import com.nisovin.magicspells.events.SpellTargetEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.Util;
 
@@ -106,7 +106,7 @@ public class ItemProjectileSpell extends InstantSpell {
 			for (Entity e : entity.getNearbyEntities(hitRadius, hitRadius + 0.5, hitRadius)) {
 				if (e instanceof LivingEntity && validTargetList.canTarget(caster, e)) {
 					SpellTargetEvent event = new SpellTargetEvent(ItemProjectileSpell.this, caster, (LivingEntity)e, power);
-					Bukkit.getPluginManager().callEvent(event);
+					EventUtil.call(event);
 					if (!event.isCancelled()) {
 						if (spellOnHitEntity != null) {							
 							spellOnHitEntity.castAtEntity(caster, (LivingEntity)e, event.getPower());
@@ -133,6 +133,7 @@ public class ItemProjectileSpell extends InstantSpell {
 			entity.remove();
 			MagicSpells.cancelTask(taskId);
 		}
+		
 	}
 
 }

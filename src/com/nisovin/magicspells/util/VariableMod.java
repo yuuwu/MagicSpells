@@ -8,7 +8,6 @@ import com.nisovin.magicspells.MagicSpells;
 
 public class VariableMod {
 	
-	
 	public static enum VariableOwner {
 		CASTER, TARGET
 	}
@@ -67,13 +66,13 @@ public class VariableMod {
 	
 	public double getValue(Player caster, Player target) {
 		if (modifyingVariableName != null) {
-			if (variableOwner == VariableOwner.CASTER ) {
-				return MagicSpells.getVariableManager().getValue(modifyingVariableName, caster)* (negate ? -1: 1);
+			if (variableOwner == VariableOwner.CASTER) {
+				return MagicSpells.getVariableManager().getValue(modifyingVariableName, caster) * (negate ? -1 : 1);
 			} else { //variable owner == target
-				return MagicSpells.getVariableManager().getValue(modifyingVariableName, target)* (negate ? -1: 1);
+				return MagicSpells.getVariableManager().getValue(modifyingVariableName, target) * (negate ? -1 : 1);
 			}	
 		} else {
-			return constantModifier * (negate ? -1: 1);
+			return constantModifier * (negate ? -1 : 1);
 		}
 	}
 	

@@ -10,18 +10,14 @@ public class ExperienceVariable extends MetaVariable {
 	@Override
 	public double getValue(String player) {
 		Player p = PlayerNameUtils.getPlayerExact(player);
-		if (p != null) {
-			return p.getExp();
-		}
+		if (p != null) return p.getExp();
 		return 0;
 	}
 	
 	@Override
 	public void set(String player, double amount) {
 		Player p = PlayerNameUtils.getPlayerExact(player);
-		if (p != null) {
-			p.setExp((int) amount);
-		}
+		if (p != null) p.setExp((int) amount);
 	}
 	
 	@Override

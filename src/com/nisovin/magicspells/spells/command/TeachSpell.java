@@ -2,7 +2,6 @@ package com.nisovin.magicspells.spells.command;
 
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -13,6 +12,7 @@ import com.nisovin.magicspells.events.SpellLearnEvent;
 import com.nisovin.magicspells.events.SpellLearnEvent.LearnSource;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.CommandSpell;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.Util;
 
@@ -170,7 +170,7 @@ public class TeachSpell extends CommandSpell {
 	
 	private boolean callEvent(Spell spell, Player learner, Object teacher) {
 		SpellLearnEvent event = new SpellLearnEvent(spell, learner, LearnSource.TEACH, teacher);
-		Bukkit.getServer().getPluginManager().callEvent(event);
+		EventUtil.call(event);
 		return event.isCancelled();
 	}
 

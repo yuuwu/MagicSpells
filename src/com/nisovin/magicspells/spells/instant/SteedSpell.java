@@ -51,40 +51,29 @@ public class SteedSpell extends InstantSpell {
 			String a = getConfigString("armor", null);
 			if (c != null) {
 				for (Horse.Color h : Horse.Color.values()) {
-					if (h.name().equalsIgnoreCase(c)) {
-						color = h;
-						break;
-					}
+					if (!h.name().equalsIgnoreCase(c)) continue;
+					color = h;
+					break;
 				}
-				if (color == null) {
-					DebugHandler.debugBadEnumValue(Horse.Color.class, c);
-				}
+				if (color == null) DebugHandler.debugBadEnumValue(Horse.Color.class, c);
 			}
 			if (s != null) {
 				for (Horse.Style h : Horse.Style.values()) {
-					if (h.name().equalsIgnoreCase(s)) {
-						style = h;
-						break;
-					}
+					if (!h.name().equalsIgnoreCase(s)) continue;
+					style = h;
+					break;
 				}
-				if (style == null) {
-					DebugHandler.debugBadEnumValue(Horse.Style.class, s);
-				}
+				if (style == null) DebugHandler.debugBadEnumValue(Horse.Style.class, s);
 			}
 			if (v != null) {
 				for (Horse.Variant h : Horse.Variant.values()) {
-					if (h.name().equalsIgnoreCase(v)) {
-						variant = h;
-						break;
-					}
+					if (!h.name().equalsIgnoreCase(v)) continue;
+					variant = h;
+					break;
 				}
-				if (variant == null) {
-					DebugHandler.debugBadEnumValue(Horse.Variant.class, v);
-				}
+				if (variant == null) DebugHandler.debugBadEnumValue(Horse.Variant.class, v);
 			}
-			if (a != null) {
-				armor = Util.getItemStackFromString(a);
-			}
+			if (a != null) armor = Util.getItemStackFromString(a);
 		}
 		
 		strAlreadyMounted = getConfigString("str-already-mounted", "You are already mounted!");
@@ -122,9 +111,7 @@ public class SteedSpell extends InstantSpell {
 				((Horse)entity).setTamed(true);
 				((Horse)entity).setOwner(player);
 				((Horse)entity).getInventory().setSaddle(new ItemStack(Material.SADDLE));
-				if (armor != null) {
-					((Horse)entity).getInventory().setArmor(armor);
-				}
+				if (armor != null) ((Horse)entity).getInventory().setArmor(armor);
 			}
 			entity.setPassenger(player);
 			playSpellEffects(EffectPosition.CASTER, player);
@@ -135,9 +122,7 @@ public class SteedSpell extends InstantSpell {
 	
 	@EventHandler
 	void onDamage(EntityDamageEvent event) {
-		if (mounted.containsValue(event.getEntity().getEntityId())) {
-			event.setCancelled(true);
-		}
+		if (mounted.containsValue(event.getEntity().getEntityId())) event.setCancelled(true);
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -176,9 +161,9 @@ public class SteedSpell extends InstantSpell {
 	public void turnOff() {
 		for (String name : mounted.keySet()) {
 			Player player = Bukkit.getPlayerExact(name);
-			if (player != null && player.getVehicle() != null) {
-				player.getVehicle().eject();
-			}
+			if (player == null) continue;
+			if (player.getVehicle() == null) continue;
+			player.getVehicle().eject();
 		}
 		mounted.clear();
 	}

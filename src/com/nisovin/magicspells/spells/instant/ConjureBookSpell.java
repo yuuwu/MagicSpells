@@ -68,36 +68,42 @@ public class ConjureBookSpell extends InstantSpell implements TargetedLocationSp
 		String author = meta.getAuthor();
 		List<String> lore = meta.getLore();
 		List<String> pages = meta.getPages();
+		
 		if (player != null) {
-			title = title.replace("{{name}}", player.getName()).replace("{{disp}}", player.getDisplayName());
-			author = author.replace("{{name}}", player.getName()).replace("{{disp}}", player.getDisplayName());
-			if (lore != null && lore.size() > 0) {
+			String playerName = player.getName();
+			String playerDisplayName = player.getDisplayName();
+			
+			title = title.replace("{{name}}", playerName).replace("{{disp}}", playerDisplayName);
+			author = author.replace("{{name}}", playerName).replace("{{disp}}", playerDisplayName);
+			if (lore != null && !lore.isEmpty()) {
 				for (int l = 0; l < lore.size(); l++) {
-					lore.set(l, lore.get(l).replace("{{name}}", player.getName()).replace("{{disp}}", player.getDisplayName()));
+					lore.set(l, lore.get(l).replace("{{name}}", playerName).replace("{{disp}}", playerDisplayName));
 				}
 			}
-			if (pages != null && pages.size() > 0) {
+			if (pages != null && !pages.isEmpty()) {
 				for (int p = 0; p < pages.size(); p++) {
-					pages.set(p, pages.get(p).replace("{{name}}", player.getName()).replace("{{disp}}", player.getDisplayName()));
+					pages.set(p, pages.get(p).replace("{{name}}", playerName).replace("{{disp}}", playerDisplayName));
 				}
 			}
 		}
+		
 		if (args != null) {
 			for (int i = 0; i < args.length; i++) {
-				title = title.replace("{{"+i+"}}", args[i]);
-				author = author.replace("{{"+i+"}}", args[i]);
-				if (lore != null && lore.size() > 0) {
+				title = title.replace("{{" + i + "}}", args[i]);
+				author = author.replace("{{" + i + "}}", args[i]);
+				if (lore != null && !lore.isEmpty()) {
 					for (int l = 0; l < lore.size(); l++) {
-						lore.set(l, lore.get(l).replace("{{"+i+"}}", args[i]));
+						lore.set(l, lore.get(l).replace("{{" + i + "}}", args[i]));
 					}
 				}
-				if (pages != null && pages.size() > 0) {
+				if (pages != null && !pages.isEmpty()) {
 					for (int p = 0; p < pages.size(); p++) {
-						pages.set(p, pages.get(p).replace("{{"+i+"}}", args[i]));
+						pages.set(p, pages.get(p).replace("{{" + i + "}}", args[i]));
 					}
 				}
 			}
 		}
+		
 		meta.setTitle(title);
 		meta.setAuthor(author);
 		meta.setLore(lore);

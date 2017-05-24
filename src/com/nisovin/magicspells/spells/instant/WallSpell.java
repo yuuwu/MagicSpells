@@ -2,7 +2,6 @@ package com.nisovin.magicspells.spells.instant;
 
 import java.util.ArrayList;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -19,6 +18,7 @@ import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.util.BlockUtils;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TemporaryBlockSet;
@@ -66,9 +66,7 @@ public class WallSpell extends InstantSpell {
 	@Override
 	public void initialize() {
 		super.initialize();
-		if ((preventBreaking || preventDrops) && wallDuration > 0) {
-			registerEvents(new BreakListener());
-		}
+		if ((preventBreaking || preventDrops) && wallDuration > 0) registerEvents(new BreakListener());
 	}
 	
 	@Override
@@ -86,7 +84,7 @@ public class WallSpell extends InstantSpell {
 					BlockState eventBlockState = target.getState();
 					wallMaterial.setBlock(target, false);
 					MagicSpellsBlockPlaceEvent event = new MagicSpellsBlockPlaceEvent(target, eventBlockState, target, HandHandler.getItemInMainHand(player), player, true);
-					Bukkit.getPluginManager().callEvent(event);
+					EventUtil.call(event);
 					BlockUtils.setTypeAndData(target, Material.AIR, (byte)0, false);
 					if (event.isCancelled()) {
 						sendMessage(strNoTarget, player, args);
@@ -129,7 +127,7 @@ public class WallSpell extends InstantSpell {
 				}
 				if (wallDuration > 0) {
 					blockSets.add(blockSet);
-					blockSet.removeAfter(Math.round(wallDuration*power), new BlockSetRemovalCallback() {
+					blockSet.removeAfter(Math.round(wallDuration * power), new BlockSetRemovalCallback() {
 						@Override
 						public void run(TemporaryBlockSet set) {
 							blockSets.remove(set);
@@ -144,19 +142,18 @@ public class WallSpell extends InstantSpell {
 	}
 	
 	class BreakListener implements Listener {
+		
 		@EventHandler(ignoreCancelled=true)
 		void onBlockBreak(BlockBreakEvent event) {
-			if (blockSets.size() > 0) {
-				for (TemporaryBlockSet blockSet : blockSets) {
-					if (blockSet.contains(event.getBlock())) {
-						event.setCancelled(true);
-						if (!preventBreaking) {
-							event.getBlock().setType(Material.AIR);
-						}
-					}
-				}
+			if (blockSets.isEmpty()) return;
+			Block block = event.getBlock();
+			for (TemporaryBlockSet blockSet : blockSets) {
+				if (!blockSet.contains(block)) continue;
+				event.setCancelled(true);
+				if (!preventBreaking) block.setType(Material.AIR);
 			}
 		}
+		
 	}
 	
 	@Override
@@ -166,4 +163,5 @@ public class WallSpell extends InstantSpell {
 		}
 		blockSets.clear();
 	}
+	
 }

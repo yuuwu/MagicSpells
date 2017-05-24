@@ -21,7 +21,4 @@ public class V1_11EntityTypeHandler {
 		return v_1_11API;
 	}
 	
-	
-	
-	
 }

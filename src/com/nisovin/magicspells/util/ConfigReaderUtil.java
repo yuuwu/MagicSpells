@@ -9,7 +9,6 @@ import com.nisovin.magicspells.util.prompt.PromptType;
 
 public class ConfigReaderUtil {
 
-	
 	public static MagicLocation readLocation(ConfigurationSection section, String path) {
 		return readLocation(section, path, "world,0,0,0");
 	}
@@ -25,12 +24,8 @@ public class ConfigReaderUtil {
 			double z = Double.parseDouble(split[3]);
 			float yaw = 0;
 			float pitch = 0;
-			if (split.length > 4) {
-				yaw = Float.parseFloat(split[4]);
-			}
-			if (split.length > 5) {
-				pitch = Float.parseFloat(split[5]);
-			}
+			if (split.length > 4) yaw = Float.parseFloat(split[4]);
+			if (split.length > 5) pitch = Float.parseFloat(split[5]);
 			ret = new MagicLocation(world, x, y, z, yaw, pitch);
 		} catch (Exception e) {
 			return null;
@@ -50,7 +45,6 @@ public class ConfigReaderUtil {
 		
 		return promptType.constructPrompt(section);
 	}
-	
 	
 	// prefix accepts a string and defaults to null
 	// local-echo accepts a boolean and defaults to true
@@ -80,10 +74,9 @@ public class ConfigReaderUtil {
 		
 		// handle escape sequence
 		String escapeSequence = section.getString("escape-sequence", null);
-		if (escapeSequence != null && !escapeSequence.isEmpty()) {
-			ret = ret.withEscapeSequence("");
-		}
+		if (escapeSequence != null && !escapeSequence.isEmpty()) ret = ret.withEscapeSequence("");
 		
+		// Return
 		return ret;
 	}
 	

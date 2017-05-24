@@ -33,9 +33,8 @@ public class ExperienceBarManager {
 	
 	public void unlock(Player player, Object object) {
 		Object lock = locks.get(player);
-		if (lock != null && lock.equals(object)) {
-			locks.remove(player);
-		}
+		if (lock == null) return;
+		if (lock.equals(object)) locks.remove(player);
 	}
 	
 }

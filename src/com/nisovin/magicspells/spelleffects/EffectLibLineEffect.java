@@ -30,15 +30,11 @@ public class EffectLibLineEffect extends EffectLibEffect {
 	public void playTrackingLinePatterns(Location origin, Location target, Entity originEntity,
 			Entity targetEntity) {
 		if (forceStaticOriginLocation) {
-			if (origin == null && originEntity != null) {
-				origin = originEntity.getLocation();
-			}
+			if (origin == null && originEntity != null) origin = originEntity.getLocation();
 			originEntity = null;
 		}
 		if (forceStaticTargetLocation) {
-			if (target == null && targetEntity != null) {
-				target = targetEntity.getLocation();
-			}
+			if (target == null && targetEntity != null) target = targetEntity.getLocation();
 			targetEntity = null;
 		}
 		manager.start(className, effectLibSection, origin, target, originEntity, targetEntity, null);

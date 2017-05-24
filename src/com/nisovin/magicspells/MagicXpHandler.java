@@ -23,6 +23,7 @@ import com.nisovin.magicspells.Spell.SpellCastState;
 import com.nisovin.magicspells.events.SpellCastedEvent;
 import com.nisovin.magicspells.events.SpellLearnEvent;
 import com.nisovin.magicspells.events.SpellLearnEvent.LearnSource;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.IntMap;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
@@ -162,7 +163,7 @@ public class MagicXpHandler implements Listener {
 						for (Spell spell : toCheck) {
 							if (!spellbook.hasSpell(spell, false) && spellbook.canLearn(spell)) {
 								SpellLearnEvent evt = new SpellLearnEvent(spell, player, LearnSource.MAGIC_XP, castedSpell);
-								Bukkit.getPluginManager().callEvent(evt);
+								EventUtil.call(evt);
 								if (!evt.isCancelled()) {
 									spellbook.addSpell(spell);
 									MagicSpells.sendMessage(spell.getStrXpLearned(), player, MagicSpells.NULL_ARGS);
@@ -191,24 +192,26 @@ public class MagicXpHandler implements Listener {
 	public void onChangeWorld(PlayerChangedWorldEvent event) {
 		if (plugin.separatePlayerSpellsPerWorld) {
 			Player player = event.getPlayer();
-			if (dirty.contains(player.getName())) {
+			String playerName = player.getName();
+			if (dirty.contains(playerName)) {
 				save(player);
 			}
-			currentWorld.put(player.getName(), player.getWorld().getName());
+			currentWorld.put(playerName, player.getWorld().getName());
 			load(player);
-			dirty.remove(player.getName());
+			dirty.remove(playerName);
 		}
 	}
 
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
-		if (dirty.contains(player.getName())) {
+		String playerName = player.getName();
+		if (dirty.contains(playerName)) {
 			save(player);
 		}
-		xp.remove(player.getName());
-		dirty.remove(player.getName());
-		currentWorld.remove(player.getName());
+		xp.remove(playerName);
+		dirty.remove(playerName);
+		currentWorld.remove(playerName);
 	}
 	
 	public void load(Player player) {

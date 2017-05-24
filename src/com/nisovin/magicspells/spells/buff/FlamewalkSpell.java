@@ -13,6 +13,7 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.events.MagicSpellsEntityDamageByEntityEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.BuffSpell;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
 
@@ -42,31 +43,31 @@ public class FlamewalkSpell extends BuffSpell {
 	@Override
 	public boolean castBuff(Player player, float power, String[] args) {
 		flamewalkers.put(player.getName(), power);
-		if (burner == null) {
-			burner = new Burner();
-		}
+		if (burner == null) burner = new Burner();
 		return true;
 	}	
 	
 	@Override
 	public void turnOffBuff(Player player) {
 		flamewalkers.remove(player.getName());
-		if (flamewalkers.size() == 0 && burner != null) {
-			burner.stop();
-			burner = null;
-		}
+		if (!flamewalkers.isEmpty()) return;
+		if (burner == null) return;
+		
+		burner.stop();
+		burner = null;
 	}
 	
 	@Override
 	protected void turnOff() {
 		flamewalkers.clear();
-		if (burner != null) {
-			burner.stop();
-			burner = null;
-		}
+		if (burner == null) return;
+		
+		burner.stop();
+		burner = null;
 	}
 
 	private class Burner implements Runnable {
+		
 		int taskId;
 		String[] strArr = new String[0];
 		
@@ -95,16 +96,14 @@ public class FlamewalkSpell extends BuffSpell {
 							if (entity != player && targetPlayers) {
 								if (checkPlugins) {
 									MagicSpellsEntityDamageByEntityEvent event = new MagicSpellsEntityDamageByEntityEvent(player, entity, DamageCause.ENTITY_ATTACK, 1D);
-									Bukkit.getServer().getPluginManager().callEvent(event);
-									if (event.isCancelled()) {
-										continue;
-									}
+									EventUtil.call(event);
+									if (event.isCancelled()) continue;
 								}
 							}
 						} else if (!(entity instanceof LivingEntity)) {
 							continue;
 						}
-						entity.setFireTicks(Math.round(fireTicks*power));
+						entity.setFireTicks(Math.round(fireTicks * power));
 						playSpellEffects(EffectPosition.TARGET, entity);
 						playSpellEffectsTrail(player.getLocation(), entity.getLocation());
 						addUse(player);
@@ -113,13 +112,12 @@ public class FlamewalkSpell extends BuffSpell {
 				}
 			}
 		}
+		
 	}
 
 	@Override
 	public boolean isActive(Player player) {
 		return flamewalkers.containsKey(player.getName());
 	}
-
-
 
 }

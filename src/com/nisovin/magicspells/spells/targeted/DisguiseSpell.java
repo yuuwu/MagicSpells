@@ -35,6 +35,7 @@ import com.nisovin.magicspells.util.IDisguiseManager;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
 import com.nisovin.magicspells.util.TargetInfo;
+
 public class DisguiseSpell extends TargetedSpell implements TargetedEntitySpell {
 
 	static IDisguiseManager manager;
@@ -130,12 +131,8 @@ public class DisguiseSpell extends TargetedSpell implements TargetedEntitySpell 
 	public void initialize() {
 		if (manager == null) return;
 		super.initialize();
-		if (undisguiseOnCast) {
-			registerEvents(new CastListener());
-		}
-		if (undisguiseOnGiveDamage || undisguiseOnTakeDamage) {
-			registerEvents(new DamageListener());
-		}
+		if (undisguiseOnCast) registerEvents(new CastListener());
+		if (undisguiseOnGiveDamage || undisguiseOnTakeDamage) registerEvents(new DamageListener());
 	}
 
 	@Override
@@ -227,15 +224,18 @@ public class DisguiseSpell extends TargetedSpell implements TargetedEntitySpell 
 	}
 	
 	class CastListener implements Listener {
+		
 		@EventHandler
 		void onSpellCast(SpellCastedEvent event) {
 			if (event.getSpell() != thisSpell && disguised.containsKey(event.getCaster().getName().toLowerCase())) {
 				manager.removeDisguise(event.getCaster());
 			}
 		}
+		
 	}
 	
 	class DamageListener implements Listener {
+		
 		@EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
 		void onDamage(EntityDamageEvent event) {
 			if (undisguiseOnTakeDamage && event.getEntity() instanceof Player && disguised.containsKey(((Player)event.getEntity()).getName().toLowerCase())) {
@@ -255,6 +255,7 @@ public class DisguiseSpell extends TargetedSpell implements TargetedEntitySpell 
 				}
 			}
 		}
+		
 	}
 	
 	public static IDisguiseManager getDisguiseManager() {
@@ -381,18 +382,22 @@ public class DisguiseSpell extends TargetedSpell implements TargetedEntitySpell 
 	}
 	
 	public class PlayerDisguiseData {
+		
 		public String uuid;
 		public String skin;
 		public String sig;
+		
 		public PlayerDisguiseData(String uuid, String skin, String sig) {
 			this.uuid = uuid;
 			this.skin = skin;
 			this.sig = sig;
 		}
+		
 		@Override
 		public PlayerDisguiseData clone() {
 			return new PlayerDisguiseData(uuid, skin, sig);
 		}
+		
 	}
 	
 }

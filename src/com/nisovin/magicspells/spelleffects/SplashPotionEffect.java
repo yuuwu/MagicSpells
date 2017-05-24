@@ -5,6 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 
 import com.nisovin.magicspells.DebugHandler;
+
 /**
  * SplashPotionEffect<br>
  * <table border=1>

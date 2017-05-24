@@ -26,9 +26,8 @@ public class UnconjureSpell extends InstantSpell {
 		items = new ArrayList<ItemStack>();
 		for (String s : itemNames) {
 			ItemStack i = Util.getItemStackFromString(s);
-			if (i != null) {
-				items.add(i);
-			}
+			if (i == null) continue;
+			items.add(i);
 		}
 	}
 
@@ -50,14 +49,12 @@ public class UnconjureSpell extends InstantSpell {
 	private boolean check(ItemStack[] inv) {
 		boolean chg = false;
 		for (int i = 0; i < inv.length; i++) {
-			if (inv[i] != null) {
-				for (ItemStack item : items) {
-					if (item.isSimilar(inv[i])) {
-						inv[i] = null;
-						chg = true;
-						break;
-					}
-				}
+			if (inv[i] == null) continue;
+			for (ItemStack item : items) {
+				if (!item.isSimilar(inv[i])) continue;
+				inv[i] = null;
+				chg = true;
+				break;
 			}
 		}
 		return chg;

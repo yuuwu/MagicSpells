@@ -2,7 +2,6 @@ package com.nisovin.magicspells.spells.targeted;
 
 import java.util.Collection;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -16,7 +15,9 @@ import com.nisovin.magicspells.events.SpellTargetLocationEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
+
 public class ForcebombSpell extends TargetedSpell implements TargetedLocationSpell {
 
 	private int radiusSquared;
@@ -44,7 +45,7 @@ public class ForcebombSpell extends TargetedSpell implements TargetedLocationSpe
 			Block block = getTargetedBlock(player, power);
 			if (block != null && block.getType() != Material.AIR) {
 				SpellTargetLocationEvent event = new SpellTargetLocationEvent(this, player, block.getLocation(), power);
-				Bukkit.getPluginManager().callEvent(event);
+				EventUtil.call(event);
 				if (event.isCancelled()) {
 					block = null;
 				} else {
@@ -83,12 +84,9 @@ public class ForcebombSpell extends TargetedSpell implements TargetedLocationSpe
 				float power = basePower;
 				if (callTargetEvents && player != null) {
 					SpellTargetEvent event = new SpellTargetEvent(this, player, (LivingEntity)entity, power);
-					Bukkit.getPluginManager().callEvent(event);
-					if (event.isCancelled()) {
-						continue;
-					} else {
-						power = event.getPower();
-					}
+					EventUtil.call(event);
+					if (event.isCancelled()) continue;
+					power = event.getPower();
 				}
 				e = entity.getLocation().toVector();
 				v = e.subtract(t).normalize().multiply(force/10.0*power);
@@ -97,9 +95,7 @@ public class ForcebombSpell extends TargetedSpell implements TargetedLocationSpe
 				} else {
 					v.setY(yForce/10.0*power);
 				}
-				if (v.getY() > (maxYForce/10.0)) {
-					v.setY(maxYForce/10.0);
-				}
+				if (v.getY() > (maxYForce/10.0)) v.setY(maxYForce/10.0);
 				entity.setVelocity(v);
 				playSpellEffects(EffectPosition.TARGET, entity);
 			}

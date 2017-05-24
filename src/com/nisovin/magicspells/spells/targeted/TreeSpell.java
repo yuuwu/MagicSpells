@@ -6,7 +6,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.bukkit.BlockChangeDelegate;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.TreeType;
@@ -18,8 +17,10 @@ import org.bukkit.entity.Player;
 import com.nisovin.magicspells.events.SpellTargetLocationEvent;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellAnimation;
+
 public class TreeSpell extends TargetedSpell implements TargetedLocationSpell {
 
 	private TreeType treeType;
@@ -41,7 +42,7 @@ public class TreeSpell extends TargetedSpell implements TargetedLocationSpell {
 
 			if (target != null && target.getType() != Material.AIR) {
 				SpellTargetLocationEvent event = new SpellTargetLocationEvent(this, player, target.getLocation(), power);
-				Bukkit.getPluginManager().callEvent(event);
+				EventUtil.call(event);
 				if (event.isCancelled()) {
 					target = null;
 				} else {
@@ -49,45 +50,35 @@ public class TreeSpell extends TargetedSpell implements TargetedLocationSpell {
 				}
 			}
 			
-			if (target == null || target.getType() == Material.AIR) {
-				return noTarget(player);
-			}
+			if (target == null || target.getType() == Material.AIR) return noTarget(player);
 			
 			// grow tree
 			boolean grown = growTree(target);
 			
 			// check if failed
-			if (!grown) {
-				return noTarget(player);
-			} else {
-				playSpellEffects(player, target.getLocation());
-			}
-			
+			if (!grown) return noTarget(player);
+			playSpellEffects(player, target.getLocation());
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}
 
 	private boolean growTree(Block target) {
 		// switch to block above
-		target = target.getRelative(BlockFace.UP); //TODO make an alternative to overriding the parameter
-		if (target.getType() != Material.AIR) {
-			return false;
-		}
+		target = target.getRelative(BlockFace.UP);
+		if (target.getType() != Material.AIR) return false;
 		
 		// grow tree
 		Location loc = target.getLocation();				
 		if (speed > 0) {
 			List<BlockState> blockStates = new ArrayList<BlockState>();
 			target.getWorld().generateTree(loc, treeType, new TreeWatch(loc, blockStates));
-			if (blockStates.size() > 0) {
+			if (!blockStates.isEmpty()) {
 				new GrowAnimation(loc.getBlockX(), loc.getBlockZ(), blockStates, speed);
 				return true;
-			} else {
-				return false;
 			}
-		} else {
-			return target.getWorld().generateTree(loc, treeType);
+			return false;
 		}
+		return target.getWorld().generateTree(loc, treeType);
 	}
 	
 	@Override
@@ -141,7 +132,7 @@ public class TreeSpell extends TargetedSpell implements TargetedLocationSpell {
 			for (int i = 0; i < blocksPerTick; i++) {
 				BlockState state = blockStates.remove(0);
 				state.update(true);
-				if (blockStates.size() == 0) {
+				if (blockStates.isEmpty()) {
 					stop();
 					break;
 				}
@@ -172,7 +163,7 @@ public class TreeSpell extends TargetedSpell implements TargetedLocationSpell {
 
 		@Override
 		public boolean isEmpty(int x, int y, int z) {
-			return getTypeId(x,y,z) == 0;
+			return getTypeId(x, y, z) == 0;
 		}
 
 		@Override

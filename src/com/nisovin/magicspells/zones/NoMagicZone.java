@@ -54,17 +54,11 @@ public abstract class NoMagicZone implements Comparable<NoMagicZone> {
 	
 	public final ZoneCheckResult check(Location location, Spell spell) {
 		if (!inZone(location)) return ZoneCheckResult.IGNORED;
-		if (disallowedSpells != null && disallowedSpells.contains(spell.getInternalName())) {
-			return ZoneCheckResult.DENY;
-		} else if (allowedSpells != null && allowedSpells.contains(spell.getInternalName())) {
-			return ZoneCheckResult.ALLOW;
-		} else if (disallowAll) {
-			return ZoneCheckResult.DENY;
-		} else if (allowAll) {
-			return ZoneCheckResult.ALLOW;
-		} else {
-			return ZoneCheckResult.IGNORED;
-		}
+		if (disallowedSpells != null && disallowedSpells.contains(spell.getInternalName())) return ZoneCheckResult.DENY;
+		if (allowedSpells != null && allowedSpells.contains(spell.getInternalName())) return ZoneCheckResult.ALLOW;
+		if (disallowAll) return ZoneCheckResult.DENY;
+		if (allowAll) return ZoneCheckResult.ALLOW;
+		return ZoneCheckResult.IGNORED;
 	}
 	
 	public abstract boolean inZone(Location location);
@@ -79,17 +73,15 @@ public abstract class NoMagicZone implements Comparable<NoMagicZone> {
 	
 	@Override
 	public int compareTo(NoMagicZone other) {
-		if (this.priority < other.priority) {
-			return 1;
-		} else if (this.priority > other.priority) {
-			return -1;
-		} else {
-			return this.id.compareTo(other.id);
-		}
+		if (this.priority < other.priority) return 1;
+		if (this.priority > other.priority) return -1;
+		return this.id.compareTo(other.id);
 	}
 	
 	public enum ZoneCheckResult {
+		
 		ALLOW, DENY, IGNORED
+		
 	}
 	
 }

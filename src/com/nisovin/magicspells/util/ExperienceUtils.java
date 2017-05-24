@@ -21,7 +21,7 @@ public class ExperienceUtils {
 			xpTotalToReachLevel[i] = i * 17;
 		}
 		for (int i = 17; i < MAX_LEVEL_SUPPORTED; i++) {
-			xpRequiredForNextLevel[i - 1] = 3*i - 31;
+			xpRequiredForNextLevel[i - 1] = 3 * i - 31;
 			xpTotalToReachLevel[i] = xpTotalToReachLevel[i - 1] + xpRequiredForNextLevel[i - 1];
 		}
 	}
@@ -31,11 +31,8 @@ public class ExperienceUtils {
 		if (xp < 0) xp = 0;
 		
 		int newLvl = getLevelFromExp(xp);
-		if (newLvl >= MAX_LEVEL_SUPPORTED) {
-			return;
-		} else if (player.getLevel() != newLvl) {
-			player.setLevel(newLvl);
-		}
+		if (newLvl >= MAX_LEVEL_SUPPORTED) return;
+		if (player.getLevel() != newLvl) player.setLevel(newLvl);
 		
 		float pct = ((float)(xp - xpTotalToReachLevel[newLvl]) / (float)xpRequiredForNextLevel[newLvl]);
 		player.setExp(pct);
@@ -56,4 +53,5 @@ public class ExperienceUtils {
 		int pos = Arrays.binarySearch(xpTotalToReachLevel, exp);
 		return pos < 0 ? -pos - 2 : pos;
 	}
+	
 }

@@ -30,9 +30,7 @@ public class PotionHandler {
 			List<String> potionEffects = config.getStringList(POTION_EFFECT_CONFIG_NAME);
 			for (String potionEffect : potionEffects) {
 				PotionEffect eff = buildPotionEffect(potionEffect);
-				if (eff != null) {
-					pmeta.addCustomEffect(eff, true);
-				}
+				if (eff != null) pmeta.addCustomEffect(eff, true);
 			}
 		}
 		
@@ -42,7 +40,6 @@ public class PotionHandler {
 			pmeta.setColor(c);
 		}
 		
-		
 		return pmeta;
 	}
 	
@@ -50,9 +47,7 @@ public class PotionHandler {
 			String[] data = effectString.split(" ");
 			PotionEffectType t = MagicValues.PotionEffect.getPotionEffectType(data[0]);
 			
-			if (t == null) {
-				MagicSpells.error("'" + data[0] + "' could not be connected to a potion effect type");
-			}
+			if (t == null) MagicSpells.error("'" + data[0] + "' could not be connected to a potion effect type");
 			if (t != null) {
 				int level = 0;
 				if (data.length > 1) {
@@ -71,11 +66,10 @@ public class PotionHandler {
 					}
 				}
 				boolean ambient = false;
-				if (data.length > 3 && (BooleanUtils.isYes(data[3]) || data[3].equalsIgnoreCase("ambient"))) {
-					ambient = true;
-				}
+				if (data.length > 3 && (BooleanUtils.isYes(data[3]) || data[3].equalsIgnoreCase("ambient"))) ambient = true;
 				return new PotionEffect(t, duration, level, ambient);
 			}
 		return null;
 	}
+	
 }

@@ -56,14 +56,14 @@ public class SpellReagents {
 	}
 	
 	public ItemStack[] getItemsAsArray() {
-		if (items == null || items.size() == 0) return null;
+		if (items == null || items.isEmpty()) return null;
 		ItemStack[] arr = new ItemStack[items.size()];
 		arr = items.toArray(arr);
 		return arr;
 	}
 	
 	public void setItems(Collection<ItemStack> items) {
-		if (items == null || items.size() == 0) {
+		if (items == null || items.isEmpty()) {
 			this.items = null;
 		} else {
 			this.items = new HashSet<ItemStack>();
@@ -153,7 +153,7 @@ public class SpellReagents {
 	}
 	
 	public void setVariables(Map<String, Double> variables) {
-		if (variables == null || variables.size() == 0) {
+		if (variables == null || variables.isEmpty()) {
 			this.variables = null;
 		} else {
 			this.variables = new HashMap<String, Double>();

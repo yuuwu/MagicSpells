@@ -9,11 +9,9 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 
-public class MagicSpellsEntityDamageByEntityEvent extends
-		EntityDamageByEntityEvent implements IMagicSpellsCompatEvent {
+public class MagicSpellsEntityDamageByEntityEvent extends EntityDamageByEntityEvent implements IMagicSpellsCompatEvent {
 	
-	public MagicSpellsEntityDamageByEntityEvent(Entity damager, Entity damagee,
-			DamageCause cause, double damage) {
+	public MagicSpellsEntityDamageByEntityEvent(Entity damager, Entity damagee, DamageCause cause, double damage) {
 		//super(damager, damagee, cause, damage);
 		super(damager, damagee, cause, getModTemplate(damage), getModifierFunctionTemplate(0D));
 	}
@@ -36,4 +34,5 @@ public class MagicSpellsEntityDamageByEntityEvent extends
 			
 		};
 	}
+	
 }

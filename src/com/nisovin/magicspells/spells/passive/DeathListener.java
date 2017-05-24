@@ -3,6 +3,7 @@ package com.nisovin.magicspells.spells.passive;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
@@ -24,11 +25,10 @@ public class DeathListener extends PassiveListener {
 	@OverridePriority
 	@EventHandler
 	public void onDeath(PlayerDeathEvent event) {
-		Spellbook spellbook = MagicSpells.getSpellbook(event.getEntity());
+		Player player = event.getEntity();
+		Spellbook spellbook = MagicSpells.getSpellbook(player);
 		for (PassiveSpell spell : spells) {
-			if (spellbook.hasSpell(spell)) {
-				spell.activate(event.getEntity());
-			}
+			if (spellbook.hasSpell(spell)) spell.activate(player);
 		}
 	}
 

@@ -53,9 +53,7 @@ public class HandHandler {
 	}
 	
 	public static ItemStack getItemInMainHand(EntityEquipment equip) {
-		if (offhandExists) {
-			return equip.getItemInMainHand();
-		}
+		if (offhandExists) return equip.getItemInMainHand();
 		return equip.getItemInHand();
 	}
 	
@@ -88,11 +86,8 @@ public class HandHandler {
 	}
 	
 	public static float getItemInMainHandDropChance(EntityEquipment equip) {
-		if (offhandExists) {
-			return equip.getItemInMainHandDropChance();
-		} else {
-			return equip.getItemInHandDropChance();
-		}
+		if (offhandExists) return equip.getItemInMainHandDropChance();
+		return equip.getItemInHandDropChance();
 	}
 	
 	public static ItemStack getItemInOffHand(Player equip) {
@@ -100,9 +95,7 @@ public class HandHandler {
 	}
 	
 	public static ItemStack getItemInOffHand(EntityEquipment equip) {
-		if (offhandExists) {
-			return equip.getItemInOffHand();
-		}
+		if (offhandExists) return equip.getItemInOffHand();
 		// no offhand to get from
 		return null;
 	}
@@ -136,10 +129,7 @@ public class HandHandler {
 	}
 	
 	public static float getItemInOffHandDropChance(EntityEquipment equip) {
-		if (offhandExists) {
-			return equip.getItemInOffHandDropChance();
-		} else {
-			return 0F;
-		}
+		if (offhandExists) return equip.getItemInOffHandDropChance();
+		return 0F;
 	}
 }

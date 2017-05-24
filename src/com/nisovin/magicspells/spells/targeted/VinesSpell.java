@@ -35,16 +35,10 @@ public class VinesSpell extends TargetedSpell {
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			List<Block> target = getLastTwoTargetedBlocks(player, power);
-			if (target == null || target.size() != 2) {
-				return noTarget(player);
-			}
-			if (target.get(0).getType() != Material.AIR || !target.get(1).getType().isSolid()) {
-				return noTarget(player);
-			}
+			if (target == null || target.size() != 2) return noTarget(player);
+			if (target.get(0).getType() != Material.AIR || !target.get(1).getType().isSolid()) return noTarget(player);
 			boolean success = growVines(player, target.get(0), target.get(1));
-			if (!success) {
-				return noTarget(player);
-			}
+			if (!success) return noTarget(player);
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}
@@ -87,9 +81,7 @@ public class VinesSpell extends TargetedSpell {
 			}
 		}
 		
-		if (blocks.size() == 0) {
-			return false;
-		}
+		if (blocks.isEmpty()) return false;
 		
 		if (animateInterval <= 0) {
 			for (VineBlock vine : blocks) {
@@ -135,6 +127,7 @@ public class VinesSpell extends TargetedSpell {
 	}
 	
 	class VineBlock implements Comparable<VineBlock> {
+		
 		Block block;
 		double distanceSquared;
 		
@@ -145,13 +138,9 @@ public class VinesSpell extends TargetedSpell {
 		
 		@Override
 		public int compareTo(VineBlock o) {
-			if (o.distanceSquared < this.distanceSquared) {
-				return 1;
-			} else if (o.distanceSquared > this.distanceSquared) {
-				return -1;
-			} else {
-				return o.block.getLocation().toString().compareTo(this.block.getLocation().toString());
-			}
+			if (o.distanceSquared < this.distanceSquared) return 1;
+			if (o.distanceSquared > this.distanceSquared) return -1;
+			return o.block.getLocation().toString().compareTo(this.block.getLocation().toString());
 		}
 		
 	}

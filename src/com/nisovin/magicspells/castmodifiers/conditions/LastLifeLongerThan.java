@@ -41,6 +41,4 @@ public class LastLifeLongerThan extends Condition {
 		return false;
 	}
 
-	
-	
 }

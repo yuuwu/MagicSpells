@@ -12,9 +12,7 @@ public class CoordYawVariable extends MetaVariable {
 	@Override
 	public double getValue(String player) {
 		Player p = PlayerNameUtils.getPlayerExact(player);
-		if (p != null) {
-			return p.getLocation().getYaw();
-		}
+		if (p != null) return p.getLocation().getYaw();
 		return 0D;
 	}
 	

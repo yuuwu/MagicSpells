@@ -17,6 +17,7 @@ import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
 import com.nisovin.magicspells.util.Util;
+
 public class CaptureSpell extends TargetedSpell implements TargetedEntitySpell {
 
 	boolean powerAffectsQuantity;
@@ -34,9 +35,7 @@ public class CaptureSpell extends TargetedSpell implements TargetedEntitySpell {
 		itemName = getConfigString("item-name", null);
 		itemLore = getConfigStringList("item-lore", null);
 		
-		if (itemName != null) {
-			itemName = ChatColor.translateAlternateColorCodes('&', itemName);
-		}
+		if (itemName != null) itemName = ChatColor.translateAlternateColorCodes('&', itemName);
 		if (itemLore != null) {
 			for (int i = 0; i < itemLore.size(); i++) {
 				itemLore.set(i, ChatColor.translateAlternateColorCodes('&', itemLore.get(i)));
@@ -48,13 +47,9 @@ public class CaptureSpell extends TargetedSpell implements TargetedEntitySpell {
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			TargetInfo<LivingEntity> target = getTargetedEntity(player, power, getValidTargetChecker());
-			if (target == null) {
-				return noTarget(player);
-			}
+			if (target == null) return noTarget(player);
 			boolean ok = capture(player, target.getTarget(), target.getPower());
-			if (!ok) {
-				return noTarget(player);
-			}
+			if (!ok) return noTarget(player);
 			sendMessages(player, target.getTarget());
 			return PostCastAction.NO_MESSAGES;
 		}
@@ -64,10 +59,12 @@ public class CaptureSpell extends TargetedSpell implements TargetedEntitySpell {
 	@Override
 	public ValidTargetChecker getValidTargetChecker() {
 		return new ValidTargetChecker() {
+			
 			@Override
 			public boolean isValidTarget(LivingEntity entity) {
 				return (!(entity instanceof Player) && entity.getType().isSpawnable());
 			}
+			
 		};
 	}
 	
@@ -76,17 +73,13 @@ public class CaptureSpell extends TargetedSpell implements TargetedEntitySpell {
 		if (item != null) {
 			if (powerAffectsQuantity) {
 				int q = Math.round(power);
-				if (q > 1) {
-					item.setAmount(q);
-				}
+				if (q > 1) item.setAmount(q);
 			}
 			String entityName = MagicSpells.getEntityNames().get(target.getType());
 			if (itemName != null || itemLore != null) {
 				if (entityName == null) entityName = "unknown";
 				ItemMeta meta = item.getItemMeta();
-				if (itemName != null) {
-					meta.setDisplayName(itemName.replace("%name%", entityName));
-				}
+				if (itemName != null) meta.setDisplayName(itemName.replace("%name%", entityName));
 				if (itemLore != null) {
 					List<String> lore = new ArrayList<String>();
 					for (String l : itemLore) {
@@ -98,9 +91,7 @@ public class CaptureSpell extends TargetedSpell implements TargetedEntitySpell {
 			}
 			target.remove();
 			boolean added = false;
-			if (addToInventory && caster != null) {
-				added = Util.addToInventory(caster.getInventory(), item, true, false);
-			}
+			if (addToInventory && caster != null) added = Util.addToInventory(caster.getInventory(), item, true, false);
 			if (!added) {
 				Item dropped = target.getWorld().dropItem(target.getLocation().add(0, 1, 0), item);
 				dropped.setItemStack(item);

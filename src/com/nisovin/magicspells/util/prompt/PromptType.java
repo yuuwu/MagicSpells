@@ -47,7 +47,6 @@ public enum PromptType {
 	private static boolean initialized = false;
 	private static Map<String, PromptType> nameMap = null;
 	
-	
 	private PromptType(String[] names) {
 		labels = names;
 	}
@@ -78,11 +77,7 @@ public enum PromptType {
 	
 	public static PromptType getPromptType(String label) {
 		if (!initialized) initialize();
-		
 		return nameMap.get(label.toLowerCase());
 	}
-	
-	
-	
 	
 }

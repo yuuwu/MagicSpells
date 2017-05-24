@@ -66,9 +66,8 @@ public class ItemCooldownEffect extends SpellEffect {
 	
 	@Override
 	protected Runnable playEffectEntity(Entity entity) {
-		if (entity instanceof Player) {
-			MagicSpells.getVolatileCodeHandler().showItemCooldown((Player)entity, item, duration);
-		}
+		if (!(entity instanceof Player)) return null;
+		MagicSpells.getVolatileCodeHandler().showItemCooldown((Player)entity, item, duration);
 		return null;
 	}
 	

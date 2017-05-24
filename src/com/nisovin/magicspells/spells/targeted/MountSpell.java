@@ -11,6 +11,7 @@ import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
+
 public class MountSpell extends TargetedSpell implements TargetedEntitySpell {
 
 	boolean reverse = false;
@@ -19,7 +20,6 @@ public class MountSpell extends TargetedSpell implements TargetedEntitySpell {
 		super(config, spellName);
 		
 		reverse = getConfigBoolean("reverse", false);
-		
 	}
 
 	@Override
@@ -40,9 +40,7 @@ public class MountSpell extends TargetedSpell implements TargetedEntitySpell {
 					// join stack
 					LivingEntity target = null;
 					TargetInfo<Player> targetInfo = getTargetedPlayer(player, power);
-					if (targetInfo != null) {
-						target = targetInfo.getTarget();
-					}
+					if (targetInfo != null) target = targetInfo.getTarget();
 					if (target != null) {
 						while (target.getPassenger() != null && target.getPassenger() instanceof LivingEntity) {
 							target = (LivingEntity)target.getPassenger();
@@ -51,31 +49,21 @@ public class MountSpell extends TargetedSpell implements TargetedEntitySpell {
 						target.setPassenger(player);
 						sendMessages(player, target);
 						return PostCastAction.NO_MESSAGES;
-					} else {
-						return noTarget(player);
 					}
+					return noTarget(player);
 				}
 			} else {
 				// reverse - casting player forces target to mount self
 				LivingEntity target = null;
 				TargetInfo<Player> targetInfo = getTargetedPlayer(player, power);
-				if (targetInfo != null) {
-					target = targetInfo.getTarget();
-				}
+				if (targetInfo != null) target = targetInfo.getTarget();
 				if (target != null) {
 					// clear out any previous passengers
-					if (player.getPassenger() != null) {
-						player.eject();
-					}
-					if (player.getVehicle() != null) {
-						player.getVehicle().eject();
-					}
-					if (target.getPassenger() != null) {
-						target.eject();
-					}
-					if (target.getVehicle() != null) {
-						target.getVehicle().eject();
-					}
+					if (player.getPassenger() != null) player.eject();
+					if (player.getVehicle() != null) player.getVehicle().eject();
+					if (target.getPassenger() != null) target.eject();
+					if (target.getVehicle() != null) target.getVehicle().eject();
+					
 					// set passenger
 					player.setPassenger(target);
 					sendMessages(player, target);
@@ -106,12 +94,8 @@ public class MountSpell extends TargetedSpell implements TargetedEntitySpell {
 		Player player = event.getPlayer();
 		Entity vehicle = player.getVehicle();
 		Entity passenger = player.getPassenger();
-		if (passenger != null) {
-			player.eject();
-		}
-		if (vehicle != null && vehicle instanceof Player) {
-			vehicle.eject();
-		}
+		if (passenger != null) player.eject();
+		if (vehicle != null && vehicle instanceof Player) vehicle.eject();
 	}
 	
 	@EventHandler
@@ -119,12 +103,8 @@ public class MountSpell extends TargetedSpell implements TargetedEntitySpell {
 		Player player = event.getEntity();
 		Entity vehicle = player.getVehicle();
 		Entity passenger = player.getPassenger();
-		if (passenger != null) {
-			player.eject();
-		}
-		if (vehicle != null && vehicle instanceof Player) {
-			vehicle.eject();
-		}
+		if (passenger != null) player.eject();
+		if (vehicle != null && vehicle instanceof Player) vehicle.eject();
 	}
 
 }

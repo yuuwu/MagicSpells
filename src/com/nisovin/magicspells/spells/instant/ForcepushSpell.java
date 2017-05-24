@@ -2,7 +2,6 @@ package com.nisovin.magicspells.spells.instant;
 
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -11,6 +10,7 @@ import org.bukkit.util.Vector;
 import com.nisovin.magicspells.events.SpellTargetEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 
 public class ForcepushSpell extends InstantSpell {
@@ -42,32 +42,29 @@ public class ForcepushSpell extends InstantSpell {
 		List<Entity> entities = player.getNearbyEntities(range, range, range);
 		Vector e, v;
 		for (Entity entity : entities) {
-			if (entity instanceof LivingEntity && validTargetList.canTarget(player, entity)) {
-				LivingEntity target = (LivingEntity)entity;
-				float power = basePower;
-				SpellTargetEvent event = new SpellTargetEvent(this, player, target, power);
-				Bukkit.getPluginManager().callEvent(event);
-				if (event.isCancelled()) {
-					continue;
-				} else {
-					if (target != event.getTarget() && target.getWorld().equals(event.getTarget().getWorld())) {
-						target = event.getTarget();
-					}
-					power = event.getPower();
-				}
-				e = target.getLocation().toVector();
-				v = e.subtract(p).normalize().multiply(force/10.0*power);
-				if (force != 0) {
-					v.setY(v.getY() + (yForce/10.0*power));
-				} else {
-					v.setY(yForce/10.0*power);
-				}
-				if (v.getY() > (maxYForce/10.0)) {
-					v.setY(maxYForce/10.0);
-				}
-				target.setVelocity(v);
-				playSpellEffects(EffectPosition.TARGET, target);
+			if (!(entity instanceof LivingEntity)) continue;
+			if (!validTargetList.canTarget(player, entity)) continue;
+			LivingEntity target = (LivingEntity)entity;
+			float power = basePower;
+			SpellTargetEvent event = new SpellTargetEvent(this, player, target, power);
+			EventUtil.call(event);
+			if (event.isCancelled()) continue;
+			
+			if (target != event.getTarget() && target.getWorld().equals(event.getTarget().getWorld())) {
+				target = event.getTarget();
 			}
+			power = event.getPower();
+			
+			e = target.getLocation().toVector();
+			v = e.subtract(p).normalize().multiply(force/10.0 * power);
+			if (force != 0) {
+				v.setY(v.getY() + (yForce/10.0 * power));
+			} else {
+				v.setY(yForce/10.0 * power);
+			}
+			if (v.getY() > (maxYForce/10.0)) v.setY(maxYForce/10.0);
+			target.setVelocity(v);
+			playSpellEffects(EffectPosition.TARGET, target);
 	    }
 		playSpellEffects(EffectPosition.CASTER, player);
 	}

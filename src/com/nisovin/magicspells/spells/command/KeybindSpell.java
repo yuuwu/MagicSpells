@@ -60,9 +60,7 @@ public class KeybindSpell extends CommandSpell {
 					int slot = Integer.parseInt(key);
 					String spellName = conf.getString(key);
 					Spell spell = MagicSpells.getSpellByInternalName(spellName);
-					if (spell != null) {
-						keybinds.setKeybind(slot, spell);
-					}
+					if (spell != null) keybinds.setKeybind(slot, spell);
 				}
 				playerKeybinds.put(player.getName(), keybinds);
 			} catch (Exception e) {
@@ -77,9 +75,8 @@ public class KeybindSpell extends CommandSpell {
 		YamlConfiguration conf = new YamlConfiguration();
 		Spell[] binds = keybinds.keybinds;
 		for (int i = 0; i < binds.length; i++) {
-			if (binds[i] != null) {
-				conf.set(i+"", binds[i].getInternalName());
-			}
+			if (binds[i] == null) continue;
+			conf.set(i + "", binds[i].getInternalName());
 		}
 		try {
 			conf.save(file);
@@ -138,21 +135,17 @@ public class KeybindSpell extends CommandSpell {
 	@EventHandler
 	public void onItemHeldChange(PlayerItemHeldEvent event) {
 		Keybinds keybinds = playerKeybinds.get(event.getPlayer().getName());
-		if (keybinds != null) {
-			keybinds.deselect(event.getPreviousSlot());
-			keybinds.select(event.getNewSlot());
-		}
+		if (keybinds == null) return;
+		keybinds.deselect(event.getPreviousSlot());
+		keybinds.select(event.getNewSlot());
 	}
 	
 	@EventHandler
 	public void onAnimate(PlayerAnimationEvent event) {
 		Keybinds keybinds = playerKeybinds.get(event.getPlayer().getName());
-		if (keybinds != null) {
-			boolean casted = keybinds.castKeybind(event.getPlayer().getInventory().getHeldItemSlot());
-			if (casted) {
-				event.setCancelled(true);
-			}
-		}
+		if (keybinds == null) return;
+		boolean casted = keybinds.castKeybind(event.getPlayer().getInventory().getHeldItemSlot());
+		if (casted) event.setCancelled(true);
 	}
 	
 	@EventHandler
@@ -160,7 +153,9 @@ public class KeybindSpell extends CommandSpell {
 		if (event.isCancelled()) return;
 		
 		Keybinds keybinds = playerKeybinds.get(event.getPlayer().getName());
-		if (keybinds != null && keybinds.hasKeybind(event.getPlayer().getInventory().getHeldItemSlot())) {
+		if (keybinds == null) return;
+		
+		if (keybinds.hasKeybind(event.getPlayer().getInventory().getHeldItemSlot())) {
 			event.setCancelled(true);
 		}
 	}
@@ -185,6 +180,7 @@ public class KeybindSpell extends CommandSpell {
 	}
 	
 	private class Keybinds {
+		
 		Player player;
 		Spell[] keybinds;
 		
@@ -195,21 +191,17 @@ public class KeybindSpell extends CommandSpell {
 		
 		public void deselect(int slot) {
 			Spell spell = keybinds[slot];
-			if (spell != null) {
-				ItemStack spellIcon = spell.getSpellIcon();
-				if (spellIcon == null) {
-					spellIcon = defaultSpellIcon;
-				}
-				//player.getInventory().setItem(slot, new ItemStack(spellIcon.getType(), 0, spellIcon.getDurability()));
-				sendFakeSlotUpdate(player, slot, spellIcon);
-			}
+			if (spell == null) return;
+			ItemStack spellIcon = spell.getSpellIcon();
+			if (spellIcon == null) spellIcon = defaultSpellIcon;
+			//player.getInventory().setItem(slot, new ItemStack(spellIcon.getType(), 0, spellIcon.getDurability()));
+			sendFakeSlotUpdate(player, slot, spellIcon);
 		}
 		
 		public void select(int slot) {
 			Spell spell = keybinds[slot];
-			if (spell != null) {
-				sendFakeSlotUpdate(player, slot, wandItem);
-			}
+			if (spell == null) return;
+			sendFakeSlotUpdate(player, slot, wandItem);
 		}
 		
 		public boolean hasKeybind(int slot) {
@@ -218,11 +210,9 @@ public class KeybindSpell extends CommandSpell {
 		
 		public boolean castKeybind(int slot) {
 			Spell spell = keybinds[slot];
-			if (spell != null) {
-				spell.cast(player);
-				return true;
-			}
-			return false;
+			if (spell == null) return false;
+			spell.cast(player);
+			return true;
 		}
 		
 		public void setKeybind(int slot, Spell spell) {
@@ -236,12 +226,12 @@ public class KeybindSpell extends CommandSpell {
 		
 		public void clearKeybinds() {
 			for (int i = 0; i < keybinds.length; i++) {
-				if (keybinds[i] != null) {
-					keybinds[i] = null;
-					sendFakeSlotUpdate(player, i, null);
-				}
+				if (keybinds[i] == null) continue;
+				keybinds[i] = null;
+				sendFakeSlotUpdate(player, i, null);
 			}
 		}
+		
 	}
 
 }

@@ -1,6 +1,5 @@
 package com.nisovin.magicspells.spells.instant;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -11,6 +10,7 @@ import com.nisovin.magicspells.events.SpellTargetEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.util.BoundingBox;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 
 public class BeamSpell extends InstantSpell {
@@ -38,9 +38,7 @@ public class BeamSpell extends InstantSpell {
 	public void initialize() {
 		super.initialize();
 		spell = new Subspell(spellNameToCast);
-		if (!spell.process()) {
-			MagicSpells.error("Beam Spell '" + internalName + "' has invalid spell defined");
-		}
+		if (!spell.process()) MagicSpells.error("Beam Spell '" + internalName + "' has invalid spell defined");
 	}
 
 	@Override
@@ -58,25 +56,24 @@ public class BeamSpell extends InstantSpell {
 			while (d < maxDistance) {
 				d += interval;
 				pos.add(dir);
-				if (!isTransparent(pos.toLocation(player.getWorld()).getBlock())) {
-					break;
-				}
+				if (!isTransparent(pos.toLocation(player.getWorld()).getBlock())) break;
 				playSpellEffects(EffectPosition.SPECIAL, pos.toLocation(player.getWorld()));
 			}
 			
 			BoundingBox box = new BoundingBox(start.toLocation(player.getWorld()), pos.toLocation(player.getWorld()));
 			box.expand(beamWidth);
 			for (LivingEntity e : player.getWorld().getLivingEntities()) {
-				if (!e.equals(player) && !e.isDead() && box.contains(e) && (validTargetList == null || validTargetList.canTarget(e))) {
-					double dist = pointLineDist(start, pos, e.getLocation().add(0, 0.8, 0).toVector());
-					if (dist < beamWidth/2) {
-						SpellTargetEvent event = new SpellTargetEvent(this, player, e, power);
-						Bukkit.getPluginManager().callEvent(event);
-						if (!event.isCancelled()) {
-							spell.castAtEntity(player, event.getTarget(), event.getPower());
-							playSpellEffects(EffectPosition.TARGET, event.getTarget());
-						}
-					}
+				if (e.equals(player)) continue;
+				if (e.isDead()) continue;
+				if (!box.contains(e)) continue;
+				if (validTargetList != null && !validTargetList.canTarget(e)) continue;
+				double dist = pointLineDist(start, pos, e.getLocation().add(0, 0.8, 0).toVector());
+				if (dist < beamWidth/2) {
+					SpellTargetEvent event = new SpellTargetEvent(this, player, e, power);
+					EventUtil.call(event);
+					if (event.isCancelled()) continue;
+					spell.castAtEntity(player, event.getTarget(), event.getPower());
+					playSpellEffects(EffectPosition.TARGET, event.getTarget());
 				}
 			}
 			

@@ -8,6 +8,4 @@ public abstract class Reagent {
 	
 	public abstract boolean remove(Player player, int amount);
 	
-	
-	
 }

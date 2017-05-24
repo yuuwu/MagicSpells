@@ -12,6 +12,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import com.nisovin.magicspells.MagicSpells;
 
 public class CastItem {
+	
 	private int type = 0;
 	private short data = 0;
 	private String name = "";
@@ -132,13 +133,9 @@ public class CastItem {
 	
 	@Override
 	public boolean equals(Object o) {
-		if (o instanceof CastItem) {
-			return equals((CastItem)o);
-		} else if (o instanceof ItemStack) {
-			return equals((ItemStack)o);
-		} else {
-			return false;
-		}
+		if (o instanceof CastItem) return equals((CastItem)o);
+		if (o instanceof ItemStack) return equals((ItemStack)o);
+		return false;
 	}
 	
 	@Override
@@ -150,60 +147,58 @@ public class CastItem {
 	public String toString() {
 		String s;
 		if (data == 0) {
-			s = type+"";
+			s = type + "";
 		} else {
 			s = type + ":" + data;
 		}
 		if (enchants != null) {
-			s += ";";
+			s += ';';
 			for (int i = 0; i < enchants.length; i++) {
 				s += enchants[i][0] + "-" + enchants[i][1];
-				if (i < enchants.length-1) {
-					s += "+";
-				}
+				if (i < enchants.length - 1) s += '+';
 			}
 		}
-		if (name != null && !name.isEmpty()) {
-			s += "|" + name;
-		}
+		if (name != null && !name.isEmpty()) s += "|" + name;
 		return s;
 	}
 	
 	private int[][] getEnchants(ItemStack item) {
-		if (item != null) {
-			Map<Enchantment, Integer> enchantments = item.getEnchantments();
-			if (enchantments != null && enchantments.size() > 0) {
-				int[][] enchants = new int[enchantments.size()][];
-				int i = 0;
-				for (Enchantment e : enchantments.keySet()) {
-					enchants[i] = new int[] { MagicValues.Enchantments.getId(e), enchantments.get(e) };
-					i++;
-				}
-				sortEnchants(enchants);
-				return enchants;
-			}
+		if (item == null) return null;
+		Map<Enchantment, Integer> enchantments = item.getEnchantments();
+		if (enchantments == null) return null;
+		if (enchantments.isEmpty()) return null;
+		int[][] enchants = new int[enchantments.size()][];
+		int i = 0;
+		for (Enchantment e : enchantments.keySet()) {
+			enchants[i] = new int[] { MagicValues.Enchantments.getId(e), enchantments.get(e) };
+			i++;
 		}
-		return null;
+		sortEnchants(enchants);
+		return enchants;
 	}
 	
 	private static void sortEnchants(int[][] enchants) {
-		Arrays.sort(enchants, new Comparator<int[]>() {
-			@Override
-			public int compare(int[] o1, int[] o2) {
-				if (o1[0] > o2[0]) return 1;
-				if (o1[0] < o2[0]) return -1;
-				return 0;
-			}
-		});
+		Arrays.sort(enchants, enchantComparator);
 	}
+	
+	private static final Comparator<int[]> enchantComparator = new Comparator<int[]>() {
+
+		@Override
+		public int compare(int[] o1, int[] o2) {
+			if (o1[0] > o2[0]) return 1;
+			if (o1[0] < o2[0]) return -1;
+			return 0;
+		}
+		
+	};
 	
 	private boolean compareEnchants(int[][] o1, int[][] o2) {
 		if (o1 == null && o2 == null) return true;
 		if (o1 == null || o2 == null) return false;
 		if (o1.length != o2.length) return false;
 		for (int i = 0; i < o1.length; i++) {
-			if (o1[i][0] != o2[i][0] || o1[i][1] != o2[i][1]) 
-				return false;
+			if (o1[i][0] != o2[i][0]) return false;
+			if (o1[i][1] != o2[i][1]) return false;
 		}
 		return true;
 	}

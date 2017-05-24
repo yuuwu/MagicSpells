@@ -20,6 +20,14 @@ import com.nisovin.magicspells.util.MagicConfig;
 
 public class RepairSpell extends InstantSpell {
 
+	private static final String REPAIR_SELECTOR_KEY_HELD = "held";
+	private static final String REPAIR_SELECTOR_KEY_HOTBAR = "hotbar";
+	private static final String REPAIR_SELECTOR_KEY_INVENTORY = "inventory";
+	private static final String REPAIR_SELECTOR_KEY_HELMET = "helmet";
+	private static final String REPAIR_SELECTOR_KEY_CHESTPLATE = "chestplate";
+	private static final String REPAIR_SELECTOR_KEY_LEGGINGS = "leggings";
+	private static final String REPAIR_SELECTOR_KEY_BOOTS = "boots";
+	
 	private int repairAmt;
 	private String[] toRepair;
 	private Set<Material> ignoreItems;
@@ -31,16 +39,13 @@ public class RepairSpell extends InstantSpell {
 		
 		repairAmt = getConfigInt("repair-amount", 300);
 		List<String> toRepairList = getConfigStringList("to-repair", null);
-		if (toRepairList == null) {
-			toRepairList = new ArrayList<String>();
-		}
-		if (toRepairList.size() == 0) {
-			toRepairList.add("held");
-		}
+		if (toRepairList == null) toRepairList = new ArrayList<String>();
+		if (toRepairList.isEmpty()) toRepairList.add(REPAIR_SELECTOR_KEY_HELD);
 		Iterator<String> iter = toRepairList.iterator();
 		while (iter.hasNext()) {
 			String s = iter.next();
-			if (!s.equals("held") && !s.equals("hotbar") && !s.equals("inventory") && !s.equals("helmet") && !s.equals("chestplate") && !s.equals("leggings") && !s.equals("boots")) {
+			
+			if (!s.equals(REPAIR_SELECTOR_KEY_HELD) && !s.equals(REPAIR_SELECTOR_KEY_HOTBAR) && !s.equals(REPAIR_SELECTOR_KEY_INVENTORY) && !s.equals(REPAIR_SELECTOR_KEY_HELMET) && !s.equals(REPAIR_SELECTOR_KEY_CHESTPLATE) && !s.equals(REPAIR_SELECTOR_KEY_LEGGINGS) && !s.equals(REPAIR_SELECTOR_KEY_BOOTS)) {
 				Bukkit.getServer().getLogger().severe("MagicSpells: repair: invalid to-repair option: " + s);
 				iter.remove();
 			}
@@ -53,24 +58,26 @@ public class RepairSpell extends InstantSpell {
 		if (list != null) {
 			for (String s : list) {
 				MagicMaterial m = MagicSpells.getItemNameResolver().resolveItem(s);
-				if (m != null && m.getMaterial() != null) {
-					ignoreItems.add(m.getMaterial());
-				}
+				if (m == null) continue;
+				Material material = m.getMaterial();
+				if (material == null) continue;
+				ignoreItems.add(material);
 			}
 		}
-		if (ignoreItems.size() == 0) ignoreItems = null;
+		if (ignoreItems.isEmpty()) ignoreItems = null;
 		
 		allowedItems = EnumSet.noneOf(Material.class);
 		list = getConfigStringList("allowed-items", null);
 		if (list != null) {
 			for (String s : list) {
 				MagicMaterial m = MagicSpells.getItemNameResolver().resolveItem(s);
-				if (m != null && m.getMaterial() != null) {
-					allowedItems.add(m.getMaterial());
-				}
+				if (m == null) continue;
+				Material material = m.getMaterial();
+				if (material == null) continue;
+				allowedItems.add(material);
 			}
 		}
-		if (allowedItems.size() == 0) allowedItems = null;
+		if (allowedItems.isEmpty()) allowedItems = null;
 		
 		strNothingToRepair = getConfigString("str-nothing-to-repair", "Nothing to repair.");
 	}
@@ -80,68 +87,98 @@ public class RepairSpell extends InstantSpell {
 		if (state == SpellCastState.NORMAL) {
 			int repaired = 0;
 			for (String s : toRepair) {
-				if (s.equals("held")) {
+				if (s.equals(REPAIR_SELECTOR_KEY_HELD)) {
 					ItemStack item = HandHandler.getItemInMainHand(player);
-					if (item != null && isRepairable(item.getType()) && item.getDurability() > 0) {
+					if (item == null) continue;
+					if (!isRepairable(item.getType())) continue;
+					if (item.getDurability() > 0) {
 						item.setDurability(newDura(item));
 						HandHandler.setItemInMainHand(player, item);
 						repaired++;
 					}
-				} else if (s.equals("hotbar") || s.equals("inventory")) {
+					continue;
+				}
+				
+				if (s.equals(REPAIR_SELECTOR_KEY_HOTBAR) || s.equals(REPAIR_SELECTOR_KEY_INVENTORY)) {
 					int start, end;
 					ItemStack[] items = player.getInventory().getContents();
-					if (s.equals("hotbar")) {
+					
+					if (s.equals(REPAIR_SELECTOR_KEY_HOTBAR)) {
 						start = 0; 
 						end = 9;
 					} else {
 						start = 9; 
 						end = 36;
 					}
+					
 					for (int i = start; i < end; i++) {
 						ItemStack item = items[i];
-						if (item != null && isRepairable(item.getType()) && item.getDurability() > 0) {
+						if (item == null) continue;
+						if (!isRepairable(item.getType())) continue;
+						if (item.getDurability() > 0) {
 							item.setDurability(newDura(item));
 							items[i] = item;
 							repaired++;
 						}
 					}
 					player.getInventory().setContents(items);
-				} else if (s.equals("helmet")) {
+					continue;
+				}
+				
+				if (s.equals(REPAIR_SELECTOR_KEY_HELMET)) {
 					ItemStack item = player.getInventory().getHelmet();
-					if (item != null && isRepairable(item.getType()) && item.getDurability() > 0) {
+					if (item == null) continue;
+					if (!isRepairable(item.getType())) continue;
+					if (item.getDurability() > 0) {
 						item.setDurability(newDura(item));
 						player.getInventory().setHelmet(item);
 						repaired++;
 					}
-				} else if (s.equals("chestplate")) {
+					continue;
+				}
+				
+				if (s.equals(REPAIR_SELECTOR_KEY_CHESTPLATE)) {
 					ItemStack item = player.getInventory().getChestplate();
-					if (item != null && isRepairable(item.getType()) && item.getDurability() > 0) {
+					if (item == null) continue;
+					if (!isRepairable(item.getType())) continue;
+					if (item.getDurability() > 0) {
 						item.setDurability(newDura(item));
 						player.getInventory().setChestplate(item);
 						repaired++;
 					}
-				} else if (s.equals("leggings")) {
+					continue;
+				}
+				
+				if (s.equals(REPAIR_SELECTOR_KEY_LEGGINGS)) {
 					ItemStack item = player.getInventory().getLeggings();
-					if (item != null && isRepairable(item.getType()) && item.getDurability() > 0) {
+					if (item == null) continue;
+					if (!isRepairable(item.getType())) continue;
+					if (item.getDurability() > 0) {
 						item.setDurability(newDura(item));
 						player.getInventory().setLeggings(item);
 						repaired++;
 					}
-				} else if (s.equals("boots")) {
+					continue;
+				}
+				
+				if (s.equals(REPAIR_SELECTOR_KEY_BOOTS)) {
 					ItemStack item = player.getInventory().getBoots();
-					if (item != null && isRepairable(item.getType()) && item.getDurability() > 0) {
+					if (item == null) continue;
+					if (!isRepairable(item.getType())) continue;
+					if (item.getDurability() > 0) {
 						item.setDurability(newDura(item));
 						player.getInventory().setBoots(item);
 						repaired++;
 					}
+					continue;
 				}
 			}
 			if (repaired == 0) {
 				sendMessage(strNothingToRepair, player, args);
 				return PostCastAction.ALREADY_HANDLED;
-			} else {
-				playSpellEffects(EffectPosition.CASTER, player);
 			}
+			
+			playSpellEffects(EffectPosition.CASTER, player);
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}
@@ -153,6 +190,7 @@ public class RepairSpell extends InstantSpell {
 		return dura;
 	}
 	
+	// TODO is it version safe to check for the repairable interface on the item?
 	private boolean isRepairable(Material material) {
 		if (ignoreItems != null && ignoreItems.contains(material)) return false;
 		if (allowedItems != null && !allowedItems.contains(material)) return false;

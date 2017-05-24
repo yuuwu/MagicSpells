@@ -8,11 +8,8 @@ import org.bukkit.inventory.ItemStack;
 
 public class MagicSpellsBlockPlaceEvent extends BlockPlaceEvent implements IMagicSpellsCompatEvent {
 
-	public MagicSpellsBlockPlaceEvent(Block placedBlock,
-			BlockState replacedBlockState, Block placedAgainst,
-			ItemStack itemInHand, Player thePlayer, boolean canBuild) {
-		super(placedBlock, replacedBlockState, placedAgainst, itemInHand, thePlayer,
-				canBuild);
+	public MagicSpellsBlockPlaceEvent(Block placedBlock, BlockState replacedBlockState, Block placedAgainst, ItemStack itemInHand, Player thePlayer, boolean canBuild) {
+		super(placedBlock, replacedBlockState, placedAgainst, itemInHand, thePlayer, canBuild);
 	}
 
 }

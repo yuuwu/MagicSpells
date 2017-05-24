@@ -80,6 +80,4 @@ public abstract class Variable {
 		return getValue(player) + "";
 	}
 	
-	
-	
 }

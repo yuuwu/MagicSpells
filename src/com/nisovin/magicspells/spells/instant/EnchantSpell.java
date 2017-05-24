@@ -19,9 +19,7 @@ public class EnchantSpell extends InstantSpell {
 	public EnchantSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		enchantments = new HashMap<Enchantment, Integer>();
-		if (!configKeyExists("enchantments")) {
-			throw new NullPointerException("There must be a configuration section called enchantments");
-		}
+		if (!configKeyExists("enchantments")) throw new NullPointerException("There must be a configuration section called enchantments");
 		ConfigurationSection enchantSection = getConfigSection("enchantments");
 		for (String key: enchantSection.getKeys(false)) {
 			enchantments.put(Enchantment.getByName(key), enchantSection.getInt(key));

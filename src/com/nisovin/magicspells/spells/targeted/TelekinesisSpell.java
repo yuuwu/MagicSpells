@@ -2,7 +2,6 @@ package com.nisovin.magicspells.spells.targeted;
 
 import java.util.HashSet;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -16,8 +15,10 @@ import com.nisovin.magicspells.events.MagicSpellsPlayerInteractEvent;
 import com.nisovin.magicspells.events.SpellTargetLocationEvent;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
+
 public class TelekinesisSpell extends TargetedSpell implements TargetedLocationSpell {
 	
 	private boolean checkPlugins;
@@ -44,34 +45,32 @@ public class TelekinesisSpell extends TargetedSpell implements TargetedLocationS
 			if (target == null) {
 				// fail
 				return noTarget(player);
-			} else {
-				// run target event
-				SpellTargetLocationEvent event = new SpellTargetLocationEvent(this, player, target.getLocation(), power);
-				Bukkit.getPluginManager().callEvent(event);
-				if (event.isCancelled()) {
-					return noTarget(player);
-				} else {
-					target = event.getTargetLocation().getBlock();
-				}
-				// run effect
-				boolean activated = activate(player, target);
-				if (!activated) {
-					return noTarget(player);
-				} else {
-					playSpellEffects(player, target.getLocation());
-				}
 			}
+			
+			// run target event
+			SpellTargetLocationEvent event = new SpellTargetLocationEvent(this, player, target.getLocation(), power);
+			EventUtil.call(event);
+			if (event.isCancelled()) return noTarget(player);
+			
+			target = event.getTargetLocation().getBlock();
+			
+			// run effect
+			boolean activated = activate(player, target);
+			if (!activated) return noTarget(player);
+			
+			playSpellEffects(player, target.getLocation());
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}
 	
 	private boolean activate(Player caster, Block target) {
-		if (target.getType() == Material.LEVER || target.getType() == Material.STONE_BUTTON || target.getType() == Material.WOOD_BUTTON) {
+		Material targetType = target.getType();
+		if (targetType == Material.LEVER || targetType == Material.STONE_BUTTON || targetType == Material.WOOD_BUTTON) {
 			if (checkPlugins(caster, target)) {
 				MagicSpells.getVolatileCodeHandler().toggleLeverOrButton(target);
 				return true;
 			}
-		} else if (target.getType() == Material.WOOD_PLATE || target.getType() == Material.STONE_PLATE || target.getType() == Material.IRON_PLATE || target.getType() == Material.GOLD_PLATE) {
+		} else if (targetType == Material.WOOD_PLATE || targetType == Material.STONE_PLATE || targetType == Material.IRON_PLATE || targetType == Material.GOLD_PLATE) {
 			if (checkPlugins(caster, target)) {
 				MagicSpells.getVolatileCodeHandler().pressPressurePlate(target);
 				return true;
@@ -83,10 +82,8 @@ public class TelekinesisSpell extends TargetedSpell implements TargetedLocationS
 	private boolean checkPlugins(Player caster, Block target) {
 		if (checkPlugins) {
 			MagicSpellsPlayerInteractEvent event = new MagicSpellsPlayerInteractEvent(caster, Action.RIGHT_CLICK_BLOCK, HandHandler.getItemInMainHand(caster), target, BlockFace.SELF);
-			Bukkit.getPluginManager().callEvent(event);
-			if (event.useInteractedBlock() == Result.DENY) {
-				return false;
-			}
+			EventUtil.call(event);
+			if (event.useInteractedBlock() == Result.DENY) return false;
 		}
 		return true;
 	}
@@ -94,9 +91,7 @@ public class TelekinesisSpell extends TargetedSpell implements TargetedLocationS
 	@Override
 	public boolean castAtLocation(Player caster, Location target, float power) {
 		boolean activated = activate(caster, target.getBlock());
-		if (activated) {
-			playSpellEffects(caster, target);
-		}
+		if (activated) playSpellEffects(caster, target);
 		return activated;
 	}
 
@@ -104,4 +99,5 @@ public class TelekinesisSpell extends TargetedSpell implements TargetedLocationS
 	public boolean castAtLocation(Location target, float power) {
 		return false;
 	}
+	
 }

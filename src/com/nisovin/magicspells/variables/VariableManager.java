@@ -83,16 +83,11 @@ public class VariableManager implements Listener {
 			}
 			MagicSpells.debug(1, variables.size() + " variables loaded!");
 		}
-		if (variables.size() > 0) {
-			MagicSpells.registerEvents(this);
-		}
-		
+		if (variables.size() > 0) MagicSpells.registerEvents(this);
 		
 		// load vars
 		folder = new File(plugin.getDataFolder(), "vars");
-		if (!folder.exists()) {
-			folder.mkdir();
-		}
+		if (!folder.exists()) folder.mkdir();
 		loadGlobalVars();
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			loadPlayerVars(player.getName(), Util.getUniqueId(player));
@@ -104,15 +99,13 @@ public class VariableManager implements Listener {
 		
 		// start save task
 		MagicSpells.scheduleRepeatingTask(new Runnable() {
+			
 			@Override
 			public void run() {
-				if (dirtyGlobalVars) {
-					saveGlobalVars();
-				}
-				if (dirtyPlayerVars.size() > 0) {
-					saveAllPlayerVars();
-				}
+				if (dirtyGlobalVars) saveGlobalVars();
+				if (!dirtyPlayerVars.isEmpty()) saveAllPlayerVars();
 			}
+			
 		}, 60 * 20, 60 * 20);
 	}
 	
@@ -192,38 +185,26 @@ public class VariableManager implements Listener {
 	
 	public double getValue(String variable, Player player) {
 		Variable var = variables.get(variable);
-		if (var != null) {
-			return var.getValue(player);
-		} else {
-			return 0D;
-		}
+		if (var != null) return var.getValue(player);
+		return 0D;
 	}
 	
 	public String getStringValue(String variable, Player player) {
 		Variable var = variables.get(variable);
-		if (var != null) {
-			return var.getStringValue(player);
-		} else {
-			return 0D + "";
-		}
+		if (var != null) return var.getStringValue(player);
+		return 0D + "";
 	}
 	
 	public double getValue(String variable, String player) {
 		Variable var = variables.get(variable);
-		if (var != null) {
-			return var.getValue(player);
-		} else {
-			return 0;
-		}
+		if (var != null) return var.getValue(player);
+		return 0;
 	}
 	
 	public String getStringValue(String variable, String player) {
 		Variable var = variables.get(variable);
-		if (var != null) {
-			return var.getStringValue(player);
-		} else {
-			return 0D + "";
-		}
+		if (var != null) return var.getStringValue(player);
+		return 0D + "";
 	}
 	
 	public Variable getVariable(String name) {
@@ -255,9 +236,7 @@ public class VariableManager implements Listener {
 				}
 			} else if (var instanceof PlayerVariable) {
 				Player p = PlayerNameUtils.getPlayerExact(player);
-				if (p != null) {
-					MagicSpells.getBossBarManager().setPlayerBar(p, var.bossBar, var.getValue(p) / var.maxValue);
-				}
+				if (p != null) MagicSpells.getBossBarManager().setPlayerBar(p, var.bossBar, var.getValue(p) / var.maxValue);
 			}
 		}
 	}
@@ -271,9 +250,7 @@ public class VariableManager implements Listener {
 				}
 			} else if (var instanceof PlayerVariable) {
 				Player p = PlayerNameUtils.getPlayerExact(player);
-				if (p != null) {
-					MagicSpells.getVolatileCodeHandler().setExperienceBar(p, (int)var.getValue(p), (float)(var.getValue(p) / var.maxValue));
-				}
+				if (p != null) MagicSpells.getVolatileCodeHandler().setExperienceBar(p, (int)var.getValue(p), (float)(var.getValue(p) / var.maxValue));
 			}
 		}
 	}
@@ -288,9 +265,7 @@ public class VariableManager implements Listener {
 					if (!line.isEmpty()) {
 						String[] s = line.split("=", 2);
 						Variable variable = variables.get(s[0]);
-						if (variable != null && variable instanceof GlobalVariable && variable.permanent) {
-							variable.parseAndSet("", s[1]);
-						}
+						if (variable != null && variable instanceof GlobalVariable && variable.permanent) variable.parseAndSet("", s[1]);
 					}
 				}
 				scanner.close();
@@ -312,13 +287,11 @@ public class VariableManager implements Listener {
 			Variable variable = variables.get(variableName);
 			if (variable instanceof GlobalVariable && variable.permanent) {
 				String val = variable.getStringValue("");
-				if (!val.equals(variable.defaultStringValue)) {
-					lines.add(variableName + "=" + Util.flattenLineBreaks(val));
-				}
+				if (!val.equals(variable.defaultStringValue)) lines.add(variableName + "=" + Util.flattenLineBreaks(val));
 			}
 		}
 		
-		if (lines.size() > 0) {
+		if (!lines.isEmpty()) {
 			BufferedWriter writer = null;
 			try {
 				writer = new BufferedWriter(new FileWriter(file, false));
@@ -348,9 +321,7 @@ public class VariableManager implements Listener {
 		File file = new File(folder, "PLAYER_" + uniqueId + ".txt");
 		if (!file.exists()) {
 			File file2 = new File(folder, "PLAYER_" + player + ".txt");
-			if (file2.exists()) {
-				file2.renameTo(file);
-			}
+			if (file2.exists()) file2.renameTo(file);
 		}
 		if (file.exists()) {
 			try {
@@ -360,9 +331,7 @@ public class VariableManager implements Listener {
 					if (!line.isEmpty()) {
 						String[] s = line.split("=", 2);
 						Variable variable = variables.get(s[0]);
-						if (variable != null && variable instanceof PlayerVariable && variable.permanent) {
-							variable.parseAndSet(player, s[1]);
-						}
+						if (variable != null && variable instanceof PlayerVariable && variable.permanent) variable.parseAndSet(player, s[1]);
 					}
 				}
 				scanner.close();
@@ -386,13 +355,11 @@ public class VariableManager implements Listener {
 			Variable variable = variables.get(variableName);
 			if (variable instanceof PlayerVariable && variable.permanent) {
 				String val = variable.getStringValue(player);
-				if (!val.equals(variable.defaultStringValue)) {
-					lines.add(variableName + "=" + Util.flattenLineBreaks(val));
-				}
+				if (!val.equals(variable.defaultStringValue)) lines.add(variableName + "=" + Util.flattenLineBreaks(val));
 			}
 		}
 		
-		if (lines.size() > 0) {
+		if (!lines.isEmpty()) {
 			BufferedWriter writer = null;
 			try {
 				writer = new BufferedWriter(new FileWriter(file, false));
@@ -421,9 +388,7 @@ public class VariableManager implements Listener {
 	void saveAllPlayerVars() {
 		for (String playerName : new HashSet<String>(dirtyPlayerVars)) {
 			String uid = Util.getUniqueId(playerName);
-			if (uid != null) {
-				savePlayerVars(playerName, uid);
-			}
+			if (uid != null) savePlayerVars(playerName, uid);
 		}
 	}
 	
@@ -446,12 +411,8 @@ public class VariableManager implements Listener {
 	}
 	
 	public void disable() {
-		if (dirtyGlobalVars) {
-			saveGlobalVars();
-		}
-		if (dirtyPlayerVars.size() > 0) {
-			saveAllPlayerVars();
-		}
+		if (dirtyGlobalVars) saveGlobalVars();
+		if (!dirtyPlayerVars.isEmpty()) saveAllPlayerVars();
 		variables.clear();
 	}
 	
@@ -461,18 +422,18 @@ public class VariableManager implements Listener {
 		loadPlayerVars(player.getName(), Util.getUniqueId(player));
 		loadBossBar(player);
 		MagicSpells.scheduleDelayedTask(new Runnable() {
+			
 			@Override
 			public void run() {
 				loadExpBar(player);
 			}
+			
 		}, 10);
 	}
 	
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
-		if (dirtyPlayerVars.contains(event.getPlayer().getName())) {
-			savePlayerVars(event.getPlayer().getName(), Util.getUniqueId(event.getPlayer()));
-		}
+		if (dirtyPlayerVars.contains(event.getPlayer().getName())) savePlayerVars(event.getPlayer().getName(), Util.getUniqueId(event.getPlayer()));
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -550,9 +511,9 @@ public class VariableManager implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onSpellTarget(SpellTargetEvent event) {
 		Map<String, VariableMod> varMods = event.getSpell().getVariableModsTarget();
-		if (varMods != null && varMods.size() > 0) {
+		if (varMods != null && !varMods.isEmpty()) {
 			Player player = event.getCaster();
-			Player target = (event.getTarget() instanceof Player ? (Player)event.getTarget(): null);
+			Player target = (event.getTarget() instanceof Player ? (Player)event.getTarget() : null);
 			if (player != null) {
 				for (String var : varMods.keySet()) {
 					VariableMod mod = varMods.get(var);
@@ -583,4 +544,5 @@ public class VariableManager implements Listener {
 			}
 		}
 	}
+	
 }

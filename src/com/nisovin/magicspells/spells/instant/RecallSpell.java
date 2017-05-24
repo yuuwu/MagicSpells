@@ -58,14 +58,10 @@ public class RecallSpell extends InstantSpell implements TargetedEntitySpell {
 			if (args != null && args.length == 1 && player.hasPermission("magicspells.advanced." + internalName)) {
 				Player target = PlayerNameUtils.getPlayer(args[0]);				
 				if (useBedLocation) {
-					if (target != null) {
-						markLocation = target.getBedSpawnLocation();
-					}
+					if (target != null) markLocation = target.getBedSpawnLocation();
 				} else if (markSpell != null) {
 					Location loc = markSpell.getEffectiveMark(target != null ? target.getName().toLowerCase() : args[0].toLowerCase());
-					if (loc != null) {
-						markLocation = loc;
-					}
+					if (loc != null) markLocation = loc;
 				}
 			} else {
 				markLocation = getRecallLocation(player);
@@ -73,11 +69,11 @@ public class RecallSpell extends InstantSpell implements TargetedEntitySpell {
 			if (markLocation == null) {
 				sendMessage(strNoMark, player, args);
 				return PostCastAction.ALREADY_HANDLED;
-			} else if (!allowCrossWorld && LocationUtil.isntSameWorld(markLocation, player.getLocation())) {
+			} else if (!allowCrossWorld && !LocationUtil.isSameWorld(markLocation, player.getLocation())) {
 				// can't cross worlds
 				sendMessage(strOtherWorld, player, args);
 				return PostCastAction.ALREADY_HANDLED;
-			} else if (maxRange > 0 && markLocation.toVector().distanceSquared(player.getLocation().toVector()) > maxRange*maxRange) {
+			} else if (maxRange > 0 && markLocation.toVector().distanceSquared(player.getLocation().toVector()) > maxRange * maxRange) {
 				// too far
 				sendMessage(strTooFar, player, args);
 				return PostCastAction.ALREADY_HANDLED;
@@ -100,25 +96,18 @@ public class RecallSpell extends InstantSpell implements TargetedEntitySpell {
 	}
 	
 	Location getRecallLocation(Player caster) {
-		if (useBedLocation) {
-			return caster.getBedSpawnLocation();
-		} else if (markSpell != null) {
-			Location loc = markSpell.getEffectiveMark(caster);
-			if (loc != null) {
-				return loc;
-			}
-		}
-		return null;
+		if (useBedLocation) return caster.getBedSpawnLocation();
+		if (markSpell == null) return null;
+		Location loc = markSpell.getEffectiveMark(caster);
+		return loc;
 	}
 
 	@Override
 	public boolean castAtEntity(Player caster, LivingEntity target, float power) {
 		Location mark = getRecallLocation(caster);
-		if (mark != null) {
-			target.teleport(mark);
-			return true;
-		}
-		return false;
+		if (mark == null) return false;
+		target.teleport(mark);
+		return true;
 	}
 
 	@Override

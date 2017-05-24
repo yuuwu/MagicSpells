@@ -43,9 +43,7 @@ public class SeeHealthSpell extends BuffSpell {
 		mode = getConfigString("mode", "always");
 		interval = getConfigInt("update-interval", 5);
 		
-		if (!mode.equals("attack") && !mode.equals("always")) {
-			mode = "attack";
-		}
+		if (!mode.equals("attack") && !mode.equals("always")) mode = "attack";
 		
 		bars = new HashMap<String, Integer>();
 	}
@@ -62,9 +60,7 @@ public class SeeHealthSpell extends BuffSpell {
 	@Override
 	public boolean castBuff(Player player, float power, String[] args) {
 		bars.put(player.getName(), player.getInventory().getHeldItemSlot());
-		if (updater == null && mode.equals("always")) {
-			updater = new Updater();
-		}
+		if (updater == null && mode.equals("always")) updater = new Updater();
 		return true;
 	}
 
@@ -139,7 +135,7 @@ public class SeeHealthSpell extends BuffSpell {
 		Integer i = bars.remove(player.getName());
 		if (i != null) {
 			player.updateInventory();
-			if (updater != null && bars.size() == 0) {
+			if (updater != null && bars.isEmpty()) {
 				updater.stop();
 				updater = null;
 			}
@@ -150,9 +146,9 @@ public class SeeHealthSpell extends BuffSpell {
 	protected void turnOff() {
 		for (String playerName : bars.keySet()) {
 			Player player = Bukkit.getPlayerExact(playerName);
-			if (player != null && player.isValid()) {
-				player.updateInventory();
-			}
+			if (player == null) continue;
+			if (!player.isValid()) continue;
+			player.updateInventory();
 		}
 		bars.clear();
 		if (updater != null) {
@@ -163,11 +159,13 @@ public class SeeHealthSpell extends BuffSpell {
 	
 	private final String colors = "01234567890abcdef";
 	private final Random random = new Random();
+	
 	private ChatColor getRandomColor() {
 		return ChatColor.getByChar(colors.charAt(random.nextInt(colors.length())));
 	}
 	
 	class AttackListener implements Listener {
+		
 		@EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
 		public void onAttack(EntityDamageByEntityEvent event) {
 			if (event.getEntity() instanceof LivingEntity) {
@@ -178,6 +176,7 @@ public class SeeHealthSpell extends BuffSpell {
 				// update bar?
 			}
 		}
+		
 	}
 	
 	class Updater implements Runnable {
@@ -192,13 +191,13 @@ public class SeeHealthSpell extends BuffSpell {
 		public void run() {
 			for (String playerName : bars.keySet()) {
 				Player player = PlayerNameUtils.getPlayerExact(playerName);
-				if (player != null && player.isValid()) {
-					TargetInfo<LivingEntity> target = getTargetedEntity(player, 1F);
-					if (target != null) {
-						showHealthBar(player, target.getTarget());
-					} else {
-						//resetHealthBar(player);
-					}
+				if (player == null) continue;
+				if (!player.isValid()) continue;
+				TargetInfo<LivingEntity> target = getTargetedEntity(player, 1F);
+				if (target != null) {
+					showHealthBar(player, target.getTarget());
+				} else {
+					//resetHealthBar(player);
 				}
 			}
 		}
@@ -208,6 +207,5 @@ public class SeeHealthSpell extends BuffSpell {
 		}
 		
 	}
-
 
 }

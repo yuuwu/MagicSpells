@@ -27,9 +27,7 @@ public class BlockPlatform {
 		this.moving = moving;
 		this.type = type;
 		
-		if (moving) {
-			blocks = new ArrayList<Block>();
-		}
+		if (moving) blocks = new ArrayList<Block>();
 		
 		createPlatform();
 	}
@@ -45,11 +43,11 @@ public class BlockPlatform {
 			int cz = center.getZ();
 			World world = center.getWorld();
 			int max = world.getMaxHeight();
-			for (int x = cx-size; x <= cx+size; x++) {
-				for (int z = cz-size; z <= cz+size; z++) {
-					block = world.getBlockAt(x,cy,z);
-					above = block.getRelative(0,1,0);
-					if ((block.getType() == replaceType && (cy >= max-1 || (blocks != null && blocks.contains(above)) || above.getType() == Material.AIR)) || (blocks != null && blocks.contains(block))) {
+			for (int x = cx - size; x <= cx + size; x++) {
+				for (int z = cz - size; z <= cz + size; z++) {
+					block = world.getBlockAt(x, cy, z);
+					above = block.getRelative(0, 1, 0);
+					if ((block.getType() == replaceType && (cy >= max - 1 || (blocks != null && blocks.contains(above)) || above.getType() == Material.AIR)) || (blocks != null && blocks.contains(block))) {
 						// only add if it's a replaceable block and has air above, or if it is already part of the platform
 						platform.add(block);
 					}
@@ -57,10 +55,10 @@ public class BlockPlatform {
 			}
 		} else if (type.equals("cube")) {
 			Block block;
-			for (int x = center.getX()-size; x <= center.getX()+size; x++) {
-				for (int y = center.getY()-size; y <= center.getY()+size; y++) {
-					for (int z = center.getZ()-size; z <= center.getZ()+size; z++) {
-						block = center.getWorld().getBlockAt(x,y,z);
+			for (int x = center.getX() - size; x <= center.getX() + size; x++) {
+				for (int y = center.getY() - size; y <= center.getY() + size; y++) {
+					for (int z = center.getZ()-size; z <= center.getZ() + size; z++) {
+						block = center.getWorld().getBlockAt(x, y, z);
 						if (block.getType() == replaceType || (blocks != null && blocks.contains(block))) {
 							// only add if it's a replaceable block or if it is already part of the block set
 							platform.add(block);
@@ -91,9 +89,7 @@ public class BlockPlatform {
 		}
 		
 		// update platform block set
-		if (moving) {
-			blocks = platform;
-		}
+		if (moving) blocks = platform;
 	}
 	
 	public boolean movePlatform(Block center) {
@@ -105,9 +101,8 @@ public class BlockPlatform {
 			this.center = center;
 			createPlatform();
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 	
 	public boolean isMoved(Block newCenter) {
@@ -115,11 +110,8 @@ public class BlockPlatform {
 	}
 	
 	public boolean isMoved(Block newCenter, boolean allowDown) {
-		if (!allowDown && newCenter.getY() < center.getY()) {
-			return false;
-		} else {
-			return !newCenter.getLocation().equals(center.getLocation());
-		}
+		if (!allowDown && newCenter.getY() < center.getY()) return false;
+		return !newCenter.getLocation().equals(center.getLocation());
 	}
 	
 	public boolean isMovedHorizontally(Block newCenter) {
@@ -136,11 +128,10 @@ public class BlockPlatform {
 		// remove platform blocks
 		if (moving) {
 			for (Block block : blocks) {
-				if (block.getType() == platformType) {
-					BlockState state = block.getState();
-					state.setType(replaceType);
-					state.update(true, false);
-				}
+				if (block.getType() != platformType) continue;
+				BlockState state = block.getState();
+				state.setType(replaceType);
+				state.update(true, false);
 			}
 		}
 		blocks = null;
@@ -151,5 +142,4 @@ public class BlockPlatform {
 		return this.center;
 	}
 	
-
 }

@@ -11,9 +11,7 @@ public class Util_1_9 {
 	
 	public static Particle getParticleFromName(String name) {
 		for (Particle p : Particle.values()) {
-			if (p.name().equalsIgnoreCase(name)) {
-				return p;
-			}
+			if (p.name().equalsIgnoreCase(name)) return p;
 		}
 		return particleMap.get(name.toLowerCase());
 	}

@@ -29,9 +29,7 @@ public class WitherSkullSpell extends InstantSpell implements TargetedEntityFrom
 		projectileHasGravity = getConfigBoolean("gravity", false);
 		fire = getConfigBoolean("fire", false);
 		skullName = getConfigString("skull-name", null);
-		if (skullName == null || skullName.equals("")) {
-			showCustomName = false;
-		}
+		if (skullName == null || skullName.isEmpty()) showCustomName = false;
 	}
 
 	@Override
@@ -76,6 +74,4 @@ public class WitherSkullSpell extends InstantSpell implements TargetedEntityFrom
 		return castAtEntityFromLocation(null, from, target, power);
 	}
 
-	
-	
 }

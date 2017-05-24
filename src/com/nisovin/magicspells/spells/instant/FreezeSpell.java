@@ -2,7 +2,6 @@ package com.nisovin.magicspells.spells.instant;
 
 import java.util.Random;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
@@ -18,8 +17,13 @@ import com.nisovin.magicspells.events.SpellTargetEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.spells.SpellDamageSpell;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 
+// TODO allow power to optionally control snowball count
+// TODO allow power to optionally control slow amount
+// TODO allow power to optionally control slow duration
+// TODO should the effects on hit be fully configurable?
 public class FreezeSpell extends InstantSpell implements SpellDamageSpell {
 
 	private int snowballs;
@@ -69,16 +73,18 @@ public class FreezeSpell extends InstantSpell implements SpellDamageSpell {
 	
 	@EventHandler(priority=EventPriority.LOWEST)
 	public void onEntityDamage(EntityDamageByEntityEvent event) {
-		if (damage <= 0 || event.isCancelled() || !(event.getEntity() instanceof LivingEntity)) return;
-		
-		if (!(event.getDamager() instanceof Snowball) || event.getDamager().getFallDistance() != identifier) return;
+		if (damage <= 0) return;
+		if (event.isCancelled()) return;
+		if (!(event.getEntity() instanceof LivingEntity)) return;
+		if (!(event.getDamager() instanceof Snowball)) return;
+		if (event.getDamager().getFallDistance() != identifier) return;
 		
 		LivingEntity entity = (LivingEntity)event.getEntity();
 		
 		if (validTargetList.canTarget(entity)) {
 			float power = 1;
 			SpellTargetEvent e = new SpellTargetEvent(this, (Player)((Snowball)event.getDamager()).getShooter(), entity, power);
-			Bukkit.getPluginManager().callEvent(e);
+			EventUtil.call(e);
 			if (e.isCancelled()) {
 				event.setCancelled(true);
 			} else {
@@ -90,10 +96,11 @@ public class FreezeSpell extends InstantSpell implements SpellDamageSpell {
 	}
 	
 	@EventHandler(priority=EventPriority.HIGHEST, ignoreCancelled=true)
-	public void onEntityDamage2(EntityDamageByEntityEvent event) {
+	public void applySlowEffect(EntityDamageByEntityEvent event) {
 		if (slowAmount <= 0 || slowDuration <= 0) return;
 		
-		if (!(event.getDamager() instanceof Snowball) || event.getDamager().getFallDistance() != identifier) return;
+		if (!(event.getDamager() instanceof Snowball)) return;
+		if (event.getDamager().getFallDistance() != identifier) return;
 		
 		((LivingEntity)event.getEntity()).addPotionEffect(new PotionEffect(PotionEffectType.SLOW, slowDuration, slowAmount), true);
 	}

@@ -70,10 +70,9 @@ public class ImbueSpell extends CommandSpell {
 			ItemNameResolver resolver = MagicSpells.getItemNameResolver();
 			for (String s : allowed) {
 				MagicMaterial m = resolver.resolveItem(s);
-				if (m != null) {
-					allowedItemTypes.add(m.getMaterial());
-					allowedItemMaterials.add(m);
-				}
+				if (m == null) continue;
+				allowedItemTypes.add(m.getMaterial());
+				allowedItemMaterials.add(m);
 			}
 		}
 		
@@ -240,6 +239,7 @@ public class ImbueSpell extends CommandSpell {
 	
 	private String getImbueData(ItemStack item) {
 		String s = Util.getLoreData(item);
+		
 		if (s != null && s.startsWith(key + ":")) {
 			return s.replace(key + ":", "");
 		}

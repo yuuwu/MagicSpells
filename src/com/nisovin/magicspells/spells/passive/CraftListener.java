@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.bukkit.Material;
@@ -64,43 +65,34 @@ public class CraftListener extends PassiveListener {
 		if (event.getCurrentItem() == null && event.getCurrentItem().getType() == Material.AIR) return;
 		Player player = (Player)event.getWhoClicked();
 		
-		if (allTypes.size() > 0) {
+		if (!allTypes.isEmpty()) {
 			Spellbook spellbook = MagicSpells.getSpellbook(player);
 			for (PassiveSpell spell : allTypes) {
 				if (!isCancelStateOk(spell, event.isCancelled())) continue;
-				if (spellbook.hasSpell(spell)) {
-					boolean casted = spell.activate(player);
-					if (PassiveListener.cancelDefaultAction(spell, casted)) {
-						event.setCancelled(true);
-					}
-				}
+				if (!spellbook.hasSpell(spell)) continue;
+				boolean casted = spell.activate(player);
+				if (PassiveListener.cancelDefaultAction(spell, casted)) event.setCancelled(true);
 			}
 		}
 		
-		if (types.size() > 0) {
+		if (!types.isEmpty()) {
 			List<PassiveSpell> list = getSpells(event.getCurrentItem());
 			if (list != null) {
 				Spellbook spellbook = MagicSpells.getSpellbook(player);
 				for (PassiveSpell spell : list) {
 					if (!isCancelStateOk(spell, event.isCancelled())) continue;
-					if (spellbook.hasSpell(spell)) {
-						boolean casted = spell.activate(player);
-						if (PassiveListener.cancelDefaultAction(spell, casted)) {
-							event.setCancelled(true);
-						}
-					}
+					if (!spellbook.hasSpell(spell)) continue;
+					boolean casted = spell.activate(player);
+					if (PassiveListener.cancelDefaultAction(spell, casted)) event.setCancelled(true);
 				}
 			}
 		}
 	}
 	
 	private List<PassiveSpell> getSpells(ItemStack item) {
-		if (materials.contains(item.getType())) {
-			for (MagicMaterial m : types.keySet()) {
-				if (m.equals(item)) {
-					return types.get(m);
-				}
-			}
+		if (!materials.contains(item.getType())) return null;
+		for (Entry<MagicMaterial, List<PassiveSpell>> entry : types.entrySet()) {
+			if (entry.getKey().equals(item)) return entry.getValue();
 		}
 		return null;
 	}

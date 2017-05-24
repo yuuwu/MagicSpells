@@ -18,6 +18,7 @@ import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
 import com.nisovin.magicspells.util.Util;
+
 public class CleanseSpell extends TargetedSpell implements TargetedEntitySpell {
 
 	boolean targetPlayers;
@@ -49,32 +50,29 @@ public class CleanseSpell extends TargetedSpell implements TargetedEntitySpell {
 				}
 			} else {
 				PotionEffectType type = Util.getPotionEffectType(s);
-				if (type != null) {
-					potionEffectTypes.add(type);
-				}
+				if (type != null) potionEffectTypes.add(type);
 			}
 		}
 		
 		checker = new ValidTargetChecker() {
+			
 			@Override
 			public boolean isValidTarget(LivingEntity entity) {
-				if (fire && entity.getFireTicks() > 0) {
-					return true;
-				}
+				if (fire && entity.getFireTicks() > 0) return true;
+				
 				for (PotionEffectType type : potionEffectTypes) {
-					if (entity.hasPotionEffect(type)) {
-						return true;
-					}
+					if (entity.hasPotionEffect(type)) return true;
 				}
+				
 				if (entity instanceof Player) {
 					for (BuffSpell spell : buffSpells) {
-						if (spell.isActive((Player)entity)) {
-							return true;
-						}
+						if (spell.isActive((Player)entity)) return true;
 					}
 				}
+				
 				return false;
 			}
+			
 		};
 	}
 
@@ -82,9 +80,7 @@ public class CleanseSpell extends TargetedSpell implements TargetedEntitySpell {
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			TargetInfo<LivingEntity> target = getTargetedEntity(player, power, checker);
-			if (target == null) {
-				return noTarget(player);
-			}
+			if (target == null) return noTarget(player);
 			
 			cleanse(player, target.getTarget());
 			
@@ -95,9 +91,7 @@ public class CleanseSpell extends TargetedSpell implements TargetedEntitySpell {
 	}
 	
 	private void cleanse(Player caster, LivingEntity target) {
-		if (fire) {
-			target.setFireTicks(0);
-		}
+		if (fire) target.setFireTicks(0);
 		for (PotionEffectType type : potionEffectTypes) {
 			target.addPotionEffect(new PotionEffect(type, 0, 0, true), true);
 			target.removePotionEffect(type);
@@ -119,9 +113,8 @@ public class CleanseSpell extends TargetedSpell implements TargetedEntitySpell {
 		if (validTargetList.canTarget(caster, target)) {
 			cleanse(caster, target);
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 	@Override
@@ -129,9 +122,8 @@ public class CleanseSpell extends TargetedSpell implements TargetedEntitySpell {
 		if (validTargetList.canTarget(target)) {
 			cleanse(null, target);
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 	
 	@Override

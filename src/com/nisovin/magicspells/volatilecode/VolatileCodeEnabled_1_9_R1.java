@@ -770,7 +770,8 @@ public class VolatileCodeEnabled_1_9_R1 implements VolatileCodeHandle {
 
 	@Override
 	public void setClientVelocity(Player player, Vector velocity) {
-		((CraftPlayer)player).getHandle().playerConnection.sendPacket(new PacketPlayOutEntityVelocity(player.getEntityId(), velocity.getX(), velocity.getY(), velocity.getZ()));
+		PacketPlayOutEntityVelocity packet = new PacketPlayOutEntityVelocity(player.getEntityId(), velocity.getX(), velocity.getY(), velocity.getZ());
+		((CraftPlayer)player).getHandle().playerConnection.sendPacket(packet);
 	}
 
 	@Override
@@ -817,7 +818,7 @@ public class VolatileCodeEnabled_1_9_R1 implements VolatileCodeHandle {
 	}
 	
 	private GameProfile setTexture(GameProfile profile, String texture, String signature) {
-		if (signature == null || signature.equalsIgnoreCase("")) {
+		if (signature == null || signature.isEmpty()) {
 			profile.getProperties().put("textures", new Property("textures", texture));
 		} else {
 			profile.getProperties().put("textures", new Property("textures", texture, signature));
@@ -829,7 +830,7 @@ public class VolatileCodeEnabled_1_9_R1 implements VolatileCodeHandle {
 	public void setTexture(SkullMeta meta, String texture, String signature,
 			String uuid, String name) {
 		try {
-			GameProfile profile = new GameProfile(uuid != null ? UUID.fromString(uuid): null, name);
+			GameProfile profile = new GameProfile(uuid != null ? UUID.fromString(uuid) : null, name);
 			setTexture(profile, texture, signature);
 			craftMetaSkullProfileField.set(meta, profile);
 		} catch (SecurityException e) {

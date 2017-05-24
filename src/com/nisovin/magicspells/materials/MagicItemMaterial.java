@@ -5,6 +5,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
 public class MagicItemMaterial extends MagicMaterial {
+	
 	Material type;
 	MaterialData matData;
 	short duraData;
@@ -55,4 +56,5 @@ public class MagicItemMaterial extends MagicMaterial {
 			return type == item.getType() && duraData == item.getDurability();
 		}
 	}
+	
 }

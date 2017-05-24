@@ -12,9 +12,7 @@ public class MoneyHandler {
 
 	public MoneyHandler() {
 		RegisteredServiceProvider<Economy> provider = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
-		if (provider != null) {
-			economy = provider.getProvider();
-		}
+		if (provider != null) economy = provider.getProvider();
 	}
 	
 	public boolean hasMoney(Player player, float money) {
@@ -23,15 +21,13 @@ public class MoneyHandler {
 	}
 	
 	public void removeMoney(Player player, float money) {
-		if (economy != null) {
-			economy.withdrawPlayer(player.getName(), money);
-		}
+		if (economy == null) return;
+		economy.withdrawPlayer(player.getName(), money);
 	}
 	
 	public void addMoney(Player player, float money) {
-		if (economy != null) {
-			economy.depositPlayer(player.getName(), money);
-		}
+		if (economy == null) return;
+		economy.depositPlayer(player.getName(), money);
 	}
 	
 	public double checkMoney(Player player) {

@@ -1,6 +1,5 @@
 package com.nisovin.magicspells.spells.targeted;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -15,12 +14,14 @@ import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.BoundingBox;
 import com.nisovin.magicspells.util.EffectPackage;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.ParticleNameUtil;
 import com.nisovin.magicspells.util.TargetInfo;
 
 import de.slikey.effectlib.util.ParticleEffect;
 import de.slikey.effectlib.util.ParticleEffect.ParticleData;
+
 public class HomingMissileSpell extends TargetedSpell implements TargetedEntitySpell, TargetedEntityFromLocationSpell {
 
 	float projectileVelocity;
@@ -79,9 +80,7 @@ public class HomingMissileSpell extends TargetedSpell implements TargetedEntityS
 		changeCasterOnReflect = getConfigBoolean("change-caster-on-reflect", true);
 		
 		intermediateSpecialEffects = getConfigInt("intermediate-special-effect-locations", 0);
-		if (intermediateSpecialEffects < 0) {
-			intermediateSpecialEffects = 0;
-		}
+		if (intermediateSpecialEffects < 0) intermediateSpecialEffects = 0;
 		
 		EffectPackage pkg = ParticleNameUtil.findEffectPackage(particleName);
 		effect = pkg.effect;
@@ -105,9 +104,7 @@ public class HomingMissileSpell extends TargetedSpell implements TargetedEntityS
 		if (state == SpellCastState.NORMAL) {
 			ValidTargetChecker checker = spell != null ? spell.getSpell().getValidTargetChecker() : null;
 			TargetInfo<LivingEntity> target = getTargetedEntity(player, power, checker);
-			if (target == null) {
-				return noTarget(player);
-			}
+			if (target == null) return noTarget(player);
 			new MissileTracker(player, target.getTarget(), target.getPower());
 			sendMessages(player, target.getTarget());
 			return PostCastAction.NO_MESSAGES;
@@ -117,42 +114,30 @@ public class HomingMissileSpell extends TargetedSpell implements TargetedEntityS
 
 	@Override
 	public boolean castAtEntity(Player caster, LivingEntity target, float power) {
-		if (validTargetList.canTarget(caster, target)) {
-			new MissileTracker(caster, target, power);
-			return true;
-		} else {
-			return false;
-		}
+		if (!validTargetList.canTarget(caster, target)) return false;
+		new MissileTracker(caster, target, power);
+		return true;
 	}
 
 	@Override
 	public boolean castAtEntity(LivingEntity target, float power) {
-		if (validTargetList.canTarget(target)) {
-			new MissileTracker(null, target, power);
-			return true;
-		} else {
-			return false;
-		}
+		if (!validTargetList.canTarget(target)) return false;
+		new MissileTracker(null, target, power);
+		return true;
 	}
 
 	@Override
 	public boolean castAtEntityFromLocation(Player caster, Location from, LivingEntity target, float power) {
-		if (validTargetList.canTarget(caster, target)) {
-			new MissileTracker(caster, from, target, power);
-			return true;
-		} else {
-			return false;
-		}
+		if (!validTargetList.canTarget(caster, target)) return false;
+		new MissileTracker(caster, from, target, power);
+		return true;
 	}
 
 	@Override
 	public boolean castAtEntityFromLocation(Location from, LivingEntity target, float power) {
-		if (validTargetList.canTarget(target)) {
-			new MissileTracker(null, from, target, power);
-			return true;
-		} else {
-			return false;
-		}
+		if (!validTargetList.canTarget(target)) return false;
+		new MissileTracker(null, from, target, power);
+		return true;
 	}
 
 	class MissileTracker implements Runnable {
@@ -240,7 +225,7 @@ public class HomingMissileSpell extends TargetedSpell implements TargetedEntityS
 				if (hitBox.contains(target.getLocation().add(0, yOffset, 0))) {
 					//fire off a preimpact event so reflect spells can still let us have our animation
 					SpellPreImpactEvent preImpact = new SpellPreImpactEvent(spell.getSpell(), thisSpell, caster, target, power);
-					Bukkit.getPluginManager().callEvent(preImpact);
+					EventUtil.call(preImpact);
 					//should we bounce the missile back?
 					if (!preImpact.getRedirected()) {
 						//apparently didn't get redirected, carry out the plans

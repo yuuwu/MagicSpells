@@ -21,6 +21,7 @@ import com.nisovin.magicspells.spells.passive.PassiveManager;
 import com.nisovin.magicspells.spells.passive.PassiveTrigger;
 import com.nisovin.magicspells.util.CastItem;
 import com.nisovin.magicspells.util.ConfigData;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.Util;
 
@@ -98,12 +99,11 @@ public class PassiveSpell extends Spell {
 		if (spellNames != null) {
 			for (String spellName : spellNames) {
 				Subspell spell = new Subspell(spellName);
-				if (spell.process()) {
-					spells.add(spell);
-				}
+				if (!spell.process()) continue;
+				spells.add(spell);
 			}
 		}
-		if (spells.size() == 0) {
+		if (spells.isEmpty()) {
 			MagicSpells.error("Passive spell '" + name + "' has no spells defined!");
 			return;
 		}
@@ -181,7 +181,7 @@ public class PassiveSpell extends Spell {
 		if (!disabled && (chance >= .999 || random.nextFloat() <= chance) && state == SpellCastState.NORMAL) {
 			disabled = true;
 			SpellCastEvent event = new SpellCastEvent(this, caster, SpellCastState.NORMAL, basePower, null, this.cooldown, this.reagents.clone(), 0);
-			Bukkit.getPluginManager().callEvent(event);
+			EventUtil.call(event);
 			if (!event.isCancelled() && event.getSpellCastState() == SpellCastState.NORMAL) {
 				if (event.haveReagentsChanged() && !hasReagents(caster, event.getReagents())) {
 					disabled = false;
@@ -202,7 +202,7 @@ public class PassiveSpell extends Spell {
 					} else if (spell.isTargetedEntitySpell() && target != null && !isActuallyNonTargeted(spell.getSpell())) {
 						MagicSpells.debug(3, "    Casting at entity");
 						SpellTargetEvent targetEvent = new SpellTargetEvent(this, caster, target, basePower);
-						Bukkit.getPluginManager().callEvent(targetEvent);
+						EventUtil.call(targetEvent);
 						if (!targetEvent.isCancelled()) {
 							target = targetEvent.getTarget();
 							spell.castAtEntity(caster, target, targetEvent.getPower());
@@ -223,7 +223,7 @@ public class PassiveSpell extends Spell {
 						}
 						if (loc != null) {
 							SpellTargetLocationEvent targetEvent = new SpellTargetLocationEvent(this, caster, loc, basePower);
-							Bukkit.getPluginManager().callEvent(targetEvent);
+							EventUtil.call(targetEvent);
 							if (!targetEvent.isCancelled()) {
 								loc = targetEvent.getTargetLocation();
 								spell.castAtLocation(caster, loc, targetEvent.getPower());
@@ -240,7 +240,7 @@ public class PassiveSpell extends Spell {
 						float power = basePower;
 						if (target != null) {
 							SpellTargetEvent targetEvent = new SpellTargetEvent(this, caster, target, power);
-							Bukkit.getPluginManager().callEvent(targetEvent);
+							EventUtil.call(targetEvent);
 							if (!targetEvent.isCancelled()) {
 								power = targetEvent.getPower();
 							} else {
@@ -249,7 +249,7 @@ public class PassiveSpell extends Spell {
 							}
 						} else if (location != null) {
 							SpellTargetLocationEvent targetEvent = new SpellTargetLocationEvent(this, caster, location, basePower);
-							Bukkit.getPluginManager().callEvent(targetEvent);
+							EventUtil.call(targetEvent);
 							if (!targetEvent.isCancelled()) {
 								power = targetEvent.getPower();
 							} else {
@@ -267,7 +267,7 @@ public class PassiveSpell extends Spell {
 				removeReagents(caster, event.getReagents());
 				sendMessage(strCastSelf, caster, MagicSpells.NULL_ARGS);
 				SpellCastedEvent event2 = new SpellCastedEvent(this, caster, SpellCastState.NORMAL, basePower, null, event.getCooldown(), event.getReagents(), PostCastAction.HANDLE_NORMALLY);
-				Bukkit.getPluginManager().callEvent(event2);
+				EventUtil.call(event2);
 				disabled = false;
 				return true;
 			} else {
@@ -277,7 +277,7 @@ public class PassiveSpell extends Spell {
 			}
 		} else if (state != SpellCastState.NORMAL && sendFailureMessages) {
 			if (state == SpellCastState.ON_COOLDOWN) {
-				MagicSpells.sendMessage(formatMessage(strOnCooldown, "%c", Math.round(getCooldown(caster))+""), caster, null);
+				MagicSpells.sendMessage(formatMessage(strOnCooldown, "%c", Math.round(getCooldown(caster)) + ""), caster, null);
 			} else if (state == SpellCastState.MISSING_REAGENTS) {
 				MagicSpells.sendMessage(strMissingReagents, caster, MagicSpells.NULL_ARGS);
 				if (MagicSpells.showStrCostOnMissingReagents() && strCost != null && !strCost.isEmpty()) {
@@ -289,11 +289,8 @@ public class PassiveSpell extends Spell {
 	}
 	
 	private boolean isActuallyNonTargeted(Spell spell) {
-		if (spell instanceof ExternalCommandSpell) {
-			return !((ExternalCommandSpell)spell).requiresPlayerTarget();
-		} else if (spell instanceof BuffSpell) {
-			return !((BuffSpell)spell).isTargeted();
-		}
+		if (spell instanceof ExternalCommandSpell) return !((ExternalCommandSpell)spell).requiresPlayerTarget();
+		if (spell instanceof BuffSpell) return !((BuffSpell)spell).isTargeted();
 		return false;
 	}
 	

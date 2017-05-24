@@ -34,6 +34,7 @@ import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.command.ScrollSpell;
 import com.nisovin.magicspells.spells.command.TomeSpell;
 import com.nisovin.magicspells.util.HandHandler;
+import com.nisovin.magicspells.util.InventoryUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.Util;
 
@@ -99,9 +100,7 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 	public void initialize() {
 		super.initialize();
 
-		if (expiration > 0 && expirationHandler == null) {
-			expirationHandler = new ExpirationHandler();
-		}
+		if (expiration > 0 && expirationHandler == null) expirationHandler = new ExpirationHandler();
 		
 		if (itemList != null && itemList.size() > 0) {
 			itemTypes = new ItemStack[itemList.size()];
@@ -112,7 +111,7 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 			for (int i = 0; i < itemList.size(); i++) {
 				try {
 					String[] data = Util.splitParams(itemList.get(i));
-					String[] quantityData = data.length == 1 ? new String[]{"1"} : data[1].split("-");
+					String[] quantityData = data.length == 1 ? new String[]{ "1" } : data[1].split("-");
 					
 					if (data[0].startsWith("TOME:")) {
 						String[] tomeData = data[0].split(":");
@@ -191,24 +190,22 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 			boolean added = false;
 			PlayerInventory inv = player.getInventory();
 			if (autoEquip && item.getAmount() == 1) {
-				if (item.getType().name().endsWith("HELMET") && inv.getHelmet() == null) {
+				if (item.getType().name().endsWith("HELMET") && InventoryUtil.isNothing(inv.getHelmet())) {
 					inv.setHelmet(item);
 					added = true;
-				} else if (item.getType().name().endsWith("CHESTPLATE") && inv.getChestplate() == null) {
+				} else if (item.getType().name().endsWith("CHESTPLATE") && InventoryUtil.isNothing(inv.getChestplate())) {
 					inv.setChestplate(item);
 					added = true;
-				} else if (item.getType().name().endsWith("LEGGINGS") && inv.getLeggings() == null) {
+				} else if (item.getType().name().endsWith("LEGGINGS") && InventoryUtil.isNothing(inv.getLeggings())) {
 					inv.setLeggings(item);
 					added = true;
-				} else if (item.getType().name().endsWith("BOOTS") && inv.getBoots() == null) {
+				} else if (item.getType().name().endsWith("BOOTS") && InventoryUtil.isNothing(inv.getBoots())) {
 					inv.setBoots(item);
 					added = true;
 				}
 			}
 			if (!added) {
-				if (addToEnderChest) {
-					added = Util.addToInventory(player.getEnderChest(), item, stackExisting, ignoreMaxStackSize);
-				}
+				if (addToEnderChest) added = Util.addToInventory(player.getEnderChest(), item, stackExisting, ignoreMaxStackSize);
 				if (!added && addToInventory) {
 					if (offhand) {
 						HandHandler.setItemInOffHand(player, item);
@@ -220,7 +217,7 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 						inv.setItem(requiredSlot, item);
 						added = true;
 						updateInv = true;
-					} else if (preferredSlot >= 0 && inv.getItem(preferredSlot) == null) {
+					} else if (preferredSlot >= 0 && InventoryUtil.isNothing(inv.getItem(preferredSlot))) {
 						inv.setItem(preferredSlot, item);
 						added = true;
 						updateInv = true;
@@ -246,10 +243,8 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 				updateInv = true;
 			}
 		}
-		if (updateInv && forceUpdateInventory) {
-			player.updateInventory();
-		}
 		
+		if (updateInv && forceUpdateInventory) player.updateInventory();
 		playSpellEffects(EffectPosition.CASTER, player);
 	}
 	
@@ -281,15 +276,11 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 		if (itemMaxQuantities[i] > itemMinQuantities[i]) {
 			quant = rand.nextInt(itemMaxQuantities[i] - itemMinQuantities[i]) + itemMinQuantities[i];
 		}
-		if (powerAffectsQuantity) {
-			quant = Math.round(quant * power);
-		}
+		if (powerAffectsQuantity) quant = Math.round(quant * power);
 		if (quant > 0) {
 			ItemStack item = itemTypes[i].clone();
 			item.setAmount(quant);
-			if (expiration > 0) {
-				expirationHandler.addExpiresLine(item, expiration);
-			}
+			if (expiration > 0) expirationHandler.addExpiresLine(item, expiration);
 			items.add(item);
 		}
 	}
@@ -308,12 +299,8 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 			together(items, rand, power);
 		}
 		Location loc = target.clone();
-		if (loc.getBlock().getType() != Material.AIR) {
-			loc.add(0, 1, 0);
-		}
-		if (loc.getBlock().getType() != Material.AIR) {
-			loc.add(0, 1, 0);
-		}
+		if (loc.getBlock().getType() != Material.AIR) loc.add(0, 1, 0);
+		if (loc.getBlock().getType() != Material.AIR) loc.add(0, 1, 0);
 		for (ItemStack item : items) {
 			Item dropped = loc.getWorld().dropItem(loc, item);
 			dropped.setItemStack(item);
@@ -339,9 +326,8 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 		if (target instanceof Player) {
 			conjureItems((Player)target, power);
 			return true;
-		} else {
-			return false;
-		}		
+		}
+		return false;
 	}
 	
 	@Override
@@ -350,6 +336,7 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 	}
 	
 	class ExpirationHandler implements Listener {
+		
 		private final String expPrefix =  ChatColor.BLACK.toString() + ChatColor.MAGIC.toString() + "MSExp:";
 		
 		public ExpirationHandler() {
@@ -425,9 +412,7 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 		private void processInventoryContents(ItemStack[] contents) {
 			for (int i = 0; i < contents.length; i++) {
 				ExpirationResult result = updateExpiresLineIfNeeded(contents[i]);
-				if (result == ExpirationResult.EXPIRED) {
-					contents[i] = null;
-				}
+				if (result == ExpirationResult.EXPIRED) contents[i] = null;
 			}
 		}
 		
@@ -482,9 +467,11 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 		
 	}
 	
-	private enum ExpirationResult {
+	private static enum ExpirationResult {
+		
 		NO_UPDATE, UPDATE, EXPIRED
+		
 	}
 	
-
 }
+

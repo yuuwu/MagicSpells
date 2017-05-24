@@ -24,6 +24,7 @@ import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
 import com.nisovin.magicspells.util.ValidTargetList;
+
 public class SilenceSpell extends TargetedSpell implements TargetedEntitySpell {
 
 	private boolean preventCast;
@@ -62,7 +63,7 @@ public class SilenceSpell extends TargetedSpell implements TargetedEntitySpell {
 	public void initialize() {
 		super.initialize();
 		
-		if (allowedSpellNames != null && allowedSpellNames.size() > 0) {
+		if (allowedSpellNames != null && !allowedSpellNames.isEmpty()) {
 			allowedSpells = new HashSet<Spell>();
 			for (String spellName : allowedSpellNames) {
 				Spell spell = MagicSpells.getSpellByInternalName(spellName);
@@ -76,7 +77,7 @@ public class SilenceSpell extends TargetedSpell implements TargetedEntitySpell {
 		}
 		allowedSpellNames = null;
 
-		if (disallowedSpellNames != null && disallowedSpellNames.size() > 0) {
+		if (disallowedSpellNames != null && !disallowedSpellNames.isEmpty()) {
 			disallowedSpells = new HashSet<Spell>();
 			for (String spellName : disallowedSpellNames) {
 				Spell spell = MagicSpells.getSpellByInternalName(spellName);
@@ -90,24 +91,16 @@ public class SilenceSpell extends TargetedSpell implements TargetedEntitySpell {
 		}
 		disallowedSpellNames = null;
 		
-		if (preventCast) {
-			registerEvents(new CastListener());
-		}
-		if (preventChat) {
-			registerEvents(new ChatListener());
-		}
-		if (preventCommands) {
-			registerEvents(new CommandListener());
-		}
+		if (preventCast) registerEvents(new CastListener());
+		if (preventChat) registerEvents(new ChatListener());
+		if (preventCommands) registerEvents(new CommandListener());
 	}
 
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			TargetInfo<Player> target = getTargetedPlayer(player, power);
-			if (target == null) {
-				return noTarget(player);
-			}
+			if (target == null) return noTarget(player);
 			
 			// silence player
 			silence(target.getTarget(), target.getPower());
@@ -121,12 +114,12 @@ public class SilenceSpell extends TargetedSpell implements TargetedEntitySpell {
 	
 	private void silence(Player player, float power) {
 		// handle previous silence
-		Unsilencer u = silenced.get(player.getName());
-		if (u != null) {
-			u.cancel();
-		}
+		String playerName = player.getName();
+		Unsilencer u = silenced.get(playerName);
+		if (u != null) u.cancel();
+		
 		// silence now
-		silenced.put(player.getName(), new Unsilencer(player, Math.round(duration * power)));
+		silenced.put(playerName, new Unsilencer(player, Math.round(duration * power)));
 	}
 
 	@Override
@@ -135,9 +128,8 @@ public class SilenceSpell extends TargetedSpell implements TargetedEntitySpell {
 			silence((Player)target, power);
 			playSpellEffects(caster, target);
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 	@Override
@@ -146,12 +138,12 @@ public class SilenceSpell extends TargetedSpell implements TargetedEntitySpell {
 			silence((Player)target, power);
 			playSpellEffects(EffectPosition.TARGET, target);
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 	
 	public class CastListener implements Listener {
+		
 		@EventHandler(ignoreCancelled=true)
 		public void onSpellCast(final SpellCastEvent event) {
 			if (
@@ -169,26 +161,29 @@ public class SilenceSpell extends TargetedSpell implements TargetedEntitySpell {
 				});
 			}
 		}
+		
 	}
 	
 	public class ChatListener implements Listener {
+		
 		@EventHandler(ignoreCancelled=true)
 		public void onChat(AsyncPlayerChatEvent event) {
-			if (silenced.containsKey(event.getPlayer().getName())) {
-				event.setCancelled(true);
-				sendMessage(strSilenced, event.getPlayer(), MagicSpells.NULL_ARGS);
-			}
+			if (!silenced.containsKey(event.getPlayer().getName())) return;
+			event.setCancelled(true);
+			sendMessage(strSilenced, event.getPlayer(), MagicSpells.NULL_ARGS);
 		}
+		
 	}
 	
 	public class CommandListener implements Listener {
+		
 		@EventHandler(ignoreCancelled=true)
 		public void onCommand(PlayerCommandPreprocessEvent event) {
-			if (silenced.containsKey(event.getPlayer().getName())) {
-				event.setCancelled(true);
-				sendMessage(strSilenced, event.getPlayer(), MagicSpells.NULL_ARGS);
-			}
+			if (!silenced.containsKey(event.getPlayer().getName())) return;
+			event.setCancelled(true);
+			sendMessage(strSilenced, event.getPlayer(), MagicSpells.NULL_ARGS);
 		}
+		
 	}
 	
 	public class Unsilencer implements Runnable {
@@ -204,16 +199,12 @@ public class SilenceSpell extends TargetedSpell implements TargetedEntitySpell {
 		
 		@Override
 		public void run() {
-			if (!canceled) {
-				silenced.remove(playerName);
-			}
+			if (!canceled) silenced.remove(playerName);
 		}
 		
 		public void cancel() {
 			canceled = true;
-			if (taskId > 0) {
-				Bukkit.getScheduler().cancelTask(taskId);
-			}
+			if (taskId > 0) Bukkit.getScheduler().cancelTask(taskId);
 		}
 		
 	}

@@ -3,7 +3,6 @@ package com.nisovin.magicspells.spells.targeted;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,6 +16,7 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.SpellDamageSpell;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
 
@@ -46,9 +46,7 @@ public class DotSpell extends TargetedSpell implements TargetedEntitySpell, Spel
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			TargetInfo<LivingEntity> targetInfo = getTargetedEntity(player, power);
-			if (targetInfo == null) {
-				return noTarget(player);
-			}
+			if (targetInfo == null) return noTarget(player);
 			applyDot(player, targetInfo.getTarget(), targetInfo.getPower());
 		}
 		return PostCastAction.HANDLE_NORMALLY;
@@ -85,9 +83,7 @@ public class DotSpell extends TargetedSpell implements TargetedEntitySpell, Spel
 	@EventHandler
 	void onDeath(PlayerDeathEvent event) {
 		Dot dot = activeDots.get(event.getEntity().getEntityId());
-		if (dot != null) {
-			dot.cancel();
-		}
+		if (dot != null) dot.cancel();
 	}
 	
 	class Dot implements Runnable {
@@ -119,12 +115,12 @@ public class DotSpell extends TargetedSpell implements TargetedEntitySpell, Spel
 			}
 			double dam = damage * power;
 			SpellApplyDamageEvent event = new SpellApplyDamageEvent(DotSpell.this, caster, target, dam, DamageCause.MAGIC, spellDamageType);
-			Bukkit.getPluginManager().callEvent(event);
+			EventUtil.call(event);
 			dam = event.getFinalDamage();
 			if (preventKnockback) {
 				// bukkit doesn't call a damage event here, so we'll do it ourselves
 				MagicSpellsEntityDamageByEntityEvent devent = new MagicSpellsEntityDamageByEntityEvent(caster, target, DamageCause.ENTITY_ATTACK, damage);
-				Bukkit.getPluginManager().callEvent(devent);
+				EventUtil.call(devent);
 				if (!devent.isCancelled()) {
 					target.damage(devent.getDamage());
 				}

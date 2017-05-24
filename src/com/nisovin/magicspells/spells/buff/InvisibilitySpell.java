@@ -5,6 +5,7 @@ import java.util.HashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -84,9 +85,7 @@ public class InvisibilitySpell extends BuffSpell {
 	@Override
 	public void initialize() {
 		super.initialize();
-		if (cancelOnSpellCast) {
-			registerEvents(new SpellCastListener());
-		}
+		if (cancelOnSpellCast) registerEvents(new SpellCastListener());
 	}
 
 	@Override
@@ -99,9 +98,8 @@ public class InvisibilitySpell extends BuffSpell {
 	@Override
 	public boolean recastBuff(Player player, float power, String[] args) {
 		makeInvisible(player);
-		if (invisibles.containsKey(player.getName())) {
-			invisibles.put(player.getName(), new CostCharger(player));
-		}
+		String playerName = player.getName();
+		if (invisibles.containsKey(playerName)) invisibles.put(playerName, new CostCharger(player));
 		return true;
 	}
 	
@@ -113,41 +111,46 @@ public class InvisibilitySpell extends BuffSpell {
 		// detarget monsters
 		Creature creature;
 		for (Entity e : player.getNearbyEntities(30, 30, 30)) {
-			if (e instanceof Creature) {
-				creature = (Creature)e;
-				if (creature.getTarget() != null && creature.getTarget().equals(player)) {
-					creature.setTarget(null);
-				}
-			}
+			if (!(e instanceof Creature)) continue;
+			
+			creature = (Creature)e;
+			LivingEntity target = creature.getTarget();
+			if (target == null) continue;
+			if (!target.equals(player)) continue;
+			
+			creature.setTarget(null);
 		}
 	}
 	
 	
 	@EventHandler
 	public void onPlayerItemPickup(PlayerPickupItemEvent event) {
-		if (preventPickups && invisibles.containsKey(event.getPlayer().getName())) {
-			event.setCancelled(true);
-		}
+		if (!preventPickups) return;
+		if (!invisibles.containsKey(event.getPlayer().getName())) return;
+		event.setCancelled(true);
 	}
 	
 	@EventHandler
 	public void onEntityTarget(EntityTargetEvent event) {
-		if (!event.isCancelled() && event.getTarget() instanceof Player) {
-			if (invisibles.containsKey(((Player)event.getTarget()).getName())) {
-				event.setCancelled(true);
-			}
-		}
+		if (event.isCancelled()) return;
+		Entity target = event.getTarget();
+		if (!(target instanceof Player)) return;
+		if (!invisibles.containsKey(((Player)target).getName())) return;
+		
+		event.setCancelled(true);
 	}
 	
 	@EventHandler(priority=EventPriority.MONITOR)
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
+		
 		for (String name : invisibles.keySet()) {
 			Player p = PlayerNameUtils.getPlayerExact(name);
-			if (p != null && !name.equals(player.getName())) {
-				player.hidePlayer(p);
-			}
+			if (p == null) continue;
+			if (name.equals(player.getName())) continue;
+			player.hidePlayer(p);
 		}
+		
 		if (invisibles.containsKey(player.getName())) {
 			for (Player p : Bukkit.getOnlinePlayers()) {
 				p.hidePlayer(player);
@@ -159,12 +162,11 @@ public class InvisibilitySpell extends BuffSpell {
 	public void turnOffBuff(Player player) {
 		// stop charge ticker
 		CostCharger c = invisibles.remove(player.getName());
-		if (c != null) {
-			c.stop();
-			// force visible
-			for (Player p : Bukkit.getOnlinePlayers()) {
-				p.showPlayer(player);
-			}
+		if (c == null) return;
+		c.stop();
+		// force visible
+		for (Player p : Bukkit.getOnlinePlayers()) {
+			p.showPlayer(player);
 		}
 	}
 
@@ -177,15 +179,20 @@ public class InvisibilitySpell extends BuffSpell {
 	}
 	
 	public class SpellCastListener implements Listener {
+		
 		@EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
 		public void onSpellCast(SpellCastEvent event) {
-			if (isActive(event.getCaster()) && !event.getSpell().getInternalName().equals(internalName)) {
-				turnOff(event.getCaster());
-			}
+			Player caster = event.getCaster();
+			if (!isActive(caster)) return;
+			if (event.getSpell().getInternalName().equals(internalName)) return;
+			
+			turnOff(caster);
 		}
+		
 	}
 	
 	private class CostCharger implements Runnable {
+		
 		int taskId = -1;
 		Player player;
 		
@@ -202,10 +209,10 @@ public class InvisibilitySpell extends BuffSpell {
 		}
 		
 		public void stop() {
-			if (taskId != -1) {
-				Bukkit.getScheduler().cancelTask(taskId);
-			}
+			if (taskId == -1) return;
+			Bukkit.getScheduler().cancelTask(taskId);
 		}
+		
 	}
 
 	@Override

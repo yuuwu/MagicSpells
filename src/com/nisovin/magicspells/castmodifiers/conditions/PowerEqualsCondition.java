@@ -50,7 +50,7 @@ public class PowerEqualsCondition extends Condition implements IModifier {
 
 	@Override
 	public boolean setVar(String var) {
-		if (var != null && !var.equals("")) {
+		if (var != null && !var.isEmpty()) {
 			try {
 				power = Float.parseFloat(var);
 				return true;

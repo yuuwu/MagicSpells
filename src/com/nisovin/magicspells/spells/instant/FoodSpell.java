@@ -6,6 +6,8 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 
+// TODO allow saturation to optionally be controlled by power
+// TODO allow food to be optionally controlled by power
 public class FoodSpell extends InstantSpell {
 
 	private int food;

@@ -31,8 +31,9 @@ public class BannerHandler {
 				if (patternData.contains(" ")) {
 					String[] split = patternData.split(" ");
 					DyeColor color = null;
+					String splitZeroLowercase = split[0].toLowerCase();
 					for (DyeColor c : DyeColor.values()) {
-						if (c != null && c.name().replace("_", "").toLowerCase().equals(split[0].toLowerCase())) {
+						if (c != null && c.name().replace("_", "").toLowerCase().equals(splitZeroLowercase)) {
 							color = c;
 							break;
 						}
@@ -46,9 +47,7 @@ public class BannerHandler {
 							}
 						}
 					}
-					if (color != null && pattern != null) {
-						bmeta.addPattern(new Pattern(color, pattern));
-					}
+					if (color != null && pattern != null) bmeta.addPattern(new Pattern(color, pattern));
 				}
 			}
 		}

@@ -46,20 +46,12 @@ public class NoMagicZoneCuboid extends NoMagicZone {
 
 	@Override
 	public boolean inZone(Location location) {
-		if (!worldName.equalsIgnoreCase(location.getWorld().getName())) {
-			return false;
-		} else {
-			int x = location.getBlockX();
-			int y = location.getBlockY();
-			int z = location.getBlockZ();
-			if (minx <= x && x <= maxx &&
-					miny <= y && y <= maxy &&
-					minz <= z && z <= maxz) {
-				return true;
-			} else {
-				return false;
-			}
-		}
+		if (!worldName.equalsIgnoreCase(location.getWorld().getName())) return false;
+		int x = location.getBlockX();
+		int y = location.getBlockY();
+		int z = location.getBlockZ();
+		if (minx <= x && x <= maxx && miny <= y && y <= maxy && minz <= z && z <= maxz) return true;
+		return false;
 	}
 	
 }

@@ -313,9 +313,9 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 						if (spell.isValidItemForCastCommand(HandHandler.getItemInMainHand(player))) {
 							String[] spellArgs = null;
 							if (args.length > 1) {
-								spellArgs = new String[args.length-1];
+								spellArgs = new String[args.length - 1];
 								for (int i = 1; i < args.length; i++) {
-									spellArgs[i-1] = args[i];
+									spellArgs[i - 1] = args[i];
 								}
 							}
 							spell.cast(player, spellArgs);

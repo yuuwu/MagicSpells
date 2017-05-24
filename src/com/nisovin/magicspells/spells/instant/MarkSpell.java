@@ -63,18 +63,14 @@ public class MarkSpell extends InstantSpell {
 			}
 		}
 		
-		if (permanentMarks) {
-			loadMarks();
-		}
+		if (permanentMarks) loadMarks();
 	}
 
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			marks.put(getPlayerKey(player), new MagicLocation(player.getLocation()));
-			if (permanentMarks) {
-				saveMarks();
-			}
+			if (permanentMarks) saveMarks();
 			playSpellEffects(EffectPosition.CASTER, player);
 		}
 		return PostCastAction.HANDLE_NORMALLY;		
@@ -82,20 +78,17 @@ public class MarkSpell extends InstantSpell {
 	
 	@EventHandler(priority=EventPriority.MONITOR)
 	public void onPlayerQuit(PlayerQuitEvent event) {
-		if (!permanentMarks) {
-			marks.remove(getPlayerKey(event.getPlayer()));
-		}
+		if (!permanentMarks) marks.remove(getPlayerKey(event.getPlayer()));
 	}
 	
 	@EventHandler
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
-		if (useAsRespawnLocation) {
-			MagicLocation loc = marks.get(getPlayerKey(event.getPlayer()));
-			if (loc != null) {
-				event.setRespawnLocation(loc.getLocation());
-			} else if (enableDefaultMarks && defaultMark != null) {
-				event.setRespawnLocation(defaultMark.getLocation());
-			}
+		if (!useAsRespawnLocation) return;
+		MagicLocation loc = marks.get(getPlayerKey(event.getPlayer()));
+		if (loc != null) {
+			event.setRespawnLocation(loc.getLocation());
+		} else if (enableDefaultMarks && defaultMark != null) {
+			event.setRespawnLocation(defaultMark.getLocation());
 		}
 	}
 	
@@ -105,9 +98,7 @@ public class MarkSpell extends InstantSpell {
 	
 	public void setMarks(HashMap<String,MagicLocation> marks) {
 		this.marks = marks;
-		if (permanentMarks) {
-			saveMarks();
-		}
+		if (permanentMarks) saveMarks();
 	}
 	
 	private void loadMarks() {
@@ -158,9 +149,7 @@ public class MarkSpell extends InstantSpell {
 	public Location getEffectiveMark(Player player) {
 		MagicLocation m = marks.get(getPlayerKey(player));
 		if (m == null) {
-			if (enableDefaultMarks) {
-				return defaultMark.getLocation();
-			}
+			if (enableDefaultMarks) return defaultMark.getLocation();
 			return null;
 		}
 		
@@ -170,9 +159,7 @@ public class MarkSpell extends InstantSpell {
 	public Location getEffectiveMark(String player) {
 		MagicLocation m = marks.get(player.toLowerCase());
 		if (m == null) {
-			if (enableDefaultMarks) {
-				return defaultMark.getLocation();
-			}
+			if (enableDefaultMarks) return defaultMark.getLocation();
 			return null;
 		}
 		

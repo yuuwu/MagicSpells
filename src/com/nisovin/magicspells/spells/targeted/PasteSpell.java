@@ -22,6 +22,7 @@ import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.blocks.BaseBlock;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.schematic.SchematicFormat;
+
 public class PasteSpell extends TargetedSpell implements TargetedLocationSpell {
 
 	File file;
@@ -42,14 +43,10 @@ public class PasteSpell extends TargetedSpell implements TargetedLocationSpell {
 		super(config, spellName);
 		
 		File folder = new File(MagicSpells.plugin.getDataFolder(), "schematics");
-		if (!folder.exists()) {
-			folder.mkdir();
-		}
+		if (!folder.exists()) folder.mkdir();
 		String schematic = getConfigString("schematic", "none");
 		file = new File(folder, schematic);
-		if (!file.exists()) {
-			MagicSpells.error("PasteSpell " + spellName + " has non-existant schematic: " + schematic);
-		}
+		if (!file.exists()) MagicSpells.error("PasteSpell " + spellName + " has non-existant schematic: " + schematic);
 		
 		yOffset = getConfigInt("y-offset", 0);
 		maxBlocks = getConfigInt("max-blocks", 10000);
@@ -59,9 +56,7 @@ public class PasteSpell extends TargetedSpell implements TargetedLocationSpell {
 		
 		undo = getConfigBoolean("undo", false);
 		undoDelayTicks = getConfigInt("undo-delay-ticks", 200);
-		if (undoDelayTicks < 0) {
-			undoDelayTicks = 0;
-		}
+		if (undoDelayTicks < 0) undoDelayTicks = 0;
 		
 		playBlockBreakEffect = getConfigBoolean("play-block-break-effect", true);
 		
@@ -82,15 +77,11 @@ public class PasteSpell extends TargetedSpell implements TargetedLocationSpell {
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			Block target = pasteAtCaster ? player.getLocation().getBlock() : getTargetedBlock(player, power);
-			if (target == null) {
-				return noTarget(player);
-			}
+			if (target == null) return noTarget(player);
 			Location loc = target.getLocation();
 			loc.add(0, yOffset, 0);
 			boolean ok = castAtLocation(loc, power);
-			if (!ok) {
-				return noTarget(player);
-			}
+			if (!ok) return noTarget(player);
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}
@@ -124,14 +115,14 @@ public class PasteSpell extends TargetedSpell implements TargetedLocationSpell {
 			final EditSession session = new EditSession(new BukkitWorld(target.getWorld()), maxBlocks);
 			cuboid.paste(session, new Vector(target.getX(), target.getY(), target.getZ()), !pasteAir, pasteEntities);
 			if (undo) {
-			MagicSpells.plugin.getServer().getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
-
-				@Override
-				public void run() {
-					session.undo(session);
-				}
-				
-			}, undoDelayTicks);
+				MagicSpells.plugin.getServer().getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
+	
+					@Override
+					public void run() {
+						session.undo(session);
+					}
+					
+				}, undoDelayTicks);
 			}
 			return true;
 		} catch (Exception e) {

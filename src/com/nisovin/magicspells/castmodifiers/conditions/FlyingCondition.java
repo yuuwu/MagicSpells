@@ -31,6 +31,4 @@ public class FlyingCondition extends Condition {
 		return false;
 	}
 
-	
-	
 }

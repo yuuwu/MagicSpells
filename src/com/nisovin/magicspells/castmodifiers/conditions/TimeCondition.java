@@ -39,17 +39,9 @@ public class TimeCondition extends Condition {
 	public boolean check(Player player, Location location) {
 		long time = location.getWorld().getTime();
 		if (end >= start) {
-			if (start <= time && time <= end) {
-				return true;
-			} else {
-				return false;
-			}
+			return (start <= time && time <= end);
 		} else {
-			if (time >= start || time <= end) {
-				return true;
-			} else {
-				return false;
-			}
+			return (time >= start || time <= end); 
 		}
 	}
 

@@ -30,14 +30,13 @@ public class SpellCastedListener extends PassiveListener {
 			String[] split = var.split(",");
 			for (String s : split) {
 				Spell sp = MagicSpells.getSpellByInternalName(s.trim());
-				if (sp != null) {
-					List<PassiveSpell> passives = spells.get(sp);
-					if (passives == null) {
-						passives = new ArrayList<PassiveSpell>();
-						spells.put(sp, passives);
-					}
-					passives.add(spell);
+				if (sp == null) continue;
+				List<PassiveSpell> passives = spells.get(sp);
+				if (passives == null) {
+					passives = new ArrayList<PassiveSpell>();
+					spells.put(sp, passives);
 				}
+				passives.add(spell);
 			}
 		}
 	}
@@ -48,16 +47,16 @@ public class SpellCastedListener extends PassiveListener {
 		if (event.getSpellCastState() == SpellCastState.NORMAL && event.getPostCastAction() != PostCastAction.ALREADY_HANDLED && event.getCaster() != null) {
 			Spellbook spellbook = MagicSpells.getSpellbook(event.getCaster());
 			for (PassiveSpell spell : anySpell) {
-				if (!spell.equals(event.getSpell()) && spellbook.hasSpell(spell, false)) {
-					spell.activate(event.getCaster());
-				}
+				if (spell.equals(event.getSpell())) continue;
+				if (!spellbook.hasSpell(spell, false)) continue;
+				spell.activate(event.getCaster());
 			}
 			List<PassiveSpell> list = spells.get(event.getSpell());
 			if (list != null) {
 				for (PassiveSpell spell : list) {
-					if (!spell.equals(event.getSpell()) && spellbook.hasSpell(spell, false)) {
-						spell.activate(event.getCaster());
-					}
+					if (spell.equals(event.getSpell())) continue;
+					if (!spellbook.hasSpell(spell, false)) continue;
+					spell.activate(event.getCaster());
 				}
 			}
 		}

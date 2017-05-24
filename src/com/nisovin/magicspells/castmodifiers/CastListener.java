@@ -25,24 +25,20 @@ public class CastListener implements Listener {
 		for (IModifier premod: preModifierHooks) {
 			if (!premod.apply(event)) return;
 		}
-		if (m != null) {
-			m.apply(event);
-		}
+		if (m != null) m.apply(event);
 		for (IModifier postMod: postModifierHooks) {
 			if (!postMod.apply(event)) return;
 		}
 	}
 	
 	public void addPreModifierHook(IModifier hook) {
-		if (hook != null) {
-			preModifierHooks.add(hook);
-		}
+		if (hook == null) return;
+		preModifierHooks.add(hook);
 	}
 	
 	public void addPostModifierHook(IModifier hook) {
-		if (hook != null) {
-			postModifierHooks.add(hook);
-		}
+		if (hook == null) return;
+		postModifierHooks.add(hook);
 	}
 	
 	public void unload() {

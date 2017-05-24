@@ -35,7 +35,7 @@ public class ConsumeListener implements Listener {
 	}
 	
 	public boolean hasConsumeCastItems() {
-		return consumeCastItems.size() > 0;
+		return !consumeCastItems.isEmpty();
 	}
 	
 	@EventHandler

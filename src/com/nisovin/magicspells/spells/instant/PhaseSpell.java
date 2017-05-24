@@ -31,15 +31,12 @@ public class PhaseSpell extends InstantSpell {
 		allowedPassThru = new ArrayList<MagicMaterial>();
 		for (String s : passThru) {
 			MagicMaterial m = MagicSpells.getItemNameResolver().resolveBlock(s);
-			if (m != null) {
-				allowedPassThru.add(m);
-			}
+			if (m == null) continue;
+			allowedPassThru.add(m);
 		}
 		strCantPhase = getConfigString("str-cant-phase", "Unable to find place to phase to.");
 		
-		if (allowedPassThru.size() == 0) {
-			allowedPassThru = null;
-		}
+		if (allowedPassThru.isEmpty()) allowedPassThru = null;
 	}
 
 	@Override
@@ -50,7 +47,7 @@ public class PhaseSpell extends InstantSpell {
 			
 			BlockIterator iter;
 			try {
-				iter = new BlockIterator(player, distance*2);
+				iter = new BlockIterator(player, distance * 2);
 			} catch (IllegalStateException e) {
 				sendMessage(strCantPhase, player, args);
 				return PostCastAction.ALREADY_HANDLED;
@@ -61,9 +58,10 @@ public class PhaseSpell extends InstantSpell {
 			Location location = null;
 			
 			// get wall block
-			while (start == null && i++ < range*2 && iter.hasNext()) {
+			while (start == null && i++ < range * 2 && iter.hasNext()) {
 				Block b = iter.next();
-				if (b.getType() != Material.AIR && player.getLocation().distanceSquared(b.getLocation()) < range*range) {
+				if (b.getType() == Material.AIR) continue;
+				if (player.getLocation().distanceSquared(b.getLocation()) < range * range) {
 					start = b;
 					break;
 				}
@@ -77,10 +75,10 @@ public class PhaseSpell extends InstantSpell {
 				} else {
 					// get next empty space
 					Block end = null;
-					while (end == null && i++ < distance*2 && iter.hasNext()) {
+					while (end == null && i++ < distance * 2 && iter.hasNext()) {
 						Block b = iter.next();
 						// check for suitable landing location
-						if (b.getType() == Material.AIR && b.getRelative(0, 1, 0).getType() == Material.AIR && player.getLocation().distanceSquared(b.getLocation()) < distance*distance) {
+						if (b.getType() == Material.AIR && b.getRelative(0, 1, 0).getType() == Material.AIR && player.getLocation().distanceSquared(b.getLocation()) < distance * distance) {
 							location = b.getLocation();
 							break;
 						}

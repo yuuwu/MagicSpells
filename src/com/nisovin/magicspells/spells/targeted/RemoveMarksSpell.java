@@ -5,6 +5,7 @@ import java.util.Iterator;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -50,13 +51,9 @@ public class RemoveMarksSpell extends TargetedSpell implements TargetedLocationS
 				loc = player.getLocation();
 			} else {
 				Block b = getTargetedBlock(player, power);
-				if (b != null && b.getType() != Material.AIR) {
-					loc = b.getLocation();
-				}
+				if (b != null && b.getType() != Material.AIR) loc = b.getLocation();
 			}
-			if (loc == null) {
-				return noTarget(player);
-			}
+			if (loc == null) return noTarget(player);
 			removeMarks(player, loc, power);
 		}
 		return PostCastAction.HANDLE_NORMALLY;
@@ -67,18 +64,15 @@ public class RemoveMarksSpell extends TargetedSpell implements TargetedLocationS
 		float radSq = rad * rad;
 		HashMap<String, MagicLocation> marks = markSpell.getMarks();
 		Iterator<String> iter = marks.keySet().iterator();
+		World locWorld = loc.getWorld();
+		String locWorldName = locWorld.getName();
 		while (iter.hasNext()) {
 			MagicLocation l = marks.get(iter.next());
-			if (l.getWorld().equals(loc.getWorld().getName())) {
-				if (l.getLocation().distanceSquared(loc) < radSq) {
-					iter.remove();
-				}
-			}
+			if (!l.getWorld().equals(locWorldName)) continue;
+			if (l.getLocation().distanceSquared(loc) < radSq) iter.remove();
 		}
 		markSpell.setMarks(marks);
-		if (caster != null) {
-			playSpellEffects(EffectPosition.CASTER, caster);
-		}
+		if (caster != null) playSpellEffects(EffectPosition.CASTER, caster);
 		playSpellEffects(EffectPosition.TARGET, loc);
 	}
 
@@ -93,4 +87,5 @@ public class RemoveMarksSpell extends TargetedSpell implements TargetedLocationS
 		removeMarks(null, target, power);
 		return true;
 	}
+	
 }

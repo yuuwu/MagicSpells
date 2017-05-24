@@ -51,9 +51,7 @@ public class LeftClickBlockCoordListener extends PassiveListener {
 			Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());
 			if (spellbook.hasSpell(spell, false)) {
 				boolean casted = spell.activate(event.getPlayer(), location.add(0.5, 0.5, 0.5));
-				if (PassiveListener.cancelDefaultAction(spell, casted)) {
-					event.setCancelled(true);
-				}
+				if (PassiveListener.cancelDefaultAction(spell, casted)) event.setCancelled(true);
 			}
 		}
 	}

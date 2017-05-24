@@ -44,4 +44,5 @@ public class WorldGuardRegionMembershipCondition extends AbstractWorldGuardCondi
 		LocalPlayer localPlayer = new BukkitPlayer(worldGuard, player);
 		return ownerRequired ? region.isOwner(localPlayer) : region.isMember(localPlayer);
 	}
+	
 }

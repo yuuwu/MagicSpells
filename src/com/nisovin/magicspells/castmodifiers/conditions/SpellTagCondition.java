@@ -1,9 +1,12 @@
 package com.nisovin.magicspells.castmodifiers.conditions;
 
+import java.util.Set;
+
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
+import com.nisovin.magicspells.Spell;
 import com.nisovin.magicspells.castmodifiers.Condition;
 import com.nisovin.magicspells.castmodifiers.IModifier;
 import com.nisovin.magicspells.events.MagicSpellsGenericPlayerEvent;
@@ -18,10 +21,7 @@ public class SpellTagCondition extends Condition implements IModifier {
 	
 	@Override
 	public boolean apply(SpellCastEvent event) {
-		if (event.getSpell().getTags() != null) {
-			return event.getSpell().getTags().contains(tag);
-		}
-		return false;
+		return checkSpell(event.getSpell());
 	}
 
 	@Override
@@ -31,23 +31,28 @@ public class SpellTagCondition extends Condition implements IModifier {
 
 	@Override
 	public boolean apply(SpellTargetEvent event) {
-		if (event.getSpell().getTags() != null) {
-			return event.getSpell().getTags().contains(tag);
-		}
-		return false;
+		return checkSpell(event.getSpell());
 	}
 
 	@Override
 	public boolean apply(SpellTargetLocationEvent event) {
-		if (event.getSpell().getTags() != null) {
-			return event.getSpell().getTags().contains(tag);
-		}
-		return false;
+		return checkSpell(event.getSpell());
 	}
 
 	@Override
 	public boolean apply(MagicSpellsGenericPlayerEvent event) {
 		return false;
+	}
+	
+	private boolean checkSpell(Spell spell) {
+		if (spell == null) return false;
+		Set<String> tags = spell.getTags();
+		return checkWithTags(tags);
+	}
+	
+	private boolean checkWithTags(Set<String> tags) {
+		if (tags == null) return false;
+		return tags.contains(tag);
 	}
 
 	@Override

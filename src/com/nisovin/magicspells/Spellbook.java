@@ -12,7 +12,6 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -21,6 +20,7 @@ import org.bukkit.plugin.Plugin;
 import com.nisovin.magicspells.events.SpellSelectionChangedEvent;
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.util.CastItem;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.Util;
 
 public class Spellbook {
@@ -61,6 +61,7 @@ public class Spellbook {
 		}
 		
 	};
+	
 	private HashMap<CastItem, ArrayList<Spell>> itemSpells = new HashMap<CastItem,ArrayList<Spell>>();
 	private HashMap<CastItem, Integer> activeSpells = new HashMap<CastItem,Integer>();
 	private HashMap<Spell, Set<CastItem>> customBindings = new HashMap<Spell,Set<CastItem>>();
@@ -93,10 +94,10 @@ public class Spellbook {
 	}
 	
 	public void load(World playerWorld) {
-		// load spells from file
+		// Load spells from file
 		loadFromFile(playerWorld);
 		
-		// give all spells to ops, or if ignoring grant perms
+		// Give all spells to ops, or if ignoring grant perms
 		if (plugin.ignoreGrantPerms || (player.isOp() && plugin.opsHaveAllSpells)) {
 			MagicSpells.debug(2, "  Op, granting all spells...");
 			for (Spell spell : plugin.spellsOrdered) {
@@ -106,12 +107,12 @@ public class Spellbook {
 			}
 		}
 		
-		// add spells granted by permissions
+		// Add spells granted by permissions
 		if (!plugin.ignoreGrantPerms) {
 			addGrantedSpells();
 		}
 		
-		// sort spells or pre-select if just one
+		// Sort spells or pre-select if just one
 		for (CastItem i : itemSpells.keySet()) {
 			ArrayList<Spell> spells = itemSpells.get(i);
 			if (spells.size() == 1 && !plugin.allowCycleToNoSpell) {
@@ -151,7 +152,7 @@ public class Spellbook {
 				Scanner scanner = new Scanner(file);
 				while (scanner.hasNext()) {
 					String line = scanner.nextLine();
-					if (!line.equals("")) {
+					if (!line.isEmpty()) {
 						if (!line.contains(":")) {
 							Spell spell = MagicSpells.getSpellByInternalName(line);
 							if (spell != null) {
@@ -195,9 +196,7 @@ public class Spellbook {
 				}
 			}
 		}
-		if (added) {
-			save();
-		}
+		if (added) save();
 	}
 	
 	public boolean canLearn(Spell spell) {
@@ -263,43 +262,33 @@ public class Spellbook {
 	public List<String> tabComplete(String partial) {
 		String[] data = Util.splitParams(partial, 2);
 		if (data.length == 1) {
-			// complete spell name
-			partial = data[0].toLowerCase(); //TODO find an alternative to reassigning the parameter
+			// Complete spell name
+			partial = data[0].toLowerCase();
 			List<String> options = new ArrayList<String>();
 			for (Spell spell : allSpells) {
-				if (spell.canCastByCommand() && !spell.isHelperSpell()) {
-					if (spell.getName().toLowerCase().startsWith(partial)) {
-						options.add(spell.getName());
-					} else {
-						String[] aliases = spell.getAliases();
-						if (aliases != null && aliases.length > 0) {
-							for (String alias : aliases) {
-								if (alias.toLowerCase().startsWith(partial)) {
-									options.add(alias);
-								}
-							}
+				if (!spell.canCastByCommand()) continue;
+				if (spell.isHelperSpell()) continue;
+				if (spell.getName().toLowerCase().startsWith(partial)) {
+					options.add(spell.getName());
+				} else {
+					String[] aliases = spell.getAliases();
+					if (aliases != null && aliases.length > 0) {
+						for (String alias : aliases) {
+							if (!alias.toLowerCase().startsWith(partial)) continue;
+							options.add(alias);
 						}
 					}
 				}
 			}
-			if (options.size() > 0) {
-				return options;
-			} else {
-				return null;
-			}
+			if (!options.isEmpty()) return options;
+			return null;
 		} else {
-			// complete spell params
+			// Complete spell params
 			Spell spell = getSpellByName(data[0]);
-			if (spell == null) {
-				return null;
-			} else {
-				List<String> ret = spell.tabComplete(player, data[1]);
-				if (ret == null || ret.size() == 0) {
-					return null;
-				} else {
-					return ret;
-				}
-			}
+			if (spell == null) return null;
+			List<String> ret = spell.tabComplete(player, data[1]);
+			if (ret == null || ret.isEmpty()) return null;
+			return ret;
 		}
 	}
 	
@@ -320,16 +309,14 @@ public class Spellbook {
 	
 	protected Spell nextSpell(ItemStack item) {
 		CastItem castItem = getCastItemForCycling(item);
-		if (castItem != null) {
-			return nextSpell(castItem);
-		}
+		if (castItem != null) return nextSpell(castItem);
 		return null;
 	}
 	
 	protected Spell nextSpell(CastItem castItem) {
-		Integer i = activeSpells.get(castItem); // get the index of the active spell for the cast item
+		Integer i = activeSpells.get(castItem); // Get the index of the active spell for the cast item
 		if (i != null) {
-			ArrayList<Spell> spells = itemSpells.get(castItem); // get all the spells for the cast item
+			ArrayList<Spell> spells = itemSpells.get(castItem); // Get all the spells for the cast item
 			if (spells.size() > 1 || i.equals(-1) || plugin.allowCycleToNoSpell || plugin.alwaysShowMessageOnCycle) {
 				int count = 0;
 				while (count++ < spells.size()) {
@@ -337,7 +324,7 @@ public class Spellbook {
 					if (i >= spells.size()) {
 						if (plugin.allowCycleToNoSpell) {
 							activeSpells.put(castItem, -1);
-							Bukkit.getPluginManager().callEvent(new SpellSelectionChangedEvent(null, player, castItem, this));
+							EventUtil.call(new SpellSelectionChangedEvent(null, player, castItem, this));
 							MagicSpells.sendMessage(plugin.strSpellChangeEmpty, player, MagicSpells.NULL_ARGS);
 							return null;
 						} else {
@@ -346,7 +333,7 @@ public class Spellbook {
 					}
 					if (!plugin.onlyCycleToCastableSpells || canCast(spells.get(i))) {
 						activeSpells.put(castItem, i);
-						Bukkit.getPluginManager().callEvent(new SpellSelectionChangedEvent(spells.get(i), player, castItem, this));
+						EventUtil.call(new SpellSelectionChangedEvent(spells.get(i), player, castItem, this));
 						return spells.get(i);
 					}
 				}
@@ -361,16 +348,14 @@ public class Spellbook {
 	
 	protected Spell prevSpell(ItemStack item) {
 		CastItem castItem = getCastItemForCycling(item);
-		if (castItem != null) {
-			return prevSpell(castItem);
-		}
+		if (castItem != null) return prevSpell(castItem);
 		return null;
 	}
 	
 	protected Spell prevSpell(CastItem castItem) {
-		Integer i = activeSpells.get(castItem); // get the index of the active spell for the cast item
+		Integer i = activeSpells.get(castItem); // Get the index of the active spell for the cast item
 		if (i != null) {
-			ArrayList<Spell> spells = itemSpells.get(castItem); // get all the spells for the cast item
+			ArrayList<Spell> spells = itemSpells.get(castItem); // Get all the spells for the cast item
 			if (spells.size() > 1 || i.equals(-1) || plugin.allowCycleToNoSpell) {
 				int count = 0;
 				while (count++ < spells.size()) {
@@ -378,7 +363,7 @@ public class Spellbook {
 					if (i < 0) {
 						if (plugin.allowCycleToNoSpell && i == -1) {
 							activeSpells.put(castItem, -1);
-							Bukkit.getPluginManager().callEvent(new SpellSelectionChangedEvent(null, player, castItem, this));
+							EventUtil.call(new SpellSelectionChangedEvent(null, player, castItem, this));
 							MagicSpells.sendMessage(plugin.strSpellChangeEmpty, player, MagicSpells.NULL_ARGS);
 							return null;
 						} else {
@@ -387,7 +372,7 @@ public class Spellbook {
 					}
 					if (!plugin.onlyCycleToCastableSpells || canCast(spells.get(i))) {
 						activeSpells.put(castItem, i);
-						Bukkit.getPluginManager().callEvent(new SpellSelectionChangedEvent(spells.get(i), player, castItem, this));
+						EventUtil.call(new SpellSelectionChangedEvent(spells.get(i), player, castItem, this));
 						return spells.get(i);
 					}
 				}
@@ -407,11 +392,8 @@ public class Spellbook {
 	
 	public Spell getActiveSpell(CastItem castItem) {
 		Integer i = activeSpells.get(castItem);
-		if (i != null && i != -1) {
-			return itemSpells.get(castItem).get(i);
-		} else {
-			return null;
-		}
+		if (i != null && i != -1) return itemSpells.get(castItem).get(i);
+		return null;
 	}
 	
 	public boolean hasSpell(Spell spell) {
@@ -421,18 +403,15 @@ public class Spellbook {
 	public boolean hasSpell(Spell spell, boolean checkGranted) {
 		if (plugin.ignoreGrantPerms) return true;
 		boolean has = allSpells.contains(spell);
-		if (has) {
-			return true;
-		} else if (checkGranted && player.hasPermission("magicspells.grant." + spell.getPermissionName())) {
+		if (has) return true;
+		if (checkGranted && player.hasPermission("magicspells.grant." + spell.getPermissionName())) {
 			MagicSpells.debug(2, "Adding granted spell for " + player.getName() + ": " + spell.getName());
 			addSpell(spell);
 			save();
 			return true;
-		} else if (MagicSpells.plugin.enableTempGrantPerms && player.hasPermission("magicspells.tempgrant." + spell.getPermissionName())) {
-			return true;
-		} else {
-			return false;
 		}
+		if (MagicSpells.plugin.enableTempGrantPerms && player.hasPermission("magicspells.tempgrant." + spell.getPermissionName())) return true;
+		return false;
 	}
 	
 	public void addSpell(Spell spell) {
@@ -453,9 +432,7 @@ public class Spellbook {
 				items = castItems;
 				HashSet<CastItem> set = new HashSet<CastItem>();
 				for (CastItem item : items) {
-					if (item != null) {
-						set.add(item);
-					}
+					if (item != null) set.add(item);
 				}
 				customBindings.put(spell, set);
 			} else if (plugin.ignoreDefaultBindings) {
@@ -476,7 +453,7 @@ public class Spellbook {
 				}
 			}
 		}
-		// remove any spells that this spell replaces
+		// Remove any spells that this spell replaces
 		if (spell.replaces != null) {
 			for (String spellName : spell.replaces) {
 				Spell sp = MagicSpells.getSpellByInternalName(spellName);
@@ -486,7 +463,7 @@ public class Spellbook {
 				}
 			}
 		}
-		// prevent learning of spells this spell precludes
+		// Prevent learning of spells this spell precludes
 		if (spell.precludes != null) {
 			for (String s : spell.precludes) {
 				cantLearn.add(s.toLowerCase());
@@ -507,7 +484,7 @@ public class Spellbook {
 				ArrayList<Spell> temp = itemSpells.get(item);
 				if (temp != null) {
 					temp.remove(spell);
-					if (temp.size() == 0) {
+					if (temp.isEmpty()) {
 						itemSpells.remove(item);
 						activeSpells.remove(item);
 					} else {
@@ -550,7 +527,7 @@ public class Spellbook {
 	}
 	
 	public void addCastItem(Spell spell, CastItem castItem) {
-		// add to custom bindings
+		// Add to custom bindings
 		Set<CastItem> bindings = customBindings.get(spell);
 		if (bindings == null) {
 			bindings = new HashSet<CastItem>();
@@ -560,7 +537,7 @@ public class Spellbook {
 			bindings.add(castItem);
 		}
 		
-		// add to item bindings
+		// Add to item bindings
 		ArrayList<Spell> bindList = itemSpells.get(castItem);
 		if (bindList == null) {
 			bindList = new ArrayList<Spell>();
@@ -573,20 +550,20 @@ public class Spellbook {
 	public boolean removeCastItem(Spell spell, CastItem castItem) {
 		boolean removed = false;
 		
-		// remove from custom bindings
+		// Remove from custom bindings
 		Set<CastItem> bindings = customBindings.get(spell);
 		if (bindings != null) {
 			removed = bindings.remove(castItem);
-			if (bindings.size() == 0) {
+			if (bindings.isEmpty()) {
 				bindings.add(new CastItem(-1));
 			}
 		}
 		
-		// remove from active bindings
+		// Remove from active bindings
 		ArrayList<Spell> bindList = itemSpells.get(castItem);
 		if (bindList != null) {
 			removed = bindList.remove(spell) || removed;
-			if (bindList.size() == 0) {
+			if (bindList.isEmpty()) {
 				itemSpells.remove(castItem);
 				activeSpells.remove(castItem);
 			} else {
@@ -645,7 +622,7 @@ public class Spellbook {
 						Set<CastItem> items = customBindings.get(spell);
 						String s = "";
 						for (CastItem i : items) {
-							s += (s.isEmpty()?"":",") + i;
+							s += (s.isEmpty() ? "" : ",") + i;
 						}
 						writer.append(":" + s);
 					}

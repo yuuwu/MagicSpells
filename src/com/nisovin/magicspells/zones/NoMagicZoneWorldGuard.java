@@ -25,25 +25,21 @@ public class NoMagicZoneWorldGuard extends NoMagicZone {
 	@Override
 	public boolean inZone(Location location) {
 		// check world
-		if (!worldName.equals(location.getWorld().getName())) {
-			return false;
-		}
+		if (!worldName.equals(location.getWorld().getName())) return false;
+		
 		// get region, if necessary
 		if (region == null) {
 			WorldGuardPlugin worldGuard = null;
-			if (Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard")) {
-				worldGuard = (WorldGuardPlugin)Bukkit.getServer().getPluginManager().getPlugin("WorldGuard");
-			}
+			if (Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard")) worldGuard = (WorldGuardPlugin)Bukkit.getServer().getPluginManager().getPlugin("WorldGuard");
 			if (worldGuard != null) {
 				World w = Bukkit.getServer().getWorld(worldName);
 				if (w != null) {
 					RegionManager rm = worldGuard.getRegionManager(w);
-					if (rm != null) {
-						region = rm.getRegion(regionName);
-					}
+					if (rm != null) region = rm.getRegion(regionName);
 				}
 			}
 		}
+		
 		// check if contains
 		if (region != null) {
 			com.sk89q.worldedit.Vector v = new com.sk89q.worldedit.Vector(location.getX(), location.getY(), location.getZ());

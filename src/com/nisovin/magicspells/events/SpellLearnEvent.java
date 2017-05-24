@@ -82,12 +82,14 @@ public class SpellLearnEvent extends Event implements Cancellable {
         return handlers;
     }
 	
-	public enum LearnSource {
+	public static enum LearnSource {
+		
 		TEACH,
 		SPELLBOOK,
 		TOME,
 		MAGIC_XP,
 		OTHER
+		
 	}
 
 }

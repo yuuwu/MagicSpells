@@ -7,6 +7,7 @@ import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
+
 public class SwitchHealthSpell extends TargetedSpell implements TargetedEntitySpell {
 
 	boolean requireGreaterHealthPercent;
@@ -23,13 +24,9 @@ public class SwitchHealthSpell extends TargetedSpell implements TargetedEntitySp
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			TargetInfo<LivingEntity> target = getTargetedEntity(player, power);
-			if (target == null) {
-				return noTarget(player);
-			}
+			if (target == null) return noTarget(player);
 			boolean ok = switchHealth(player, target.getTarget());
-			if (!ok) {
-				return noTarget(player);
-			}
+			if (!ok) return noTarget(player);
 			sendMessages(player, target.getTarget());
 			return PostCastAction.NO_MESSAGES;
 		}
@@ -50,9 +47,7 @@ public class SwitchHealthSpell extends TargetedSpell implements TargetedEntitySp
 
 	@Override
 	public boolean castAtEntity(Player caster, LivingEntity target, float power) {
-		if (!validTargetList.canTarget(caster, target)) {
-			return false;
-		}
+		if (!validTargetList.canTarget(caster, target)) return false;
 		return switchHealth(caster, target);
 	}
 

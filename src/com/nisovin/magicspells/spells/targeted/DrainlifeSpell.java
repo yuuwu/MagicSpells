@@ -18,6 +18,7 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.SpellDamageSpell;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.ExperienceUtils;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellAnimation;
@@ -114,17 +115,13 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 		if (takeType.equals(STR_GIVE_TAKE_TYPE_HEALTH)) {
 			if (target instanceof Player && checkPlugins) {
 				MagicSpellsEntityDamageByEntityEvent event = new MagicSpellsEntityDamageByEntityEvent(player, target, DamageCause.ENTITY_ATTACK, take);
-				Bukkit.getServer().getPluginManager().callEvent(event);
-				if (event.isCancelled()) {
-					return false;
-				}
-				if (!avoidDamageModification) {
-					take = event.getDamage();
-				}
+				EventUtil.call(event);
+				if (event.isCancelled()) return false;
+				if (!avoidDamageModification) take = event.getDamage();
 				player.setLastDamageCause(event);
 			}
 			SpellApplyDamageEvent event = new SpellApplyDamageEvent(this, player, target, take, DamageCause.MAGIC, spellDamageType);
-			Bukkit.getPluginManager().callEvent(event);
+			EventUtil.call(event);
 			take = event.getFinalDamage();
 			if (ignoreArmor) {
 				double health = target.getHealth();
@@ -132,9 +129,7 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 				health -= take;
 				if (health < MIN_HEALTH) health = MIN_HEALTH;
 				if (health > target.getMaxHealth()) health = target.getMaxHealth();
-				if (health == MIN_HEALTH && player != null) {
-					MagicSpells.getVolatileCodeHandler().setKiller(target, player);
-				}
+				if (health == MIN_HEALTH && player != null) MagicSpells.getVolatileCodeHandler().setKiller(target, player);
 				target.setHealth(health);
 				target.playEffect(EntityEffect.HURT);
 			} else {
@@ -143,9 +138,7 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 		} else if (takeType.equals(STR_GIVE_TAKE_TYPE_MANA)) {
 			if (target instanceof Player) {
 				boolean removed = MagicSpells.getManaHandler().removeMana((Player)target, (int)Math.round(take), ManaChangeReason.OTHER);
-				if (!removed) {
-					give = 0;
-				}
+				if (!removed) give = 0;
 			}
 		} else if (takeType.equals(STR_GIVE_TAKE_TYPE_HUNGER)) {
 			if (target instanceof Player) {
@@ -174,9 +167,7 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 		}		
 		
 		// show animation
-		if (showSpellEffect) {
-			new DrainlifeAnim(target.getLocation(), player, give, power);
-		}
+		if (showSpellEffect) new DrainlifeAnim(target.getLocation(), player, give, power);
 		
 		return true;
 	}
@@ -200,11 +191,8 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 
 	@Override
 	public boolean castAtEntity(Player caster, LivingEntity target, float power) {
-		if (!validTargetList.canTarget(caster, target)) {
-			return false;
-		} else {
-			return drain(caster, target, power);
-		}
+		if (!validTargetList.canTarget(caster, target)) return false;
+		return drain(caster, target, power);
 	}
 
 	@Override
@@ -212,6 +200,8 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 		return false;
 	}
 	
+	// TODO refactor this so that the animation format can be used in a more generic manner
+	// TODO it should have abstract methods for what to do at the points specific to this spell
 	private class DrainlifeAnim extends SpellAnimation {
 		
 		Vector current;

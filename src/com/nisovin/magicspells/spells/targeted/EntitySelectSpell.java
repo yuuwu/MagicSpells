@@ -28,9 +28,7 @@ public class EntitySelectSpell extends TargetedSpell {
 			float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			TargetInfo<LivingEntity> targetInfo = getTargetedEntity(player, power);
-			if (targetInfo == null || targetInfo.getTarget() == null) {
-				return noTarget(player);
-			}
+			if (targetInfo == null || targetInfo.getTarget() == null) return noTarget(player);
 			
 			targets.put(player.getName(), new WeakReference<LivingEntity>(targetInfo.getTarget()));
 			
@@ -40,12 +38,13 @@ public class EntitySelectSpell extends TargetedSpell {
 	}
 	
 	public LivingEntity getTarget(Player player) {
-		if (!targets.containsKey(player.getName())) return null;
+		String playerName = player.getName();
+		if (!targets.containsKey(playerName)) return null;
 		
-		WeakReference<LivingEntity> ref = targets.get(player.getName());
+		WeakReference<LivingEntity> ref = targets.get(playerName);
 		
 		if (ref == null) {
-			targets.remove(player.getName());
+			targets.remove(playerName);
 			return null;
 		}
 		
@@ -68,4 +67,5 @@ public class EntitySelectSpell extends TargetedSpell {
 		// this is needed so we don't have memory leaks
 		remove(event.getPlayer());
 	}
+	
 }

@@ -4,11 +4,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.util.ConfigData;
@@ -29,20 +31,17 @@ public class GillsSpell extends BuffSpell {
 		glassHeadEffect = getConfigBoolean("glass-head-effect", true);
 		
 		fishes = new HashSet<String>();
-		if (glassHeadEffect) {
-			helmets = new HashMap<Player,ItemStack>();
-		}
+		if (glassHeadEffect) helmets = new HashMap<Player,ItemStack>();
 	}
 
 	@Override
 	public boolean castBuff(Player player, float power, String[] args) {
 		fishes.add(player.getName());
+		PlayerInventory inventory = player.getInventory();
 		if (glassHeadEffect) {
-			ItemStack helmet = player.getInventory().getHelmet();
-			if (helmet != null && helmet.getType() != Material.AIR) {
-				helmets.put(player, helmet);
-			}
-			player.getInventory().setHelmet(new ItemStack(Material.GLASS, 1));
+			ItemStack helmet = inventory.getHelmet();
+			if (helmet != null && helmet.getType() != Material.AIR) helmets.put(player, helmet);
+			inventory.setHelmet(new ItemStack(Material.GLASS, 1));
 		}
 		return true;
 	}
@@ -50,54 +49,65 @@ public class GillsSpell extends BuffSpell {
 	@EventHandler
 	public void onEntityDamage(EntityDamageEvent event) {
 		if (event.isCancelled()) return;
-		if (!event.isCancelled() && event.getEntity() instanceof Player && event.getCause() == DamageCause.DROWNING) {
-			Player player = (Player)event.getEntity();
-			if (fishes.contains(player.getName())) {
-				if (isExpired(player)) {
-					turnOff(player);
-				} else {
-					addUse(player);
-					boolean ok = chargeUseCost(player);
-					if (ok) {
-						event.setCancelled(true);
-						player.setRemainingAir(player.getMaximumAir());
-					}
-				}
+		Entity entity = event.getEntity();
+		if (!(entity instanceof Player)) return;
+		if (event.getCause() != DamageCause.DROWNING) return;
+		
+		Player player = (Player)entity;
+		
+		if (!fishes.contains(player.getName())) return;
+		if (isExpired(player)) {
+			turnOff(player);
+		} else {
+			addUse(player);
+			boolean ok = chargeUseCost(player);
+			if (ok) {
+				event.setCancelled(true);
+				player.setRemainingAir(player.getMaximumAir());
 			}
 		}
 	}
 
 	@Override
 	public void turnOffBuff(Player player) {
-		if (fishes.remove(player.getName())) {
-			if (glassHeadEffect) {
-				if (helmets.containsKey(player)) {
-					if (player.isOnline()) player.getInventory().setHelmet(helmets.get(player));
-					helmets.remove(player);
-				} else if (player.getInventory().getHelmet() != null && player.getInventory().getHelmet().getType() == Material.GLASS) {
-					if (player.isOnline()) player.getInventory().setHelmet(null);				
-				}
-			}
+		if (!fishes.remove(player.getName())) return;
+		if (!glassHeadEffect) return;
+		
+		boolean playerOnline = player.isOnline();
+		PlayerInventory inventory = player.getInventory();
+		ItemStack helmet = inventory.getHelmet();
+		
+		if (helmets.containsKey(player)) {
+			if (playerOnline) inventory.setHelmet(helmets.get(player));
+			helmets.remove(player);
+		} else if (helmet != null && helmet.getType() == Material.GLASS) {
+			if (playerOnline) inventory.setHelmet(null);				
 		}
 	}
 	
 	@Override
 	protected void turnOff() {
-		for (String name : fishes) {
-			if (glassHeadEffect) {
+		if (glassHeadEffect) {
+			for (String name : fishes) {
 				Player player = PlayerNameUtils.getPlayerExact(name);
-				if (player != null && player.isOnline()) {
-					if (helmets.containsKey(player)) {
-						player.getInventory().setHelmet(helmets.get(player));
-					} else if (player.getInventory().getHelmet() != null && player.getInventory().getHelmet().getType() == Material.GLASS) {
-						player.getInventory().setHelmet(null);
-					}
+				if (player == null) continue;
+				if (!player.isOnline()) continue;
+				
+				PlayerInventory inventory = player.getInventory();
+				
+				if (helmets.containsKey(player)) {
+					inventory.setHelmet(helmets.get(player));
+					continue;
 				}
+				
+				ItemStack helmet = inventory.getHelmet();
+				if (helmet == null) continue;
+				if (helmet.getType() != Material.GLASS) continue;
+				
+				inventory.setHelmet(null);
 			}
 		}
-		if (helmets != null) {
-			helmets.clear();
-		}
+		if (helmets != null) helmets.clear();
 		fishes.clear();
 	}
 

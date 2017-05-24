@@ -13,4 +13,5 @@ public class RegexUtil {
 	public static final boolean matches(Pattern pattern, String string) {
 		return pattern.matcher(string).matches();
 	}
+	
 }

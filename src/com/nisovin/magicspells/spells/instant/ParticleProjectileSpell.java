@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -23,6 +22,7 @@ import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.util.BlockUtils;
 import com.nisovin.magicspells.util.BoundingBox;
 import com.nisovin.magicspells.util.EffectPackage;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.ParticleNameUtil;
 import com.nisovin.magicspells.util.SpellTypesAllowed;
@@ -337,40 +337,40 @@ public class ParticleProjectileSpell extends InstantSpell implements TargetedLoc
 				BoundingBox hitBox = new BoundingBox(currentLocation, hitRadius, verticalHitRadius);
 				for (int i = 0; i < inRange.size(); i++) {
 					LivingEntity e = inRange.get(i);
-					if (!e.isDead() && hitBox.contains(e.getLocation().add(0, 0.6, 0))) {
-						if (spell != null) {
-							if (spell.isTargetedEntitySpell()) {
-								ValidTargetChecker checker = spell.getSpell().getValidTargetChecker();
-								if (checker != null && !checker.isValidTarget(e)) {
-									inRange.remove(i);
-									break;
-								}
-								LivingEntity target = e;
-								float thisPower = power;
-								SpellTargetEvent event = new SpellTargetEvent(thisSpell, caster, target, thisPower);
-								Bukkit.getPluginManager().callEvent(event);
-								if (event.isCancelled()) {
-									inRange.remove(i);
-									break;
-								} else {
-									target = event.getTarget();
-									thisPower = event.getPower();
-								}
-								spell.castAtEntity(caster, target, thisPower);
-								playSpellEffects(EffectPosition.TARGET, e);
-							} else if (spell.isTargetedLocationSpell()) {
-								spell.castAtLocation(caster, currentLocation.clone(), power);
-								playSpellEffects(EffectPosition.TARGET, currentLocation);
+					if (e.isDead()) continue;
+					if (!hitBox.contains(e.getLocation().add(0, 0.6, 0))) continue;
+					if (spell != null) {
+						if (spell.isTargetedEntitySpell()) {
+							ValidTargetChecker checker = spell.getSpell().getValidTargetChecker();
+							if (checker != null && !checker.isValidTarget(e)) {
+								inRange.remove(i);
+								break;
 							}
+							LivingEntity target = e;
+							float thisPower = power;
+							SpellTargetEvent event = new SpellTargetEvent(thisSpell, caster, target, thisPower);
+							EventUtil.call(event);
+							if (event.isCancelled()) {
+								inRange.remove(i);
+								break;
+							} else {
+								target = event.getTarget();
+								thisPower = event.getPower();
+							}
+							spell.castAtEntity(caster, target, thisPower);
+							playSpellEffects(EffectPosition.TARGET, e);
+						} else if (spell.isTargetedLocationSpell()) {
+							spell.castAtLocation(caster, currentLocation.clone(), power);
+							playSpellEffects(EffectPosition.TARGET, currentLocation);
 						}
-						if (stopOnHitEntity) {
-							stop();
-						} else {
-							inRange.remove(i);
-							immune.put(e, System.currentTimeMillis());
-						}
-						break;
 					}
+					if (stopOnHitEntity) {
+						stop();
+					} else {
+						inRange.remove(i);
+						immune.put(e, System.currentTimeMillis());
+					}
+					break;
 				}
 				Iterator<Map.Entry<LivingEntity, Long>> iter = immune.entrySet().iterator();
 				while (iter.hasNext()) {
@@ -391,10 +391,9 @@ public class ParticleProjectileSpell extends InstantSpell implements TargetedLoc
 			previousLocation = null;
 			currentLocation = null;
 			currentVelocity = null;
-			if (inRange != null) {
-				inRange.clear();
-				inRange = null;
-			}
+			if (inRange == null) return;
+			inRange.clear();
+			inRange = null;
 		}
 		
 	}

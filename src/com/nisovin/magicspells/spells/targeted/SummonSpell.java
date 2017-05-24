@@ -22,6 +22,7 @@ import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.BlockUtils;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
+
 public class SummonSpell extends TargetedSpell implements TargetedEntitySpell, TargetedEntityFromLocationSpell {
 
 	private boolean requireExactName;
@@ -74,7 +75,7 @@ public class SummonSpell extends TargetedSpell implements TargetedEntitySpell, T
 			}
 			
 			// check usage
-			if (targetName.equals("")) {
+			if (targetName.isEmpty()) {
 				// fail -- show usage
 				sendMessage(strUsage, player, args);
 				return PostCastAction.ALREADY_HANDLED;
@@ -90,9 +91,7 @@ public class SummonSpell extends TargetedSpell implements TargetedEntitySpell, T
 			Player target = null;
 			if (requireExactName) {
 				target = PlayerNameUtils.getPlayer(targetName);
-				if (target != null && !target.getName().equalsIgnoreCase(targetName)) {
-					target = null;
-				}
+				if (target != null && !target.getName().equalsIgnoreCase(targetName)) target = null;
 			} else {
 				List<Player> players = Bukkit.getServer().matchPlayer(targetName);
 				if (players != null && players.size() == 1) {
@@ -123,27 +122,27 @@ public class SummonSpell extends TargetedSpell implements TargetedEntitySpell, T
 	
 	@EventHandler(priority=EventPriority.LOW)
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
-		if (requireAcceptance && event.getMessage().equalsIgnoreCase("/" + acceptCommand) && pendingSummons.containsKey(event.getPlayer())) {
-			Player player = event.getPlayer();
-			if (maxAcceptDelay > 0 && pendingTimes.get(player) + maxAcceptDelay*1000 < System.currentTimeMillis()) {
-				// waited too long
-				sendMessage(strSummonExpired, player, MagicSpells.NULL_ARGS);
-			} else {
-				// all ok, teleport
-				player.teleport(pendingSummons.get(player));
-				sendMessage(strSummonAccepted, player, MagicSpells.NULL_ARGS);
-			}
-			pendingSummons.remove(player);
-			pendingTimes.remove(player);
-			event.setCancelled(true);
+		if (!requireAcceptance) return;
+		if (!event.getMessage().equalsIgnoreCase("/" + acceptCommand)) return;
+		if (!pendingSummons.containsKey(event.getPlayer())) return;
+		
+		Player player = event.getPlayer();
+		if (maxAcceptDelay > 0 && pendingTimes.get(player) + maxAcceptDelay * 1000 < System.currentTimeMillis()) {
+			// waited too long
+			sendMessage(strSummonExpired, player, MagicSpells.NULL_ARGS);
+		} else {
+			// all ok, teleport
+			player.teleport(pendingSummons.get(player));
+			sendMessage(strSummonAccepted, player, MagicSpells.NULL_ARGS);
 		}
+		pendingSummons.remove(player);
+		pendingTimes.remove(player);
+		event.setCancelled(true);
 	}
 	
 	@Override
 	public List<String> tabComplete(CommandSender sender, String partial) {
-		if (partial.contains(" ")) {
-			return null;
-		}
+		if (partial.contains(" ")) return null;
 		return tabCompletePlayerName(sender, partial);
 	}
 

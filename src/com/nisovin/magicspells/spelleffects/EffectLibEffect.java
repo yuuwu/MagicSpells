@@ -29,4 +29,5 @@ public class EffectLibEffect extends SpellEffect {
 		manager.start(className, effectLibSection, location);
 		return null;
 	}
+	
 }

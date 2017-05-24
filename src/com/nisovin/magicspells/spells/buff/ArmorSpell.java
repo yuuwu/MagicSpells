@@ -9,6 +9,8 @@ import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -107,12 +109,8 @@ public class ArmorSpell extends BuffSpell {
 						String[] enchinfo = info[i].split(":");
 						Enchantment ench = Util.getEnchantmentType(enchinfo[0]);
 						int lvl = 1;
-						if (enchinfo.length > 1) {
-							lvl = Integer.parseInt(enchinfo[1].toUpperCase().replace(" ", "_"));
-						}
-						if (ench != null) {
-							item.addUnsafeEnchantment(ench, lvl);
-						}
+						if (enchinfo.length > 1) lvl = Integer.parseInt(enchinfo[1].toUpperCase().replace(" ", "_"));
+						if (ench != null) item.addUnsafeEnchantment(ench, lvl);
 					}
 				}
 				
@@ -137,9 +135,7 @@ public class ArmorSpell extends BuffSpell {
 		
 		setArmor(inv);
 		
-		if (!permanent) {
-			armored.add(player.getName());
-		}
+		if (!permanent) armored.add(player.getName());
 		return true;
 	}
 	
@@ -168,16 +164,23 @@ public class ArmorSpell extends BuffSpell {
 	}
 	
 	void removeArmor(PlayerInventory inv) {
-		if (helmet != null && inv.getHelmet() != null && inv.getHelmet().getType() == helmet.getType()) {
+		ItemStack invHelmet = inv.getHelmet();
+		if (helmet != null && invHelmet != null && invHelmet.getType() == helmet.getType()) {
 			inv.setHelmet(null);
 		}
-		if (chestplate != null && inv.getChestplate() != null && inv.getChestplate().getType() == chestplate.getType()) {
+		
+		ItemStack invChestplate = inv.getChestplate();
+		if (chestplate != null && invChestplate != null && invChestplate.getType() == chestplate.getType()) {
 			inv.setChestplate(null);
 		}
-		if (leggings != null && inv.getLeggings() != null && inv.getLeggings().getType() == leggings.getType()) {
+		
+		ItemStack invLeggings = inv.getLeggings();
+		if (leggings != null && invLeggings != null && invLeggings.getType() == leggings.getType()) {
 			inv.setLeggings(null);
 		}
-		if (boots != null && inv.getBoots() != null && inv.getBoots().getType() == boots.getType()) {
+		
+		ItemStack invBoots = inv.getBoots();
+		if (boots != null && invBoots != null && invBoots.getType() == boots.getType()) {
 			inv.setBoots(null);
 		}
 	}
@@ -186,22 +189,28 @@ public class ArmorSpell extends BuffSpell {
 	
 		@EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
 		public void onEntityDamage(EntityDamageEvent event) {
-			if (event.getEntity() instanceof Player) {
-				Player p = (Player)event.getEntity();
-				if (isActive(p) && p.getNoDamageTicks() < 10) {
-					addUseAndChargeCost(p);
-				}
-			}
+			Entity entity = event.getEntity();
+			if (!(entity instanceof Player)) return;
+			
+			Player p = (Player)entity;
+			if (!isActive(p)) return;
+			
+			if (p.getNoDamageTicks() >= 10) return;
+			addUseAndChargeCost(p);
 		}
 		
 		@EventHandler(ignoreCancelled=true)
 		public void onInventoryClick(InventoryClickEvent event) {
-			if (event.getSlotType() == SlotType.ARMOR && event.getWhoClicked() instanceof Player) {
-				Player p = (Player)event.getWhoClicked();
-				if (isActive(p)) {
-					event.setCancelled(true);
-				}
-			}
+			if (event.getSlotType() != SlotType.ARMOR) return;
+			
+			HumanEntity entity = event.getWhoClicked();
+			
+			if (!(entity instanceof Player)) return;
+			
+			Player p = (Player)entity;
+			if (!isActive(p)) return;
+			
+			event.setCancelled(true);
 		}
 		
 		@EventHandler
@@ -209,68 +218,79 @@ public class ArmorSpell extends BuffSpell {
 			Iterator<ItemStack> drops = event.getDrops().iterator();
 			while (drops.hasNext()) {
 				ItemStack drop = drops.next();
-				if (drop.hasItemMeta() && drop.getItemMeta() != null) {
-					List<String> lore = drop.getItemMeta().getLore();
-					if (lore != null && lore.size() > 0 && lore.get(lore.size()-1).equals(strLoreText)) {
-						drops.remove();
-					}
-				}
+				if (!drop.hasItemMeta()) continue;
+				
+				ItemMeta dropMeta = drop.getItemMeta();
+				if (dropMeta == null) continue;
+				
+				List<String> lore = dropMeta.getLore();
+				if (lore == null) continue;
+				if (lore.isEmpty()) continue;
+				
+				if (!lore.get(lore.size() - 1).equals(strLoreText)) continue;
+				
+				drops.remove();
 			}
 		}
 		
 		@EventHandler
 		public void onPlayerRespawn(PlayerRespawnEvent event) {
-			if (isActive(event.getPlayer()) && !isExpired(event.getPlayer())) {
-				final PlayerInventory inv = event.getPlayer().getInventory();
-				Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
-					@Override
-					public void run() {
-						setArmor(inv);
-					}
-				});
-			}
+			Player player = event.getPlayer();
+			if (!isActive(player)) return;
+			if (isExpired(player)) return;
+			
+			final PlayerInventory inv = player.getInventory();
+			Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
+				@Override
+				public void run() {
+					setArmor(inv);
+				}
+			});
 		}
 		
 		@EventHandler
 		public void onPlayerQuit(PlayerQuitEvent event) {
-			if (isActive(event.getPlayer())) {
-				if (cancelOnLogout) {
-					turnOff(event.getPlayer());
-				} else {
-					removeArmor(event.getPlayer().getInventory());
-				}
+			Player player = event.getPlayer();
+			if (!isActive(player)) return;
+			
+			if (cancelOnLogout) {
+				turnOff(player);
+			} else {
+				removeArmor(player.getInventory());
 			}
 		}
 		
 		@EventHandler
 		public void onPlayerJoin(PlayerJoinEvent event) {
-			if (isActive(event.getPlayer())) {
-				if (!isExpired(event.getPlayer())) {
-					setArmor(event.getPlayer().getInventory());
-				} else {
-					turnOff(event.getPlayer());
-				}
+			Player player = event.getPlayer();
+			if (!isActive(player)) return;
+			
+			if (!isExpired(player)) {
+				setArmor(player.getInventory());
+			} else {
+				turnOff(player);
 			}
 		}
+		
 	}
 	
 	@Override
 	public void turnOffBuff(Player player) {
-		if (armored.remove(player.getName())) {
-			if (player.isOnline()) {
-				PlayerInventory inv = player.getInventory();
-				removeArmor(inv);
-			}
-		}
+		if (!armored.remove(player.getName())) return;
+		if (!player.isOnline()) return;
+		
+		PlayerInventory inv = player.getInventory();
+		removeArmor(inv);
 	}
 
 	@Override
 	protected void turnOff() {
 		for (String name : new HashSet<String>(armored)) {
 			Player p = PlayerNameUtils.getPlayerExact(name);
-			if (p != null && p.isOnline()) {
-				turnOff(p);
-			}
+			if (p == null) continue;
+			if (!p.isOnline()) continue;
+			
+			turnOff(p);
 		}
 	}
 

@@ -18,105 +18,85 @@ import com.nisovin.magicspells.util.VariableMod;
 import com.nisovin.magicspells.util.VariableMod.VariableOwner;
 
 public enum ModifierType {
+	
 	REQUIRED(false, false, false, false, "required", "require") {
+		
 		@Override
-		public boolean apply(SpellCastEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(SpellCastEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (!check) event.setCancelled(true);
 			return check;
 		}
 
 		@Override
-		public boolean apply(ManaChangeEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(ManaChangeEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (!check) event.setNewAmount(event.getOldAmount());
 			return check;
 		}
 
 		@Override
-		public boolean apply(SpellTargetEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(SpellTargetEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (!check) event.setCancelled(true);
 			return check;
 		}
 
 		@Override
-		public boolean apply(SpellTargetLocationEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(SpellTargetLocationEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (!check) event.setCancelled(true);
 			return check;
 		}
 
 		@Override
-		public boolean apply(MagicSpellsGenericPlayerEvent event,
-				boolean check, String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(MagicSpellsGenericPlayerEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (!check) event.setCancelled(true);
 			return check;
 		}
+		
 	},
 	
-	
 	DENIED(false, false, false, false, "denied", "deny") {
+		
 		@Override
-		public boolean apply(SpellCastEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(SpellCastEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) event.setCancelled(true);
 			return !check;
 		}
 
 		@Override
-		public boolean apply(ManaChangeEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(ManaChangeEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) event.setNewAmount(event.getOldAmount());
 			return !check;
 		}
 
 		@Override
-		public boolean apply(SpellTargetEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(SpellTargetEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) event.setCancelled(true);
 			return !check;
 		}
 
 		@Override
-		public boolean apply(SpellTargetLocationEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(SpellTargetLocationEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) event.setCancelled(true);
 			return !check;
 		}
 
 		@Override
-		public boolean apply(MagicSpellsGenericPlayerEvent event,
-				boolean check, String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(MagicSpellsGenericPlayerEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) event.setCancelled(true);
 			return !check;
 		}
+		
 	},
 	
-	
 	POWER(false, true, false, false, "power", "empower", "multiply") {
+		
 		@Override
-		public boolean apply(SpellCastEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(SpellCastEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) event.increasePower(modifierVarFloat);
 			return true;
 		}
 
 		@Override
-		public boolean apply(ManaChangeEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(ManaChangeEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) {
 				int gain = event.getNewAmount() - event.getOldAmount();
 				gain = Math.round(gain * modifierVarFloat);
@@ -128,42 +108,33 @@ public enum ModifierType {
 		}
 
 		@Override
-		public boolean apply(SpellTargetEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(SpellTargetEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) event.increasePower(modifierVarFloat);
 			return true;
 		}
 
 		@Override
-		public boolean apply(SpellTargetLocationEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(SpellTargetLocationEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			return true;
 		}
 
 		@Override
-		public boolean apply(MagicSpellsGenericPlayerEvent event,
-				boolean check, String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(MagicSpellsGenericPlayerEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			return true;
 		}
+		
 	},
 	
-	
 	ADD_POWER(false, true, false, false, "addpower", "add") {
+		
 		@Override
-		public boolean apply(SpellCastEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(SpellCastEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) event.setPower(event.getPower() + modifierVarFloat);
 			return true;
 		}
 
 		@Override
-		public boolean apply(ManaChangeEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(ManaChangeEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) {
 				int newAmt = event.getNewAmount() + (int)modifierVarFloat;
 				if (newAmt > event.getMaxMana()) newAmt = event.getMaxMana();
@@ -174,253 +145,193 @@ public enum ModifierType {
 		}
 
 		@Override
-		public boolean apply(SpellTargetEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(SpellTargetEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) event.setPower(event.getPower() + modifierVarFloat);
 			return true;
 		}
 
 		@Override
-		public boolean apply(SpellTargetLocationEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(SpellTargetLocationEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			return true;
 		}
 
 		@Override
-		public boolean apply(MagicSpellsGenericPlayerEvent event,
-				boolean check, String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(MagicSpellsGenericPlayerEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			return true;
 		}
+		
 	},
 	
-	
 	COOLDOWN(false, true, false, false, "cooldown") {
+		
 		@Override
-		public boolean apply(SpellCastEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(SpellCastEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) event.setCooldown(modifierVarFloat);
 			return true;
 		}
 
 		@Override
-		public boolean apply(ManaChangeEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(ManaChangeEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			return true;
 		}
 
 		@Override
-		public boolean apply(SpellTargetEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(SpellTargetEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			return true;
 		}
 
 		@Override
-		public boolean apply(SpellTargetLocationEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(SpellTargetLocationEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			return true;
 		}
 
 		@Override
-		public boolean apply(MagicSpellsGenericPlayerEvent event,
-				boolean check, String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(MagicSpellsGenericPlayerEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			return true;
 		}
+		
 	},
 	
-	
 	REAGENTS(false, true, false, false, "reagents") {
+		
 		@Override
-		public boolean apply(SpellCastEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(SpellCastEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) event.setReagents(event.getReagents().multiply(modifierVarFloat));
 			return true;
 		}
 
 		@Override
-		public boolean apply(ManaChangeEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(ManaChangeEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			return true;
 		}
 
 		@Override
-		public boolean apply(SpellTargetEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(SpellTargetEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			return true;
 		}
 
 		@Override
-		public boolean apply(SpellTargetLocationEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(SpellTargetLocationEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			return true;
 		}
 
 		@Override
-		public boolean apply(MagicSpellsGenericPlayerEvent event,
-				boolean check, String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(MagicSpellsGenericPlayerEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			return true;
 		}
+		
 	},
 	
-	
 	CAST_TIME(false, false, true, false, "casttime") {
+		
 		@Override
-		public boolean apply(SpellCastEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(SpellCastEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) event.setCastTime(modifierVarInt);
 			return true;
 		}
 
 		@Override
-		public boolean apply(ManaChangeEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(ManaChangeEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			return true;
 		}
 
 		@Override
-		public boolean apply(SpellTargetEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(SpellTargetEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			return true;
 		}
 
 		@Override
-		public boolean apply(SpellTargetLocationEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(SpellTargetLocationEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			return true;
 		}
 
 		@Override
-		public boolean apply(MagicSpellsGenericPlayerEvent event,
-				boolean check, String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(MagicSpellsGenericPlayerEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			return true;
 		}
+		
 	},
-	
 	
 	STOP(false, false, false, false, "stop") {
+		
 		@Override
-		public boolean apply(SpellCastEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(SpellCastEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			return !check;
 		}
 
 		@Override
-		public boolean apply(ManaChangeEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(ManaChangeEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			return !check;
 		}
 
 		@Override
-		public boolean apply(SpellTargetEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(SpellTargetEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			return !check;
 		}
 
 		@Override
-		public boolean apply(SpellTargetLocationEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(SpellTargetLocationEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			return !check;
 		}
 
 		@Override
-		public boolean apply(MagicSpellsGenericPlayerEvent event,
-				boolean check, String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(MagicSpellsGenericPlayerEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			return !check;
 		}
+		
 	},
-	
 	
 	CONTINUE(false, false, false, false, "continue") {
+		
 		@Override
-		public boolean apply(SpellCastEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(SpellCastEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			return check;
 		}
 
 		@Override
-		public boolean apply(ManaChangeEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(ManaChangeEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			return check;
 		}
 
 		@Override
-		public boolean apply(SpellTargetEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(SpellTargetEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			return check;
 		}
 
 		@Override
-		public boolean apply(SpellTargetLocationEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(SpellTargetLocationEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			return check;
 		}
 
 		@Override
-		public boolean apply(MagicSpellsGenericPlayerEvent event,
-				boolean check, String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(MagicSpellsGenericPlayerEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			return check;
 		}
+		
 	},
 	
-	
 	CAST(true, false, false, false, "cast") {
+		
 		@Override
-		public boolean apply(SpellCastEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(SpellCastEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) {
 				Spell spell = MagicSpells.getSpellByInternalName(modifierVar);
-				if (spell != null) {
-					spell.cast(event.getCaster(), event.getPower(), event.getSpellArgs());
-				}
+				if (spell != null) spell.cast(event.getCaster(), event.getPower(), event.getSpellArgs());
 			}
 			return true;
 		}
 
 		@Override
-		public boolean apply(ManaChangeEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(ManaChangeEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) {
 				Spell spell = MagicSpells.getSpellByInternalName(modifierVar);
-				if (spell != null) {
-					spell.cast(event.getPlayer(), 1, null);
-				}
+				if (spell != null) spell.cast(event.getPlayer(), 1, null);
 			}
 			return true;
 		}
 
 		@Override
-		public boolean apply(SpellTargetEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(SpellTargetEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) {
 				Spell spell = MagicSpells.getSpellByInternalName(modifierVar);
 				if (spell != null) {
@@ -431,9 +342,7 @@ public enum ModifierType {
 		}
 
 		@Override
-		public boolean apply(SpellTargetLocationEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(SpellTargetLocationEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) {
 				Spell spell = MagicSpells.getSpellByInternalName(modifierVar);
 				if (spell != null && spell instanceof TargetedLocationSpell) {
@@ -444,25 +353,20 @@ public enum ModifierType {
 		}
 
 		@Override
-		public boolean apply(MagicSpellsGenericPlayerEvent event,
-				boolean check, String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(MagicSpellsGenericPlayerEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) {
 				Spell spell = MagicSpells.getSpellByInternalName(modifierVar);
-				if (spell != null) {
-					spell.cast(event.getPlayer(), 1, null);
-				}
+				if (spell != null) spell.cast(event.getPlayer(), 1, null);
 			}
 			return true;
 		}
+		
 	},
 	
-	
 	CAST_INSTEAD(true, false, false, false, "castinstead") {
+		
 		@Override
-		public boolean apply(SpellCastEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(SpellCastEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) {
 				Spell spell = MagicSpells.getSpellByInternalName(modifierVar);
 				if (spell != null) {
@@ -474,9 +378,7 @@ public enum ModifierType {
 		}
 
 		@Override
-		public boolean apply(ManaChangeEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(ManaChangeEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) {
 				Spell spell = MagicSpells.getSpellByInternalName(modifierVar);
 				if (spell != null) {
@@ -487,9 +389,7 @@ public enum ModifierType {
 		}
 
 		@Override
-		public boolean apply(SpellTargetEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(SpellTargetEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) {
 				Spell spell = MagicSpells.getSpellByInternalName(modifierVar);
 				if (spell != null) {
@@ -504,9 +404,7 @@ public enum ModifierType {
 		}
 
 		@Override
-		public boolean apply(SpellTargetLocationEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(SpellTargetLocationEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) {
 				Spell spell = MagicSpells.getSpellByInternalName(modifierVar);
 				if (spell != null && spell instanceof TargetedLocationSpell) {
@@ -518,33 +416,32 @@ public enum ModifierType {
 		}
 
 		@Override
-		public boolean apply(MagicSpellsGenericPlayerEvent event,
-				boolean check, String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(MagicSpellsGenericPlayerEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) {
 				Spell spell = MagicSpells.getSpellByInternalName(modifierVar);
-				if (spell != null) {
-					spell.cast(event.getPlayer(), 1, null);
-				}
+				if (spell != null) spell.cast(event.getPlayer(), 1, null);
 			}
 			return true;
 		}
+		
 	},
 	
 	
 	VARIABLE_MODIFY(false, false, false, true, "variable") {
 		
 		class CustomData {
+			
 			public VariableOwner modifiedVariableOwner;
 			public String modifiedVariableName;
 			public VariableMod mod;
 			
 			CustomData() {
+				
 			}
+			
 		}
 		
-		private void modifyVariable(String variableName, VariableOwner modifiedVariableOwner,
-				Player caster, Player targetPlayer, VariableMod.Operation op, double amount) {
+		private void modifyVariable(String variableName, VariableOwner modifiedVariableOwner, Player caster, Player targetPlayer, VariableMod.Operation op, double amount) {
 			Player varToModifiyOwnerPlayer = modifiedVariableOwner == VariableOwner.CASTER ? caster: targetPlayer;
 			switch (op) {
 			case SET:
@@ -568,9 +465,7 @@ public enum ModifierType {
 		}
 		
 		@Override
-		public boolean apply(SpellCastEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(SpellCastEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) {
 				CustomData data = (CustomData)customData;
 				if (isDataOk(data, event.getCaster(), null)) {
@@ -582,9 +477,7 @@ public enum ModifierType {
 		}
 
 		@Override
-		public boolean apply(ManaChangeEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(ManaChangeEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) {
 				CustomData data = (CustomData)customData;
 				if (isDataOk(data, event.getPlayer(), null)) {
@@ -596,9 +489,7 @@ public enum ModifierType {
 		}
 
 		@Override
-		public boolean apply(SpellTargetEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(SpellTargetEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) {
 				CustomData data = (CustomData)customData;
 				Player targetPlayer = event.getTarget() instanceof Player ? (Player)event.getTarget(): null;
@@ -611,9 +502,7 @@ public enum ModifierType {
 		}
 
 		@Override
-		public boolean apply(SpellTargetLocationEvent event, boolean check,
-				String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(SpellTargetLocationEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) {
 				CustomData data = (CustomData)customData;
 				if (isDataOk(data, event.getCaster(), null)) {
@@ -625,9 +514,7 @@ public enum ModifierType {
 		}
 
 		@Override
-		public boolean apply(MagicSpellsGenericPlayerEvent event,
-				boolean check, String modifierVar, float modifierVarFloat,
-				int modifierVarInt, Object customData) {
+		public boolean apply(MagicSpellsGenericPlayerEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) {
 				CustomData data = (CustomData)customData;
 				if (isDataOk(data, event.getPlayer(), null)) {
@@ -668,6 +555,7 @@ public enum ModifierType {
 		}
 		
 	}
+	
 	;
 	
 	private String[] keys;
@@ -702,7 +590,6 @@ public enum ModifierType {
 		return usesModifierVarInt;
 	}
 	
-	
 	public abstract boolean apply(SpellCastEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData);
 	public abstract boolean apply(ManaChangeEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData);
 	public abstract boolean apply(SpellTargetEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData);
@@ -714,6 +601,7 @@ public enum ModifierType {
 	}
 	
 	static HashMap<String, ModifierType> nameMap;
+	
 	static void initialize() {
 		nameMap = new HashMap<String, ModifierType>();
 		for (ModifierType type: ModifierType.values()) {
@@ -725,9 +613,7 @@ public enum ModifierType {
 	}
 	
 	public static ModifierType getModifierTypeByName(String name) {
-		if (!initialized) {
-			initialize();
-		}
+		if (!initialized) initialize();
 		return nameMap.get(name.toLowerCase());
 	}
 	

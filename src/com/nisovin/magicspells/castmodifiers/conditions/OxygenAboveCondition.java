@@ -36,5 +36,6 @@ public class OxygenAboveCondition extends Condition{
 	public boolean check(Player player, Location location) {
 		return false;
 	}
+	
 }
 

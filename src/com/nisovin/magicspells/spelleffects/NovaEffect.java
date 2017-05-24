@@ -142,22 +142,20 @@ public class NovaEffect extends SpellEffect {
 		item.remove();
 		List<Player> nearby = new ArrayList<Player>();
 		for (Entity e : nearbyEntities) {
-			if (e instanceof Player) {
-				nearby.add((Player)e);
-			}
+			if (!(e instanceof Player)) continue;
+			nearby.add((Player)e);
 		}
 		
 		// start animation
 		Block b = location.getBlock();
-		if (!BlockUtils.isPathable(b)) {
-			b = b.getRelative(BlockFace.UP);
-		}
+		if (!BlockUtils.isPathable(b)) b = b.getRelative(BlockFace.UP);
 		new NovaAnimation(nearby, location.getBlock(), mat, radius, novaTickInterval, expandingRadiusChange);
 		return null;
 	}
 	
 
 	private class NovaAnimation extends SpellAnimation {
+		
 		List<Player> nearby;
 		Block center;
 		MagicMaterial matNova;
@@ -178,7 +176,7 @@ public class NovaEffect extends SpellEffect {
 		@Override
 		protected void onTick(int tick) {
 			// remove old fire blocks
-			tick*= radiusChange;
+			tick *= radiusChange;
 			for (Block block : blocks) {
 				for (Player p : nearby) {
 					Util.restoreFakeBlockChange(p, block);
@@ -193,13 +191,11 @@ public class NovaEffect extends SpellEffect {
 				int bz = center.getZ();
 				for (int x = bx - tick; x <= bx + tick; x++) {
 					for (int z = bz - tick; z <= bz + tick; z++) {
-						if (Math.abs(x-bx) == tick || Math.abs(z-bz) == tick) {
-							Block b = center.getWorld().getBlockAt(x,y,z);
+						if (Math.abs(x-bx) == tick || Math.abs(z - bz) == tick) {
+							Block b = center.getWorld().getBlockAt(x, y, z);
 							if (b.getType() == Material.AIR || b.getType() == Material.LONG_GRASS) {
 								Block under = b.getRelative(BlockFace.DOWN);
-								if (under.getType() == Material.AIR || under.getType() == Material.LONG_GRASS) {
-									b = under;
-								}
+								if (under.getType() == Material.AIR || under.getType() == Material.LONG_GRASS) b = under;
 								for (Player p : nearby) {
 									Util.sendFakeBlockChange(p, b, matNova);
 								}
@@ -214,11 +210,12 @@ public class NovaEffect extends SpellEffect {
 						}
 					}
 				}
-			} else if (tick > radiusNova+1) {
+			} else if (tick > radiusNova + 1) {
 				// stop if done
 				stop();
 			}
 		}
+		
 	}
 
 }

@@ -28,9 +28,8 @@ public class QuitListener extends PassiveListener {
 		Player player = event.getPlayer();
 		Spellbook spellbook = MagicSpells.getSpellbook(player);
 		for (PassiveSpell spell : spells) {
-			if (spellbook.hasSpell(spell)) {
-				spell.activate(player);
-			}
+			if (!spellbook.hasSpell(spell)) continue;
+			spell.activate(player);
 		}
 	}
 

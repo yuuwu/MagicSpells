@@ -70,12 +70,8 @@ public class SoundPersonalEffect extends SpellEffect {
 		if (string != null && string.length() > 0) {
 			String[] data = string.split(" ");
 			sound = data[0];
-			if (data.length > 1) {
-				volume = Float.parseFloat(data[1]);
-			}
-			if (data.length > 2) {
-				pitch = Float.parseFloat(data[2]);
-			}
+			if (data.length > 1) volume = Float.parseFloat(data[1]);
+			if (data.length > 2) pitch = Float.parseFloat(data[2]);
 		}
 		if (sound.equals("random.wood_click")) {
 			sound = "random.wood click";

@@ -15,6 +15,7 @@ import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellAnimation;
+
 public class BombSpell extends TargetedSpell implements TargetedLocationSpell {
 
 	MagicMaterial bomb;
@@ -44,16 +45,11 @@ public class BombSpell extends TargetedSpell implements TargetedLocationSpell {
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			List<Block> blocks = getLastTwoTargetedBlocks(player, power);
-			if (blocks.size() != 2) {
-				return noTarget(player);
-			} else if (!blocks.get(1).getType().isSolid()) {
-				return noTarget(player);
-			}
+			if (blocks.size() != 2) return noTarget(player);
+			if (!blocks.get(1).getType().isSolid()) return noTarget(player);
 			Block target = blocks.get(0);
 			boolean ok = bomb(player, target.getLocation(), power);
-			if (!ok) {
-				return noTarget(player);
-			}
+			if (!ok) return noTarget(player);
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}
@@ -67,7 +63,9 @@ public class BombSpell extends TargetedSpell implements TargetedLocationSpell {
 			} else {
 				playSpellEffects(EffectPosition.TARGET, loc);
 			}
+			// TODO this should be moved to a named inner class
 			new SpellAnimation(interval, interval, true) {
+				
 				int time = 0;
 				Location l = block.getLocation().add(0.5, 0.5, 0.5);
 				@Override
@@ -86,11 +84,11 @@ public class BombSpell extends TargetedSpell implements TargetedLocationSpell {
 						playSpellEffects(EffectPosition.SPECIAL, l);
 					}
 				}
+				
 			};
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 	@Override

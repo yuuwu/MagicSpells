@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.bukkit.Material;
@@ -44,9 +45,7 @@ public class GiveDamageListener extends PassiveListener {
 				if (s.contains("|")) {
 					String[] stuff = s.split("\\|");
 					mat = MagicSpells.getItemNameResolver().resolveItem(stuff[0]);
-					if (mat != null) {
-						mat = new MagicItemWithNameMaterial(mat, stuff[1]);						
-					}
+					if (mat != null) mat = new MagicItemWithNameMaterial(mat, stuff[1]);						
 				} else {
 					mat = MagicSpells.getItemNameResolver().resolveItem(s);
 				}
@@ -75,12 +74,10 @@ public class GiveDamageListener extends PassiveListener {
 			spellbook = MagicSpells.getSpellbook(player);
 			for (PassiveSpell spell : always) {
 				if (!isCancelStateOk(spell, event.isCancelled())) continue;
-				if (spellbook.hasSpell(spell, false)) {
-					boolean casted = spell.activate(player, attacked);
-					if (PassiveListener.cancelDefaultAction(spell, casted)) {
-						event.setCancelled(true);
-					}
-				}
+				if (!spellbook.hasSpell(spell, false)) continue;
+				boolean casted = spell.activate(player, attacked);
+				if (!PassiveListener.cancelDefaultAction(spell, casted)) continue;
+				event.setCancelled(true);
 			}
 		}
 		
@@ -92,12 +89,10 @@ public class GiveDamageListener extends PassiveListener {
 					if (spellbook == null) spellbook = MagicSpells.getSpellbook(player);
 					for (PassiveSpell spell : list) {
 						if (!isCancelStateOk(spell, event.isCancelled())) continue;
-						if (spellbook.hasSpell(spell, false)) {
-							boolean casted = spell.activate(player, attacked);
-							if (PassiveListener.cancelDefaultAction(spell, casted)) {
-								event.setCancelled(true);
-							}
-						}
+						if (!spellbook.hasSpell(spell, false)) continue;
+						boolean casted = spell.activate(player, attacked);
+						if (!PassiveListener.cancelDefaultAction(spell, casted)) continue;
+						event.setCancelled(true);
 					}
 				}
 			}
@@ -106,21 +101,17 @@ public class GiveDamageListener extends PassiveListener {
 	
 	private Player getPlayerAttacker(EntityDamageByEntityEvent event) {
 		Entity e = event.getDamager();
-		if (e instanceof Player) {
-			return (Player)e;
-		} else if (e instanceof Projectile && ((Projectile)e).getShooter() instanceof Player) {
+		if (e instanceof Player) return (Player)e;
+		if (e instanceof Projectile && ((Projectile)e).getShooter() instanceof Player) {
 			return (Player)((Projectile)e).getShooter();
 		}
 		return null;
 	}
 	
 	private List<PassiveSpell> getSpells(ItemStack item) {
-		if (types.contains(item.getType())) {
-			for (MagicMaterial m : weapons.keySet()) {
-				if (m.equals(item)) {
-					return weapons.get(m);
-				}
-			}
+		if (!types.contains(item.getType())) return null;
+		for (Entry<MagicMaterial, List<PassiveSpell>> entry : weapons.entrySet()) {
+			if (entry.getKey().equals(item)) return entry.getValue();
 		}
 		return null;
 	}

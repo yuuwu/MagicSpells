@@ -8,7 +8,6 @@ import org.bukkit.entity.AreaEffectCloud;
 
 import com.nisovin.magicspells.util.Util_1_9;
 
-
 /**
  * ParticleCloudEffect<br>
  * <table border=1>

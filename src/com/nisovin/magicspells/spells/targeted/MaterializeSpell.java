@@ -19,8 +19,10 @@ import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
+
 public class MaterializeSpell extends TargetedSpell implements TargetedLocationSpell {
 
 	MagicMaterial material;
@@ -59,17 +61,12 @@ public class MaterializeSpell extends TargetedSpell implements TargetedLocationS
 				Block block = lastTwo.get(0);
 				Block against = lastTwo.get(1);
 				SpellTargetLocationEvent event = new SpellTargetLocationEvent(this, player, block.getLocation(), power);
-				Bukkit.getPluginManager().callEvent(event);
-				if (event.isCancelled()) {
-					return noTarget(player, strFailed);
-				} else {
-					block = event.getTargetLocation().getBlock();
-				}
+				EventUtil.call(event);
+				if (event.isCancelled()) return noTarget(player, strFailed);
+				block = event.getTargetLocation().getBlock();
 				
 				boolean done = materialize(player, block, against);
-				if (!done) {
-					return noTarget(player, strFailed);
-				}
+				if (!done) return noTarget(player, strFailed);
 			} else {
 				// fail no target
 				return noTarget(player);
@@ -84,11 +81,9 @@ public class MaterializeSpell extends TargetedSpell implements TargetedLocationS
 		if (checkPlugins && player != null) {
 			material.setBlock(block, false);
 			MagicSpellsBlockPlaceEvent event = new MagicSpellsBlockPlaceEvent(block, blockState, against, HandHandler.getItemInMainHand(player), player, true);
-			Bukkit.getPluginManager().callEvent(event);
+			EventUtil.call(event);
 			blockState.update(true);
-			if (event.isCancelled()) {
-				return false;
-			}
+			if (event.isCancelled()) return false;
 		}
 		if (!falling) {
 			material.setBlock(block, applyPhysics);
@@ -101,12 +96,12 @@ public class MaterializeSpell extends TargetedSpell implements TargetedLocationS
 			playSpellEffects(EffectPosition.TARGET, block.getLocation());
 			playSpellEffectsTrail(player.getLocation(), block.getLocation());
 		}
-		if (playBreakEffect) {
-			block.getWorld().playEffect(block.getLocation(), Effect.STEP_SOUND, block.getType());
-		}
+		
+		if (playBreakEffect) block.getWorld().playEffect(block.getLocation(), Effect.STEP_SOUND, block.getType());
 		
 		if (resetDelay > 0 && !falling) {
 			Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
+				
 				@Override
 				public void run() {
 					if (material.getMaterial().equals(block.getType())) {
@@ -118,9 +113,9 @@ public class MaterializeSpell extends TargetedSpell implements TargetedLocationS
 						}
 					}
 				}
+				
 			}, resetDelay);
 		}
-		
 		return true;
 	}
 	
@@ -128,31 +123,19 @@ public class MaterializeSpell extends TargetedSpell implements TargetedLocationS
 	public boolean castAtLocation(Player caster, Location target, float power) {
 		Block block = target.getBlock();
 		Block against = target.clone().add(target.getDirection()).getBlock();
-		if (block.equals(against)) {
-			against = block.getRelative(BlockFace.DOWN);
-		}
-		if (block.getType() == Material.AIR) {
-			return materialize(caster, block, against);
-		} else {
-			Block block2 = block.getRelative(BlockFace.UP);
-			if (block2.getType() == Material.AIR) {
-				return materialize(null, block2, block);
-			}
-		}
+		if (block.equals(against)) against = block.getRelative(BlockFace.DOWN);
+		if (block.getType() == Material.AIR) return materialize(caster, block, against);
+		Block block2 = block.getRelative(BlockFace.UP);
+		if (block2.getType() == Material.AIR) return materialize(null, block2, block);
 		return false;
 	}
 
 	@Override
 	public boolean castAtLocation(Location target, float power) {
 		Block block = target.getBlock();
-		if (block.getType() == Material.AIR) {
-			return materialize(null, block, block);
-		} else {
-			Block block2 = block.getRelative(BlockFace.UP);
-			if (block2.getType() == Material.AIR) {
-				return materialize(null, block2, block);
-			}
-		}
+		if (block.getType() == Material.AIR) return materialize(null, block, block);
+		Block block2 = block.getRelative(BlockFace.UP);
+		if (block2.getType() == Material.AIR) return materialize(null, block2, block);
 		return false;
 	}
 

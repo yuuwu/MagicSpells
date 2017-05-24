@@ -11,11 +11,8 @@ public class IntMap<T> {
 	
 	public int put(T key, int value) {
 		Integer prev = map.put(key, Integer.valueOf(value));
-		if (prev != null) {
-			return prev.intValue();
-		} else {
-			return 0;
-		}
+		if (prev != null) return prev.intValue();
+		return 0;
 	}
 	
 	public void set(T key, int value) {
@@ -24,20 +21,14 @@ public class IntMap<T> {
 	
 	public int get(T key) {
 		Integer value = map.get(key);
-		if (value != null) {
-			return value.intValue();
-		} else {
-			return 0;
-		}
+		if (value != null) return value.intValue();
+		return 0;
 	}
 	
 	public int remove(T key) {
 		Integer value = map.remove(key);
-		if (value != null) {
-			return value.intValue();
-		} else {
-			return 0;
-		}
+		if (value != null) return value.intValue();
+		return 0;
 	}
 	
 	public int size() {

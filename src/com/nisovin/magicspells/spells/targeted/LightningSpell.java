@@ -2,7 +2,6 @@ package com.nisovin.magicspells.spells.targeted;
 
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LightningStrike;
@@ -22,8 +21,10 @@ import com.nisovin.magicspells.events.SpellTargetLocationEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
+
 public class LightningSpell extends TargetedSpell implements TargetedLocationSpell {
 	
 	private boolean requireEntityTarget;
@@ -57,16 +58,12 @@ public class LightningSpell extends TargetedSpell implements TargetedLocationSpe
 				}
 				if (entityTarget != null && entityTarget instanceof Player && checkPlugins) {
 					MagicSpellsEntityDamageByEntityEvent event = new MagicSpellsEntityDamageByEntityEvent(player, entityTarget, DamageCause.ENTITY_ATTACK, 1 + additionalDamage);
-					Bukkit.getServer().getPluginManager().callEvent(event);
-					if (event.isCancelled()) {
-						entityTarget = null;
-					}					
+					EventUtil.call(event);
+					if (event.isCancelled()) entityTarget = null;
 				}
 				if (entityTarget != null) {
 					target = entityTarget.getLocation().getBlock();
-					if (additionalDamage > 0) {
-						entityTarget.damage(additionalDamage * power, player);
-					}
+					if (additionalDamage > 0) entityTarget.damage(additionalDamage * power, player);
 				} else {
 					return noTarget(player);
 				}
@@ -79,7 +76,7 @@ public class LightningSpell extends TargetedSpell implements TargetedLocationSpe
 				}
 				if (target != null) {
 					SpellTargetLocationEvent event = new SpellTargetLocationEvent(this, player, target.getLocation(), power);
-					Bukkit.getPluginManager().callEvent(event);
+					EventUtil.call(event);
 					if (event.isCancelled()) {
 						target = null;
 					} else {
@@ -107,23 +104,19 @@ public class LightningSpell extends TargetedSpell implements TargetedLocationSpe
 			target.getWorld().strikeLightningEffect(target);
 		} else {				
 			LightningStrike strike = target.getWorld().strikeLightning(target);
-			strike.setMetadata("MS"+internalName, new FixedMetadataValue(MagicSpells.plugin, new ChargeOption(chargeCreepers, zapPigs)));
+			strike.setMetadata("MS" + internalName, new FixedMetadataValue(MagicSpells.plugin, new ChargeOption(chargeCreepers, zapPigs)));
 		}
 	}
 	
 	@EventHandler
 	public void onCreeperCharge(CreeperPowerEvent event) {
 		LightningStrike strike = event.getLightning();
-		if (strike == null) {
-			return;
-		}
-		List<MetadataValue> data = strike.getMetadata("MS"+internalName);
-		if (data == null || data.size() == 0) return;
+		if (strike == null) return;
+		List<MetadataValue> data = strike.getMetadata("MS" + internalName);
+		if (data == null || data.isEmpty()) return;
 		for (MetadataValue val: data) {
 			ChargeOption option = (ChargeOption)val.value();
-			if (!option.chargeCreeper) {
-				event.setCancelled(true);
-			}
+			if (!option.chargeCreeper) event.setCancelled(true);
 			break;
 		}
 	}
@@ -132,13 +125,11 @@ public class LightningSpell extends TargetedSpell implements TargetedLocationSpe
 	public void onPigZap(PigZapEvent event) {
 		LightningStrike strike = event.getLightning();
 		if (strike == null) return;
-		List<MetadataValue> data = strike.getMetadata("MS"+internalName);
-		if (data == null || data.size() == 0) return;
+		List<MetadataValue> data = strike.getMetadata("MS" + internalName);
+		if (data == null || data.isEmpty()) return;
 		for (MetadataValue val: data) {
 			ChargeOption option = (ChargeOption)val.value();
-			if (!option.changePig) {
-				event.setCancelled(true);
-			}
+			if (!option.changePig) event.setCancelled(true);
 		}
 	}
 
@@ -156,12 +147,16 @@ public class LightningSpell extends TargetedSpell implements TargetedLocationSpe
 		return true;
 	}
 	
-	class ChargeOption {
+	static class ChargeOption {
+		
 		boolean chargeCreeper;
 		boolean changePig;
+		
 		public ChargeOption(boolean creeper, boolean pigmen) {
 			chargeCreeper = creeper;
 			changePig = pigmen;
 		}
+		
 	}
+	
 }

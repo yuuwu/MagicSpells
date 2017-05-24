@@ -12,9 +12,7 @@ public class CoordPitchVariable extends MetaVariable {
 	@Override
 	public double getValue(String player) {
 		Player p = PlayerNameUtils.getPlayerExact(player);
-		if (p != null) {
-			return p.getLocation().getPitch();
-		}
+		if (p != null) return p.getLocation().getPitch();
 		return 0D;
 	}
 	

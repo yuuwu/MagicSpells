@@ -1,6 +1,5 @@
 package com.nisovin.magicspells.spells.targeted;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -9,8 +8,10 @@ import org.bukkit.util.Vector;
 import com.nisovin.magicspells.events.MagicSpellsEntityDamageByEntityEvent;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
+
 public class ForcetossSpell extends TargetedSpell implements TargetedEntitySpell {
 
 	private int damage;
@@ -36,9 +37,7 @@ public class ForcetossSpell extends TargetedSpell implements TargetedEntitySpell
 		if (state == SpellCastState.NORMAL) {
 			// get target
 			TargetInfo<LivingEntity> targetInfo = getTargetedEntity(player, power);
-			if (targetInfo == null) {
-				return noTarget(player);
-			}
+			if (targetInfo == null) return noTarget(player);
 			LivingEntity target = targetInfo.getTarget();
 			power = targetInfo.getPower();
 			
@@ -47,13 +46,9 @@ public class ForcetossSpell extends TargetedSpell implements TargetedEntitySpell
 				double damage = this.damage * power;
 				if (target instanceof Player && checkPlugins) {
 					MagicSpellsEntityDamageByEntityEvent event = new MagicSpellsEntityDamageByEntityEvent(player, target, DamageCause.ENTITY_ATTACK, damage);
-					Bukkit.getServer().getPluginManager().callEvent(event);
-					if (event.isCancelled()) {
-						return noTarget(player);
-					}
-					if (!avoidDamageModification) {
-						damage = event.getDamage();
-					}
+					EventUtil.call(event);
+					if (event.isCancelled()) return noTarget(player);
+					if (!avoidDamageModification) damage = event.getDamage();
 				}
 				target.damage(damage);
 			}
@@ -72,20 +67,17 @@ public class ForcetossSpell extends TargetedSpell implements TargetedEntitySpell
 		Vector v = target.getLocation().toVector().subtract(player.getLocation().toVector())
 				.setY(0)
 				.normalize()
-				.multiply(hForce*power)
-				.setY(vForce*power);
+				.multiply(hForce * power)
+				.setY(vForce * power);
 		target.setVelocity(v);
 		playSpellEffects(player, target);
 	}
 
 	@Override
 	public boolean castAtEntity(Player caster, LivingEntity target, float power) {
-		if (!validTargetList.canTarget(caster, target)) {
-			return false;
-		} else {
-			toss(caster, target, power);
-			return true;
-		}
+		if (!validTargetList.canTarget(caster, target)) return false;
+		toss(caster, target, power);
+		return true;
 	}
 
 	@Override

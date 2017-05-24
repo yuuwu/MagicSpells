@@ -8,6 +8,7 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 
+// TODO add an option to change how it is affected by power
 public class ManaSpell extends InstantSpell {
 
 	private int mana;
@@ -21,13 +22,10 @@ public class ManaSpell extends InstantSpell {
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
-			int amount = Math.round(mana*power);
+			int amount = Math.round(mana * power);
 			boolean added = MagicSpells.getManaHandler().addMana(player, amount, ManaChangeReason.OTHER);
-			if (!added) {
-				return PostCastAction.ALREADY_HANDLED;
-			} else {
-				playSpellEffects(EffectPosition.CASTER, player);
-			}
+			if (!added) return PostCastAction.ALREADY_HANDLED;
+			playSpellEffects(EffectPosition.CASTER, player);
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}	

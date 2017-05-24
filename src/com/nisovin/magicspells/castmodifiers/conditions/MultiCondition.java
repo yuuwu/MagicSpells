@@ -203,6 +203,7 @@ public class MultiCondition extends Condition implements IModifier {
 		return passCondition.hasPassed(pass, fail);
 	}
 	
+	// TODO see if this can be static
 	public enum PassCondition {
 		ALL{
 
@@ -251,5 +252,7 @@ public class MultiCondition extends Condition implements IModifier {
 		
 		public abstract boolean hasPassed(int passes, int fails);
 		public abstract boolean shouldContinue(int passes, int fails);
+		
 	}
+	
 }

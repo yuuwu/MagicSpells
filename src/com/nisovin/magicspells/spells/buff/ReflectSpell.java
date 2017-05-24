@@ -75,26 +75,26 @@ public class ReflectSpell extends BuffSpell {
 	public void onSpellPreImpact(SpellPreImpactEvent event) {
 		if (event == null) {
 			if (DebugHandler.isNullCheckEnabled()) {
-			NullPointerException e = new NullPointerException("SpellPreImpactEvent was null!");
-			e.fillInStackTrace();
-			DebugHandler.nullCheck(e);
+				NullPointerException e = new NullPointerException("SpellPreImpactEvent was null!");
+				e.fillInStackTrace();
+				DebugHandler.nullCheck(e);
 			}
 			return;
 		}
 		if (event.getTarget() == null) {
 			MagicSpells.plugin.getLogger().warning("Spell preimpact event had a null target, the spell cannot be reflected.");
 			if (DebugHandler.isNullCheckEnabled()) {
-			NullPointerException e = new NullPointerException("Spell preimpact event had a null target");
-			e.fillInStackTrace();
-			DebugHandler.nullCheck(e);
+				NullPointerException e = new NullPointerException("Spell preimpact event had a null target");
+				e.fillInStackTrace();
+				DebugHandler.nullCheck(e);
 			}
 			return;
 		}
 		if (event.getCaster() == null) {
 			if (DebugHandler.isNullCheckEnabled()) {
-			NullPointerException e = new NullPointerException("SpellPreImpactEvent had a null caster!");
-			e.fillInStackTrace();
-			DebugHandler.nullCheck(e);
+				NullPointerException e = new NullPointerException("SpellPreImpactEvent had a null caster!");
+				e.fillInStackTrace();
+				DebugHandler.nullCheck(e);
 			}
 			return;
 		}

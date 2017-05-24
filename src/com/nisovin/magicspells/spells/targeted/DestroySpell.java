@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -26,7 +25,9 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedEntityFromLocationSpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
+
 public class DestroySpell extends TargetedSpell implements TargetedLocationSpell, TargetedEntityFromLocationSpell {
 
 	int horizRadius;
@@ -76,24 +77,26 @@ public class DestroySpell extends TargetedSpell implements TargetedLocationSpell
 		fallingBlockDamage = getConfigInt("falling-block-damage", 0);
 		
 		List<String> toThrow = getConfigStringList("block-types-to-throw", null);
-		if (toThrow != null && toThrow.size() > 0) {
+		if (toThrow != null && !toThrow.isEmpty()) {
 			blockTypesToThrow = EnumSet.noneOf(Material.class);
 			for (String s : toThrow) {
 				MagicMaterial m = MagicSpells.getItemNameResolver().resolveBlock(s);
-				if (m != null && m.getMaterial() != null) {
-					blockTypesToThrow.add(m.getMaterial());
-				}
+				if (m == null) continue;
+				Material material = m.getMaterial();
+				if (material == null) continue;
+				blockTypesToThrow.add(material);
 			}
 		}
 		
 		List<String> toRemove = getConfigStringList("block-types-to-remove", null);
-		if (toRemove != null && toRemove.size() > 0) {
+		if (toRemove != null && !toRemove.isEmpty()) {
 			blockTypesToRemove = EnumSet.noneOf(Material.class);
 			for (String s : toRemove) {
 				MagicMaterial m = MagicSpells.getItemNameResolver().resolveBlock(s);
-				if (m != null && m.getMaterial() != null) {
-					blockTypesToRemove.add(m.getMaterial());
-				}
+				if (m == null) continue;
+				Material material = m.getMaterial();
+				if (material == null) continue;
+				blockTypesToRemove.add(material);
 			}
 		}
 		
@@ -102,13 +105,10 @@ public class DestroySpell extends TargetedSpell implements TargetedLocationSpell
 			MagicSpells.scheduleRepeatingTask(new Runnable() {
 				@Override
 				public void run() {
-					if (fallingBlocks.size() > 0) {
-						Iterator<FallingBlock> iter = fallingBlocks.iterator();
-						while (iter.hasNext()) {
-							if (!iter.next().isValid()) {
-								iter.remove();
-							}
-						}
+					if (fallingBlocks.isEmpty()) return;
+					Iterator<FallingBlock> iter = fallingBlocks.iterator();
+					while (iter.hasNext()) {
+						if (!iter.next().isValid()) iter.remove();
 					}
 				}
 			}, 600, 600);
@@ -121,7 +121,7 @@ public class DestroySpell extends TargetedSpell implements TargetedLocationSpell
 			Block b = getTargetedBlock(player, power);
 			if (b != null && b.getType() != Material.AIR) {
 				SpellTargetLocationEvent event = new SpellTargetLocationEvent(this, player, b.getLocation(), power);
-				Bukkit.getPluginManager().callEvent(event);
+				EventUtil.call(event);
 				if (event.isCancelled()) {
 					b = null;
 				} else {
@@ -176,6 +176,7 @@ public class DestroySpell extends TargetedSpell implements TargetedLocationSpell
 		for (Block b : blocksToRemove) {
 			b.setType(Material.AIR);
 		}
+		
 		for (Block b : blocksToThrow) {
 			MagicMaterial mat = new MagicBlockMaterial(b.getState().getData());
 			Location l = new Location(target.getWorld(), b.getX() + 0.5, b.getY() + 0.5, b.getZ() + 0.5);
@@ -213,15 +214,11 @@ public class DestroySpell extends TargetedSpell implements TargetedLocationSpell
 			} else {
 				v = new Vector(0, (Math.random() - .5) / 4, 0);
 			}
-			if (v != null) {
-				fb.setVelocity(v);
-			}
-			if (fallingBlockDamage > 0) {
-				MagicSpells.getVolatileCodeHandler().setFallingBlockHurtEntities(fb, fallingBlockDamage, fallingBlockDamage);
-			}
-			if (preventLandingBlocks) {
-				fallingBlocks.add(fb);
-			}
+			
+			if (v != null) fb.setVelocity(v);
+			if (fallingBlockDamage > 0) MagicSpells.getVolatileCodeHandler().setFallingBlockHurtEntities(fb, fallingBlockDamage, fallingBlockDamage);
+			
+			if (preventLandingBlocks) fallingBlocks.add(fb);
 			b.setType(Material.AIR);
 		}
 		
@@ -270,17 +267,19 @@ public class DestroySpell extends TargetedSpell implements TargetedLocationSpell
 	}
 	
 	class FallingBlockListener implements Listener {
+		
 		@EventHandler
 		public void onBlockLand(EntityChangeBlockEvent event) {
 			boolean removed = fallingBlocks.remove(event.getEntity());
-			if (removed) {
-				event.setCancelled(true);
-			}
+			if (removed) event.setCancelled(true);
 		}
+		
 	}
 	
 	public enum VelocityType {
+		
 		NONE, UP, OUT, UP_OUT, RANDOM, RANDOMUP, DOWN, TOWARD, AWAY
+		
 	}
 	
 }

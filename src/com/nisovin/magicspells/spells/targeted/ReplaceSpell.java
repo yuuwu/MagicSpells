@@ -14,6 +14,7 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
+
 public class ReplaceSpell extends TargetedSpell implements TargetedLocationSpell {
 
 	int yOffset;
@@ -71,21 +72,15 @@ public class ReplaceSpell extends TargetedSpell implements TargetedLocationSpell
 			MagicSpells.error("ReplaceSpell " + spellName + " replace-random false, but replace-blocks and replace-with have different sizes!");
 		}
 		
-		if (replace.size() == 0) {
-			MagicSpells.error("ReplaceSpell " + spellName + " has empty replace-blocks list!");
-		}
-		if (replaceWith.size() == 0) {
-			MagicSpells.error("ReplaceSpell " + spellName + " has empty replace-with list!");
-		}
+		if (replace.isEmpty()) MagicSpells.error("ReplaceSpell " + spellName + " has empty replace-blocks list!");
+		if (replaceWith.isEmpty()) MagicSpells.error("ReplaceSpell " + spellName + " has empty replace-with list!");
 	}
 
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			Block target = pointBlank ? player.getLocation().getBlock() : getTargetedBlock(player, power);
-			if (target == null) {
-				return noTarget(player);
-			}
+			if (target == null) return noTarget(player);
 			castAtLocation(player, target.getLocation(), power);
 		}
 		return PostCastAction.HANDLE_NORMALLY;

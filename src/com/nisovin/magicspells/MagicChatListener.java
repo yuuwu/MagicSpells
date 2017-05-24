@@ -41,7 +41,7 @@ public class MagicChatListener implements Listener {
 				if (spellbook.hasSpell(spell)) {
 					String[] args = new String[split.length - 1];
 					for (int i = 0; i < args.length; i++) {
-						args[i] = split[i+1];
+						args[i] = split[i + 1];
 					}
 					spell.cast(player, args);
 					return true;

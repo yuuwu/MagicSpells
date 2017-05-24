@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -27,10 +27,10 @@ import com.nisovin.magicspells.Subspell;
 import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.events.SpellTargetEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellReagents;
-
 
 /**
  * ArrowSpell<br>
@@ -159,20 +159,14 @@ public class ArrowSpell extends Spell {
 		
 		if (spellNameOnHitEntity != null && !spellNameOnHitEntity.isEmpty()) {
 			Subspell spell = new Subspell(spellNameOnHitEntity);
-			if (spell.process() && spell.isTargetedEntitySpell()) {
-				spellOnHitEntity = spell;
-			}
+			if (spell.process() && spell.isTargetedEntitySpell()) spellOnHitEntity = spell;
 		}
 		if (spellNameOnHitGround != null && !spellNameOnHitGround.isEmpty()) {
 			Subspell spell = new Subspell(spellNameOnHitGround);
-			if (spell.process() && spell.isTargetedLocationSpell()) {
-				spellOnHitGround = spell;
-			}
+			if (spell.process() && spell.isTargetedLocationSpell()) spellOnHitGround = spell;
 		}
 		
-		if (handler == null) {
-			handler = new ArrowSpellHandler();
-		}
+		if (handler == null) handler = new ArrowSpellHandler();
 		handler.registerSpell(this);
 	}
 	
@@ -225,14 +219,15 @@ public class ArrowSpell extends Spell {
 				if (spell != null && spellbook.hasSpell(spell) && spellbook.canCast(spell)) {
 					SpellReagents reagents = spell.reagents.clone();
 					SpellCastEvent castEvent = new SpellCastEvent(spell, shooter, SpellCastState.NORMAL, useBowForce ? event.getForce() : 1.0F, null, cooldown, reagents, castTime);
-					Bukkit.getPluginManager().callEvent(castEvent);
+					EventUtil.call(castEvent);
+					Entity projectile = event.getProjectile();
 					if (!castEvent.isCancelled()) {
-						event.getProjectile().setMetadata(METADATA_KEY, new FixedMetadataValue(MagicSpells.plugin, new ArrowSpellData(spell, castEvent.getPower(), castEvent.getReagents())));
+						projectile.setMetadata(METADATA_KEY, new FixedMetadataValue(MagicSpells.plugin, new ArrowSpellData(spell, castEvent.getPower(), castEvent.getReagents())));
 						spell.playSpellEffects(EffectPosition.PROJECTILE, event.getProjectile());
-						spell.playTrackingLinePatterns(EffectPosition.DYNAMIC_CASTER_PROJECTILE_LINE, shooter.getLocation(), event.getProjectile().getLocation(), shooter, event.getProjectile());
+						spell.playTrackingLinePatterns(EffectPosition.DYNAMIC_CASTER_PROJECTILE_LINE, shooter.getLocation(), projectile.getLocation(), shooter, projectile);
 					} else {
 						event.setCancelled(true);
-						event.getProjectile().remove();
+						projectile.remove();
 					}
 				}
 			}
@@ -243,13 +238,14 @@ public class ArrowSpell extends Spell {
 			final Projectile arrow = event.getEntity();
 			if (arrow.getType() != EntityType.ARROW) return;
 			List<MetadataValue> metas = arrow.getMetadata(METADATA_KEY);
-			if (metas == null || metas.size() == 0) return;
+			if (metas == null || metas.isEmpty()) return;
 			for (MetadataValue meta : metas) {
 				final ArrowSpellData data = (ArrowSpellData)meta.value();
 				if (data.spell.spellOnHitGround != null) {
 					MagicSpells.scheduleDelayedTask(new Runnable() {
 						@Override
 						public void run() {
+							// FIXME this needs to be flattened
 							Player shooter = (Player)arrow.getShooter();
 							if (!data.casted && !data.spell.onCooldown(shooter) && data.spell.hasReagents(shooter, data.arrowSpellDataReagents)) {
 								boolean success = data.spell.spellOnHitGround.castAtLocation(shooter, arrow.getLocation(), data.power);
@@ -274,14 +270,14 @@ public class ArrowSpell extends Spell {
 			if (!(event.getEntity() instanceof LivingEntity)) return;
 			Projectile arrow = (Projectile)event.getDamager();
 			List<MetadataValue> metas = arrow.getMetadata(METADATA_KEY);
-			if (metas == null || metas.size() == 0) return;
+			if (metas == null || metas.isEmpty()) return;
 			Player shooter = (Player)arrow.getShooter();
 			for (MetadataValue meta : metas) {
 				ArrowSpellData data = (ArrowSpellData)meta.value();
 				if (!data.spell.onCooldown(shooter)) {
 					if (data.spell.spellOnHitEntity != null) {
 						SpellTargetEvent evt = new SpellTargetEvent(data.spell, shooter, (LivingEntity)event.getEntity(), data.power);
-						Bukkit.getPluginManager().callEvent(evt);
+						EventUtil.call(evt);
 						if (!evt.isCancelled()) {
 							data.spell.spellOnHitEntity.castAtEntity(shooter, (LivingEntity)event.getEntity(), evt.getPower());
 							data.spell.setCooldown(shooter, data.spell.cooldown);
@@ -302,16 +298,19 @@ public class ArrowSpell extends Spell {
 		
 	}
 	
-	class ArrowSpellData {
+	static class ArrowSpellData {
+		
 		ArrowSpell spell;
 		boolean casted = false;
 		float power = 1.0F;
 		SpellReagents arrowSpellDataReagents;
+		
 		public ArrowSpellData(ArrowSpell spell, float power, SpellReagents reagents) {
 			this.spell = spell;
 			this.power = power;
 			this.arrowSpellDataReagents = reagents;
 		}
+		
 	}
 
 }

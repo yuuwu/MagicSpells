@@ -28,4 +28,5 @@ public abstract class InstantSpell extends Spell {
 	public boolean canCastByCommand() {
 		return castByCommand;
 	}
+	
 }

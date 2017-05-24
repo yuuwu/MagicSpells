@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -22,7 +21,9 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.BoundingBox;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
+
 public class AreaEffectSpell extends TargetedSpell implements TargetedLocationSpell {
 
 	private int radius;
@@ -51,13 +52,9 @@ public class AreaEffectSpell extends TargetedSpell implements TargetedLocationSp
 		spellNames = getConfigStringList("spells", null);
 		
 		List<String> list = getConfigStringList("location-target-modifiers", null);
-		if (list != null) {
-			locationTargetModifiers = new ModifierSet(list);
-		}
+		if (list != null) locationTargetModifiers = new ModifierSet(list);
 		list = getConfigStringList("entity-target-modifiers", null);
-		if (list != null) {
-			entityTargetModifiers = new ModifierSet(list);
-		}
+		if (list != null) entityTargetModifiers = new ModifierSet(list);
 	}
 	
 	@Override
@@ -66,7 +63,7 @@ public class AreaEffectSpell extends TargetedSpell implements TargetedLocationSp
 		
 		spells = new ArrayList<Subspell>();
 		
-		if (spellNames != null && spellNames.size() > 0) {
+		if (spellNames != null && !spellNames.isEmpty()) {
 			for (String spellName : spellNames) {
 				Subspell spell = new Subspell(spellName);
 				if (spell.process()) {
@@ -83,7 +80,7 @@ public class AreaEffectSpell extends TargetedSpell implements TargetedLocationSp
 			spellNames = null;
 		}
 		
-		if (spells.size() == 0) {
+		if (spells.isEmpty()) {
 			MagicSpells.error("AreaEffect spell '" + name + "' has no spells!");
 		}
 	}
@@ -108,7 +105,7 @@ public class AreaEffectSpell extends TargetedSpell implements TargetedLocationSp
 			}
 			if (loc != null) {
 				SpellTargetLocationEvent event = new SpellTargetLocationEvent(this, player, loc, power);
-				Bukkit.getPluginManager().callEvent(event);
+				EventUtil.call(event);
 				if (locationTargetModifiers != null) {
 					locationTargetModifiers.apply(event);
 				}
@@ -119,9 +116,7 @@ public class AreaEffectSpell extends TargetedSpell implements TargetedLocationSp
 					power = event.getPower();
 				}
 			}
-			if (loc == null) {
-				return noTarget(player);
-			}
+			if (loc == null) return noTarget(player);
 			
 			// cast spells on nearby entities
 			boolean done = doAoe(player, loc, power);
@@ -148,31 +143,24 @@ public class AreaEffectSpell extends TargetedSpell implements TargetedLocationSp
 			if (e instanceof LivingEntity && box.contains(e)) {
 				if (pointBlank && cone > 0) {
 					Vector dir = e.getLocation().toVector().subtract(vLoc);
-					if (Math.abs(dir.angle(facing)) > cone) {
-						continue;
-					}
+					if (Math.abs(dir.angle(facing)) > cone) continue;
 				}
 				LivingEntity target = (LivingEntity)e;
 				float power = basePower;
 				if (!target.isDead() && ((player == null && validTargetList.canTarget(target)) || validTargetList.canTarget(player, target))) {
 					if (player != null) {
 						SpellTargetEvent event = new SpellTargetEvent(this, player, target, power);
-						Bukkit.getPluginManager().callEvent(event);
+						EventUtil.call(event);
 						if (entityTargetModifiers != null) {
 							entityTargetModifiers.apply(event);
 						}
-						if (event.isCancelled()) {
-							continue;
-						} else {
-							target = event.getTarget();
-							power = event.getPower();
-						}
+						if (event.isCancelled()) continue;
+						target = event.getTarget();
+						power = event.getPower();
 					} else if (entityTargetModifiers != null) {
 						SpellTargetEvent event = new SpellTargetEvent(this, player, target, power);
 						entityTargetModifiers.apply(event);
-						if (event.isCancelled()) {
-							continue;
-						}
+						if (event.isCancelled()) continue;
 					}
 					for (Subspell spell : spells) {
 						if (player != null) {
@@ -200,17 +188,13 @@ public class AreaEffectSpell extends TargetedSpell implements TargetedLocationSp
 						playSpellEffectsTrail(player.getLocation(), target.getLocation());
 					}
 					count++;
-					if (maxTargets > 0 && count >= maxTargets) {
-						break;
-					}
+					if (maxTargets > 0 && count >= maxTargets) break;
 				}
 			}
 		}
 
 		if (count > 0 || !failIfNoTargets) {
-			if (player != null) {
-				playSpellEffects(EffectPosition.CASTER, player);
-			}
+			if (player != null) playSpellEffects(EffectPosition.CASTER, player);
 			playSpellEffects(EffectPosition.SPECIAL, location);
 		}
 		

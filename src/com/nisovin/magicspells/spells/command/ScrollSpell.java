@@ -25,6 +25,7 @@ import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellReagents;
 import com.nisovin.magicspells.util.Util;
+
 /**
  * public class ScrollSpell extends {@link CommandSpell}
  * Configuration fields:
@@ -109,7 +110,7 @@ public class ScrollSpell extends CommandSpell {
 	@Override
 	public void initialize() {
 		super.initialize();
-		if (predefinedScrolls != null && predefinedScrolls.size() > 0) {
+		if (predefinedScrolls != null && !predefinedScrolls.isEmpty()) {
 			predefinedScrollSpells = new HashMap<Integer, Spell>();
 			predefinedScrollUses = new HashMap<Integer, Integer>();
 			for (String s : predefinedScrolls) {

@@ -47,10 +47,11 @@ public class EmpowerSpell extends BuffSpell {
 	@Override
 	public boolean recastBuff(Player player, float power, String[] args) {
 		if (maxPower > extraPower) {
-			float p = empowered.get(player.getName());
+			String playerName = player.getName();
+			float p = empowered.get(playerName);
 			p += power * extraPower;
 			if (p > maxPower) p = maxPower;
-			empowered.put(player.getName(), p);
+			empowered.put(playerName, p);
 		}
 		return true;
 	}
@@ -58,10 +59,14 @@ public class EmpowerSpell extends BuffSpell {
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void onSpellCast(SpellCastEvent event) {
 		Player player = event.getCaster();
-		if (player != null && empowered.containsKey(player.getName()) && filter.check(event.getSpell())) {
-			event.increasePower(empowered.get(player.getName()));
-			addUseAndChargeCost(player);
-		}
+		if (player == null) return;
+		
+		String playerName = player.getName();
+		if (!empowered.containsKey(playerName)) return;
+		if (!filter.check(event.getSpell())) return;
+		
+		event.increasePower(empowered.get(playerName));
+		addUseAndChargeCost(player);
 	}
 	
 	@Override

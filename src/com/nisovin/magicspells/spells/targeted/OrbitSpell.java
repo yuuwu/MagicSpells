@@ -18,6 +18,7 @@ import com.nisovin.magicspells.util.TargetInfo;
 
 import de.slikey.effectlib.util.ParticleEffect;
 import de.slikey.effectlib.util.ParticleEffect.ParticleData;
+
 public class OrbitSpell extends TargetedSpell implements TargetedEntitySpell {
 
 	float orbitRadius;
@@ -75,13 +76,9 @@ public class OrbitSpell extends TargetedSpell implements TargetedEntitySpell {
 		data = pkg.data;
 		
 		spell = new Subspell(getConfigString("spell", ""));
-		if (!spell.process()) {
-			spell = null;
-		}
+		if (!spell.process()) spell = null;
 		if (spell != null) {
-			if (!spell.isTargetedLocationSpell()) {
-				spell = null;
-			}
+			if (!spell.isTargetedLocationSpell()) spell = null;
 		}
 	}
 
@@ -89,9 +86,7 @@ public class OrbitSpell extends TargetedSpell implements TargetedEntitySpell {
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			TargetInfo<LivingEntity> target = getTargetedEntity(player, power);
-			if (target == null) {
-				return noTarget(player);
-			}			
+			if (target == null) return noTarget(player);
 			new ParticleTracker(player, target.getTarget(), target.getPower(), spell);
 			playSpellEffects(player, target.getTarget());
 			sendMessages(player, target.getTarget());
@@ -158,9 +153,7 @@ public class OrbitSpell extends TargetedSpell implements TargetedEntitySpell {
 			effect.display(data, loc, particleColor, renderDistance, particleHorizontalSpread, particleVerticalSpread, particleHorizontalSpread, particleSpeed, particleCount);
 			
 			//cast the spell at the location if it isn't null
-			if (orbitingSpell != null) {
-				orbitingSpell.castAtLocation(caster, loc, power);
-			}
+			if (orbitingSpell != null) orbitingSpell.castAtLocation(caster, loc, power);
 			//ParticleData data, Location center, Color color, double range, float offsetX, float offsetY, float offsetZ, float speed, int amount
 			
 		}
@@ -177,9 +170,7 @@ public class OrbitSpell extends TargetedSpell implements TargetedEntitySpell {
 		}
 		
 		public void stop() {
-			if (target.isValid()) {
-				playSpellEffects(EffectPosition.DELAYED, getLocation());
-			}
+			if (target.isValid()) playSpellEffects(EffectPosition.DELAYED, getLocation());
 			MagicSpells.cancelTask(taskId);
 			caster = null;
 			target = null;

@@ -1,6 +1,5 @@
 package com.nisovin.magicspells.spells.targeted;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -15,7 +14,9 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.BlockUtils;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
+
 public class FarmSpell extends TargetedSpell implements TargetedLocationSpell {
 
 	private int radius;
@@ -51,7 +52,7 @@ public class FarmSpell extends TargetedSpell implements TargetedLocationSpell {
 			}
 			if (block != null) {
 				SpellTargetLocationEvent event = new SpellTargetLocationEvent(this, player, block.getLocation(), power);
-				Bukkit.getPluginManager().callEvent(event);
+				EventUtil.call(event);
 				if (event.isCancelled()) {
 					block = null;
 				} else {
@@ -63,9 +64,7 @@ public class FarmSpell extends TargetedSpell implements TargetedLocationSpell {
 				boolean farmed = farm(block, Math.round(radius * power));
 				if (!farmed) return noTarget(player);
 				playSpellEffects(EffectPosition.CASTER, player);
-				if (targeted) {
-					playSpellEffects(EffectPosition.TARGET, block.getLocation());
-				}
+				if (targeted) playSpellEffects(EffectPosition.TARGET, block.getLocation());
 			} else {
 				return noTarget(player);
 			}
@@ -84,17 +83,13 @@ public class FarmSpell extends TargetedSpell implements TargetedLocationSpell {
 				Block b = center.getWorld().getBlockAt(x, y, z);
 				if (b.getType() != Material.SOIL) {
 					b = b.getRelative(BlockFace.DOWN);
-					if (b.getType() != Material.SOIL) {
-						continue;
-					}
+					if (b.getType() != Material.SOIL) continue;
 				}
 				b = b.getRelative(BlockFace.UP);
 				if (b.getType() == Material.AIR) {
 					if (newCropType != null) {
 						newCropType.setBlock(b);
-						if (growth > 1) {
-							BlockUtils.setGrowthLevel(b, growth - 1);
-						}
+						if (growth > 1) BlockUtils.setGrowthLevel(b, growth - 1);
 						count++;
 					}
 				} else if (((growWheat && b.getType() == Material.CROPS) || (growCarrots && b.getType() == Material.CARROT) || (growPotatoes && b.getType() == Material.POTATO)) && BlockUtils.getGrowthLevel(b) < 7) {

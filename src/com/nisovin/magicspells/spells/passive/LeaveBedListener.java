@@ -26,11 +26,9 @@ public class LeaveBedListener extends PassiveListener {
 	public void onDeath(PlayerBedLeaveEvent event) {
 		Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());
 		for (PassiveSpell spell : spells) {
-			if (spellbook.hasSpell(spell)) {
-				spell.activate(event.getPlayer());
-			}
+			if (!spellbook.hasSpell(spell)) continue;
+			spell.activate(event.getPlayer());
 		}
 	}
-
 
 }

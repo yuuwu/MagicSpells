@@ -3,6 +3,7 @@ package com.nisovin.magicspells.mana;
 import org.bukkit.ChatColor;
 
 public class ManaRank {
+	
 	String name;
 	int startingMana;
 	int maxMana;
@@ -23,4 +24,5 @@ public class ManaRank {
 			+ ",colorEmpty=" + colorEmpty
 			+ "]";
 	}
+	
 }

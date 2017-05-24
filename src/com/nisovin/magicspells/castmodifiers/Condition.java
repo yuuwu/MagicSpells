@@ -29,7 +29,7 @@ public abstract class Condition {
 		Class<? extends Condition> clazz = conditions.get(name.toLowerCase());
 		if (clazz == null) {
 			if (name.toLowerCase().startsWith("addon")) {
-				//if it starts with addon, then load it as an addon provided condition
+				// If it starts with addon, then load it as an addon provided condition
 				return new ProxyCondition(name.replaceFirst("addon:", ""));
 			}
 			return null;
@@ -148,6 +148,7 @@ public abstract class Condition {
 		conditions.put("beneficial", SpellBeneficialCondition.class);
 		conditions.put("customnamevisible", CustomNameVisibleCondition.class);
 		conditions.put("canpickupitems", CanPickupItemsCondition.class);
+		conditions.put("gliding", GlidingCondition.class);
 	}
 	
 }

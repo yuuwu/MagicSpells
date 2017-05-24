@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
+import com.nisovin.magicspells.Spell;
 import com.nisovin.magicspells.castmodifiers.Condition;
 import com.nisovin.magicspells.castmodifiers.IModifier;
 import com.nisovin.magicspells.events.MagicSpellsGenericPlayerEvent;
@@ -16,7 +17,8 @@ public class SpellBeneficialCondition extends Condition implements IModifier {
 
 	@Override
 	public boolean apply(SpellCastEvent event) {
-		return event.getSpell().isBeneficial();
+		Spell spell = event.getSpell();
+		return checkSpell(spell);
 	}
 
 	@Override
@@ -26,17 +28,24 @@ public class SpellBeneficialCondition extends Condition implements IModifier {
 
 	@Override
 	public boolean apply(SpellTargetEvent event) {
-		return event.getSpell().isBeneficial();
+		Spell spell = event.getSpell();
+		return checkSpell(spell);
 	}
 
 	@Override
 	public boolean apply(SpellTargetLocationEvent event) {
-		return event.getSpell().isBeneficial();
+		Spell spell = event.getSpell();
+		return checkSpell(spell);
 	}
 
 	@Override
 	public boolean apply(MagicSpellsGenericPlayerEvent event) {
 		return false;
+	}
+	
+	private boolean checkSpell(Spell spell) {
+		if (spell == null) return false;
+		return spell.isBeneficial();
 	}
 
 	@Override

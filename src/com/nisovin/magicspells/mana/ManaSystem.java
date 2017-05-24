@@ -95,7 +95,7 @@ public class ManaSystem extends ManaHandler {
 	
 	@Override
 	public void initialize() {
-		if (modifierList != null && modifierList.size() > 0) {
+		if (modifierList != null && !modifierList.isEmpty()) {
 			MagicSpells.debug(2, "Adding mana modifiers");
 			modifiers = new ModifierSet(modifierList);
 			modifierList = null;
@@ -127,10 +127,12 @@ public class ManaSystem extends ManaHandler {
 				}
 			}
 			MagicSpells.scheduleDelayedTask(new Runnable() {
+				
 				@Override
 				public void run() {
 					showMana(player);
 				}
+				
 			}, 11);
 		}
 	}
@@ -166,68 +168,51 @@ public class ManaSystem extends ManaHandler {
 	@Override
 	public int getMaxMana(Player player) {
 		ManaBar bar = getManaBar(player);
-		if (bar != null) {
-			return bar.getMaxMana();
-		} else {
-			return 0;
-		}
+		if (bar != null) return bar.getMaxMana();
+		return 0;
 	}
 	
 	@Override
 	public void setMaxMana(Player player, int amount) {
 		ManaBar bar = getManaBar(player);
-		if (bar != null) {
-			bar.setMaxMana(amount);
-		}
+		if (bar != null) bar.setMaxMana(amount);
 	}
 	
 	@Override
 	public int getRegenAmount(Player player) {
 		ManaBar bar = getManaBar(player);
-		if (bar != null) {
-			return bar.getRegenAmount();
-		} else {
-			return 0;
-		}
+		if (bar == null) return 0;
+		return bar.getRegenAmount();
 	}
 
 	@Override
 	public void setRegenAmount(Player player, int amount) {
 		ManaBar bar = getManaBar(player);
-		if (bar != null) {
-			bar.setRegenAmount(amount);
-		}
+		if (bar == null) return;
+		bar.setRegenAmount(amount);
 	}
 
 	@Override
 	public int getMana(Player player) {
 		ManaBar bar = getManaBar(player);
-		if (bar != null) {
-			return bar.getMana();
-		}
-		return 0;
+		if (bar == null) return 0;
+		return bar.getMana();
 	}
 	
 	@Override
 	public boolean hasMana(Player player, int amount) {
 		ManaBar bar = getManaBar(player);
-		if (bar != null) {
-			return bar.has(amount);
-		} else {
-			return false;
-		}
+		if (bar == null) return false;
+		return bar.has(amount);
 	}
 
 	@Override
 	public boolean addMana(Player player, int amount, ManaChangeReason reason) {
 		ManaBar bar = getManaBar(player);
-		if (bar != null) {
-			boolean r = bar.changeMana(amount, reason);
-			if (r) showMana(player, showManaOnUse);
-			return r;
-		} else {
-			return false;
-		}
+		if (bar == null) return false;
+		boolean r = bar.changeMana(amount, reason);
+		if (r) showMana(player, showManaOnUse);
+		return r;
 	}
 
 	@Override
@@ -238,24 +223,20 @@ public class ManaSystem extends ManaHandler {
 	@Override
 	public boolean setMana(Player player, int amount, ManaChangeReason reason) {
 		ManaBar bar = getManaBar(player);
-		if (bar != null) {
-			boolean r = bar.setMana(amount, reason);
-			if (r) showMana(player, showManaOnUse);
-			return r;
-		} else {
-			return false;
-		}
+		if (bar == null) return false;
+		boolean r = bar.setMana(amount, reason);
+		if (r) showMana(player, showManaOnUse);
+		return r;
 	}
 
 	@Override
 	public void showMana(Player player, boolean showInChat) {
 		ManaBar bar = getManaBar(player);
-		if (bar != null) {
-			if (showInChat) showManaInChat(player, bar);
-			if (showManaOnWoodTool) showManaOnWoodTool(player, bar);
-			if (showManaOnHungerBar) showManaOnHungerBar(player, bar);
-			if (showManaOnExperienceBar) showManaOnExperienceBar(player, bar);
-		}
+		if (bar == null) return;
+		if (showInChat) showManaInChat(player, bar);
+		if (showManaOnWoodTool) showManaOnWoodTool(player, bar);
+		if (showManaOnHungerBar) showManaOnHungerBar(player, bar);
+		if (showManaOnExperienceBar) showManaOnExperienceBar(player, bar);
 	}
 	
 	@Override
@@ -280,18 +261,18 @@ public class ManaSystem extends ManaHandler {
 	
 	private void showManaOnWoodTool(Player player, ManaBar bar) {
 		ItemStack item = player.getInventory().getItem(manaBarToolSlot);
-		if (item != null) {
-			Material type = item.getType();
-			if (type == Material.WOOD_AXE || type == Material.WOOD_HOE || type == Material.WOOD_PICKAXE || type == Material.WOOD_SPADE || type == Material.WOOD_SWORD) {
-				int dur = 60 - (int)(((double)bar.getMana()/(double)bar.getMaxMana()) * 60);
-				if (dur == 60) {
-					dur = 59;
-				} else if (dur == 0) {
-					dur = 1;
-				}
-				item.setDurability((short)dur);
-				player.getInventory().setItem(manaBarToolSlot, item);
+		if (item == null) return;
+		
+		Material type = item.getType();
+		if (type == Material.WOOD_AXE || type == Material.WOOD_HOE || type == Material.WOOD_PICKAXE || type == Material.WOOD_SPADE || type == Material.WOOD_SWORD) {
+			int dur = 60 - (int)(((double)bar.getMana()/(double)bar.getMaxMana()) * 60);
+			if (dur == 60) {
+				dur = 59;
+			} else if (dur == 0) {
+				dur = 1;
 			}
+			item.setDurability((short)dur);
+			player.getInventory().setItem(manaBarToolSlot, item);
 		}
 	}
 	
@@ -312,12 +293,11 @@ public class ManaSystem extends ManaHandler {
 	public void turnOff() {
 		ranks.clear();
 		manaBars.clear();
-		if (taskId > 0) {
-			Bukkit.getScheduler().cancelTask(taskId);
-		}
+		if (taskId > 0) Bukkit.getScheduler().cancelTask(taskId);
 	}
 	
 	public class Regenerator implements Runnable {
+		
 		@Override
 		public void run() {
 			for (ManaBar bar : manaBars.values()) {
@@ -329,7 +309,8 @@ public class ManaSystem extends ManaHandler {
 					}
 				}
 			}
-		}		
+		}
+		
 	}
 
 }

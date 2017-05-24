@@ -99,9 +99,7 @@ public class MagicConfig {
 			
 			// load main config
 			mainConfig = new YamlConfiguration();
-			if (file.exists()) {
-				mainConfig.load(file);
-			}
+			if (file.exists()) mainConfig.load(file);
 			if (!mainConfig.contains("general")) mainConfig.createSection("general");
 			if (!mainConfig.contains("mana")) mainConfig.createSection("mana");
 			if (!mainConfig.contains("spells")) mainConfig.createSection("spells");
@@ -168,25 +166,19 @@ public class MagicConfig {
 					for (String key : keys) {
 						if (key.equals("predefined-items")) {
 							ConfigurationSection sec = mainConfig.getConfigurationSection("general.predefined-items");
-							if (sec == null) {
-								sec = mainConfig.createSection("general.predefined-items");
-							}
+							if (sec == null) sec = mainConfig.createSection("general.predefined-items");
 							for (String itemKey : spellConfig.getConfigurationSection("predefined-items").getKeys(false)) {
 								sec.set(itemKey, spellConfig.get("predefined-items." + itemKey));
 							}
 						} else if (key.equals("variables")) {
 							ConfigurationSection sec = mainConfig.getConfigurationSection("general.variables");
-							if (sec == null) {
-								sec = mainConfig.createSection("general.variables");
-							}
+							if (sec == null) sec = mainConfig.createSection("general.variables");
 							for (String itemKey : spellConfig.getConfigurationSection("variables").getKeys(false)) {
 								sec.set(itemKey, spellConfig.get("variables." + itemKey));
 							}
 						} else if (key.equals("modifiers")) {
 							ConfigurationSection sec = mainConfig.getConfigurationSection("general.modifiers");
-							if (sec == null) {
-								sec = mainConfig.createSection("general.modifiers");
-							}
+							if (sec == null) sec = mainConfig.createSection("general.modifiers");
 							for (String modifierKey : spellConfig.getConfigurationSection("modifiers").getKeys(false)) {
 								sec.set(modifierKey, spellConfig.get("modifiers." + modifierKey));
 							}
@@ -202,9 +194,7 @@ public class MagicConfig {
 			
 			// load mini configs
 			File spellConfigsFolder = new File(folder, "spellconfigs");
-			if (spellConfigsFolder.exists()) {
-				loadSpellConfigs(spellConfigsFolder);
-			}
+			if (spellConfigsFolder.exists()) loadSpellConfigs(spellConfigsFolder);
 		} catch (Exception ex) {
 			MagicSpells.handleException(ex);
 		}
@@ -239,11 +229,8 @@ public class MagicConfig {
 	}
 	
 	public boolean contains(String path) {
-		if (mainConfig.contains(path)) {
-			return true;
-		} else {
-			return false;
-		}
+		if (mainConfig.contains(path)) return true;
+		return false;
 	}
 	
 	public int getInt(String path, int def) {
@@ -255,11 +242,8 @@ public class MagicConfig {
 	}
 	
 	public double getDouble(String path, double def) {
-		if (mainConfig.contains(path) && mainConfig.isInt(path)) {
-			return mainConfig.getInt(path);
-		} else {
-			return mainConfig.getDouble(path, def);
-		}
+		if (mainConfig.contains(path) && mainConfig.isInt(path)) return mainConfig.getInt(path);
+		return mainConfig.getDouble(path, def);
 	}
 	
 	public boolean getBoolean(String path, boolean def) {		
@@ -267,99 +251,69 @@ public class MagicConfig {
 	}
 	
 	public boolean isString(String path) {
-		if (mainConfig.contains(path)) {
-			return mainConfig.isString(path);
-		} else {
-			return false;
-		}
+		if (!mainConfig.contains(path)) return false;
+		return mainConfig.isString(path);
 	}
 	
 	public String getString(String path, String def) {
-		if (mainConfig.contains(path)) {
-			return mainConfig.get(path).toString();
-		} else {
-			return def;
-		}
+		if (!mainConfig.contains(path)) return def;
+		return mainConfig.get(path).toString();
 	}
 	
 	public boolean isList(String path) {
-		if (mainConfig.contains(path)) {
-			return mainConfig.isList(path);
-		} else {
-			return false;
-		}
+		if (mainConfig.contains(path)) return mainConfig.isList(path);
+		return false;
 	}
 	
 	public List<Integer> getIntList(String path, List<Integer> def) {
-		if (mainConfig.contains(path)) {
-			List<Integer> l = mainConfig.getIntegerList(path);
-			if (l != null) {
-				return l;
-			}
-		}
+		if (!mainConfig.contains(path)) return def;
+		List<Integer> l = mainConfig.getIntegerList(path);
+		if (l != null) return l;
 		return def;
 	}
 	
 	public List<Byte> getByteList(String path, List<Byte> def) {
-		if (mainConfig.contains(path)) {
-			List<Byte> l = mainConfig.getByteList(path);
-			if (l != null) {
-				return l;
-			}
-		}
+		if (!mainConfig.contains(path)) return def;
+		List<Byte> l = mainConfig.getByteList(path);
+		if (l != null) return l;
 		return def;
 	}
 	
 	public List<String> getStringList(String path, List<String> def) {
-		if (mainConfig.contains(path)) {
-			List<String> l = mainConfig.getStringList(path);
-			if (l != null) {
-				return l;
-			}
-		}
+		if (!mainConfig.contains(path)) return def;
+		List<String> l = mainConfig.getStringList(path);
+		if (l != null) return l;
 		return def;
 	}
 	
 	public List<?> getList(String path, List<?> def) {
-		if (mainConfig.contains(path)) {
-			List<?> l = mainConfig.getList(path);
-			if (l != null) {
-				return l;
-			}
-		}
+		if (!mainConfig.contains(path)) return def;
+		List<?> l = mainConfig.getList(path);
+		if (l != null) return l;
 		return def;
 	}
 	
 	public Set<String> getKeys(String path) {
-		if (mainConfig.contains(path) && mainConfig.isConfigurationSection(path)) {
-			return mainConfig.getConfigurationSection(path).getKeys(false);
-		} else {
-			return null;
-		}
+		if (!mainConfig.contains(path)) return null;
+		if (!mainConfig.isConfigurationSection(path)) return null;
+		return mainConfig.getConfigurationSection(path).getKeys(false);
 	}
 	
 	public boolean isSection(String path) {
-		if (mainConfig.contains(path)) {
-			return mainConfig.isConfigurationSection(path);
-		} else {
-			return false;
-		}
+		if (mainConfig.contains(path)) return mainConfig.isConfigurationSection(path);
+		return false;
 	}
 	
 	public ConfigurationSection getSection(String path) {
-		if (mainConfig.contains(path)) {
-			return mainConfig.getConfigurationSection(path);
-		} else {
-			return null;
-		}
+		if (mainConfig.contains(path)) return mainConfig.getConfigurationSection(path);
+		return null;
 	}
 	
 	public Set<String> getSpellKeys() {
-		if (mainConfig != null && mainConfig.contains("spells") && mainConfig.isConfigurationSection("spells")) {
-			return mainConfig.getConfigurationSection("spells").getKeys(false);
-		} else {
-			return null;
-		}
+		if (mainConfig == null) return null;
+		if (!mainConfig.contains("spells")) return null;
+		if (!mainConfig.isConfigurationSection("spells")) return null;
+		return mainConfig.getConfigurationSection("spells").getKeys(false);
 	}
 	
 }

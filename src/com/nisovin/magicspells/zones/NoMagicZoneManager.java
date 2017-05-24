@@ -39,9 +39,7 @@ public class NoMagicZoneManager {
 				ConfigurationSection zoneConfig = config.getSection("no-magic-zones." + node);
 				
 				// check enabled
-				if (!zoneConfig.getBoolean("enabled", true)) {
-					continue;
-				}
+				if (!zoneConfig.getBoolean("enabled", true)) continue;
 				
 				// get zone type
 				String type = zoneConfig.getString("type", "");
@@ -49,6 +47,7 @@ public class NoMagicZoneManager {
 					MagicSpells.error("Invalid no-magic zone type '" + type + "' on zone '" + node + "'");
 					continue;
 				}
+				
 				Class<? extends NoMagicZone> clazz = zoneTypes.get(type);
 				if (clazz == null) {
 					MagicSpells.error("Invalid no-magic zone type '" + type + "' on zone '" + node + "'");
@@ -81,11 +80,8 @@ public class NoMagicZoneManager {
 	public boolean willFizzle(Location location, Spell spell) {
 		for (NoMagicZone zone : zonesOrdered) {
 			ZoneCheckResult result = zone.check(location, spell);
-			if (result == ZoneCheckResult.DENY) {
-				return true;
-			} else if (result == ZoneCheckResult.ALLOW) {
-				return false;
-			}
+			if (result == ZoneCheckResult.DENY) return true;
+			if (result == ZoneCheckResult.ALLOW) return false;
 		}
 		return false;
 	}
@@ -96,9 +92,7 @@ public class NoMagicZoneManager {
 	
 	public boolean inZone(Location loc, String zoneName) {
 		NoMagicZone zone = zones.get(zoneName);
-		if (zone != null && zone.inZone(loc)) {
-			return true;
-		}
+		if (zone != null && zone.inZone(loc)) return true;
 		return false;
 	}
 	

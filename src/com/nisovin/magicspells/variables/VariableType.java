@@ -6,32 +6,40 @@ import java.util.Map;
 public enum VariableType {
 	
 	PLAYER(new String[]{ "player" }) {
+		
 		@Override
 		public Variable newInstance() {
 			return new PlayerVariable();
 		}
+		
 	},
 	
 	GLOBAL(new String[]{ "global" }) {
+		
 		@Override
 		public Variable newInstance() {
 			return new GlobalVariable();
 		}
+		
 	},
 	
 	DISTANCE_TO(new String[]{ "distancetolocation" }) {
+		
 		@Override
 		public Variable newInstance() {
 			return new DistanceToVariable();
 		}
+		
 	},
 	
 	
 	DISTANCE_TO_SQUARED(new String[]{ "squareddistancetolocation" }) {
+		
 		@Override
 		public Variable newInstance() {
 			return new DistanceToSquaredVariable();
 		}
+		
 	},
 	
 	PLAYER_STRING(new String[] { "playerstring" }) {
@@ -74,4 +82,5 @@ public enum VariableType {
 		
 		return ret;
 	}
+	
 }

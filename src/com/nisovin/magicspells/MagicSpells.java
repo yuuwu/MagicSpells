@@ -425,7 +425,7 @@ public class MagicSpells extends JavaPlugin {
 		log("Loading spells...");
 		loadSpells(config, pm, permGrantChildren, permLearnChildren, permCastChildren, permTeachChildren);
 		log("...spells loaded: " + spells.size());
-		if (spells.size() == 0) {
+		if (spells.isEmpty()) {
 			MagicSpells.error("No spells loaded!");
 			return;
 		}
@@ -462,13 +462,14 @@ public class MagicSpells extends JavaPlugin {
 			String[] aliases = spell.getAliases();
 			if (aliases != null && aliases.length > 0) {
 				for (String alias : aliases) {
-					if (!spellNames.containsKey(alias.toLowerCase())) {
-						spellNames.put(alias.toLowerCase(), spell);
+					String lowercaseAlias = alias.toLowerCase();
+					if (!spellNames.containsKey(lowercaseAlias)) {
+						spellNames.put(lowercaseAlias, spell);
 					}
 				}
 			}
 			List<String> incs = spell.getIncantations();
-			if (incs != null && incs.size() > 0) {
+			if (incs != null && !incs.isEmpty()) {
 				for (String s : incs) {
 					incantations.put(s.toLowerCase(), spell);
 				}
@@ -535,7 +536,7 @@ public class MagicSpells extends JavaPlugin {
 			
 			// load mana potions
 			List<String> manaPots = config.getStringList("mana.mana-potions", null);
-			if (manaPots != null && manaPots.size() > 0) {
+			if (manaPots != null && !manaPots.isEmpty()) {
 				manaPotions = new LinkedHashMap<ItemStack,Integer>();
 				for (int i = 0; i < manaPots.size(); i++) {
 					String[] data = manaPots.get(i).split(" ");
@@ -621,7 +622,7 @@ public class MagicSpells extends JavaPlugin {
 		try {		
 			urls[0] = getDataFolder().toURI().toURL();
 			for(int i = 1; i <= jarList.size(); i++) {
-				urls[i] = jarList.get(i-1).toURI().toURL();
+				urls[i] = jarList.get(i - 1).toURI().toURL();
 			}
 			cl = new URLClassLoader(urls, getClassLoader());
 		} catch (MalformedURLException e) {
@@ -887,11 +888,11 @@ public class MagicSpells extends JavaPlugin {
 		if (message == null) return null;
 		
 		String msg = message;
-		for (int i = 0; i < replacements.length; i+=2) {
+		for (int i = 0; i < replacements.length; i += 2) {
 			if (replacements[i] == null) continue;
 			
-			if (replacements[i+1] != null) {
-				msg = msg.replace(replacements[i], replacements[i+1]);
+			if (replacements[i + 1] != null) {
+				msg = msg.replace(replacements[i], replacements[i + 1]);
 			} else {
 				msg = msg.replace(replacements[i], "");
 			}
@@ -919,13 +920,13 @@ public class MagicSpells extends JavaPlugin {
 	 * @param message the message to send
 	 */
 	public static void sendMessage(String message, Player player, String[] args) {
-		if (message != null && !message.equals("")) {
+		if (message != null && !message.isEmpty()) {
 			// do var replacements
 			message = doArgumentAndVariableSubstitution(message, player, args);
 			// send messages
 			String [] msgs = message.replaceAll("&([0-9a-fk-or])", "\u00A7$1").split("\n");
 			for (String msg : msgs) {
-				if (!msg.equals("")) {
+				if (!msg.isEmpty()) {
 					player.sendMessage(plugin.textColor + msg);
 				}
 			}
@@ -972,7 +973,7 @@ public class MagicSpells extends JavaPlugin {
 			Matcher matcher = argumentSubstitutionPattern.matcher(string);
 			while (matcher.find()) {
 				String argText = matcher.group();
-				String[] argData = argText.substring(5, argText.length()-1).split(":");
+				String[] argData = argText.substring(5, argText.length() - 1).split(":");
 				int argIndex = Integer.parseInt(argData[0]) - 1;
 				String newValue;
 				if (args != null && args.length < argIndex + 1) {

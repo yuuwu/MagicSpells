@@ -60,6 +60,7 @@ import com.nisovin.magicspells.util.MagicConfig;
  *     </tr>
  * </table>
  */
+// TODO should this have an option to set the potion effects used?
 public class HasteSpell extends BuffSpell {
 
 	private int strength;
@@ -79,7 +80,7 @@ public class HasteSpell extends BuffSpell {
 
 	@Override
 	public boolean castBuff(final Player player, float power, String[] args) {
-		hasted.put(player, Math.round(strength*power));
+		hasted.put(player, Math.round(strength * power));
 		return true;
 	}
 
@@ -87,28 +88,28 @@ public class HasteSpell extends BuffSpell {
 	public void onPlayerToggleSprint(PlayerToggleSprintEvent event) {
 		if (event.isCancelled()) return;
 		Player player = event.getPlayer();
-		if (hasted.containsKey(player)) {
-			if (isExpired(player)) {
-				turnOff(player);
-			} else if (event.isSprinting()) {
-				event.setCancelled(true);
-				player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, boostDuration, hasted.get(player)), true);
-				addUseAndChargeCost(player);
-				playSpellEffects(EffectPosition.CASTER, player);
-			} else {
-				player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 1, 0), true);
-				player.removePotionEffect(PotionEffectType.SPEED);
-				playSpellEffects(EffectPosition.DISABLED, player);
-			}
+		Integer amplifier = hasted.get(player);
+		if (amplifier == null) return;
+		
+		if (isExpired(player)) {
+			turnOff(player);
+		} else if (event.isSprinting()) {
+			event.setCancelled(true);
+			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, boostDuration, amplifier), true);
+			addUseAndChargeCost(player);
+			playSpellEffects(EffectPosition.CASTER, player);
+		} else {
+			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 1, 0), true);
+			player.removePotionEffect(PotionEffectType.SPEED);
+			playSpellEffects(EffectPosition.DISABLED, player);
 		}
 	}
 
 	@Override
 	public void turnOffBuff(Player player) {
-		if (hasted.remove(player) != null) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 1, 0), true);
-			player.removePotionEffect(PotionEffectType.SPEED);
-		}
+		if (hasted.remove(player) == null) return;
+		player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 1, 0), true);
+		player.removePotionEffect(PotionEffectType.SPEED);
 	}
 	
 	@Override

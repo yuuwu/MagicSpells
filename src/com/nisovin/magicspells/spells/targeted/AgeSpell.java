@@ -20,7 +20,6 @@ public class AgeSpell extends TargetedSpell implements TargetedEntitySpell {
 		applyAgeLock = getConfigBoolean("apply-age-lock", false);
 		setMaturity = getConfigBoolean("set-maturity", true);
 		rawAge = getConfigInt("age", 0);
-		
 	}
 
 	@Override
@@ -28,9 +27,7 @@ public class AgeSpell extends TargetedSpell implements TargetedEntitySpell {
 			float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			TargetInfo<LivingEntity> targetEntityInfo = getTargetedEntity(player, power);
-			if (targetEntityInfo == null || targetEntityInfo.getTarget() == null || !(targetEntityInfo.getTarget() instanceof Ageable)) {
-				return noTarget(player);
-			}
+			if (targetEntityInfo == null || targetEntityInfo.getTarget() == null || !(targetEntityInfo.getTarget() instanceof Ageable)) return noTarget(player);
 			Ageable a = (Ageable) targetEntityInfo.getTarget();
 			applyAgeChanges(a);
 		}
@@ -38,9 +35,7 @@ public class AgeSpell extends TargetedSpell implements TargetedEntitySpell {
 	}
 	
 	private void applyAgeChanges(Ageable a) {
-		if (setMaturity) {
-			a.setAge(rawAge);
-		}
+		if (setMaturity) a.setAge(rawAge);
 		if (applyAgeLock) a.setAgeLock(true);
 	}
 

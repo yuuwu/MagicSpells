@@ -25,6 +25,7 @@ import java.util.Map;
  *
  */
 public class MagicBondSpell extends TargetedSpell implements TargetedEntitySpell {
+	
     private int duration;
     private String strDurationEnd;
     private Map<Player, Player> bondTarget = new HashMap<Player, Player>();
@@ -84,6 +85,7 @@ public class MagicBondSpell extends TargetedSpell implements TargetedEntitySpell
     }
 
     class SpellMonitor implements Listener {
+    	
         Player caster;
         Player target;
         float power;
@@ -119,7 +121,7 @@ public class MagicBondSpell extends TargetedSpell implements TargetedEntitySpell
         	if (otherMonitor.power != power) return false;
         	return true;
         }
-        
 
     }
+    
 }

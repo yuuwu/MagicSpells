@@ -74,4 +74,5 @@ public abstract class MagicMaterial {
 	public static MagicMaterial fromBlock(Block block) {
 		return new MagicBlockMaterial(block.getState().getData());
 	}
+	
 }

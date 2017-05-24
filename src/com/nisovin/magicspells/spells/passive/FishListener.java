@@ -65,65 +65,55 @@ public class FishListener extends PassiveListener {
 		PlayerFishEvent.State state = event.getState();
 		Player player = event.getPlayer();
 		
-		if (allTypes.size() > 0) {
+		if (!allTypes.isEmpty()) {
 			Spellbook spellbook = MagicSpells.getSpellbook(player);
 			Entity entity = event.getCaught();
 			for (PassiveSpell spell : allTypes) {
 				if (!isCancelStateOk(spell, event.isCancelled())) continue;
-				if (spellbook.hasSpell(spell)) {
-					boolean casted = spell.activate(player, entity instanceof LivingEntity ? (LivingEntity)entity : null);
-					if (PassiveListener.cancelDefaultAction(spell, casted)) {
-						event.setCancelled(true);
-					}
-				}
+				if (!spellbook.hasSpell(spell)) continue;
+				boolean casted = spell.activate(player, entity instanceof LivingEntity ? (LivingEntity)entity : null);
+				if (!PassiveListener.cancelDefaultAction(spell, casted)) continue;
+				event.setCancelled(true);
 			}
 		}
 		
-		if (state == State.IN_GROUND && ground.size() > 0) {
+		if (state == State.IN_GROUND && !ground.isEmpty()) {
 			Spellbook spellbook = MagicSpells.getSpellbook(player);
 			for (PassiveSpell spell : ground) {
 				if (!isCancelStateOk(spell, event.isCancelled())) continue;
-				if (spellbook.hasSpell(spell)) {
-					boolean casted = spell.activate(player, event.getHook().getLocation());
-					if (PassiveListener.cancelDefaultAction(spell, casted)) {
-						event.setCancelled(true);
-					}
-				}
+				if (!spellbook.hasSpell(spell)) continue;
+				boolean casted = spell.activate(player, event.getHook().getLocation());
+				if (!PassiveListener.cancelDefaultAction(spell, casted)) continue;
+				event.setCancelled(true);
 			}
-		} else if (state == State.CAUGHT_FISH && fish.size() > 0) {
+		} else if (state == State.CAUGHT_FISH && !fish.isEmpty()) {
 			Spellbook spellbook = MagicSpells.getSpellbook(player);
 			for (PassiveSpell spell : fish) {
 				if (!isCancelStateOk(spell, event.isCancelled())) continue;
-				if (spellbook.hasSpell(spell)) {
-					boolean casted = spell.activate(player, event.getHook().getLocation());
-					if (PassiveListener.cancelDefaultAction(spell, casted)) {
-						event.setCancelled(true);
-					}
-				}
+				if (!spellbook.hasSpell(spell)) continue;
+				boolean casted = spell.activate(player, event.getHook().getLocation());
+				if (!PassiveListener.cancelDefaultAction(spell, casted)) continue;
+				event.setCancelled(true);
 			}
-		} else if (state == State.FAILED_ATTEMPT && fail.size() > 0) {
+		} else if (state == State.FAILED_ATTEMPT && !fail.isEmpty()) {
 			Spellbook spellbook = MagicSpells.getSpellbook(player);
 			for (PassiveSpell spell : fail) {
 				if (!isCancelStateOk(spell, event.isCancelled())) continue;
-				if (spellbook.hasSpell(spell)) {
-					boolean casted = spell.activate(player, event.getHook().getLocation());
-					if (PassiveListener.cancelDefaultAction(spell, casted)) {
-						event.setCancelled(true);
-					}
-				}
+				if (!spellbook.hasSpell(spell)) continue;
+				boolean casted = spell.activate(player, event.getHook().getLocation());
+				if (!PassiveListener.cancelDefaultAction(spell, casted)) continue;
+				event.setCancelled(true);
 			}
-		} else if (state == State.CAUGHT_ENTITY && types.size() > 0) {
+		} else if (state == State.CAUGHT_ENTITY && !types.isEmpty()) {
 			Entity entity = event.getCaught();
 			if (entity != null && types.containsKey(entity.getType())) {
 				Spellbook spellbook = MagicSpells.getSpellbook(player);
 				for (PassiveSpell spell : fail) {
 					if (!isCancelStateOk(spell, event.isCancelled())) continue;
-					if (spellbook.hasSpell(spell)) {
-						boolean casted = spell.activate(player, entity instanceof LivingEntity ? (LivingEntity)entity : null);
-						if (PassiveListener.cancelDefaultAction(spell, casted)) {
-							event.setCancelled(true);
-						}
-					}
+					if (!spellbook.hasSpell(spell)) continue;
+					boolean casted = spell.activate(player, entity instanceof LivingEntity ? (LivingEntity)entity : null);
+					if (!PassiveListener.cancelDefaultAction(spell, casted)) continue;
+					event.setCancelled(true);
 				}
 			}
 		}

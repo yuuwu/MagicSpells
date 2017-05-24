@@ -29,12 +29,8 @@ public class LocationSpell extends InstantSpell {
 			double z = Double.parseDouble(split[3]);
 			float yaw = 0;
 			float pitch = 0;
-			if (split.length > 4) {
-				yaw = Float.parseFloat(split[4]);
-			}
-			if (split.length > 5) {
-				pitch = Float.parseFloat(split[5]);
-			}
+			if (split.length > 4) yaw = Float.parseFloat(split[4]);
+			if (split.length > 5) pitch = Float.parseFloat(split[5]);
 			location = new MagicLocation(world, x, y, z, yaw, pitch);
 		} catch (Exception e) {
 			MagicSpells.error("Invalid location on LocationSpell '" + spellName + "'");

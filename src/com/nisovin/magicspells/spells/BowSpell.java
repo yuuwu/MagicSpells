@@ -3,7 +3,6 @@ package com.nisovin.magicspells.spells;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -20,6 +19,7 @@ import com.nisovin.magicspells.Subspell;
 import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.events.SpellCastedEvent;
 import com.nisovin.magicspells.util.ConfigData;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 
@@ -62,9 +62,7 @@ public class BowSpell extends Spell {
 			}
 		}
 		
-		if (handler == null) {
-			handler = new BowSpellHandler();
-		}
+		if (handler == null) handler = new BowSpellHandler();
 		handler.registerSpell(this);
 	}
 	
@@ -116,13 +114,13 @@ public class BowSpell extends Spell {
 				BowSpell spell = spells.get(bowName);
 				if (spell != null && spellbook.hasSpell(spell) && spellbook.canCast(spell)) {
 					SpellCastEvent evt1 = new SpellCastEvent(thisSpell, shooter, SpellCastState.NORMAL, useBowForce ? event.getForce() : 1.0F, null, thisSpell.cooldown, thisSpell.reagents, 0);
-					Bukkit.getPluginManager().callEvent(evt1);
+					EventUtil.call(evt1);
 					if (!evt1.isCancelled()) {
 						event.setCancelled(true);
 						event.getProjectile().remove();
 						spell.spellOnShoot.cast(shooter, evt1.getPower());
 						SpellCastedEvent evt2 = new SpellCastedEvent(thisSpell, shooter, SpellCastState.NORMAL, evt1.getPower(), null, thisSpell.cooldown, thisSpell.reagents, PostCastAction.HANDLE_NORMALLY);
-						Bukkit.getPluginManager().callEvent(evt2);
+						EventUtil.call(evt2);
 					}
 				}
 			}
@@ -134,4 +132,5 @@ public class BowSpell extends Spell {
 		}
 		
 	}
+	
 }

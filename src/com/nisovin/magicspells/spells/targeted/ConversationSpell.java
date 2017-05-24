@@ -12,7 +12,6 @@ import com.nisovin.magicspells.util.prompt.ConversationContextUtil;
 
 public class ConversationSpell extends TargetedSpell {
 
-	
 	private ConversationFactory conversationFactory;
 	
 	public ConversationSpell(MagicConfig config, String spellName) {

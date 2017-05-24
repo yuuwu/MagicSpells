@@ -98,9 +98,7 @@ public abstract class SpellEffect {
 		orbitYOffset = (float)config.getDouble("orbit-y-offset", orbitYOffset);
 		
 		List<String> list = config.getStringList("modifiers");
-		if (list != null) {
-			modifiers = new ModifierSet(list);
-		}
+		if (list != null) modifiers = new ModifierSet(list);
 		
 		loadFromConfig(config);
 	}
@@ -113,16 +111,15 @@ public abstract class SpellEffect {
 	 * @param param the parameter specified in the spell config (can be ignored)
 	 */
 	public Runnable playEffect(final Entity entity) {
-		if (delay <= 0) {
-			return playEffectEntity(entity);
-		} else {
-			MagicSpells.scheduleDelayedTask(new Runnable() {
-				@Override
-				public void run() {
-					playEffectEntity(entity);
-				}
-			}, delay);
-		}
+		if (delay <= 0) return playEffectEntity(entity);
+		MagicSpells.scheduleDelayedTask(new Runnable() {
+			
+			@Override
+			public void run() {
+				playEffectEntity(entity);
+			}
+			
+		}, delay);
 		return null;
 	}
 	
@@ -136,34 +133,27 @@ public abstract class SpellEffect {
 	 * @param param the parameter specified in the spell config (can be ignored)
 	 */
 	public final Runnable playEffect(final Location location) {
-		if (delay <= 0) {
-			return playEffectLocationReal(location);
-		} else {
-			MagicSpells.scheduleDelayedTask(new Runnable() {
-				@Override
-				public void run() {
-					playEffectLocationReal(location);
-				}
-			}, delay);
-		}
+		if (delay <= 0) return playEffectLocationReal(location);
+		MagicSpells.scheduleDelayedTask(new Runnable() {
+			
+			@Override
+			public void run() {
+				playEffectLocationReal(location);
+			}
+			
+		}, delay);
 		return null;
 	}
 	
 	private Runnable playEffectLocationReal(Location location) {
-		if (location == null) {
-			return playEffectLocation(null);
-		} else if (heightOffset != 0 || forwardOffset != 0) {
+		if (location == null) return playEffectLocation(null);
+		if (heightOffset != 0 || forwardOffset != 0) {
 			Location loc = location.clone();
-			if (heightOffset != 0) {
-				loc.setY(loc.getY() + heightOffset);
-			}
-			if (forwardOffset != 0) {
-				loc.add(loc.getDirection().setY(0).normalize().multiply(forwardOffset));
-			}
+			if (heightOffset != 0) loc.setY(loc.getY() + heightOffset);
+			if (forwardOffset != 0) loc.add(loc.getDirection().setY(0).normalize().multiply(forwardOffset));
 			return playEffectLocation(loc);
-		} else {
-			return playEffectLocation(location.clone());
 		}
+		return playEffectLocation(location.clone());
 	}
 	
 	protected Runnable playEffectLocation(Location location) {
@@ -186,9 +176,7 @@ public abstract class SpellEffect {
 		if (c <= 0) return null;
 		Vector v = loc2.toVector().subtract(loc1.toVector()).normalize().multiply(distanceBetween);
 		Location l = loc1.clone();
-		if (heightOffset != 0) {
-			l.setY(l.getY() + heightOffset);
-		}
+		if (heightOffset != 0) l.setY(l.getY() + heightOffset);
 		
 		for (int i = 0; i < c; i++) {
 			l.add(v);
@@ -199,12 +187,14 @@ public abstract class SpellEffect {
 	
 	public void playEffectWhileActiveOnEntity(final Entity entity, final SpellEffectActiveChecker checker) {
 		taskId = MagicSpells.scheduleRepeatingTask(new Runnable() {
+			
 			@Override
 			public void run() {
 				if (checker.isActive(entity)) {
 					playEffect(entity);
 				}
 			}
+			
 		}, 0, effectInterval);
 	}
 	

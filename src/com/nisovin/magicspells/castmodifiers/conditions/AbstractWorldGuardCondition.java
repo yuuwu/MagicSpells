@@ -40,4 +40,5 @@ public abstract class AbstractWorldGuardCondition extends Condition {
 		}
 		return topRegion;
 	}
+	
 }

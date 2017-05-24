@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 
 public class PlayerNameUtils {
 
-	
 	public static Player getPlayerExact(String playerName) {
 		//TODO come up with a non depreciated system
 		return Bukkit.getPlayerExact(playerName);

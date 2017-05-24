@@ -64,14 +64,14 @@ public class SublistSpell extends CommandSpell {
 			if (spellbook != null && reloadGrantedSpells) {
 				spellbook.addGrantedSpells();
 			}
-			if (spellbook == null || spellbook.getSpells().size() == 0) {
+			if (spellbook == null || spellbook.getSpells().isEmpty()) {
 				// no spells
 				sendMessage(strNoSpells, player, args);
 			} else {
 				String s = "";
 				for (Spell spell : spellbook.getSpells()) {
 					if (!spell.isHelperSpell() && (!onlyShowCastableSpells || spellbook.canCast(spell)) && !(spellsToHide != null && spellsToHide.contains(spell.getInternalName())) && (spellsToShow == null || spellsToShow.contains(spell.getInternalName()))) {
-						if (s.equals("")) {
+						if (s.isEmpty()) {
 							s = spell.getName();
 						} else {
 							s += ", " + spell.getName();
@@ -82,9 +82,9 @@ public class SublistSpell extends CommandSpell {
 				while (s.length() > lineLength) {
 					int i = s.substring(0, lineLength).lastIndexOf(' ');
 					sendMessage(s.substring(0, i), player, args);
-					s = s.substring(i+1);
+					s = s.substring(i + 1);
 				}
-				if (s.length() > 0) {
+				if (!s.isEmpty()) {
 					sendMessage(s, player, args);
 				}
 			}
@@ -95,9 +95,7 @@ public class SublistSpell extends CommandSpell {
 	@Override
 	public List<String> tabComplete(CommandSender sender, String partial) {
 		if (sender instanceof ConsoleCommandSender) {
-			if (!partial.contains(" ")) {
-				return tabCompletePlayerName(sender, partial);
-			}
+			if (!partial.contains(" ")) return tabCompletePlayerName(sender, partial);
 		}
 		return null;
 	}

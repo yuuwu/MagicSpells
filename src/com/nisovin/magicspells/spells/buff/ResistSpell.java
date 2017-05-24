@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -83,13 +84,12 @@ public class ResistSpell extends BuffSpell {
 			normalDamageTypes = new ArrayList<DamageCause>();
 			for (String s : list) {
 				for (DamageCause cause : DamageCause.values()) {
-					if (cause.name().equalsIgnoreCase(s)) {
-						normalDamageTypes.add(cause);
-						break;
-					}
+					if (!cause.name().equalsIgnoreCase(s)) continue;
+					normalDamageTypes.add(cause);
+					break;
 				}
 			}
-			if (normalDamageTypes.size() == 0) normalDamageTypes = null;
+			if (normalDamageTypes.isEmpty()) normalDamageTypes = null;
 		}
 	}
 
@@ -101,7 +101,10 @@ public class ResistSpell extends BuffSpell {
 	
 	@EventHandler
 	public void onSpellDamage(SpellApplyDamageEvent event) {
-		if (spellDamageTypes != null && event.getSpell() instanceof SpellDamageSpell && event.getTarget() instanceof Player && isActive((Player)event.getTarget())) {
+		if (spellDamageTypes == null) return;
+		if (!(event.getSpell() instanceof SpellDamageSpell)) return;
+		if (!(event.getTarget() instanceof Player)) return;
+		if (isActive((Player)event.getTarget())) {
 			SpellDamageSpell spell = (SpellDamageSpell)event.getSpell();
 			if (spell.getSpellDamageType() != null && spellDamageTypes.contains(spell.getSpellDamageType())) {
 				Player player = (Player)event.getTarget();
@@ -119,13 +122,17 @@ public class ResistSpell extends BuffSpell {
 	
 	@EventHandler(ignoreCancelled = true)
 	public void onEntityDamage(EntityDamageEvent event) {
-		if (normalDamageTypes != null && normalDamageTypes.contains(event.getCause()) && event.getEntity() instanceof Player && isActive((Player)event.getEntity())) {
-			Player player = (Player)event.getEntity();
+		if (normalDamageTypes == null) return;
+		if (!normalDamageTypes.contains(event.getCause())) return;
+		Entity entity = event.getEntity();
+		if (entity instanceof Player && isActive((Player)entity)) {
+			Player player = (Player)entity;
+			String playerName = player.getName();
 			float mult = multiplier;
 			if (multiplier < 1) {
-				mult *= (1 / buffed.get(player.getName()));
+				mult *= (1 / buffed.get(playerName));
 			} else if (multiplier > 1) {
-				mult *= buffed.get(player.getName());
+				mult *= buffed.get(playerName);
 			}
 			event.setDamage(event.getDamage() * mult);
 			addUseAndChargeCost(player);

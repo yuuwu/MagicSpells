@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -19,6 +20,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.util.BlockUtils;
+import com.nisovin.magicspells.util.LocationUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 
 /**
@@ -72,9 +74,7 @@ public class LilywalkSpell extends BuffSpell {
 	@Override
 	public void initialize() {
 		super.initialize();
-		if (cancelOnTeleport) {
-			registerEvents(new TeleportListener());
-		}
+		if (cancelOnTeleport) registerEvents(new TeleportListener());
 	}
 
 	@Override
@@ -87,55 +87,57 @@ public class LilywalkSpell extends BuffSpell {
 	}
 	
 	private void registerListener() {
-		if (listener == null) {
-			listener = new LilyListener();
-			registerEvents(listener);
-		}
+		if (listener != null) return;
+		listener = new LilyListener();
+		registerEvents(listener);
 	}
 	
 	private void unregisterListener() {
-		if (listener != null && lilywalkers.size() == 0) {
-			unregisterEvents(listener);
-			listener = null;
-		}
+		if (listener == null) return;
+		if (!lilywalkers.isEmpty()) return;
+		
+		unregisterEvents(listener);
+		listener = null;
 	}
 
 	public class LilyListener implements Listener {
 	
 		@EventHandler(priority=EventPriority.MONITOR)
 		public void onPlayerMove(PlayerMoveEvent event) {
-			Lilies lilies = lilywalkers.get(event.getPlayer().getName());
-			if (lilies != null) {
-				Player player = event.getPlayer();
-				if (isExpired(player)) {
-					turnOff(player);
-				} else {
-					Block block = event.getTo().getBlock();
-					boolean moved = lilies.isMoved(block);
-					if (moved) {
-						lilies.move(block);
-						addUse(player);
-						chargeUseCost(player);
-					}
+			Player player = event.getPlayer();
+			Lilies lilies = lilywalkers.get(player.getName());
+			if (lilies == null) return;
+			
+			if (isExpired(player)) {
+				turnOff(player);
+			} else {
+				Block block = event.getTo().getBlock();
+				boolean moved = lilies.isMoved(block);
+				if (moved) {
+					lilies.move(block);
+					addUse(player);
+					chargeUseCost(player);
 				}
 			}
 		}
 	
 		@EventHandler(priority=EventPriority.NORMAL, ignoreCancelled=true)
 		public void onBlockBreak(BlockBreakEvent event) {
-			if (lilywalkers.size() > 0 && event.getBlock().getType() == Material.WATER_LILY) {
-				for (Lilies lilies : lilywalkers.values()) {
-					if (lilies.contains(event.getBlock())) {
-						event.setCancelled(true);
-						break;
-					}
-				}
+			if (lilywalkers.isEmpty()) return;
+			Block block = event.getBlock();
+			if (block.getType() != Material.WATER_LILY) return;
+			
+			for (Lilies lilies : lilywalkers.values()) {
+				if (!lilies.contains(block)) continue;
+				event.setCancelled(true);
+				break;
 			}
 		}
 		
 	}
 	
 	public class Lilies {
+		
 		private Block center = null;
 		private HashSet<Block> blocks = new HashSet<Block>();
 		
@@ -145,10 +147,9 @@ public class LilywalkSpell extends BuffSpell {
 			Iterator<Block> iter = blocks.iterator();
 			while (iter.hasNext()) {
 				Block b = iter.next();
-				if (!b.equals(center)) {
-					b.setType(Material.AIR);
-					iter.remove();
-				}
+				if (b.equals(center)) continue;
+				b.setType(Material.AIR);
+				iter.remove();
 			}
 			
 			setToLily(center);
@@ -163,20 +164,17 @@ public class LilywalkSpell extends BuffSpell {
 		}
 		
 		private void setToLily(Block block) {
-			if (block.getType() == Material.AIR) {
-				BlockState state = block.getRelative(BlockFace.DOWN).getState();
-				if ((state.getType() == Material.WATER || state.getType() == Material.STATIONARY_WATER) && BlockUtils.getWaterLevel(state) == 0) {
-					block.setType(Material.WATER_LILY);
-					blocks.add(block);
-				}
+			if (block.getType() != Material.AIR) return;
+			
+			BlockState state = block.getRelative(BlockFace.DOWN).getState();
+			if ((state.getType() == Material.WATER || state.getType() == Material.STATIONARY_WATER) && BlockUtils.getWaterLevel(state) == 0) {
+				block.setType(Material.WATER_LILY);
+				blocks.add(block);
 			}
 		}
 		
 		public boolean isMoved(Block center) {
-			if (this.center == null || !this.center.equals(center)) {
-				return true;
-			}
-			return false;
+			return (this.center == null || !this.center.equals(center));
 		}
 		
 		public boolean contains(Block block) {
@@ -193,30 +191,38 @@ public class LilywalkSpell extends BuffSpell {
 	}
 
 	public class TeleportListener implements Listener {
+		
 		@EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
 		public void onPlayerTeleport(PlayerTeleportEvent event) {
-			if (lilywalkers.containsKey(event.getPlayer().getName())) {
-				if (!event.getFrom().getWorld().getName().equals(event.getTo().getWorld().getName()) || event.getFrom().toVector().distanceSquared(event.getTo().toVector()) > 50*50) {
-					turnOff(event.getPlayer());
-				}
+			Player player = event.getPlayer();
+			if (!lilywalkers.containsKey(player.getName())) return;
+			
+			Location locationFrom = event.getFrom();
+			Location locationTo = event.getTo();
+			
+			if (!LocationUtil.isSameWorld(locationFrom, locationTo) || locationFrom.toVector().distanceSquared(locationTo.toVector()) > 50 * 50) {
+				turnOff(player);
 			}
 		}
 		
 		@EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
 		public void onPlayerPortal(PlayerPortalEvent event) {
-			if (lilywalkers.containsKey(event.getPlayer().getName())) {
-				turnOff(event.getPlayer());
-			}
+			Player player = event.getPlayer();
+			
+			if (!lilywalkers.containsKey(player.getName())) return;
+			
+			turnOff(player);
 		}
+		
 	}
 	
 	@Override
 	public void turnOffBuff(Player player) {
 		Lilies lilies = lilywalkers.remove(player.getName());
-		if (lilies != null) {
-			lilies.remove();
-			unregisterListener();
-		}
+		if (lilies == null) return;
+		
+		lilies.remove();
+		unregisterListener();
 	}
 	
 	@Override

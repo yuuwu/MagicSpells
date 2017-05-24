@@ -80,9 +80,7 @@ public class CloudEffect extends SpellEffect {
 							smoke(w, b, radius);
 						} else {
 							b = b.getRelative(0, 2, 0);
-							if (BlockUtils.isPathable(b)) {
-								smoke(w, b, radius);
-							}
+							if (BlockUtils.isPathable(b)) smoke(w, b, radius);
 						}
 					}
 				}
@@ -94,7 +92,7 @@ public class CloudEffect extends SpellEffect {
 	private void smoke(World w, Block b, int r) {
 		Location loc = b.getLocation();
 		if (r <= 5) {
-			for (int i = 0; i <= 8; i+=2) {
+			for (int i = 0; i <= 8; i += 2) {
 				w.playEffect(loc, Effect.SMOKE, i);
 			}
 		} else if (r <= 8) {
@@ -106,11 +104,11 @@ public class CloudEffect extends SpellEffect {
 	}
 	
 	private boolean inRange(int x1, int z1, int x2, int z2, int r) {
-		return sq(x1-x2) + sq(z1-z2) < sq(r);
+		return sq(x1 - x2) + sq(z1 - z2) < sq(r);
 	}
 	
 	private int sq(int v) {
-		return v*v;
+		return v * v;
 	}
 
 }

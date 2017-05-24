@@ -27,7 +27,8 @@ public class StealthSpell extends BuffSpell {
 	
 	@EventHandler
 	public void onEntityTarget(EntityTargetEvent event) {
-		if (!event.isCancelled() && stealthy.size() > 0 && event.getTarget() instanceof Player) {
+		if (event.isCancelled()) return;
+		if (!stealthy.isEmpty() && event.getTarget() instanceof Player) {
 			Player player = (Player)event.getTarget();
 			if (stealthy.contains(player.getName())) {
 				if (isExpired(player)) {
@@ -35,9 +36,7 @@ public class StealthSpell extends BuffSpell {
 				} else {
 					addUse(player);
 					boolean ok = chargeUseCost(player);
-					if (ok) {
-						event.setCancelled(true);
-					}
+					if (ok) event.setCancelled(true);
 				}
 			}
 		}

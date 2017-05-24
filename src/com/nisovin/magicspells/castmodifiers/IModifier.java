@@ -9,6 +9,7 @@ import com.nisovin.magicspells.events.SpellTargetEvent;
 import com.nisovin.magicspells.events.SpellTargetLocationEvent;
 
 public interface IModifier {
+	
 	public boolean apply(SpellCastEvent event);
 	public boolean apply(ManaChangeEvent event);
 	public boolean apply(SpellTargetEvent event);

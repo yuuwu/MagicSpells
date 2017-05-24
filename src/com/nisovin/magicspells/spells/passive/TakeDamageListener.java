@@ -46,16 +46,15 @@ public class TakeDamageListener extends PassiveListener {
 				s = s.trim();
 				boolean isDamCause = false;
 				for (DamageCause c : DamageCause.values()) {
-					if (s.equalsIgnoreCase(c.name())) {
-						List<PassiveSpell> spells = damageCauses.get(c);
-						if (spells == null) {
-							spells = new ArrayList<PassiveSpell>();
-							damageCauses.put(c, spells);
-						}
-						spells.add(spell);
-						isDamCause = true;
-						break;
+					if (!s.equalsIgnoreCase(c.name())) continue;
+					List<PassiveSpell> spells = damageCauses.get(c);
+					if (spells == null) {
+						spells = new ArrayList<PassiveSpell>();
+						damageCauses.put(c, spells);
 					}
+					spells.add(spell);
+					isDamCause = true;
+					break;
 				}
 				if (!isDamCause) {
 					MagicMaterial mat = null;
@@ -105,7 +104,7 @@ public class TakeDamageListener extends PassiveListener {
 		
 		if (!damageCauses.isEmpty()) {
 			List<PassiveSpell> causeSpells = damageCauses.get(event.getCause());
-			if (causeSpells != null && causeSpells.size() > 0) {
+			if (causeSpells != null && !causeSpells.isEmpty()) {
 				attacker = getAttacker(event);
 				if (spellbook == null) spellbook = MagicSpells.getSpellbook(player);
 				for (PassiveSpell spell : causeSpells) {
@@ -131,12 +130,9 @@ public class TakeDamageListener extends PassiveListener {
 						if (spellbook == null) spellbook = MagicSpells.getSpellbook(player);
 						for (PassiveSpell spell : list) {
 							if (!isCancelStateOk(spell, event.isCancelled())) continue;
-							if (spellbook.hasSpell(spell, false)) {
-								boolean casted = spell.activate(player, attacker);
-								if (PassiveListener.cancelDefaultAction(spell, casted)) {
-									event.setCancelled(true);
-								}
-							}
+							if (!spellbook.hasSpell(spell, false)) continue;
+							boolean casted = spell.activate(player, attacker);
+							if (PassiveListener.cancelDefaultAction(spell, casted)) event.setCancelled(true);
 						}
 					}
 				}
@@ -145,23 +141,22 @@ public class TakeDamageListener extends PassiveListener {
 	}
 	
 	private LivingEntity getAttacker(EntityDamageEvent event) {
-		if (event instanceof EntityDamageByEntityEvent) {
-			Entity e = ((EntityDamageByEntityEvent)event).getDamager();
-			if (e instanceof LivingEntity) {
-				return (LivingEntity)e;
-			} else if (e instanceof Projectile && ((Projectile)e).getShooter() instanceof LivingEntity) {
-				return (LivingEntity)((Projectile)e).getShooter();
-			}
+		if (!(event instanceof EntityDamageByEntityEvent)) return null;
+		Entity e = ((EntityDamageByEntityEvent)event).getDamager();
+		
+		if (e instanceof LivingEntity) return (LivingEntity)e;
+		
+		if (e instanceof Projectile && ((Projectile)e).getShooter() instanceof LivingEntity) {
+			return (LivingEntity)((Projectile)e).getShooter();
 		}
+		
 		return null;
 	}
 	
 	private List<PassiveSpell> getSpells(ItemStack item) {
 		if (types.contains(item.getType())) {
 			for (MagicMaterial m : weapons.keySet()) {
-				if (m.equals(item)) {
-					return weapons.get(m);
-				}
+				if (m.equals(item)) return weapons.get(m);
 			}
 		}
 		return null;

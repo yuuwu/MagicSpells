@@ -59,16 +59,18 @@ public class ManaRegenSpell extends BuffSpell {
 	@EventHandler(priority=EventPriority.MONITOR)
 	public void onManaRegenTick(ManaChangeEvent event) {
 		Player p = event.getPlayer();
-		if(!isExpired(p) && isActive(p) && event.getReason().equals(ManaChangeReason.REGEN)) {
-			int newAmt = event.getNewAmount() + regenModAmt;
-			if (newAmt > event.getMaxMana()) {
-				newAmt = event.getMaxMana();
-			} else if (newAmt < 0) {
-				newAmt = 0;
-			}
-			event.setNewAmount(newAmt);
-			addUseAndChargeCost(p);
+		if (isExpired(p)) return;
+		if (!isActive(p)) return;
+		if (!event.getReason().equals(ManaChangeReason.REGEN)) return;
+		
+		int newAmt = event.getNewAmount() + regenModAmt;
+		if (newAmt > event.getMaxMana()) {
+			newAmt = event.getMaxMana();
+		} else if (newAmt < 0) {
+			newAmt = 0;
 		}
+		event.setNewAmount(newAmt);
+		addUseAndChargeCost(p);
 	}
 
 	@Override

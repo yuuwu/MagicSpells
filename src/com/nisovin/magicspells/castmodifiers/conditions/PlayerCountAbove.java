@@ -24,16 +24,20 @@ public class PlayerCountAbove extends Condition {
 
 	@Override
 	public boolean check(Player player) {
-		return Bukkit.getServer().getOnlinePlayers().size() > count;
+		return check();
 	}
 
 	@Override
 	public boolean check(Player player, LivingEntity target) {
-		return Bukkit.getServer().getOnlinePlayers().size() > count;
+		return check();
 	}
 
 	@Override
 	public boolean check(Player player, Location location) {
+		return check();
+	}
+	
+	private boolean check() {
 		return Bukkit.getServer().getOnlinePlayers().size() > count;
 	}
 

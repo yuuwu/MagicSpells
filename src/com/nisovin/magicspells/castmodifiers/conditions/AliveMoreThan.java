@@ -41,6 +41,4 @@ public class AliveMoreThan extends Condition {
 		return false;
 	}
 
-	
-	
 }

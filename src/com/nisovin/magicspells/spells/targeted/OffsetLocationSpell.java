@@ -52,9 +52,7 @@ public class OffsetLocationSpell extends TargetedSpell implements TargetedLocati
 			} else {
 				baseTargetLocation = getTargetedBlock(player, power).getLocation();
 			}
-			if (baseTargetLocation == null) {
-				return noTarget(player);
-			}
+			if (baseTargetLocation == null) return noTarget(player);
 			
 			Location loc = Util.applyOffsets(baseTargetLocation, relativeOffset, absoluteOffset);
 			if (loc != null) {
@@ -76,4 +74,5 @@ public class OffsetLocationSpell extends TargetedSpell implements TargetedLocati
 	public boolean castAtLocation(Location target, float power) {
 		return castAtLocation(null, target, power);
 	}
+	
 }

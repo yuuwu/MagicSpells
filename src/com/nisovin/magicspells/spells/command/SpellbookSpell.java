@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
@@ -27,6 +26,7 @@ import com.nisovin.magicspells.events.SpellLearnEvent.LearnSource;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.CommandSpell;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.MagicLocation;
 
@@ -178,7 +178,7 @@ public class SpellbookSpell extends CommandSpell {
 				} else {
 					// call learn event
 					SpellLearnEvent learnEvent = new SpellLearnEvent(spell, player, LearnSource.SPELLBOOK, event.getClickedBlock());
-					Bukkit.getPluginManager().callEvent(learnEvent);
+					EventUtil.call(learnEvent);
 					if (learnEvent.isCancelled()) {
 						// fail: plugin cancelled it
 						sendMessage(formatMessage(strCantLearn, "%s", spell.getName()), player, MagicSpells.NULL_ARGS);
@@ -253,7 +253,7 @@ public class SpellbookSpell extends CommandSpell {
 			Scanner scanner = new Scanner(new File(MagicSpells.plugin.getDataFolder(), "books.txt"));
 			while (scanner.hasNext()) {
 				String line = scanner.nextLine();
-				if (!line.equals("")) {
+				if (!line.isEmpty()) {
 					try {
 						String[] data = line.split(":");
 						MagicLocation loc = new MagicLocation(data[0], Integer.parseInt(data[1]), Integer.parseInt(data[2]), Integer.parseInt(data[3]));

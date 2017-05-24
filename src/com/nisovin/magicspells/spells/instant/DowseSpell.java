@@ -3,7 +3,6 @@ package com.nisovin.magicspells.spells.instant;
 import java.util.List;
 import java.util.TreeSet;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -18,6 +17,7 @@ import com.nisovin.magicspells.events.SpellTargetEvent;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
 import com.nisovin.magicspells.util.Util;
@@ -38,9 +38,7 @@ public class DowseSpell extends InstantSpell {
 		super(config, spellName);
 		
 		String blockName = getConfigString("block-type", "");
-		if (!blockName.isEmpty()) {
-			material = MagicSpells.getItemNameResolver().resolveBlock(blockName);
-		}
+		if (!blockName.isEmpty()) material = MagicSpells.getItemNameResolver().resolveBlock(blockName);
 		String entityName = getConfigString("entity-type", "");
 		if (!entityName.isEmpty()) {
 			if (entityName.equalsIgnoreCase("player")) {
@@ -80,6 +78,9 @@ public class DowseSpell extends InstantSpell {
 				int cx = loc.getBlockX();
 				int cy = loc.getBlockY();
 				int cz = loc.getBlockZ();
+				
+				// Label to exit the search
+				search:
 				for (int r = 1; r <= Math.round(radius * power); r++) {
 					for (int x = -r; x <= r; x++) {
 						for (int y = -r; y <= r; y++) {
@@ -88,32 +89,28 @@ public class DowseSpell extends InstantSpell {
 									Block block = world.getBlockAt(cx + x, cy + y, cz + z);
 									if (material.equals(block)) {
 										foundBlock = block;
-										break;
+										break search;
 									}
 								}
 							}
-							if (foundBlock != null) break;
 						}
-						if (foundBlock != null) break;
 					}
-					if (foundBlock != null) break;
 				}
 							
 				if (foundBlock == null) {
 					sendMessage(strNotFound, player, args);
 					return PostCastAction.ALREADY_HANDLED;
-				} else {
-					if (rotatePlayer) {
-						Vector v = foundBlock.getLocation().add(.5, .5, .5).subtract(player.getEyeLocation()).toVector().normalize();
-						Util.setFacing(player, v);
-					}
-					if (setCompass) {
-						player.setCompassTarget(foundBlock.getLocation());
-					}
-					if (getDistance) {
-						distance = (int)Math.round(player.getLocation().distance(foundBlock.getLocation()));
-					}
+				} 
+				
+				if (rotatePlayer) {
+					Vector v = foundBlock.getLocation().add(.5, .5, .5).subtract(player.getEyeLocation()).toVector().normalize();
+					Util.setFacing(player, v);
 				}
+				if (setCompass) player.setCompassTarget(foundBlock.getLocation());
+				if (getDistance) {
+					distance = (int)Math.round(player.getLocation().distance(foundBlock.getLocation()));
+				}
+				
 				
 			} else if (entityType != null) {
 
@@ -143,11 +140,11 @@ public class DowseSpell extends InstantSpell {
 							}
 						}
 					}
-					if (ordered.size() > 0) {
+					if (!ordered.isEmpty()) {
 						for (NearbyEntity ne : ordered) {
 							if (ne.entity instanceof LivingEntity) {
 								SpellTargetEvent event = new SpellTargetEvent(this, player, (LivingEntity)ne.entity, power);
-								Bukkit.getPluginManager().callEvent(event);
+								EventUtil.call(event);
 								if (!event.isCancelled()) {
 									foundEntity = ne.entity;
 									break;
@@ -170,18 +167,14 @@ public class DowseSpell extends InstantSpell {
 						Vector v = l.subtract(player.getEyeLocation()).toVector().normalize();
 						Util.setFacing(player, v);
 					}
-					if (setCompass) {
-						player.setCompassTarget(foundEntity.getLocation());
-					}
-					if (getDistance) {
-						distance = (int)Math.round(player.getLocation().distance(foundEntity.getLocation()));
-					}
+					if (setCompass) player.setCompassTarget(foundEntity.getLocation());
+					if (getDistance) distance = (int)Math.round(player.getLocation().distance(foundEntity.getLocation()));
 				}
 			}
 			
 			playSpellEffects(EffectPosition.CASTER, player);
 			if (getDistance) {
-				sendMessage(formatMessage(strCastSelf, "%d", distance+""), player, args);
+				sendMessage(formatMessage(strCastSelf, "%d", distance + ""), player, args);
 				sendMessageNear(player, strCastOthers);
 				return PostCastAction.NO_MESSAGES;
 			}
@@ -202,13 +195,9 @@ public class DowseSpell extends InstantSpell {
 		
 		@Override
 		public int compareTo(NearbyEntity e) {
-			if (e.distanceSquared < this.distanceSquared) {
-				return -1;
-			} else if (e.distanceSquared > this.distanceSquared) {
-				return 1;
-			} else {
-				return 0;
-			}
+			if (e.distanceSquared < this.distanceSquared) return -1;
+			if (e.distanceSquared > this.distanceSquared) return 1;
+			return 0;
 		}
 		
 	}

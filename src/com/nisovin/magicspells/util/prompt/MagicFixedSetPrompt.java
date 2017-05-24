@@ -46,4 +46,5 @@ public class MagicFixedSetPrompt extends FixedSetPrompt {
 		
 		return ret;
 	}
+	
 }

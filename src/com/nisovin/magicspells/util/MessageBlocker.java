@@ -34,11 +34,10 @@ public class MessageBlocker {
 	}
 	
 	public void turnOff() {
-		if (packetListener != null) {
-			ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
-			protocolManager.removePacketListener(packetListener);
-			packetListener = null;
-		}
+		if (packetListener == null) return;
+		ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
+		protocolManager.removePacketListener(packetListener);
+		packetListener = null;
 	}
 	
 	class PacketListener extends PacketAdapter {
@@ -49,9 +48,8 @@ public class MessageBlocker {
 		
 		@Override
 		public void onPacketSending(PacketEvent event) {
-			if (blocking.contains(event.getPlayer().getName())) {
-				event.setCancelled(true);
-			}
+			if (!blocking.contains(event.getPlayer().getName())) return;
+			event.setCancelled(true);
 		}
 		
 	}

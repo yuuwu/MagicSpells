@@ -19,12 +19,8 @@ public class ModifierSet {
 		boolean modifiers = false;
 		boolean targetModifiers = false;		
 		for (Spell spell : MagicSpells.spells()) {
-			if (spell.getModifiers() != null) {
-				modifiers = true;
-			}
-			if (spell.getTargetModifiers() != null) {
-				targetModifiers = true;
-			}
+			if (spell.getModifiers() != null) modifiers = true;
+			if (spell.getTargetModifiers() != null) targetModifiers = true;
 			if (modifiers && targetModifiers) break;
 		}
 		
@@ -87,9 +83,7 @@ public class ModifierSet {
 	public void apply(ManaChangeEvent event) {
 		for (Modifier modifier : modifiers) {
 			boolean cont = modifier.apply(event);
-			if (!cont) {
-				break;
-			}
+			if (!cont) break;
 		}
 	}
 	
@@ -97,9 +91,7 @@ public class ModifierSet {
 		for (Modifier modifier : modifiers) {
 			boolean cont = modifier.apply(event);
 			if (!cont) {
-				if (modifier.strModifierFailed != null) {
-					MagicSpells.sendMessage(modifier.strModifierFailed, event.getCaster(), MagicSpells.NULL_ARGS);
-				}
+				if (modifier.strModifierFailed != null) MagicSpells.sendMessage(modifier.strModifierFailed, event.getCaster(), MagicSpells.NULL_ARGS);
 				break;
 			}
 		}
@@ -108,18 +100,14 @@ public class ModifierSet {
 	public void apply(MagicSpellsGenericPlayerEvent event) {
 		for (Modifier modifier : modifiers) {
 			boolean cont = modifier.apply(event);
-			if (!cont) {
-				break;
-			}
+			if (!cont) break;
 		}
 	}
 	
 	public void apply(SpellTargetLocationEvent event) {
 		for (Modifier modifier : modifiers) {
 			boolean cont = modifier.apply(event);
-			if (!cont) {
-				break;
-			}
+			if (!cont) break;
 		}
 	}
 	

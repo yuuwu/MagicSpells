@@ -11,9 +11,7 @@ public class CompassTargetYVariable extends MetaVariable {
 	@Override
 	public double getValue(String player) {
 		Player p = PlayerNameUtils.getPlayerExact(player);
-		if (p != null) {
-			return p.getCompassTarget().getY();
-		}
+		if (p != null) return p.getCompassTarget().getY();
 		return 0D;
 	}
 	
@@ -38,4 +36,5 @@ public class CompassTargetYVariable extends MetaVariable {
 		}
 		return false;
 	}
+	
 }

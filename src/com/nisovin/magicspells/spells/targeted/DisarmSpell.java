@@ -23,6 +23,7 @@ import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
 import com.nisovin.magicspells.util.Util;
+
 public class DisarmSpell extends TargetedSpell implements TargetedEntitySpell {
 
 	private Set<Material> disarmable;
@@ -37,13 +38,11 @@ public class DisarmSpell extends TargetedSpell implements TargetedEntitySpell {
 		super(config, spellName);
 		
 		List<String> disarmableIds = getConfigStringList("disarmable-items", null);
-		if (disarmableIds != null && disarmableIds.size() > 0) {
+		if (disarmableIds != null && !disarmableIds.isEmpty()) {
 			disarmable = new HashSet<Material>();
 			for (String itemName : disarmableIds) {
 				ItemStack item = Util.getItemStackFromString(itemName);
-				if (item != null) {
-					disarmable.add(item.getType());
-				}
+				if (item != null) disarmable.add(item.getType());
 			}
 		}
 		
@@ -53,9 +52,7 @@ public class DisarmSpell extends TargetedSpell implements TargetedEntitySpell {
 		strInvalidItem = getConfigString("str-invalid-item", "Your target could not be disarmed.");
 		
 		if (dontDrop) preventTheft = false;
-		if (preventTheft) {
-			disarmedItems = new HashMap<Item, String>();
-		}
+		if (preventTheft) disarmedItems = new HashMap<Item, String>();
 	}
 
 	@Override
@@ -68,16 +65,18 @@ public class DisarmSpell extends TargetedSpell implements TargetedEntitySpell {
 				return noTarget(player);
 			}
 			
-			boolean disarmed = disarm(target.getTarget());
+			LivingEntity realTarget = target.getTarget();
+			
+			boolean disarmed = disarm(realTarget);
 			if (disarmed) {
-				playSpellEffects(player, target.getTarget());
+				playSpellEffects(player, realTarget);
 				// send messages
-				sendMessages(player, target.getTarget());
+				sendMessages(player, realTarget);
 				return PostCastAction.NO_MESSAGES;
-			} else {
-				// fail
-				return noTarget(player, strInvalidItem);
 			}
+			
+			// fail
+			return noTarget(player, strInvalidItem);
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}
@@ -115,48 +114,39 @@ public class DisarmSpell extends TargetedSpell implements TargetedEntitySpell {
 				setItemInHand(target, null);
 				Item item = target.getWorld().dropItemNaturally(target.getLocation(), inHand.clone());
 				item.setPickupDelay(disarmDuration);
-				if (preventTheft && target instanceof Player) {
-					disarmedItems.put(item, ((Player)target).getName());
-				}
+				if (preventTheft && target instanceof Player) disarmedItems.put(item, ((Player)target).getName());
 			}
 			return true;
-		} else {
-			return false;
 		}
+		
+		return false;
 	}
 	
 	ItemStack getItemInHand(LivingEntity entity) {
 		EntityEquipment equip = entity.getEquipment();
-		if (equip != null) {
-			return HandHandler.getItemInMainHand(equip);
-		}
-		return null;
+		if (equip == null) return null;
+		return HandHandler.getItemInMainHand(equip);
 	}
 	
 	void setItemInHand(LivingEntity entity, ItemStack item) {
 		EntityEquipment equip = entity.getEquipment();
-		if (equip != null) {
-			HandHandler.setItemInMainHand(equip, item);
-		}
+		if (equip == null) return;
+		HandHandler.setItemInMainHand(equip, item);
 	}
 
 	@Override
 	public boolean castAtEntity(Player caster, LivingEntity target, float power) {
 		if (!validTargetList.canTarget(caster, target)) return false;
 		boolean disarmed =  disarm(target);
-		if (disarmed) {
-			playSpellEffects(caster, target);
-		}
+		if (disarmed) playSpellEffects(caster, target);
 		return disarmed;
 	}
 
 	@Override
 	public boolean castAtEntity(LivingEntity target, float power) {
 		if (!validTargetList.canTarget(target)) return false;
-		boolean disarmed =  disarm(target);
-		if (disarmed) {
-			playSpellEffects(EffectPosition.TARGET, target);
-		}
+		boolean disarmed = disarm(target);
+		if (disarmed) playSpellEffects(EffectPosition.TARGET, target);
 		return disarmed;
 	}
 	

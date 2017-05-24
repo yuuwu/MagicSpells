@@ -28,9 +28,7 @@ public class ManaListener implements Listener {
 			for (IModifier premod: preModifierHooks) {
 				if (!premod.apply(event)) return;
 			}
-			if (modifiers != null) {
-				modifiers.apply(event);
-			}
+			if (modifiers != null) modifiers.apply(event);
 			for (IModifier postMod: postModifierHooks) {
 				if (!postMod.apply(event)) return;
 			}

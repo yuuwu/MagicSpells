@@ -4,6 +4,7 @@ import de.slikey.effectlib.util.ParticleEffect;
 import de.slikey.effectlib.util.ParticleEffect.ParticleData;
 
 public class EffectPackage {
+	
 	public ParticleEffect effect;
 	public ParticleData data;
 	

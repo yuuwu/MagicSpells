@@ -52,9 +52,7 @@ public abstract class SpellAnimation implements Runnable {
 		this.delay = delay;
 		this.interval = interval;
 		this.tick = -1;
-		if (autoStart) {
-			play();
-		}
+		if (autoStart) play();
 	}
 	
 	/**

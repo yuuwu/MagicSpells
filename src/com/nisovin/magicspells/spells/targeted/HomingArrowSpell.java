@@ -18,6 +18,7 @@ import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
+
 public class HomingArrowSpell extends TargetedSpell implements TargetedEntitySpell, TargetedEntityFromLocationSpell {
 
 	float velocity;
@@ -55,9 +56,7 @@ public class HomingArrowSpell extends TargetedSpell implements TargetedEntitySpe
 			v = target.getLocation().toVector().subtract(from.toVector()).normalize();
 			from = from.clone().setDirection(v);
 			projectile = from.getWorld().spawn(from, projectileType);
-			if (player != null) {
-				projectile.setShooter(player);
-			}
+			if (player != null) projectile.setShooter(player);
 		} else if (player != null) {
 			projectile = player.launchProjectile(projectileType);
 			v = player.getLocation().getDirection();
@@ -69,9 +68,7 @@ public class HomingArrowSpell extends TargetedSpell implements TargetedEntitySpe
 		playSpellEffects(EffectPosition.PROJECTILE, projectile);
 		playTrackingLinePatterns(EffectPosition.DYNAMIC_CASTER_PROJECTILE_LINE, from, projectile.getLocation(), player, projectile);
 		arrows.add(new HomingArrow(player, projectile, target, power));
-		if (monitor == 0) {
-			monitor = MagicSpells.scheduleRepeatingTask(new HomingArrowMonitor(), 1, 1);
-		}
+		if (monitor == 0) monitor = MagicSpells.scheduleRepeatingTask(new HomingArrowMonitor(), 1, 1);
 
 		if (from != null) {
 			playSpellEffects(EffectPosition.CASTER, from);
@@ -84,9 +81,7 @@ public class HomingArrowSpell extends TargetedSpell implements TargetedEntitySpe
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			TargetInfo<LivingEntity> targetInfo = getTargetedEntity(player, power);
-			if (targetInfo == null) {
-				return noTarget(player);
-			}
+			if (targetInfo == null) return noTarget(player);
 			fireHomingArrow(player, null, targetInfo.getTarget(), targetInfo.getPower());
 			sendMessages(player, targetInfo.getTarget());
 			return PostCastAction.NO_MESSAGES;
@@ -96,12 +91,9 @@ public class HomingArrowSpell extends TargetedSpell implements TargetedEntitySpe
 
 	@Override
 	public boolean castAtEntity(Player caster, LivingEntity target, float power) {
-		if (validTargetList.canTarget(caster, target)) {
-			fireHomingArrow(caster, null, target, power);			
-			return true;
-		} else {
-			return false;
-		}
+		if (!validTargetList.canTarget(caster, target)) return false;
+		fireHomingArrow(caster, null, target, power);			
+		return true;
 	}
 
 	@Override
@@ -111,25 +103,20 @@ public class HomingArrowSpell extends TargetedSpell implements TargetedEntitySpe
 
 	@Override
 	public boolean castAtEntityFromLocation(Player caster, Location from, LivingEntity target, float power) {
-		if (validTargetList.canTarget(caster, target)) {
-			fireHomingArrow(caster, from, target, power);
-			return true;
-		} else {
-			return false;
-		}
+		if (!validTargetList.canTarget(caster, target)) return false;
+		fireHomingArrow(caster, from, target, power);
+		return true;
 	}
 
 	@Override
 	public boolean castAtEntityFromLocation(Location from, LivingEntity target, float power) {
-		if (validTargetList.canTarget(target)) {
-			fireHomingArrow(null, from, target, power);
-			return true;
-		} else {
-			return false;
-		}
+		if (!validTargetList.canTarget(target)) return false;
+		fireHomingArrow(null, from, target, power);
+		return true;
 	}
 	
 	class HomingArrowMonitor implements Runnable {
+		
 		int c = 0;
 		
 		@Override
@@ -148,20 +135,19 @@ public class HomingArrowSpell extends TargetedSpell implements TargetedEntitySpe
 					arrow.arrow.setVelocity(v);
 					//Location l = arrow.arrow.getLocation().setDirection(v);
 					//arrow.arrow.teleport(l);
-					if (specialEffectInterval > 0 && c % specialEffectInterval == 0) {
-						playSpellEffects(EffectPosition.SPECIAL, arrow.arrow.getLocation());
-					}
+					if (specialEffectInterval > 0 && c % specialEffectInterval == 0) playSpellEffects(EffectPosition.SPECIAL, arrow.arrow.getLocation());
 				}
 			}
 			
-			if (arrows.size() == 0) {
+			if (arrows.isEmpty()) {
 				MagicSpells.cancelTask(monitor);
 				monitor = 0;
 			}
 		}
 	}
 	
-	class HomingArrow {
+	static class HomingArrow {
+		
 		Player shooter;
 		Projectile arrow;
 		LivingEntity target;
@@ -173,6 +159,7 @@ public class HomingArrowSpell extends TargetedSpell implements TargetedEntitySpe
 			this.target = target;
 			this.power = power;
 		}
+		
 	}
 
 }

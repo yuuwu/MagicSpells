@@ -50,12 +50,10 @@ public class StonevisionSpell extends BuffSpell {
 		if (types != null) {
 			for (int i = 0; i < types.size(); i++) {
 				type = MagicSpells.getItemNameResolver().resolveBlock(types.get(i));
-				if (type != null) {
-					transparentTypes.add(type.getMaterial());
-				}
+				if (type != null) transparentTypes.add(type.getMaterial());
 			}
 		}
-		if (transparentTypes.size() == 0) {
+		if (transparentTypes.isEmpty()) {
 			MagicSpells.error("Spell '" + internalName + "' does not define any transparent types");
 		}
 		
@@ -79,11 +77,12 @@ public class StonevisionSpell extends BuffSpell {
 	@EventHandler(priority=EventPriority.MONITOR)
 	public void onPlayerMove(PlayerMoveEvent event) {
 		Player p = event.getPlayer();
-		if (seers.containsKey(p.getName())) {
+		String playerName = p.getName();
+		if (seers.containsKey(playerName)) {
 			if (isExpired(p)) {
 				turnOff(p);
 			} else {
-				boolean moved = seers.get(p.getName()).moveTransparency();
+				boolean moved = seers.get(playerName).moveTransparency();
 				if (moved) {
 					addUse(p);
 					chargeUseCost(p);
@@ -109,6 +108,7 @@ public class StonevisionSpell extends BuffSpell {
 	}
 	
 	private class TransparentBlockSet {
+		
 		Player player;
 		Block center;
 		int range;
@@ -160,7 +160,7 @@ public class StonevisionSpell extends BuffSpell {
 							dx = Math.abs(x - px);
 							dy = Math.abs(y - py);
 							dz = Math.abs(z - pz);
-							block = center.getWorld().getBlockAt(x,y,z);
+							block = center.getWorld().getBlockAt(x, y, z);
 							if (types.contains(block.getType()) && dx <= range && dy <= range && dz <= range) {
 								Util.sendFakeBlockChange(player, block, glass);
 								newBlocks.add(block);
@@ -207,6 +207,7 @@ public class StonevisionSpell extends BuffSpell {
 			}
 			blocks = null;
 		}
+		
 	}
 
 	@Override

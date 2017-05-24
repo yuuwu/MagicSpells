@@ -61,4 +61,5 @@ public class MagicUnknownMaterial extends MagicMaterial {
 	public int hashCode() {
 		return (type + ":" + data).hashCode();
 	}
+	
 }

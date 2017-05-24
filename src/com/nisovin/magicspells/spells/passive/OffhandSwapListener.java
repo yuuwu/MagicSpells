@@ -19,9 +19,7 @@ public class OffhandSwapListener extends PassiveListener {
 	@Override
 	public void registerSpell(PassiveSpell spell, PassiveTrigger trigger,
 			String var) {
-		if (spell != null) {
-			spells.add(spell);
-		}
+		if (spell != null) spells.add(spell);
 	}
 	
 	@OverridePriority
@@ -37,9 +35,8 @@ public class OffhandSwapListener extends PassiveListener {
 			if (!isCancelStateOk(spell, event.isCancelled())) continue;
 			if (spellbook.hasSpell(spell)) {
 				boolean casted = spell.activate(player);
-				if (PassiveListener.cancelDefaultAction(spell, casted)) {
-					event.setCancelled(true);
-				}
+				if (!PassiveListener.cancelDefaultAction(spell, casted)) continue;
+				event.setCancelled(true);
 			}
 		}
 	}

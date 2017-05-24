@@ -13,6 +13,7 @@ import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
+
 public class ModifyCooldownSpell extends TargetedSpell implements TargetedEntitySpell {
 
 	List<Spell> spells;
@@ -42,18 +43,14 @@ public class ModifyCooldownSpell extends TargetedSpell implements TargetedEntity
 				}
 			}
 		}
-		if (spells.size() == 0) {
-			MagicSpells.error("ModifyCooldownSpell '" + internalName + "' has no spells!");
-		}
+		if (spells.isEmpty()) MagicSpells.error("ModifyCooldownSpell '" + internalName + "' has no spells!");
 	}
 
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			TargetInfo<Player> target = getTargetedPlayer(player, power);
-			if (target == null) {
-				return noTarget(player);
-			}
+			if (target == null) return noTarget(player);
 			modifyCooldowns(target.getTarget(), target.getPower());
 		}
 		return PostCastAction.HANDLE_NORMALLY;
@@ -80,9 +77,8 @@ public class ModifyCooldownSpell extends TargetedSpell implements TargetedEntity
 			modifyCooldowns((Player)target, power);
 			playSpellEffects(caster, target);
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 	@Override
@@ -91,9 +87,8 @@ public class ModifyCooldownSpell extends TargetedSpell implements TargetedEntity
 			modifyCooldowns((Player)target, power);
 			playSpellEffects(EffectPosition.TARGET, target);
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 }

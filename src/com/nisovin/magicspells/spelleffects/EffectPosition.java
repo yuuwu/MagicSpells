@@ -148,9 +148,8 @@ public enum EffectPosition {
 	}
 	
 	public static EffectPosition getPositionFromString(String pos) {
-		if (!initialized) {
-			initializeNameMap();
-		}
+		if (!initialized) initializeNameMap();
 		return nameMap.get(pos.toLowerCase());
 	}
+	
 }

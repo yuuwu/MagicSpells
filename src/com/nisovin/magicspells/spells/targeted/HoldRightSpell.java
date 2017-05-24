@@ -42,9 +42,7 @@ public class HoldRightSpell extends TargetedSpell implements TargetedEntitySpell
 	@Override
 	public void initialize() {
 		super.initialize();
-		if (!spell.process()) {
-			MagicSpells.error("Invalid spell on " + internalName);
-		}
+		if (!spell.process()) MagicSpells.error("Invalid spell on " + internalName);
 	}
 
 	@Override
@@ -120,6 +118,7 @@ public class HoldRightSpell extends TargetedSpell implements TargetedEntitySpell
 	}
 	
 	class CastData {
+		
 		long start = System.currentTimeMillis();
 		long lastCast = 0;
 		LivingEntity targetEntity = null;
@@ -163,6 +162,7 @@ public class HoldRightSpell extends TargetedSpell implements TargetedEntitySpell
 				spell.cast(caster, power);
 			}
 		}
+		
 	}
 
 }

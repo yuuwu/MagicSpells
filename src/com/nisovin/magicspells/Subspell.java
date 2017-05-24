@@ -2,7 +2,6 @@ package com.nisovin.magicspells;
 
 import java.util.Random;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -15,6 +14,7 @@ import com.nisovin.magicspells.events.SpellCastedEvent;
 import com.nisovin.magicspells.spells.TargetedEntityFromLocationSpell;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.RegexUtil;
 import com.nisovin.magicspells.util.Util;
 
@@ -120,52 +120,51 @@ public class Subspell {
 	
 	public PostCastAction cast(final Player player, final float power) {
 		if (chance > 0 && chance < 1) {
-			if (random.nextDouble() > chance) {
-				return PostCastAction.ALREADY_HANDLED;
+			if (random.nextDouble() > chance) return PostCastAction.ALREADY_HANDLED;
+		}
+		if (delay <= 0) return castReal(player, power);
+		MagicSpells.scheduleDelayedTask(new Runnable() {
+			
+			@Override
+			public void run() {
+				castReal(player, power);
 			}
-		}
-		if (delay <= 0) {
-			return castReal(player, power);
-		} else {
-			MagicSpells.scheduleDelayedTask(new Runnable() {
-				@Override
-				public void run() {
-					castReal(player, power);
-				}
-			}, delay);
-			return PostCastAction.HANDLE_NORMALLY;
-		}
+		}, delay);
+		
+		return PostCastAction.HANDLE_NORMALLY;
 	}
 	
 	PostCastAction castReal(Player player, float power) {
 		if ((mode == CastMode.HARD || mode == CastMode.FULL) && player != null) {
 			return spell.cast(player, power * subPower, null).action;
-		} else if (mode == CastMode.PARTIAL) {
+		}
+		
+		if (mode == CastMode.PARTIAL) {
 			SpellCastEvent event = new SpellCastEvent(spell, player, SpellCastState.NORMAL, power * subPower, null, 0, null, 0);
-			Bukkit.getPluginManager().callEvent(event);
+			EventUtil.call(event);
 			if (!event.isCancelled() && event.getSpellCastState() == SpellCastState.NORMAL) {
 				PostCastAction act = spell.castSpell(player, SpellCastState.NORMAL, event.getPower(), null);
-				Bukkit.getPluginManager().callEvent(new SpellCastedEvent(spell, player, SpellCastState.NORMAL, event.getPower(), null, 0, null, act));
+				EventUtil.call(new SpellCastedEvent(spell, player, SpellCastState.NORMAL, event.getPower(), null, 0, null, act));
 				return act;
 			}
 			return PostCastAction.ALREADY_HANDLED;
-		} else {
-			return spell.castSpell(player, SpellCastState.NORMAL, power * subPower, null);
 		}
+		
+		return spell.castSpell(player, SpellCastState.NORMAL, power * subPower, null);
 	}
 	
 	public boolean castAtEntity(final Player player, final LivingEntity target, final float power) {
-		if (delay <= 0) {
-			return castAtEntityReal(player, target, power);
-		} else {
-			MagicSpells.scheduleDelayedTask(new Runnable() {
-				@Override
-				public void run() {
-					castAtEntityReal(player, target, power);
-				}
-			}, delay);
-			return true;
-		}
+		if (delay <= 0) return castAtEntityReal(player, target, power);
+		
+		MagicSpells.scheduleDelayedTask(new Runnable() {
+			
+			@Override
+			public void run() {
+				castAtEntityReal(player, target, power);
+			}
+			
+		}, delay);
+		return true;
 	}
 	
 	boolean castAtEntityReal(Player player, LivingEntity target, float power) {
@@ -184,7 +183,7 @@ public class Subspell {
 				return success;
 			} else if (mode == CastMode.PARTIAL) {
 				SpellCastEvent event = new SpellCastEvent(spell, player, SpellCastState.NORMAL, power * subPower /*power*/, null /*args*/, 0, null /*reagents*/, 0);
-				Bukkit.getPluginManager().callEvent(event);
+				EventUtil.call(event);
 				if (!event.isCancelled() && event.getSpellCastState() == SpellCastState.NORMAL) {
 					if (player != null) {
 						ret = ((TargetedEntitySpell)spell).castAtEntity(player, target, event.getPower());
@@ -192,7 +191,7 @@ public class Subspell {
 						ret = ((TargetedEntitySpell)spell).castAtEntity(target, event.getPower());
 					}
 					if (ret) {
-						Bukkit.getPluginManager().callEvent(new SpellCastedEvent(spell, player, SpellCastState.NORMAL, event.getPower(), null /*args*/, 0, null /*reagents*/, PostCastAction.HANDLE_NORMALLY));
+						EventUtil.call(new SpellCastedEvent(spell, player, SpellCastState.NORMAL, event.getPower(), null /*args*/, 0, null /*reagents*/, PostCastAction.HANDLE_NORMALLY));
 					}
 				}
 			} else {
@@ -209,17 +208,16 @@ public class Subspell {
 	}
 	
 	public boolean castAtLocation(final Player player, final Location target, final float power) {
-		if (delay <= 0) {
-			return castAtLocationReal(player, target, power);
-		} else {
-			MagicSpells.scheduleDelayedTask(new Runnable() {
-				@Override
-				public void run() {
-					castAtLocationReal(player, target, power);
-				}
-			}, delay);
-			return true;
-		}
+		if (delay <= 0) return castAtLocationReal(player, target, power);
+		MagicSpells.scheduleDelayedTask(new Runnable() {
+			
+			@Override
+			public void run() {
+				castAtLocationReal(player, target, power);
+			}
+			
+		}, delay);
+		return true;
 	}
 	
 	boolean castAtLocationReal(Player player, Location target, float power) {
@@ -238,7 +236,7 @@ public class Subspell {
 				return success;
 			} else if (mode == CastMode.PARTIAL) {
 				SpellCastEvent event = new SpellCastEvent(spell, player, SpellCastState.NORMAL, power * subPower, null, 0, null, 0);
-				Bukkit.getPluginManager().callEvent(event);
+				EventUtil.call(event);
 				if (!event.isCancelled() && event.getSpellCastState() == SpellCastState.NORMAL) {
 					if (player != null) {
 						ret = ((TargetedLocationSpell)spell).castAtLocation(player, target, event.getPower());
@@ -246,7 +244,7 @@ public class Subspell {
 						ret = ((TargetedLocationSpell)spell).castAtLocation(target, event.getPower());
 					}
 					if (ret) {
-						Bukkit.getPluginManager().callEvent(new SpellCastedEvent(spell, player, SpellCastState.NORMAL, event.getPower(), null, 0, null, PostCastAction.HANDLE_NORMALLY));
+						EventUtil.call(new SpellCastedEvent(spell, player, SpellCastState.NORMAL, event.getPower(), null, 0, null, PostCastAction.HANDLE_NORMALLY));
 					}
 				}
 			} else {
@@ -261,17 +259,16 @@ public class Subspell {
 	}
 	
 	public boolean castAtEntityFromLocation(final Player player, final Location from, final LivingEntity target, final float power) {
-		if (delay <= 0) {
-			return castAtEntityFromLocationReal(player, from, target, power);
-		} else {
-			MagicSpells.scheduleDelayedTask(new Runnable() {
-				@Override
-				public void run() {
-					castAtEntityFromLocationReal(player, from, target, power);
-				}
-			}, delay);
-			return true;
-		}
+		if (delay <= 0) return castAtEntityFromLocationReal(player, from, target, power);
+		MagicSpells.scheduleDelayedTask(new Runnable() {
+			
+			@Override
+			public void run() {
+				castAtEntityFromLocationReal(player, from, target, power);
+			}
+			
+		}, delay);
+		return true;
 	}
 	
 	boolean castAtEntityFromLocationReal(Player player, Location from, LivingEntity target, float power) {
@@ -290,16 +287,14 @@ public class Subspell {
 				return success;
 			} else if (mode == CastMode.PARTIAL) {
 				SpellCastEvent event = new SpellCastEvent(spell, player, SpellCastState.NORMAL, power * subPower, null, 0, null, 0);
-				Bukkit.getPluginManager().callEvent(event);
+				EventUtil.call(event);
 				if (!event.isCancelled() && event.getSpellCastState() == SpellCastState.NORMAL) {
 					if (player != null) {
 						ret = ((TargetedEntityFromLocationSpell)spell).castAtEntityFromLocation(player, from, target, event.getPower());
 					} else {
 						ret = ((TargetedEntityFromLocationSpell)spell).castAtEntityFromLocation(from, target, event.getPower());
 					}
-					if (ret) {
-						Bukkit.getPluginManager().callEvent(new SpellCastedEvent(spell, player, SpellCastState.NORMAL, event.getPower(), null, 0, null, PostCastAction.HANDLE_NORMALLY));
-					}
+					if (ret) EventUtil.call(new SpellCastedEvent(spell, player, SpellCastState.NORMAL, event.getPower(), null, 0, null, PostCastAction.HANDLE_NORMALLY));
 				}
 			} else {
 				if (player != null) {
@@ -312,7 +307,14 @@ public class Subspell {
 		return ret;
 	}
 	
-	public enum CastMode {
-		HARD, FULL, PARTIAL, DIRECT
+	// TODO this should be in charge of determining the mode from a string
+	public static enum CastMode {
+		
+		HARD,
+		FULL,
+		PARTIAL,
+		DIRECT
+		
 	}
+	
 }

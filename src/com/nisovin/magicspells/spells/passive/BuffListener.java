@@ -30,10 +30,9 @@ public class BuffListener extends PassiveListener {
 	public void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var) {
 		spells.add(spell);
 		for (Subspell s : spell.getActivatedSpells()) {
-			if (s.getSpell() instanceof BuffSpell) {
-				BuffSpell buff = (BuffSpell)s.getSpell();
-				buff.setAsEverlasting();
-			}
+			if (!(s.getSpell() instanceof BuffSpell)) continue;
+			BuffSpell buff = (BuffSpell)s.getSpell();
+			buff.setAsEverlasting();
 		}
 	}
 	
@@ -97,40 +96,32 @@ public class BuffListener extends PassiveListener {
 	void on(Player player) {
 		Spellbook spellbook = MagicSpells.getSpellbook(player);
 		for (PassiveSpell spell : spells) {
-			if (spellbook.hasSpell(spell)) {
-				on(player, spell);
-			}
+			if (spellbook.hasSpell(spell)) on(player, spell);
 		}
 	}
 	
 	void on(Player player, PassiveSpell spell) {
 		for (Subspell s : spell.getActivatedSpells()) {
-			if (s.getSpell() instanceof BuffSpell) {
-				BuffSpell buff = (BuffSpell)s.getSpell();
-				if (!buff.isActive(player)) {
-					buff.castSpell(player, SpellCastState.NORMAL, 1.0F, null);
-				}
-			}
+			if (!(s.getSpell() instanceof BuffSpell)) continue;
+			BuffSpell buff = (BuffSpell)s.getSpell();
+			if (buff.isActive(player)) continue;
+			buff.castSpell(player, SpellCastState.NORMAL, 1.0F, null);
 		}
 	}
 	
 	private void off(Player player) {
 		Spellbook spellbook = MagicSpells.getSpellbook(player);
 		for (PassiveSpell spell : spells) {
-			if (spellbook.hasSpell(spell)) {
-				off(player, spell);
-			}
+			if (spellbook.hasSpell(spell)) off(player, spell);
 		}
 	}
 	
 	private void off(Player player, PassiveSpell spell) {
 		for (Subspell s : spell.getActivatedSpells()) {
-			if (s.getSpell() instanceof BuffSpell) {
-				BuffSpell buff = (BuffSpell)s.getSpell();
-				if (buff.isActive(player)) {
-					buff.turnOff(player);
-				}
-			}
+			if (!(s.getSpell() instanceof BuffSpell)) continue;
+			BuffSpell buff = (BuffSpell)s.getSpell();
+			if (!buff.isActive(player)) continue;
+			buff.turnOff(player);
 		}
 	}
 

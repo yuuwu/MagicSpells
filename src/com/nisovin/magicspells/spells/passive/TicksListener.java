@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -15,6 +16,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.Spell;
 import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.events.SpellForgetEvent;
 import com.nisovin.magicspells.events.SpellLearnEvent;
@@ -28,7 +30,6 @@ import com.nisovin.magicspells.util.OverridePriority;
 // the trigger will activate every x ticks
 public class TicksListener extends PassiveListener {
 
-	
 	Map<Integer, Ticker> tickers = new HashMap<Integer, Ticker>();
 	
 	@Override
@@ -49,10 +50,9 @@ public class TicksListener extends PassiveListener {
 	@Override
 	public void initialize() {
 		for (Player player : Bukkit.getOnlinePlayers()) {
-			if (player.isValid()) {
-				for (Ticker ticker : tickers.values()) {
-					ticker.add(player);
-				}
+			if (!player.isValid()) continue;
+			for (Ticker ticker : tickers.values()) {
+				ticker.add(player);
 			}
 		}
 	}
@@ -68,56 +68,58 @@ public class TicksListener extends PassiveListener {
 	@OverridePriority
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
+		Player player = event.getPlayer();
 		for (Ticker ticker : tickers.values()) {
-			ticker.add(event.getPlayer());
+			ticker.add(player);
 		}
 	}
 	
 	@OverridePriority
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
+		Player player = event.getPlayer();
 		for (Ticker ticker : tickers.values()) {
-			ticker.remove(event.getPlayer());
+			ticker.remove(player);
 		}
 	}
 	
 	@OverridePriority
 	@EventHandler
 	public void onDeath(PlayerDeathEvent event) {
+		Player player = event.getEntity();
 		for (Ticker ticker : tickers.values()) {
-			ticker.remove(event.getEntity());
+			ticker.remove(player);
 		}
 	}
 	
 	@OverridePriority
 	@EventHandler
 	public void onRespawn(PlayerRespawnEvent event) {
+		Player player = event.getPlayer();
 		for (Ticker ticker : tickers.values()) {
-			ticker.add(event.getPlayer());
+			ticker.add(player);
 		}
 	}
 	
 	@OverridePriority
 	@EventHandler
 	public void onLearn(SpellLearnEvent event) {
-		if (event.getSpell() instanceof PassiveSpell) {
-			for (Ticker ticker : tickers.values()) {
-				if (ticker.monitoringSpell((PassiveSpell)event.getSpell())) {
-					ticker.add(event.getLearner(), (PassiveSpell)event.getSpell());
-				}
-			}
+		Spell spell = event.getSpell();
+		if (!(spell instanceof PassiveSpell)) return;
+		for (Ticker ticker : tickers.values()) {
+			if (!ticker.monitoringSpell((PassiveSpell)spell)) continue;
+			ticker.add(event.getLearner(), (PassiveSpell)spell);
 		}
 	}
 	
 	@OverridePriority
 	@EventHandler
 	public void onForget(SpellForgetEvent event) {
-		if (event.getSpell() instanceof PassiveSpell) {
-			for (Ticker ticker : tickers.values()) {
-				if (ticker.monitoringSpell((PassiveSpell)event.getSpell())) {
-					ticker.remove(event.getForgetter(), (PassiveSpell)event.getSpell());
-				}
-			}
+		Spell spell = event.getSpell();
+		if (!(spell instanceof PassiveSpell)) return;
+		for (Ticker ticker : tickers.values()) {
+			if (!ticker.monitoringSpell((PassiveSpell)spell)) continue;
+			ticker.remove(event.getForgetter(), (PassiveSpell)spell);
 		}
 	}
 
@@ -138,10 +140,8 @@ public class TicksListener extends PassiveListener {
 		
 		public void add(Player player) {
 			Spellbook spellbook = MagicSpells.getSpellbook(player);
-			for (PassiveSpell spell : spells.keySet()) {
-				if (spellbook.hasSpell(spell)) {
-					spells.get(spell).add(player);
-				}
+			for (Entry<PassiveSpell, Collection<Player>> entry : spells.entrySet()) {
+				if (spellbook.hasSpell(entry.getKey())) entry.getValue().add(player);
 			}
 		}
 		
@@ -168,13 +168,12 @@ public class TicksListener extends PassiveListener {
 			long start = System.nanoTime();
 			for (Map.Entry<PassiveSpell, Collection<Player>> entry : spells.entrySet()) {
 				Collection<Player> players = entry.getValue();
-				if (players.size() > 0) {
-					for (Player p : new ArrayList<Player>(players)) {
-						if (p.isOnline() && p.isValid()) {
-							entry.getKey().activate(p);
-						} else {
-							players.remove(p);
-						}
+				if (players.isEmpty()) continue;
+				for (Player p : new ArrayList<Player>(players)) {
+					if (p.isOnline() && p.isValid()) {
+						entry.getKey().activate(p);
+					} else {
+						players.remove(p);
 					}
 				}
 			}

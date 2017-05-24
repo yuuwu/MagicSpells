@@ -3,7 +3,6 @@ package com.nisovin.magicspells.spells.targeted;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.EntityEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -22,10 +21,12 @@ import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellAnimation;
 import com.nisovin.magicspells.util.TargetInfo;
 import com.nisovin.magicspells.util.Util;
+
 public class GeyserSpell extends TargetedSpell implements TargetedEntitySpell {
 	
 	private double damage;
@@ -68,9 +69,7 @@ public class GeyserSpell extends TargetedSpell implements TargetedEntitySpell {
 			
 			// do geyser action + animation
 			boolean ok = geyser(player, target.getTarget(), target.getPower());
-			if (!ok) {
-				return noTarget(player);
-			}
+			if (!ok) return noTarget(player);
 			playSpellEffects(player, target.getTarget());
 			
 			sendMessages(player, target.getTarget());
@@ -86,13 +85,9 @@ public class GeyserSpell extends TargetedSpell implements TargetedEntitySpell {
 		// check plugins
 		if (caster != null && target instanceof Player && checkPlugins && damage > 0) {
 			MagicSpellsEntityDamageByEntityEvent event = new MagicSpellsEntityDamageByEntityEvent(caster, target, DamageCause.ENTITY_ATTACK, dam);
-			Bukkit.getServer().getPluginManager().callEvent(event);
-			if (event.isCancelled()) {
-				return false;
-			}
-			if (!avoidDamageModification) {
-				dam = event.getDamage();
-			}
+			EventUtil.call(event);
+			if (event.isCancelled()) return false;
+			if (!avoidDamageModification) dam = event.getDamage();
 		}
 		
 		// do damage and launch target
@@ -112,9 +107,7 @@ public class GeyserSpell extends TargetedSpell implements TargetedEntitySpell {
 		}
 		
 		// launch target into air
-		if (velocity > 0) {
-			target.setVelocity(new Vector(0, velocity*power, 0));
-		}
+		if (velocity > 0) target.setVelocity(new Vector(0, velocity * power, 0));
 		
 		// create animation
 		if (geyserHeight > 0) {
@@ -122,9 +115,8 @@ public class GeyserSpell extends TargetedSpell implements TargetedEntitySpell {
 			allNearby.add(target);
 			List<Player> playersNearby = new ArrayList<Player>();
 			for (Entity e : allNearby) {
-				if (e instanceof Player) {
-					playersNearby.add((Player)e);
-				}
+				if (!(e instanceof Player)) continue;
+				playersNearby.add((Player)e);
 			}
 			new GeyserAnimation(target.getLocation(), playersNearby);
 		}
@@ -134,24 +126,19 @@ public class GeyserSpell extends TargetedSpell implements TargetedEntitySpell {
 
 	@Override
 	public boolean castAtEntity(Player caster, LivingEntity target, float power) {
-		if (!validTargetList.canTarget(caster, target)) {
-			return false;
-		} else {
-			geyser(caster, target, power);
-			playSpellEffects(caster, target);
-			return true;
-		}
+		if (!validTargetList.canTarget(caster, target)) return false;
+		geyser(caster, target, power);
+		playSpellEffects(caster, target);
+		return true;
 	}
 
 	@Override
 	public boolean castAtEntity(LivingEntity target, float power) {
-		if (!validTargetList.canTarget(target)) {
-			return false;
-		} else {
-			geyser(null, target, power);
-			playSpellEffects(EffectPosition.TARGET, target);
-			return true;
-		}
+		if (!validTargetList.canTarget(target)) return false;
+		
+		geyser(null, target, power);
+		playSpellEffects(EffectPosition.TARGET, target);
+		return true;
 	}
 	
 	private class GeyserAnimation extends SpellAnimation {
@@ -167,17 +154,17 @@ public class GeyserSpell extends TargetedSpell implements TargetedEntitySpell {
 
 		@Override
 		protected void onTick(int tick) {
-			if (tick > geyserHeight*2) {
+			if (tick > geyserHeight * 2) {
 				stop();
 			} else if (tick < geyserHeight) {
-				Block block = start.clone().add(0,tick,0).getBlock();
+				Block block = start.clone().add(0, tick, 0).getBlock();
 				if (block.getType() == Material.AIR) {
 					for (Player p : nearby) {
 						Util.sendFakeBlockChange(p, block, geyserType);
 					}
 				}
 			} else {
-				int n = geyserHeight-(tick-geyserHeight)-1; // top to bottom
+				int n = geyserHeight - (tick - geyserHeight) - 1; // top to bottom
 				Block block = start.clone().add(0, n, 0).getBlock();
 				for (Player p : nearby) {
 					Util.restoreFakeBlockChange(p, block);

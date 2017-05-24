@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 
@@ -99,13 +100,14 @@ public class Util {
 				String[] temp = s.split(";", 2);
 				s = temp[0];
 				enchants = new HashMap<Enchantment, Integer>();
-				if (temp[1].length() > 0) {
+				if (!temp[1].isEmpty()) {
 					String[] split = temp[1].split("\\+");
 					for (int i = 0; i < split.length; i++) {
 						String[] enchantData = split[i].split("-");
 						Enchantment ench;
 						ench = MagicValues.Enchantments.getEnchantmentType(enchantData[0]);
-						if (ench != null && enchantData[1].matches("[0-9]+")) {
+						if (ench == null) continue;
+						if (enchantData[1].matches("[0-9]+")) {
 							enchants.put(ench, Integer.parseInt(enchantData[1]));
 						}
 					}
@@ -142,7 +144,7 @@ public class Util {
 				}
 			}
 			if (enchants != null) {
-				if (enchants.size() > 0) {
+				if (!enchants.isEmpty()) {
 					item.addUnsafeEnchantments(enchants);
 				} else {
 					item = MagicSpells.getVolatileCodeHandler().addFakeEnchantment(item);
@@ -324,7 +326,7 @@ public class Util {
 						}
 					}
 				}
-				if (enchants.size() == 0) {
+				if (enchants.isEmpty()) {
 					emptyEnchants = true;
 				}
 			}
@@ -381,11 +383,12 @@ public class Util {
 			// attributes
 			if (config.contains("attributes")) {
 				Set<String> attrs = config.getConfigurationSection("attributes").getKeys(false);
-				String[] attrNames = new String[attrs.size()];
-				String[] attrTypes = new String[attrs.size()];
-				double[] attrAmounts = new double[attrs.size()];
-				int[] attrOperations = new int[attrs.size()];
-				String[] slots = new String[attrs.size()];
+				int attrsSize = attrs.size();
+				String[] attrNames = new String[attrsSize];
+				String[] attrTypes = new String[attrsSize];
+				double[] attrAmounts = new double[attrsSize];
+				int[] attrOperations = new int[attrsSize];
+				String[] slots = new String[attrsSize];
 				int i = 0;
 				for (String attrName : attrs) {
 					String[] attrData = config.getString("attributes." + attrName).split(" ");
@@ -398,9 +401,10 @@ public class Util {
 					}
 					int attrOp = 0; // add number
 					if (attrData.length > 2) {
-						if (attrData[2].toLowerCase().startsWith("mult")) {
+						String attrDataLowercase = attrData[2].toLowerCase();
+						if (attrDataLowercase.startsWith("mult")) {
 							attrOp = 1; // multiply percent
-						} else if (attrData[2].toLowerCase().contains("add") && attrData[2].toLowerCase().contains("perc")) {
+						} else if (attrDataLowercase.contains("add") && attrDataLowercase.contains("perc")) {
 							attrOp = 2; // add percent
 						}
 					}
@@ -439,7 +443,7 @@ public class Util {
 		List<String> lore;
 		if (meta.hasLore()) {
 			lore = meta.getLore();
-			if (lore.size() > 0) {
+			if (!lore.isEmpty()) {
 				for (int i = 0; i < lore.size(); i++) {
 					if (isLoreData(lore.get(i))) {
 						lore.remove(i);
@@ -459,7 +463,7 @@ public class Util {
 		ItemMeta meta = item.getItemMeta();
 		if (meta != null && meta.hasLore()) {
 			List<String> lore = meta.getLore();
-			if (lore.size() > 0) {
+			if (!lore.isEmpty()) {
 				for (int i = 0; i < lore.size(); i++) {
 					String s = ChatColor.stripColor(lore.get(lore.size() - 1));
 					if (s.startsWith("MS$:")) {
@@ -476,7 +480,7 @@ public class Util {
 		List<String> lore;
 		if (meta.hasLore()) {
 			lore = meta.getLore();
-			if (lore.size() > 0) {
+			if (!lore.isEmpty()) {
 				boolean removed = false;
 				for (int i = 0; i < lore.size(); i++) {
 					String s = ChatColor.stripColor(lore.get(i));
@@ -487,7 +491,7 @@ public class Util {
 					}
 				}
 				if (removed) {
-					if (lore.size() > 0) {
+					if (!lore.isEmpty()) {
 						meta.setLore(lore);
 					} else {
 						meta.setLore(null);
@@ -562,35 +566,27 @@ public class Util {
 	
 	public static boolean arrayContains(int[] array, int value) {
 		for (int i : array) {
-			if (i == value) {
-				return true;
-			}
+			if (i == value) return true;
 		}
 		return false;
 	}
 
 	public static boolean arrayContains(String[] array, String value) {
 		for (String i : array) {
-			if (i.equals(value)) {
-				return true;
-			}
+			if (Objects.equals(i, value)) return true;
 		}
 		return false;
 	}
 	
 	public static boolean arrayContains(Object[] array, Object value) {
 		for (Object i : array) {
-			if (i != null && i.equals(value)) {
-				return true;
-			}
+			if (i != null && i.equals(value)) return true;
 		}
 		return false;
 	}
 	
 	public static String arrayJoin(String[] array, char with) {
-		if (array == null || array.length == 0) {
-			return "";
-		}
+		if (array == null || array.length == 0) return "";
 		int len = array.length;
 		StringBuilder sb = new StringBuilder(16 + len * 8);
 		sb.append(array[0]);
@@ -602,9 +598,7 @@ public class Util {
 	}
 	
 	public static String listJoin(List<String> list) {
-		if (list == null || list.size() == 0) {
-			return "";
-		}
+		if (list == null || list.isEmpty()) return "";
 		int len = list.size();
 		StringBuilder sb = new StringBuilder(len * 12);
 		sb.append(list.get(0));
@@ -617,15 +611,13 @@ public class Util {
 	
 	public static String[] splitParams(String string, int max) {
 		String[] words = string.trim().split(" ");
-		if (words.length <= 1) {
-			return words;
-		}
+		if (words.length <= 1) return words;
 		ArrayList<String> list = new ArrayList<String>();		
 		char quote = ' ';
 		String building = "";
 		
 		for (String word : words) {
-			if (word.length() == 0) continue;
+			if (word.isEmpty()) continue;
 			if (max > 0 && list.size() == max - 1) {
 				if (!building.isEmpty()) building += " ";
 				building += word;
@@ -643,11 +635,11 @@ public class Util {
 				}
 			} else {
 				if (word.charAt(word.length() - 1) == quote) {
-					list.add(building + " " + word.substring(0, word.length() - 1));
+					list.add(building + ' ' + word.substring(0, word.length() - 1));
 					building = "";
 					quote = ' ';
 				} else {
-					building += " " + word;
+					building += ' ' + word;
 				}
 			}
 		}
@@ -705,9 +697,7 @@ public class Util {
 				}
 			}
 		}
-		if (matches.size() > 0) {
-			return matches;
-		}
+		if (!matches.isEmpty()) return matches;
 		return null;
 	}
 	
@@ -733,9 +723,8 @@ public class Util {
 		if (amt == 0) {
 			inventory.setContents(items);
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 	
 	public static boolean addToInventory(Inventory inventory, ItemStack item, boolean stackExisting, boolean ignoreMaxStack) {
@@ -775,9 +764,8 @@ public class Util {
 		if (amt == 0) {
 			inventory.setContents(items);
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 	
 	public static void rotateVector(Vector v, float degrees) {
@@ -840,7 +828,7 @@ public class Util {
 	}
 	
 	public static String getStringNumber(double number, int places) {
-		if (places < 0) return number+"";
+		if (places < 0) return number + "";
 		if (places == 0) return (int)Math.round(number) + "";
 		int x = (int)Math.pow(10, places);
 		return ((double)Math.round(number * x) / x) + "";
@@ -853,7 +841,6 @@ public class Util {
 		} catch (NumberFormatException nfe) {
 			ret = textNumber;
 		}
-		
 		return ret;
 	}
 	
@@ -866,13 +853,9 @@ public class Util {
 	}
 	
 	public static String getUniqueId(String playerName) {
-		if (uniqueIds.containsKey(playerName)) {
-			return uniqueIds.get(playerName);
-		}
+		if (uniqueIds.containsKey(playerName)) return uniqueIds.get(playerName);
 		Player player = Bukkit.getPlayerExact(playerName);
-		if (player != null) {
-			return getUniqueId(player);
-		}
+		if (player != null) return getUniqueId(player);
 		return null;
 	}
 	

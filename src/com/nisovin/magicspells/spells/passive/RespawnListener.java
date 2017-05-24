@@ -25,20 +25,18 @@ public class RespawnListener extends PassiveListener {
 	@OverridePriority
 	@EventHandler
 	public void onRespawn(PlayerRespawnEvent event) {
-		if (spells.size() > 0) {
-			final Player player = event.getPlayer();
-			final Spellbook spellbook = MagicSpells.getSpellbook(player);
-			MagicSpells.scheduleDelayedTask(new Runnable() {
-				@Override
-				public void run() {
-					for (PassiveSpell spell : spells) {
-						if (spellbook.hasSpell(spell)) {
-							spell.activate(player);
-						}
-					}
+		if (spells.isEmpty()) return;
+		final Player player = event.getPlayer();
+		final Spellbook spellbook = MagicSpells.getSpellbook(player);
+		MagicSpells.scheduleDelayedTask(new Runnable() {
+			@Override
+			public void run() {
+				for (PassiveSpell spell : spells) {
+					if (!spellbook.hasSpell(spell)) continue;
+					spell.activate(player);
 				}
-			}, 1);
-		}
+			}
+		}, 1);
 	}
 
 }

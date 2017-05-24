@@ -3,7 +3,6 @@ package com.nisovin.magicspells.spells.instant;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,6 +16,7 @@ import com.nisovin.magicspells.events.SpellTargetEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.util.BoundingBox;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellReagents;
 
@@ -221,14 +221,10 @@ public class PortalSpell extends InstantSpell {
 			}
 			
 			SpellTargetEvent event = new SpellTargetEvent(spell, caster, player, 1);
-			Bukkit.getPluginManager().callEvent(event);
-			if (event.isCancelled()) {
-				return false;
-			}
+			EventUtil.call(event);
+			if (event.isCancelled()) return false;
 			
-			if (payer != null) {
-				removeReagents(payer, teleportCost);
-			}
+			if (payer != null) removeReagents(payer, teleportCost);
 			return true;
 		}
 		
@@ -236,12 +232,8 @@ public class PortalSpell extends InstantSpell {
 			playSpellEffects(EffectPosition.DELAYED, loc1);
 			playSpellEffects(EffectPosition.DELAYED, loc2);
 			unregisterEvents(this);
-			if (taskId1 > 0) {
-				MagicSpells.cancelTask(taskId1);
-			}
-			if (taskId2 > 0) {
-				MagicSpells.cancelTask(taskId2);
-			}
+			if (taskId1 > 0) MagicSpells.cancelTask(taskId1);
+			if (taskId2 > 0) MagicSpells.cancelTask(taskId2);
 			spell = null;
 			caster = null;
 			loc1 = null;

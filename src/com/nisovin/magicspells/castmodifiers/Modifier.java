@@ -1,6 +1,5 @@
 package com.nisovin.magicspells.castmodifiers;
 
-
 import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.DebugHandler;
@@ -23,7 +22,7 @@ public class Modifier implements IModifier {
 	String strModifierFailed = null;
 	Object customActionData = null;
 	
-	//is this a condition that will want to access the events directly?
+	// Is this a condition that will want to access the events directly?
 	boolean alertCondition = false;
 	
 	public static Modifier factory(String s) {
@@ -32,7 +31,7 @@ public class Modifier implements IModifier {
 		String[] data = Util.splitParams(s1[0].trim());
 		if (data.length < 2) return null;
 				
-		// get condition
+		// Get condition
 		if (data[0].startsWith("!")) {
 			m.negated = true;
 			data[0] = data[0].substring(1);
@@ -40,23 +39,21 @@ public class Modifier implements IModifier {
 		m.condition = Condition.getConditionByName(data[0]);
 		if (m.condition == null) return null;
 		
-		// get type and vars
+		// Get type and vars
 		m.type = getTypeByName(data[1]);
 		if (m.type == null && data.length > 2) {
 			boolean varok = m.condition.setVar(data[1]);
 			if (!varok) return null;
 			m.type = getTypeByName(data[2]);
-			if (data.length > 3) {
-				m.modifierVar = data[3];
-			}
+			if (data.length > 3) m.modifierVar = data[3];
 		} else if (data.length > 2) {
 			m.modifierVar = data[2];
 		}
 		
-		// check type
+		// Check type
 		if (m.type == null) return null;
 		
-		// process modifiervar
+		// Process modifiervar
 		try {
 			if (m.type.usesModifierFloat()) {
 				m.modifierVarFloat = Float.parseFloat(m.modifierVar);
@@ -71,17 +68,13 @@ public class Modifier implements IModifier {
 			return null;
 		}
 		
-		// check for failed string
-		if (s1.length > 1) {
-			m.strModifierFailed = s1[1].trim();
-		}
+		// Check for failed string
+		if (s1.length > 1) m.strModifierFailed = s1[1].trim();
 		
-		//check for the alert condition
-		if (m.condition instanceof IModifier) {
-			m.alertCondition = true;
-		}
+		// Check for the alert condition
+		if (m.condition instanceof IModifier) m.alertCondition = true;
 		
-		// done
+		// Done
 		return m;
 	}
 	
@@ -155,15 +148,13 @@ public class Modifier implements IModifier {
 	public boolean check(Player player) {
 		boolean check = condition.check(player);
 		if (negated) check = !check;
-		if (check == false && type == ModifierType.REQUIRED) {
-			return false;
-		} else if (check == true && type == ModifierType.DENIED) {
-			return false;
-		}
+		if (!check && type == ModifierType.REQUIRED) return false;
+		if (check && type == ModifierType.DENIED) return false;
 		return true;
 	}
 	
 	private static ModifierType getTypeByName(String name) {
 		return ModifierType.getModifierTypeByName(name);
 	}
+	
 }

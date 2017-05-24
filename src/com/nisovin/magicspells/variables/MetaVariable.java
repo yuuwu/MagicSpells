@@ -1,6 +1,5 @@
 package com.nisovin.magicspells.variables;
 
-
 public abstract class MetaVariable extends Variable {
 
 	public MetaVariable() {

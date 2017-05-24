@@ -40,18 +40,14 @@ public class WindwalkSpell extends BuffSpell {
         cancelOnLand = getConfigBoolean("cancel-on-land", true);
 		
 		flyers = new HashSet<String>();
-		if (useCostInterval > 0) {
-			tasks = new HashMap<String, Integer>();
-		}
+		if (useCostInterval > 0) tasks = new HashMap<String, Integer>();
 	}
 	
 	@Override
 	public void initialize() {
 		super.initialize();
 		
-		if (cancelOnLand) {
-			registerEvents(new SneakListener());
-		}
+		if (cancelOnLand) registerEvents(new SneakListener());
 	}
 
 	@Override
@@ -59,9 +55,11 @@ public class WindwalkSpell extends BuffSpell {
 		// set flying
 		if (launchSpeed > 0) {
 			player.teleport(player.getLocation().add(0, .25, 0));
-			player.setVelocity(new Vector(0,launchSpeed,0));
+			player.setVelocity(new Vector(0, launchSpeed, 0));
 		}
-		flyers.add(player.getName());
+		String playerName = player.getName();
+		
+		flyers.add(playerName);
 		player.setAllowFlight(true);
 		player.setFlying(true);
 		player.setFlySpeed(flySpeed);
@@ -73,7 +71,7 @@ public class WindwalkSpell extends BuffSpell {
 					addUseAndChargeCost(player);
 				}
 			}, useCostInterval, useCostInterval);
-			tasks.put(player.getName(), taskId);
+			tasks.put(playerName, taskId);
 		}
 		// start height monitor
 		if (heightMonitor == null && (maxY > 0 || maxAltitude > 0)) {
@@ -83,14 +81,16 @@ public class WindwalkSpell extends BuffSpell {
 	}
     
 	public class SneakListener implements Listener {
+		
 	    @EventHandler(priority=EventPriority.MONITOR)
 	    public void onPlayerToggleSneak(PlayerToggleSneakEvent event) {
-	        if (flyers.contains(event.getPlayer().getName())) {
-	            if (event.getPlayer().getLocation().subtract(0,1,0).getBlock().getType() != Material.AIR) {
-	                turnOff(event.getPlayer());
-	            }
-	        }
+	    	Player player = event.getPlayer();
+	    	String playerName = player.getName();
+	        if (!flyers.contains(playerName)) return;
+	        if (player.getLocation().subtract(0, 1, 0).getBlock().getType() == Material.AIR) return;
+	        turnOff(player);
 	    }
+	    
 	}
 	
 	public class HeightMonitor implements Runnable {
@@ -115,9 +115,7 @@ public class WindwalkSpell extends BuffSpell {
 					}
 					if (maxAltitude > 0) {
 						int ydiff = p.getLocation().getBlockY() - p.getWorld().getHighestBlockYAt(p.getLocation()) - maxAltitude;
-						if (ydiff > 0) {
-							p.setVelocity(p.getVelocity().setY(-ydiff * 1.5));
-						}
+						if (ydiff > 0) p.setVelocity(p.getVelocity().setY(-ydiff * 1.5));
 					}
 				}
 			}
@@ -126,15 +124,14 @@ public class WindwalkSpell extends BuffSpell {
 		public void stop() {
 			Bukkit.getScheduler().cancelTask(taskId);
 		}
+		
 	}
 
 	@Override
 	public void turnOffBuff(final Player player) {
 		if (flyers.remove(player.getName())) {
 			player.setFlying(false);
-			if (player.getGameMode() != GameMode.CREATIVE) {
-				player.setAllowFlight(false);
-			}
+			if (player.getGameMode() != GameMode.CREATIVE) player.setAllowFlight(false);
 			player.setFlySpeed(0.1F);
 			player.setFallDistance(0);
 		}
@@ -142,7 +139,7 @@ public class WindwalkSpell extends BuffSpell {
 			int taskId = tasks.remove(player.getName());
 			Bukkit.getScheduler().cancelTask(taskId);
 		}
-		if (heightMonitor != null && flyers.size() == 0) {
+		if (heightMonitor != null && flyers.isEmpty()) {
 			heightMonitor.stop();
 			heightMonitor = null;
 		}
@@ -153,9 +150,7 @@ public class WindwalkSpell extends BuffSpell {
 		HashSet<String> flyers = new HashSet<String>(this.flyers);
 		for (String name : flyers) {
 			Player player = PlayerNameUtils.getPlayerExact(name);
-			if (player != null) {
-				turnOff(player);
-			}
+			if (player != null) turnOff(player);
 		}
 		this.flyers.clear();
 	}

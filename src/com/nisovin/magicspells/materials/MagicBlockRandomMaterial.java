@@ -6,6 +6,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.material.MaterialData;
 
 public class MagicBlockRandomMaterial extends MagicBlockMaterial {
+	
 	MagicMaterial[] materials;
 	
 	public MagicBlockRandomMaterial(MagicMaterial[] materials) {
@@ -40,4 +41,5 @@ public class MagicBlockRandomMaterial extends MagicBlockMaterial {
 		}
 		return false;
 	}
+	
 }

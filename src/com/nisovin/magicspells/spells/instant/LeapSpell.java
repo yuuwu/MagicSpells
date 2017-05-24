@@ -2,6 +2,7 @@ package com.nisovin.magicspells.spells.instant;
 
 import java.util.HashSet;
 
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -13,6 +14,8 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 
+// TODO allow this to cast a spell when the caster lands
+// TODO add a condition to see if someone is leaping
 public class LeapSpell extends InstantSpell {
 	
 	private double forwardVelocity;
@@ -30,24 +33,20 @@ public class LeapSpell extends InstantSpell {
 		cancelDamage = getConfigBoolean("cancel-damage", true);
 		clientOnly = getConfigBoolean("client-only", false);
 		
-		if (cancelDamage) {
-			jumping = new HashSet<Player>();
-		}
+		if (cancelDamage) jumping = new HashSet<Player>();
 	}
 
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			Vector v = player.getLocation().getDirection();
-			v.setY(0).normalize().multiply(forwardVelocity*power).setY(upwardVelocity*power);
+			v.setY(0).normalize().multiply(forwardVelocity * power).setY(upwardVelocity * power);
 			if (clientOnly) {
 				MagicSpells.getVolatileCodeHandler().setClientVelocity(player, v);
 			} else {
 				player.setVelocity(v);
 			}
-			if (cancelDamage) {
-				jumping.add(player);
-			}
+			if (cancelDamage) jumping.add(player);
 			playSpellEffects(EffectPosition.CASTER, player);
 		}
 		
@@ -57,11 +56,15 @@ public class LeapSpell extends InstantSpell {
 	@EventHandler
 	public void onEntityDamage(EntityDamageEvent event) {
 		if (event.isCancelled()) return;
-		if (cancelDamage && event.getCause() == DamageCause.FALL && event.getEntity() instanceof Player && jumping.contains(event.getEntity())) {
-			event.setCancelled(true);
-			jumping.remove(event.getEntity());
-			playSpellEffects(EffectPosition.TARGET, event.getEntity().getLocation());
-		}
+		if (!cancelDamage) return;
+		if (event.getCause() != DamageCause.FALL) return;
+		
+		Entity entity = event.getEntity();
+		if (!(entity instanceof Player)) return;
+		if (!jumping.contains(entity)) return;
+		event.setCancelled(true);
+		jumping.remove(entity);
+		playSpellEffects(EffectPosition.TARGET, entity.getLocation());
 	}
 
 }

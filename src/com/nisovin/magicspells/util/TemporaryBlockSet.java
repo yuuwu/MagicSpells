@@ -60,30 +60,28 @@ public class TemporaryBlockSet implements Runnable {
 	}
 	
 	public void removeAfter(int seconds, BlockSetRemovalCallback callback) {
-		if (blocks.size() > 0) {
-			this.callback = callback;
-			MagicSpells.scheduleDelayedTask(this, seconds*20);
-		}
+		if (blocks.isEmpty()) return;
+		this.callback = callback;
+		MagicSpells.scheduleDelayedTask(this, seconds * 20);
 	}
 	
 	@Override
 	public void run() {
-		if (callback != null) {
-			callback.run(this);
-		}
+		if (callback != null) callback.run(this);
 		remove();
 	}
 	
 	public void remove() {
 		for (Block block : blocks) {
-			if (replaceWith.equals(block)) {
-				block.setType(original);
-			}
+			if (replaceWith.equals(block)) block.setType(original);
 		}
 		player = null;
 	}
 	
 	public interface BlockSetRemovalCallback {
+	
 		public void run(TemporaryBlockSet set);
+	
 	}
+	
 }

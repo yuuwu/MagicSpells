@@ -11,6 +11,7 @@ import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.BlockUtils;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
+
 public class GripSpell extends TargetedSpell implements TargetedEntitySpell, TargetedEntityFromLocationSpell {
 
 	float locationOffset;
@@ -32,14 +33,11 @@ public class GripSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 			TargetInfo<LivingEntity> target = getTargetedEntity(player, power);
 			if (target != null) {
 				boolean ok = grip(player, target.getTarget());
-				if (!ok) {
-					return noTarget(player, strCantGrip);
-				}
+				if (!ok) return noTarget(player, strCantGrip);
 				sendMessages(player, target.getTarget());
 				return PostCastAction.NO_MESSAGES;
-			} else {
-				return noTarget(player);
 			}
+			return noTarget(player);
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}
@@ -47,20 +45,15 @@ public class GripSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 	private boolean grip(Player player, LivingEntity target) {
 		Location loc = player.getLocation().add(player.getLocation().getDirection().setY(0).normalize().multiply(locationOffset));
 		loc.add(0, yOffset, 0);
-		if (!BlockUtils.isSafeToStand(loc)) {
-			return false;
-		}
+		if (!BlockUtils.isSafeToStand(loc)) return false;
 		playSpellEffects(player, target);
 		return target.teleport(loc);
 	}
 
 	@Override
 	public boolean castAtEntity(Player caster, LivingEntity target, float power) {
-		if (validTargetList.canTarget(caster, target)) {
-			return grip(caster, target);
-		} else {
-			return false;
-		}
+		if (!validTargetList.canTarget(caster, target)) return false;
+		return grip(caster, target);
 	}
 
 	@Override
@@ -82,18 +75,15 @@ public class GripSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 			loc.setZ(loc.getBlockZ() + .5);
 			if (!BlockUtils.isSafeToStand(loc)) {
 				loc.add(0, 1, 0);
-				if (!BlockUtils.isSafeToStand(loc)) {
-					return false;
-				}
+				if (!BlockUtils.isSafeToStand(loc)) return false;
 			}
 			Location start = target.getLocation().clone();
 			playSpellEffects(EffectPosition.TARGET, target);
 			target.teleport(loc);
 			playSpellEffectsTrail(start, loc);
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 }

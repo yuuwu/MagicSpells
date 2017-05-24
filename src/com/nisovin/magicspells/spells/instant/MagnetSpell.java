@@ -15,6 +15,7 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
+import com.nisovin.magicspells.util.InventoryUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 
 public class MagnetSpell extends InstantSpell implements TargetedLocationSpell {
@@ -29,8 +30,8 @@ public class MagnetSpell extends InstantSpell implements TargetedLocationSpell {
 	public MagnetSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 
-		range = getConfigDouble("range", 5.0);
-		velocity = getConfigDouble("velocity", 1.0);
+		range = getConfigDouble("range", 5D);
+		velocity = getConfigDouble("velocity", 1D);
 		teleport = getConfigBoolean("teleport-items", false);
 		forcepickup = getConfigBoolean("force-pickup", false);
 		removeItemGravity = getConfigBoolean("remove-item-gravity", false);
@@ -41,7 +42,7 @@ public class MagnetSpell extends InstantSpell implements TargetedLocationSpell {
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			
-			double radius = this.range*power;			
+			double radius = this.range * power;			
 			List<Item> items = getNearbyItems(player, radius);
 			
 			magnet(player, items, power);
@@ -68,7 +69,7 @@ public class MagnetSpell extends InstantSpell implements TargetedLocationSpell {
 		if (teleport) {
 			item.teleport(origin);	
 		} else {
-			item.setVelocity(origin.toVector().subtract(item.getLocation().toVector()).normalize().multiply(velocity*power));
+			item.setVelocity(origin.toVector().subtract(item.getLocation().toVector()).normalize().multiply(velocity * power));
 		}
 		
 		playSpellEffects(EffectPosition.PROJECTILE, item);
@@ -80,7 +81,7 @@ public class MagnetSpell extends InstantSpell implements TargetedLocationSpell {
 		if (caster == null) return false;
 		
 		// get the items nearby
-		Collection<Item> targetItems = getNearbyItems(target, range*power);
+		Collection<Item> targetItems = getNearbyItems(target, range * power);
 		
 		// magnet them
 		magnet(caster, targetItems, power);
@@ -113,7 +114,7 @@ public class MagnetSpell extends InstantSpell implements TargetedLocationSpell {
 			if (e instanceof Item) {
 				Item i = (Item)e;
 				ItemStack stack = i.getItemStack();
-				if (stack.getAmount() > 0 && !i.isDead()) {
+				if (!InventoryUtil.isNothing(stack) && !i.isDead()) {
 					if (forcepickup) {
 						i.setPickupDelay(0);
 						ret.add(i);
@@ -123,9 +124,7 @@ public class MagnetSpell extends InstantSpell implements TargetedLocationSpell {
 				}
 			}
 		}
-		if (center instanceof Item) {
-			ret.remove(center);
-		}
+		if (center instanceof Item) ret.remove(center);
 		return ret;
 	}
 	

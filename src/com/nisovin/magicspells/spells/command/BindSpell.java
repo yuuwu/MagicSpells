@@ -116,9 +116,7 @@ public class BindSpell extends CommandSpell {
 	public List<String> tabComplete(CommandSender sender, String partial) {
 		if (sender instanceof Player) {
 			// only one arg
-			if (partial.contains(" ")) {
-				return null;
-			}
+			if (partial.contains(" ")) return null;
 			
 			// tab complete spellname from spellbook
 			return tabCompleteSpellName(sender, partial);

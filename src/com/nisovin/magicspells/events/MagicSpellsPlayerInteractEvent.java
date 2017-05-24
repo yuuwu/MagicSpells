@@ -9,8 +9,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class MagicSpellsPlayerInteractEvent extends PlayerInteractEvent implements IMagicSpellsCompatEvent {
 
-	public MagicSpellsPlayerInteractEvent(Player who, Action action,
-			ItemStack item, Block clickedBlock, BlockFace clickedFace) {
+	public MagicSpellsPlayerInteractEvent(Player who, Action action, ItemStack item, Block clickedBlock, BlockFace clickedFace) {
 		super(who, action, item, clickedBlock, clickedFace);
 	}
 

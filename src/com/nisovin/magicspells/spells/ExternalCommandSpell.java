@@ -68,29 +68,29 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 		doVariableReplacement = getConfigBoolean("do-variable-replacement", false);
 		useTargetVariablesInstead = getConfigBoolean("use-target-variables-instead", false);
 		
-		
-		
-		if (requirePlayerTarget) {
-			validTargetList = new ValidTargetList(true, false);
-		}
+		if (requirePlayerTarget) validTargetList = new ValidTargetList(true, false);
 		
 		if (blockChatOutput) {
 			if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) {
-				if (messageBlocker == null) {
-					messageBlocker = new MessageBlocker();
-				}
+				if (messageBlocker == null) messageBlocker = new MessageBlocker();
 			} else {
-				convoPrompt = new StringPrompt() {	
+				convoPrompt = new StringPrompt() {
+					
 					@Override
-					public String getPromptText(ConversationContext arg0) {
+					public String getPromptText(ConversationContext context) {
 						return strBlockedOutput;
 					}
+					
 					@Override
-					public Prompt acceptInput(ConversationContext arg0, String arg1) {
+					public Prompt acceptInput(ConversationContext context, String input) {
 						return Prompt.END_OF_CONVERSATION;
 					}
+					
 				};
-				convoFac = new ConversationFactory(MagicSpells.plugin).withModality(true).withFirstPrompt(convoPrompt).withTimeout(1);
+				convoFac = new ConversationFactory(MagicSpells.plugin)
+					.withModality(true)
+					.withFirstPrompt(convoPrompt)
+					.withTimeout(1);
 			}
 		}
 	}
@@ -105,9 +105,8 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 				if (targetInfo == null) {
 					sendMessage(strNoTarget, player, args);
 					return PostCastAction.ALREADY_HANDLED;
-				} else {
-					target = targetInfo.getTarget();
 				}
+				target = targetInfo.getTarget();
 			}
 			process(player, target, args);
 		}
@@ -124,9 +123,7 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 		} else {
 			actualSender = sender;
 		}
-		if (actualSender == null) {
-			return;
-		}
+		if (actualSender == null) return;
 		
 		// grant permissions and op
 		boolean opped = false;
@@ -146,7 +143,7 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 		
 		// perform commands
 		try {
-			if (commandToExecute != null && commandToExecute.size() > 0) {
+			if (commandToExecute != null && !commandToExecute.isEmpty()) {
 
 				Conversation convo = null;
 				if (sender != null && sender instanceof Player) {
@@ -172,15 +169,11 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 						}
 						if (args != null && args.length > 0) {
 							for (int i = 0; i < args.length; i++) {
-								comm = comm.replace("%"+(i+1), args[i]);
+								comm = comm.replace("%" + (i + 1), args[i]);
 							}
 						}
-						if (sender != null) {
-							comm = comm.replace("%a", sender.getName());
-						}
-						if (target != null) {
-							comm = comm.replace("%t", target.getName());
-						}
+						if (sender != null) comm = comm.replace("%a", sender.getName());
+						if (target != null) comm = comm.replace("%t", target.getName());
 						if (comm.startsWith("DELAY ")) {
 							String[] split = comm.split(" ");
 							delay += Integer.parseInt(split[1]);
@@ -210,9 +203,7 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 		}
 		
 		// deop
-		if (opped) {
-			actualSender.setOp(false);
-		}
+		if (opped) actualSender.setOp(false);
 		
 		// effects
 		if (sender != null && sender instanceof Player) {
@@ -225,7 +216,7 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 			playSpellEffects(EffectPosition.CASTER, ((BlockCommandSender)sender).getBlock().getLocation());
 		}
 		// add delayed command
-		if (commandToExecuteLater != null && commandToExecuteLater.size() > 0 && !commandToExecuteLater.get(0).isEmpty()) {
+		if (commandToExecuteLater != null && !commandToExecuteLater.isEmpty() && !commandToExecuteLater.get(0).isEmpty()) {
 			Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new DelayedCommand(sender, target), commandDelay);
 		}
 	}
@@ -235,9 +226,8 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 		if (requirePlayerTarget && target instanceof Player) {
 			process(caster, (Player)target, MagicSpells.NULL_ARGS);
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 	@Override
@@ -262,11 +252,11 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 	
 	@EventHandler
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
-		if (!event.getPlayer().isOp() && commandToBlock != null && commandToBlock.size() > 0) {
+		if (!event.getPlayer().isOp() && commandToBlock != null && !commandToBlock.isEmpty()) {
 			String msg = event.getMessage();
 			for (String comm : commandToBlock) {
 				comm = comm.trim();
-				if (comm.equals("")) continue;
+				if (comm.isEmpty()) continue;
 				
 				if (msg.startsWith("/" + commandToBlock)) {
 					event.setCancelled(true);
@@ -293,10 +283,9 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 	
 	@Override
 	public void turnOff() {
-		if (messageBlocker != null) {
-			messageBlocker.turnOff();
-			messageBlocker = null;
-		}
+		if (messageBlocker == null) return;
+		messageBlocker.turnOff();
+		messageBlocker = null;
 	}
 	
 	private class DelayedCommand implements Runnable {
@@ -320,18 +309,15 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 			} else {
 				actualSender = sender;
 			}
-			if (actualSender == null) {
-				return;
-			}
+			if (actualSender == null) return;
 			
 			// grant permissions
 			boolean opped = false;
 			if (actualSender instanceof Player) {
 				if (temporaryPermissions != null) {
 					for (String perm : temporaryPermissions) {
-						if (!actualSender.hasPermission(perm)) {
-							actualSender.addAttachment(MagicSpells.plugin, perm, true, 5);
-						}
+						if (actualSender.hasPermission(perm)) continue;
+						actualSender.addAttachment(MagicSpells.plugin, perm, true, 5);
 					}
 				}
 				if (temporaryOp && !actualSender.isOp()) {
@@ -352,15 +338,11 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 					}
 				}
 				for (String comm : commandToExecuteLater) {
-					if (comm != null && !comm.isEmpty()) {
-						if (sender != null) {
-							comm = comm.replace("%a", sender.getName());
-						}
-						if (target != null) {
-							comm = comm.replace("%t", target.getName());
-						}
-						Bukkit.dispatchCommand(actualSender, comm);
-					}
+					if (comm == null) continue;
+					if (comm.isEmpty()) continue;
+					if (sender != null) comm = comm.replace("%a", sender.getName());
+					if (target != null) comm = comm.replace("%t", target.getName());
+					Bukkit.dispatchCommand(actualSender, comm);
 				}
 				if (blockChatOutput && messageBlocker != null && sender != null && sender instanceof Player) {
 					messageBlocker.removePlayer((Player)sender);
@@ -373,9 +355,7 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 			}
 			
 			// deop
-			if (opped) {
-				actualSender.setOp(false);
-			}
+			if (opped) actualSender.setOp(false);
 			
 			// graphical effect
 			if (sender != null) {

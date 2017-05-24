@@ -167,28 +167,16 @@ public class ParticlesEffect extends SpellEffect {
 	public void loadFromString(String string) {
 		if (string != null && !string.isEmpty()) {
 			String[] data = string.split(" ");
-			if (data.length >= 1) {
-				name = data[0];
-			}
+			if (data.length >= 1) name = data[0];
 			if (data.length >= 2) {
 				xSpread = Float.parseFloat(data[1]);
 				zSpread = xSpread;
 			}
-			if (data.length >= 3) {
-				ySpread = Float.parseFloat(data[2]);
-			}
-			if (data.length >= 4) {
-				speed = Float.parseFloat(data[3]);
-			}
-			if (data.length >= 5) {
-				count = Integer.parseInt(data[4]);
-			}
-			if (data.length >= 6) {
-				yOffset = Float.parseFloat(data[5]);
-			}
-			if (data.length >= 7) {
-				color = ColorUtil.getColorFromHexString(data[6]);
-			}
+			if (data.length >= 3) ySpread = Float.parseFloat(data[2]);
+			if (data.length >= 4) speed = Float.parseFloat(data[3]);
+			if (data.length >= 5) count = Integer.parseInt(data[4]);
+			if (data.length >= 6) yOffset = Float.parseFloat(data[5]);
+			if (data.length >= 7) color = ColorUtil.getColorFromHexString(data[6]);
 		}
 		EffectPackage pkg = ParticleNameUtil.findEffectPackage(name);
 		this.data = pkg.data;

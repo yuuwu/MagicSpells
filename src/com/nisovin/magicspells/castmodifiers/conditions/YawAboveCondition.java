@@ -34,4 +34,5 @@ public class YawAboveCondition extends Condition{
 	public boolean check(Player player, Location location) {
 		return false;
 	}
+	
 }

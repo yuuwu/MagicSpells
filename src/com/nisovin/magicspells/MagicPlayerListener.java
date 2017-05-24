@@ -40,8 +40,9 @@ class MagicPlayerListener implements Listener {
 	@EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
 	public void onPlayerChangeWorld(PlayerChangedWorldEvent event) {
 		if (plugin.separatePlayerSpellsPerWorld) {
-			MagicSpells.debug(2, "Player '" + event.getPlayer().getName() + "' changed from world '" + event.getFrom().getName() + "' to '" + event.getPlayer().getWorld().getName() + "', reloading spells");
-			MagicSpells.getSpellbook(event.getPlayer()).reload();
+			Player player = event.getPlayer();
+			MagicSpells.debug(2, "Player '" + player.getName() + "' changed from world '" + event.getFrom().getName() + "' to '" + player.getWorld().getName() + "', reloading spells");
+			MagicSpells.getSpellbook(player).reload();
 		}
 	}
 	

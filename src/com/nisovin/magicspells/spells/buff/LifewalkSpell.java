@@ -59,31 +59,31 @@ public class LifewalkSpell extends BuffSpell {
 	@Override
 	public boolean castBuff(Player player, float power, String[] args) {
 		lifewalkers.add(player.getName());
-		if (grower == null) {
-			grower = new Grower();
-		}
+		if (grower == null) grower = new Grower();
 		return true;
 	}	
 	
 	@Override
 	public void turnOffBuff(Player player) {
 		lifewalkers.remove(player.getName());
-		if (lifewalkers.size() == 0 && grower != null) {
-			grower.stop();
-			grower = null;
-		}
+		if (!lifewalkers.isEmpty()) return;
+		if (grower == null) return;
+		
+		grower.stop();
+		grower = null;
 	}
 	
 	@Override
 	protected void turnOff() {
 		lifewalkers.clear();
-		if (grower != null) {
-			grower.stop();
-			grower = null;
-		}
+		if (grower == null) return;
+		
+		grower.stop();
+		grower = null;
 	}
 
 	private class Grower implements Runnable {
+		
 		int taskId;
 		String[] strArr = new String[0];
 		
@@ -160,7 +160,5 @@ public class LifewalkSpell extends BuffSpell {
 	public boolean isActive(Player player) {
 		return lifewalkers.contains(player.getName());
 	}
-
-
 
 }

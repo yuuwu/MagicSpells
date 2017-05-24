@@ -2,7 +2,6 @@ package com.nisovin.magicspells.spells.command;
 
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -19,6 +18,7 @@ import com.nisovin.magicspells.events.SpellLearnEvent;
 import com.nisovin.magicspells.events.SpellLearnEvent.LearnSource;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.CommandSpell;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.Util;
@@ -183,7 +183,7 @@ public class TomeSpell extends CommandSpell {
 			} else {
 				// call event
 				SpellLearnEvent learnEvent = new SpellLearnEvent(spell, event.getPlayer(), LearnSource.TOME, HandHandler.getItemInMainHand(event.getPlayer()));
-				Bukkit.getPluginManager().callEvent(learnEvent);
+				EventUtil.call(learnEvent);
 				if (learnEvent.isCancelled()) {
 					// fail -- plugin cancelled
 					sendMessage(formatMessage(strCantLearn, "%s", spell.getName()), event.getPlayer(), MagicSpells.NULL_ARGS);
@@ -192,9 +192,8 @@ public class TomeSpell extends CommandSpell {
 					spellbook.addSpell(spell);
 					spellbook.save();
 					sendMessage(formatMessage(strLearned, "%s", spell.getName()), event.getPlayer(), MagicSpells.NULL_ARGS);
-					if (cancelReadOnLearn) {
-						event.setCancelled(true);
-					}
+					if (cancelReadOnLearn) event.setCancelled(true);
+					
 					// remove use
 					if (uses > 0) {
 						uses--;

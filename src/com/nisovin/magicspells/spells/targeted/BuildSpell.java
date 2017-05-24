@@ -2,7 +2,6 @@ package com.nisovin.magicspells.spells.targeted;
 
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,8 +17,10 @@ import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
+
 public class BuildSpell extends TargetedSpell implements TargetedLocationSpell {
 	
 	private int slot;
@@ -39,9 +40,8 @@ public class BuildSpell extends TargetedSpell implements TargetedLocationSpell {
 		allowedTypes = new Material[allowed.length];
 		for (int i = 0; i < allowed.length; i++) {
 			MagicMaterial mat = MagicSpells.getItemNameResolver().resolveBlock(allowed[i]);
-			if (mat != null) {
-				allowedTypes[i] = mat.getMaterial();
-			}
+			if (mat == null) continue;
+			allowedTypes[i] = mat.getMaterial();
 		}
 		checkPlugins = getConfigBoolean("check-plugins", true);
 		playBreakEffect = getConfigBoolean("show-effect", true);
@@ -72,9 +72,7 @@ public class BuildSpell extends TargetedSpell implements TargetedLocationSpell {
 				return noTarget(player, strCantBuild);
 			} else {
 				boolean built = build(player, lastBlocks.get(0), lastBlocks.get(1), item);
-				if (!built) {
-					return noTarget(player, strCantBuild);
-				}
+				if (!built) return noTarget(player, strCantBuild);
 			}
 		}
 		return PostCastAction.HANDLE_NORMALLY;
@@ -90,20 +88,18 @@ public class BuildSpell extends TargetedSpell implements TargetedLocationSpell {
 		state.update(true);
 		if (checkPlugins) {
 			MagicSpellsBlockPlaceEvent event = new MagicSpellsBlockPlaceEvent(block, previousState, against, HandHandler.getItemInMainHand(player), player, true);
-			Bukkit.getServer().getPluginManager().callEvent(event);
+			EventUtil.call(event);
 			if (event.isCancelled() && block.getType() == item.getType()) {
 				previousState.update(true);
 				return false;
 			}
 		}
-		if (playBreakEffect) {
-			block.getWorld().playEffect(block.getLocation(), Effect.STEP_SOUND, block.getType());
-		}
+		if (playBreakEffect) block.getWorld().playEffect(block.getLocation(), Effect.STEP_SOUND, block.getType());
 		playSpellEffects(EffectPosition.CASTER, player);
 		playSpellEffects(EffectPosition.TARGET, block.getLocation());
 		playSpellEffectsTrail(player.getLocation(), block.getLocation());
 		if (consumeBlock) {
-			int amt = item.getAmount()-1;
+			int amt = item.getAmount() - 1;
 			if (amt > 0) {
 				item.setAmount(amt);
 				player.getInventory().setItem(slot, item);
@@ -118,9 +114,7 @@ public class BuildSpell extends TargetedSpell implements TargetedLocationSpell {
 	public boolean castAtLocation(Player caster, Location target, float power) {
 		// get mat
 		ItemStack item = caster.getInventory().getItem(slot);
-		if (item == null || !isAllowed(item.getType())) {
-			return false;
-		}
+		if (item == null || !isAllowed(item.getType())) return false;
 		
 		// get blocks
 		Block block = target.getBlock();
@@ -137,10 +131,9 @@ public class BuildSpell extends TargetedSpell implements TargetedLocationSpell {
 	private boolean isAllowed(Material mat) {
 		if (!mat.isBlock()) return false;
 		for (int i = 0; i < allowedTypes.length; i++) {
-			if (allowedTypes[i] != null && allowedTypes[i] == mat) {
-				return true;
-			}
+			if (allowedTypes[i] != null && allowedTypes[i] == mat) return true;
 		}
 		return false;
 	}
+	
 }

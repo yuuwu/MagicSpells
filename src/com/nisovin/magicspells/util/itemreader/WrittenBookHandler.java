@@ -14,12 +14,8 @@ public class WrittenBookHandler {
 		
 		BookMeta bmeta = (BookMeta)meta;
 		
-		if (config.contains("title") && config.isString("title")) {
-			bmeta.setTitle(ChatColor.translateAlternateColorCodes('&', config.getString("title")));
-		}
-		if (config.contains("author") && config.isString("author")) {
-			bmeta.setAuthor(ChatColor.translateAlternateColorCodes('&', config.getString("author")));
-		}
+		if (config.contains("title") && config.isString("title")) bmeta.setTitle(ChatColor.translateAlternateColorCodes('&', config.getString("title")));
+		if (config.contains("author") && config.isString("author")) bmeta.setAuthor(ChatColor.translateAlternateColorCodes('&', config.getString("author")));
 		if (config.contains("pages") && config.isList("pages")) {
 			List<String> pages = config.getStringList("pages");
 			for (int i = 0; i < pages.size(); i++) {

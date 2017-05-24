@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.bukkit.Material;
@@ -35,15 +36,14 @@ public class BlockBreakListener extends PassiveListener {
 			for (String s : split) {
 				s = s.trim();
 				MagicMaterial m = MagicSpells.getItemNameResolver().resolveBlock(s);
-				if (m != null) {
-					List<PassiveSpell> list = types.get(m);
-					if (list == null) {
-						list = new ArrayList<PassiveSpell>();
-						types.put(m, list);
-					}
-					list.add(spell);
-					materials.add(m.getMaterial());
+				if (m == null) continue;
+				List<PassiveSpell> list = types.get(m);
+				if (list == null) {
+					list = new ArrayList<PassiveSpell>();
+					types.put(m, list);
 				}
+				list.add(spell);
+				materials.add(m.getMaterial());
 			}
 		}
 	}
@@ -52,41 +52,32 @@ public class BlockBreakListener extends PassiveListener {
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
 		Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());
-		if (allTypes.size() > 0) {
+		if (!allTypes.isEmpty()) {
 			for (PassiveSpell spell : allTypes) {
 				if (!isCancelStateOk(spell, event.isCancelled())) continue;
-				if (spellbook.hasSpell(spell, false)) {
-					boolean casted = spell.activate(event.getPlayer(), event.getBlock().getLocation().add(0.5, 0.5, 0.5));
-					if (PassiveListener.cancelDefaultAction(spell, casted)) {
-						event.setCancelled(true);
-					}
-				}
+				if (!spellbook.hasSpell(spell, false)) continue;
+				boolean casted = spell.activate(event.getPlayer(), event.getBlock().getLocation().add(0.5, 0.5, 0.5));
+				if (PassiveListener.cancelDefaultAction(spell, casted)) event.setCancelled(true);
 			}
 		}
-		if (types.size() > 0) {
+		if (!types.isEmpty()) {
 			List<PassiveSpell> list = getSpells(event.getBlock());
 			if (list != null) {
 				for (PassiveSpell spell : list) {
 					if (!isCancelStateOk(spell, event.isCancelled())) continue;
-					if (spellbook.hasSpell(spell, false)) {
-						boolean casted = spell.activate(event.getPlayer(), event.getBlock().getLocation().add(0.5, 0.5, 0.5));
-						if (PassiveListener.cancelDefaultAction(spell, casted)) {
-							event.setCancelled(true);
-						}
-					}
+					if (!spellbook.hasSpell(spell, false)) continue;
+					boolean casted = spell.activate(event.getPlayer(), event.getBlock().getLocation().add(0.5, 0.5, 0.5));
+					if (PassiveListener.cancelDefaultAction(spell, casted)) event.setCancelled(true);
 				}
 			}
 		}
 	}
 	
 	private List<PassiveSpell> getSpells(Block block) {
-		if (materials.contains(block.getType())) {
-			MaterialData data = block.getState().getData();
-			for (MagicMaterial m : types.keySet()) {
-				if (m.equals(data)) {
-					return types.get(m);
-				}
-			}
+		if (!materials.contains(block.getType())) return null;
+		MaterialData data = block.getState().getData();
+		for (Entry<MagicMaterial, List<PassiveSpell>> entry : types.entrySet()) {
+			if (entry.getKey().equals(data)) return entry.getValue();
 		}
 		return null;
 	}

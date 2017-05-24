@@ -11,6 +11,7 @@ import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
+
 public class CrippleSpell extends TargetedSpell implements TargetedEntitySpell {
 
 	@ConfigData(field="use-slowness-effect", dataType="boolean", defaultValue="true", description="When set to true, the target will receive a slowness effect.")
@@ -58,24 +59,18 @@ public class CrippleSpell extends TargetedSpell implements TargetedEntitySpell {
 
 	@Override
 	public boolean castAtEntity(Player caster, LivingEntity target, float power) {
-		if (!validTargetList.canTarget(caster, target)) {
-			return false;
-		} else {
-			playSpellEffects(caster, target);
-			cripple(target, power);
-			return true;
-		}
+		if (!validTargetList.canTarget(caster, target)) return false;
+		playSpellEffects(caster, target);
+		cripple(target, power);
+		return true;
 	}
 
 	@Override
 	public boolean castAtEntity(LivingEntity target, float power) {
-		if (!validTargetList.canTarget(target)) {
-			return false;
-		} else {
-			playSpellEffects(EffectPosition.TARGET, target);
-			cripple(target, power);
-			return true;
-		}
+		if (!validTargetList.canTarget(target)) return false;
+		playSpellEffects(EffectPosition.TARGET, target);
+		cripple(target, power);
+		return true;
 	}
 	
 	private void cripple(LivingEntity target, float power) {
@@ -83,14 +78,12 @@ public class CrippleSpell extends TargetedSpell implements TargetedEntitySpell {
 		
 		//slowness effect
 		if (useSlownessEffect) {
-			target.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Math.round(duration*power), strength), true);
+			target.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Math.round(duration * power), strength), true);
 		}
 		
 		// portal cooldown
 		if (applyPortalCooldown) {
-			if (target.getPortalCooldown() < (int)(portalCooldown * power)) {
-				target.setPortalCooldown((int)(portalCooldown * power));
-			}
+			if (target.getPortalCooldown() < (int)(portalCooldown * power)) target.setPortalCooldown((int)(portalCooldown * power));
 		}
 	}
 

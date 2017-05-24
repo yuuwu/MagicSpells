@@ -8,7 +8,7 @@ public class DebugHandler {
 	
 	public static void debugEffectInfo(String s) {
 		if (MagicSpells.plugin.debug) {
-		MagicSpells.plugin.getLogger().log(Level.INFO, s);
+			MagicSpells.plugin.getLogger().log(Level.INFO, s);
 		}
 	}
 	
@@ -156,4 +156,5 @@ public class DebugHandler {
 	public static boolean isSpellPreImpactEventCheckEnabled() {
 		return MagicSpells.plugin.debug;
 	}
+	
 }

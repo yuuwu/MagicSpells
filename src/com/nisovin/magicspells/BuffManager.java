@@ -35,7 +35,7 @@ public class BuffManager {
 		HashSet<BuffSpell> buffs = activeBuffs.get(player.getName());
 		if (buffs != null) {
 			buffs.remove(spell);
-			if (buffs.size() == 0) {
+			if (buffs.isEmpty()) {
 				activeBuffs.remove(player.getName());
 			}
 		}
@@ -54,6 +54,7 @@ public class BuffManager {
 	}
 	
 	class Monitor implements Runnable {
+		
 		@Override
 		public void run() {
 			NoMagicZoneManager noMagicZones = MagicSpells.getNoMagicZoneManager();
@@ -73,6 +74,7 @@ public class BuffManager {
 				taskId = -1;
 			}
 		}
+		
 	}
 	
 }

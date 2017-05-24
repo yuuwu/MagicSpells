@@ -27,8 +27,7 @@ public class MagicRegexPrompt extends RegexPrompt {
 	}
 
 	@Override
-	protected Prompt acceptValidatedInput(
-			ConversationContext paramConversationContext, String paramString) {
+	protected Prompt acceptValidatedInput(ConversationContext paramConversationContext, String paramString) {
 		return responder.acceptValidatedInput(paramConversationContext, paramString);
 	}
 	

@@ -3,7 +3,6 @@ package com.nisovin.magicspells.spells.targeted;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -16,7 +15,9 @@ import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
+import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
+
 public class TransmuteSpell extends TargetedSpell implements TargetedLocationSpell {
 
 	List<MagicMaterial> blockTypes;
@@ -29,12 +30,11 @@ public class TransmuteSpell extends TargetedSpell implements TargetedLocationSpe
 		
 		List<String> list = getConfigStringList("transmutable-types", null);
 		blockTypes = new ArrayList<MagicMaterial>();
-		if (list != null && list.size() > 0) {
+		if (list != null && !list.isEmpty()) {
 			for (String s : list) {
 				MagicMaterial m = MagicSpells.getItemNameResolver().resolveBlock(s);
-				if (m != null) {
-					blockTypes.add(m);
-				}
+				if (m == null) continue;
+				blockTypes.add(m);
 			}
 		} else {
 			blockTypes.add(MagicSpells.getItemNameResolver().resolveBlock("iron_block"));
@@ -47,21 +47,14 @@ public class TransmuteSpell extends TargetedSpell implements TargetedLocationSpe
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			Block block = getTargetedBlock(player, power);
-			if (block == null) {
-				return noTarget(player);
-			} else {
-				SpellTargetLocationEvent event = new SpellTargetLocationEvent(this, player, block.getLocation(), power);
-				Bukkit.getPluginManager().callEvent(event);
-				if (event.isCancelled()) {
-					return noTarget(player);
-				} else {
-					block = event.getTargetLocation().getBlock();
-				}
-			}
+			if (block == null) return noTarget(player);
 			
-			if (!canTransmute(block)) {
-				return noTarget(player);
-			}
+			SpellTargetLocationEvent event = new SpellTargetLocationEvent(this, player, block.getLocation(), power);
+			EventUtil.call(event);
+			if (event.isCancelled()) return noTarget(player);
+			block = event.getTargetLocation().getBlock();
+			
+			if (!canTransmute(block)) return noTarget(player);
 			
 			transmuteType.setBlock(block);
 			playSpellEffects(player, block.getLocation().add(0.5, 0.5, 0.5));
@@ -85,7 +78,6 @@ public class TransmuteSpell extends TargetedSpell implements TargetedLocationSpe
 				return true;
 			}
 		}
-		
 		return false;
 	}
 

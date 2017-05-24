@@ -12,9 +12,7 @@ public class CoordZVariable extends MetaVariable {
 	@Override
 	public double getValue(String player) {
 		Player p = PlayerNameUtils.getPlayerExact(player);
-		if (p != null) {
-			return p.getLocation().getZ();
-		}
+		if (p != null) return p.getLocation().getZ();
 		return 0D;
 	}
 	

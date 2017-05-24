@@ -55,37 +55,37 @@ public class UnbindSpell extends CommandSpell {
 			if (args == null || args.length == 0) {
 				sendMessage(strUsage, player, args);
 				return PostCastAction.ALREADY_HANDLED;
+			}
+			
+			Spell spell = MagicSpells.getSpellByInGameName(Util.arrayJoin(args, ' '));
+			Spellbook spellbook = MagicSpells.getSpellbook(player);
+			if (spell == null || spellbook == null) {
+				// fail - no such spell, or no spellbook
+				sendMessage(strNoSpell, player, args);
+				return PostCastAction.ALREADY_HANDLED;
+			} else if (!spellbook.hasSpell(spell)) {
+				// fail - doesn't know spell
+				sendMessage(strNoSpell, player, args);
+				return PostCastAction.ALREADY_HANDLED;
+			} else if (!spell.canCastWithItem()) {
+				// fail - spell can't be bound
+				sendMessage(strCantBindSpell, player, args);
+				return PostCastAction.ALREADY_HANDLED;
 			} else {
-				Spell spell = MagicSpells.getSpellByInGameName(Util.arrayJoin(args, ' '));
-				Spellbook spellbook = MagicSpells.getSpellbook(player);
-				if (spell == null || spellbook == null) {
-					// fail - no such spell, or no spellbook
-					sendMessage(strNoSpell, player, args);
+				if (allowedSpells != null && !allowedSpells.contains(spell)) {
+					sendMessage(strCantUnbind, player, args);
 					return PostCastAction.ALREADY_HANDLED;
-				} else if (!spellbook.hasSpell(spell)) {
-					// fail - doesn't know spell
-					sendMessage(strNoSpell, player, args);
-					return PostCastAction.ALREADY_HANDLED;
-				} else if (!spell.canCastWithItem()) {
-					// fail - spell can't be bound
-					sendMessage(strCantBindSpell, player, args);
-					return PostCastAction.ALREADY_HANDLED;
-				} else {
-					if (allowedSpells != null && !allowedSpells.contains(spell)) {
-						sendMessage(strCantUnbind, player, args);
-						return PostCastAction.ALREADY_HANDLED;
-					}
-					CastItem item = new CastItem(HandHandler.getItemInMainHand(player));
-					boolean removed = spellbook.removeCastItem(spell, item);
-					if (!removed) {
-						sendMessage(strNotBound, player, args);
-						return PostCastAction.ALREADY_HANDLED;
-					}
-					spellbook.save();
-					sendMessage(formatMessage(strCastSelf, "%s", spell.getName()), player, args);
-					playSpellEffects(EffectPosition.CASTER, player);
-					return PostCastAction.NO_MESSAGES;
 				}
+				CastItem item = new CastItem(HandHandler.getItemInMainHand(player));
+				boolean removed = spellbook.removeCastItem(spell, item);
+				if (!removed) {
+					sendMessage(strNotBound, player, args);
+					return PostCastAction.ALREADY_HANDLED;
+				}
+				spellbook.save();
+				sendMessage(formatMessage(strCastSelf, "%s", spell.getName()), player, args);
+				playSpellEffects(EffectPosition.CASTER, player);
+				return PostCastAction.NO_MESSAGES;
 			}
 		}		
 		return PostCastAction.HANDLE_NORMALLY;
@@ -95,9 +95,7 @@ public class UnbindSpell extends CommandSpell {
 	public List<String> tabComplete(CommandSender sender, String partial) {
 		if (sender instanceof Player) {
 			// only one arg
-			if (partial.contains(" ")) {
-				return null;
-			}
+			if (partial.contains(" ")) return null;
 			
 			// tab complete spellname from spellbook
 			return tabCompleteSpellName(sender, partial);

@@ -24,19 +24,17 @@ public class ConfusionSpell extends InstantSpell {
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
-			int range = Math.round(this.range*power);
+			int range = Math.round(this.range * power);
 			List<Entity> entities = player.getNearbyEntities(range, range, range);
 			List<LivingEntity> monsters = new ArrayList<LivingEntity>();
 			for (Entity e : entities) {
-				if (e instanceof LivingEntity && validTargetList.canTarget(player, (LivingEntity)e)) {
-					monsters.add((LivingEntity)e);
-				}
+				if (!(e instanceof LivingEntity)) continue;
+				if (!validTargetList.canTarget(player, (LivingEntity)e)) continue;
+				monsters.add((LivingEntity)e);
 			}
 			for (int i = 0; i < monsters.size(); i++) {
-				int next = i+1;
-				if (next >= monsters.size()) {
-					next = 0;
-				}
+				int next = i + 1;
+				if (next >= monsters.size()) next = 0;
 				MagicSpells.getVolatileCodeHandler().setTarget(monsters.get(i), monsters.get(next));
 				playSpellEffects(EffectPosition.TARGET, monsters.get(i));
 			}

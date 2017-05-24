@@ -32,14 +32,13 @@ public class KillListener extends PassiveListener {
 			String[] split = var.replace(" ", "").split(",");
 			for (String s : split) {
 				EntityType t = Util.getEntityType(s);
-				if (t != null) {
-					List<PassiveSpell> spells = entityTypes.get(t);
-					if (spells == null) {
-						spells = new ArrayList<PassiveSpell>();
-						entityTypes.put(t, spells);
-					}
-					spells.add(spell);
+				if (t == null) continue;
+				List<PassiveSpell> spells = entityTypes.get(t);
+				if (spells == null) {
+					spells = new ArrayList<PassiveSpell>();
+					entityTypes.put(t, spells);
 				}
+				spells.add(spell);
 			}
 		}
 	}
@@ -50,19 +49,17 @@ public class KillListener extends PassiveListener {
 		Player killer = event.getEntity().getKiller();
 		if (killer != null) {
 			Spellbook spellbook = MagicSpells.getSpellbook(killer);
-			if (allTypes.size() > 0) {
+			if (!allTypes.isEmpty()) {
 				for (PassiveSpell spell : allTypes) {
-					if (spellbook.hasSpell(spell)) {
-						spell.activate(killer, event.getEntity());
-					}
+					if (!spellbook.hasSpell(spell)) continue;
+					spell.activate(killer, event.getEntity());
 				}
 			}
 			if (entityTypes.containsKey(event.getEntityType())) {
 				List<PassiveSpell> list = entityTypes.get(event.getEntityType());
 				for (PassiveSpell spell : list) {
-					if (spellbook.hasSpell(spell)) {
-						spell.activate(killer, event.getEntity());
-					}
+					if (!spellbook.hasSpell(spell)) continue;
+					spell.activate(killer, event.getEntity());
 				}
 			}
 		}

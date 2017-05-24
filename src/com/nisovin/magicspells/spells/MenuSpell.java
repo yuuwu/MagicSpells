@@ -108,17 +108,12 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 				option.stayOpen = optionStayOpen;
 				String optionKey = uniqueNames ? getOptionKey(option.item) : optionName;
 				options.put(optionKey, option);
-				if (optionSlot > maxSlot) {
-					maxSlot = optionSlot;
-				}
+				if (optionSlot > maxSlot) maxSlot = optionSlot;
 			}
 		}
 		size = ((maxSlot / 9) * 9) + 9;
 		
-		if (options.size() == 0) {
-			MagicSpells.error("The MenuSpell '" + spellName + "' has no menu options!");
-		}
-		
+		if (options.isEmpty()) MagicSpells.error("The MenuSpell '" + spellName + "' has no menu options!");
 	}
 	
 	@Override
@@ -129,9 +124,7 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 			Subspell spell = new Subspell(option.spellName);
 			if (spell.process()) {
 				option.spell = spell;
-				if (option.modifierList != null) {
-					option.menuOptionModifiers = new ModifierSet(option.modifierList);
-				}
+				if (option.modifierList != null) option.menuOptionModifiers = new ModifierSet(option.modifierList);
 			} else {
 				MagicSpells.error("The MenuSpell '" + internalName + "' has an invalid spell listed on '" + option.menuOptionName + "'");
 			}
@@ -148,27 +141,17 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 			
 			if (requireEntityTarget) {
 				TargetInfo<LivingEntity> targetInfo = getTargetedEntity(player, power);
-				if (targetInfo != null) {
-					entityTarget = targetInfo.getTarget();
-				}
-				if (entityTarget == null) {
-					return noTarget(player);
-				}
+				if (targetInfo != null) entityTarget = targetInfo.getTarget();
+				if (entityTarget == null) return noTarget(player);
 				if (targetOpensMenuInstead) {
-					if (entityTarget instanceof Player) {
-						opener = (Player)entityTarget;
-						entityTarget = null;
-					} else {
-						return noTarget(player);
-					}
+					if (!(entityTarget instanceof Player)) return noTarget(player);
+					opener = (Player)entityTarget;
+					entityTarget = null;
 				}
 			} else if (requireLocationTarget) {
 				Block block = getTargetedBlock(player, power);
-				if (block == null || block.getType() == Material.AIR) {
-					return noTarget(player);
-				} else {
-					locTarget = block.getLocation();
-				}
+				if (block == null || block.getType() == Material.AIR) return noTarget(player);
+				locTarget = block.getLocation();
 			}
 			
 			open(player, opener, entityTarget, locTarget, power, args);
@@ -198,12 +181,8 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 	
 	void openMenu(Player caster, Player opener, LivingEntity entityTarget, Location locTarget, float power, String[] args) {
 		castPower.put(opener.getName(), power);
-		if (requireEntityTarget && entityTarget != null) {
-			castEntityTarget.put(opener.getName(), entityTarget);
-		}
-		if (requireLocationTarget && locTarget != null) {
-			castLocTarget.put(opener.getName(), locTarget);
-		}
+		if (requireEntityTarget && entityTarget != null) castEntityTarget.put(opener.getName(), entityTarget);
+		if (requireLocationTarget && locTarget != null) castLocTarget.put(opener.getName(), locTarget);
 		
 		Inventory inv = Bukkit.createInventory(opener, size, title);
 		applyOptionsToInventory(opener, inv, args);
@@ -212,13 +191,9 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 		if (entityTarget != null && caster != null) {
 			playSpellEffects(caster, entityTarget);
 		} else {
-			if (caster != null) {
-				playSpellEffects(EffectPosition.CASTER, caster);
-			}
+			if (caster != null) playSpellEffects(EffectPosition.CASTER, caster);
 			playSpellEffects(EffectPosition.SPECIAL, opener);
-			if (locTarget != null) {
-				playSpellEffects(EffectPosition.TARGET, locTarget);
-			}
+			if (locTarget != null) playSpellEffects(EffectPosition.TARGET, locTarget);
 		}
 	}
 	
@@ -253,6 +228,7 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 			event.setCancelled(true);		
 			if (event.getClick() == ClickType.LEFT) {
 				final Player player = (Player)event.getWhoClicked();
+				String playerName = player.getName();
 				boolean close = true;
 				
 				ItemStack item = event.getCurrentItem();
@@ -263,13 +239,13 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 						Subspell spell = option.spell;
 						if (spell != null) {
 							float power = option.power;
-							if (castPower.containsKey(player.getName())) {
-								power *= castPower.get(player.getName()).floatValue();
+							if (castPower.containsKey(playerName)) {
+								power *= castPower.get(playerName).floatValue();
 							}
-							if (spell.isTargetedEntitySpell() && castEntityTarget.containsKey(player.getName())) {
-								spell.castAtEntity(player, castEntityTarget.get(player.getName()), power);
-							} else if (spell.isTargetedLocationSpell() && castLocTarget.containsKey(player.getName())) {
-								spell.castAtLocation(player, castLocTarget.get(player.getName()), power);
+							if (spell.isTargetedEntitySpell() && castEntityTarget.containsKey(playerName)) {
+								spell.castAtEntity(player, castEntityTarget.get(playerName), power);
+							} else if (spell.isTargetedLocationSpell() && castLocTarget.containsKey(playerName)) {
+								spell.castAtLocation(player, castLocTarget.get(playerName), power);
 							} else if (bypassNormalCast) {
 								spell.cast(player, power);
 							} else {
@@ -280,9 +256,9 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 					}
 				}
 				
-				castPower.remove(player.getName());
-				castEntityTarget.remove(player.getName());
-				castLocTarget.remove(player.getName());
+				castPower.remove(playerName);
+				castEntityTarget.remove(playerName);
+				castLocTarget.remove(playerName);
 				
 				if (close) {
 					MagicSpells.scheduleDelayedTask(new Runnable() {
@@ -300,9 +276,10 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 	
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
-		castPower.remove(event.getPlayer().getName());
-		castEntityTarget.remove(event.getPlayer().getName());
-		castLocTarget.remove(event.getPlayer().getName());
+		String playerName = event.getPlayer().getName();
+		castPower.remove(playerName);
+		castEntityTarget.remove(playerName);
+		castLocTarget.remove(playerName);
 	}
 
 	@Override
@@ -310,12 +287,9 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 		if (requireEntityTarget && !validTargetList.canTarget(caster, target)) return false;
 		Player opener = caster;
 		if (targetOpensMenuInstead) {
-			if (target instanceof Player) {
-				opener = (Player)target;
-				target = null;
-			} else {
-				return false;
-			}
+			if (!(target instanceof Player)) return false;
+			opener = (Player)target;
+			target = null;
 		}
 		open(caster, opener, target, null, power, MagicSpells.NULL_ARGS);
 		return true;
@@ -325,12 +299,9 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 	public boolean castAtEntity(LivingEntity target, float power) {
 		if (!targetOpensMenuInstead) return false;
 		if (requireEntityTarget && !validTargetList.canTarget(target)) return false;
-		if (target instanceof Player) {
-			open(null, (Player)target, null, null, power, MagicSpells.NULL_ARGS);
-			return true;
-		} else {
-			return false;
-		}
+		if (!(target instanceof Player)) return false;
+		open(null, (Player)target, null, null, power, MagicSpells.NULL_ARGS);
+		return true;
 	}
 
 	@Override
@@ -357,7 +328,8 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 		return false;
 	}
 	
-	class MenuOption {
+	static class MenuOption {
+		
 		String menuOptionName;
 		int slot;
 		ItemStack item;
@@ -367,6 +339,7 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 		List<String> modifierList;
 		ModifierSet menuOptionModifiers;
 		boolean stayOpen;
+		
 	}
 
 }

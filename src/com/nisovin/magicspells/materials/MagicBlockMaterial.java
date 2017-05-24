@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
 public class MagicBlockMaterial extends MagicMaterial {
+	
 	MaterialData data;
 	
 	public MagicBlockMaterial(MaterialData data) {
@@ -42,4 +43,5 @@ public class MagicBlockMaterial extends MagicMaterial {
 	public ItemStack toItemStack(int quantity) {
 		return getMaterialData().toItemStack(quantity);
 	}
+	
 }

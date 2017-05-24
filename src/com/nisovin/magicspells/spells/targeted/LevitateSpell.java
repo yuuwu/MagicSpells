@@ -22,6 +22,7 @@ import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
+
 public class LevitateSpell extends TargetedSpell implements TargetedEntitySpell {
 
 	int tickRate;
@@ -51,15 +52,9 @@ public class LevitateSpell extends TargetedSpell implements TargetedEntitySpell 
 	@Override
 	public void initialize() {
 		super.initialize();
-		if (cancelOnItemSwitch) {
-			registerEvents(new ItemSwitchListener());
-		}
-		if (cancelOnSpellCast) {
-			registerEvents(new SpellCastListener());
-		}
-		if (cancelOnTakeDamage) {
-			registerEvents(new DamageListener());
-		}
+		if (cancelOnItemSwitch) registerEvents(new ItemSwitchListener());
+		if (cancelOnSpellCast) registerEvents(new SpellCastListener());
+		if (cancelOnTakeDamage) registerEvents(new DamageListener());
 	}
 
 	@Override
@@ -69,9 +64,7 @@ public class LevitateSpell extends TargetedSpell implements TargetedEntitySpell 
 			return PostCastAction.ALREADY_HANDLED;
 		} else if (state == SpellCastState.NORMAL) {
 			TargetInfo<LivingEntity> target = getTargetedEntity(player, power);
-			if (target == null) {
-				return noTarget(player);
-			}
+			if (target == null) return noTarget(player);
 			
 			levitate(player, target.getTarget(), target.getPower());
 			sendMessages(player, target.getTarget());
@@ -100,35 +93,40 @@ public class LevitateSpell extends TargetedSpell implements TargetedEntitySpell 
 	}
 	
 	public void onPlayerDeath(PlayerDeathEvent event) {
-		if (levitating.containsKey(event.getEntity())) {
-			levitating.remove(event.getEntity()).stop();
-		}
+		if (!levitating.containsKey(event.getEntity())) return;
+		levitating.remove(event.getEntity()).stop();
 	}
 	
 	public class ItemSwitchListener implements Listener {
+		
 		@EventHandler
 		public void onItemSwitch(PlayerItemHeldEvent event) {
-			if (levitating.containsKey(event.getPlayer())) {
-				levitating.remove(event.getPlayer()).stop();
-			}
+			if (!levitating.containsKey(event.getPlayer())) return;
+			levitating.remove(event.getPlayer()).stop();
 		}
+		
 	}
 	
 	public class SpellCastListener implements Listener {
+		
 		@EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
 		public void onSpellCast(SpellCastEvent event) {
 			if (levitating.containsKey(event.getCaster()) && !event.getSpell().getInternalName().equals(internalName)) {
 				levitating.remove(event.getCaster()).stop();
 			}
 		}
+		
 	}
 	
 	public class DamageListener implements Listener {
+		
+		@EventHandler
 		public void onEntityDamage(EntityDamageByEntityEvent event) {
 			if (event.getEntity() instanceof Player && levitating.containsKey(event.getEntity())) {
 				levitating.remove(event.getEntity()).stop();
 			}
 		}
+		
 	}
 	
 	@Override
@@ -162,26 +160,22 @@ public class LevitateSpell extends TargetedSpell implements TargetedEntitySpell 
 		
 		@Override
 		public void run() {
-			if (!stopped) {
-				if (caster.isDead() || !caster.isOnline()) {
-					stop();
-				} else {
-					if (distanceChange != 0 && distance > minDistance) {
-						distance -= distanceChange;
-						if (distance < minDistance)
-							distance = minDistance;
-					}
-					target.setFallDistance(0);
-					Vector casterLocation = caster.getEyeLocation().toVector();
-					Vector targetLocation = target.getLocation().toVector();
-					Vector wantedLocation = casterLocation.add(caster.getLocation().getDirection().multiply(distance));
-					Vector v = wantedLocation.subtract(targetLocation).multiply(tickRate/25F + .1);
-					target.setVelocity(v);
-					counter++;
-					if (durationLevitator > 0 && counter > durationLevitator) {
-						stop();
-					}
+			if (stopped) return;
+			if (caster.isDead() || !caster.isOnline()) {
+				stop();
+			} else {
+				if (distanceChange != 0 && distance > minDistance) {
+					distance -= distanceChange;
+					if (distance < minDistance) distance = minDistance;
 				}
+				target.setFallDistance(0);
+				Vector casterLocation = caster.getEyeLocation().toVector();
+				Vector targetLocation = target.getLocation().toVector();
+				Vector wantedLocation = casterLocation.add(caster.getLocation().getDirection().multiply(distance));
+				Vector v = wantedLocation.subtract(targetLocation).multiply(tickRate/25F + .1);
+				target.setVelocity(v);
+				counter++;
+				if (durationLevitator > 0 && counter > durationLevitator) stop();
 			}
 		}
 		

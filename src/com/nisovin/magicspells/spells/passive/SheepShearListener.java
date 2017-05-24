@@ -40,9 +40,7 @@ public class SheepShearListener extends PassiveListener {
 			allColorSpells.add(spell);
 		} else {
 			DyeColor c = DyeColor.valueOf(var.toUpperCase());
-			if (c == null) {
-				throw new IllegalArgumentException("Cannot resolve " + var + " to DyeColor");
-			}
+			if (c == null) throw new IllegalArgumentException("Cannot resolve " + var + " to DyeColor");
 			spellMap.get(DyeColor.valueOf(var.toUpperCase())).add(spell);
 		}
 	}
@@ -57,24 +55,16 @@ public class SheepShearListener extends PassiveListener {
 		Spellbook spellbook = MagicSpells.getSpellbook(p);
 		for (PassiveSpell spell : spells) {
 			if (!isCancelStateOk(spell, event.isCancelled())) continue;
-			if (spellbook.hasSpell(spell)) {
-				boolean casted = spell.activate(p);
-				if (PassiveListener.cancelDefaultAction(spell, casted)) {
-					event.setCancelled(true);
-				}
-			}
+			if (!spellbook.hasSpell(spell)) continue;
+			boolean casted = spell.activate(p);
+			if (PassiveListener.cancelDefaultAction(spell, casted)) event.setCancelled(true);
 		}
 		for (PassiveSpell spell: allColorSpells) {
 			if (!isCancelStateOk(spell, event.isCancelled())) continue;
-			if (spellbook.hasSpell(spell)) {
-				boolean casted = spell.activate(p);
-				if (PassiveListener.cancelDefaultAction(spell, casted)) {
-					event.setCancelled(true);
-				}
-			}
+			if (!spellbook.hasSpell(spell)) continue;
+			boolean casted = spell.activate(p);
+			if (PassiveListener.cancelDefaultAction(spell, casted)) event.setCancelled(true);
 		}
 	}
 
-
-	
 }

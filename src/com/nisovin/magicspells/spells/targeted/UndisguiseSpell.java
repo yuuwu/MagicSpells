@@ -9,6 +9,7 @@ import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.IDisguiseManager;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
+
 public class UndisguiseSpell extends TargetedSpell implements TargetedEntitySpell {
 
 	IDisguiseManager manager;
@@ -32,9 +33,8 @@ public class UndisguiseSpell extends TargetedSpell implements TargetedEntitySpel
 				undisguise(player, target.getTarget());
 				sendMessages(player, target.getTarget());
 				return PostCastAction.NO_MESSAGES;
-			} else {
-				return noTarget(player);
 			}
+			return noTarget(player);
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}
@@ -54,20 +54,14 @@ public class UndisguiseSpell extends TargetedSpell implements TargetedEntitySpel
 
 	@Override
 	public boolean castAtEntity(Player caster, LivingEntity target, float power) {
-		if (target instanceof Player) {
-			return undisguise(caster, (Player)target);
-		} else {
-			return false;
-		}
+		if (target instanceof Player) return undisguise(caster, (Player)target);
+		return false;
 	}
 
 	@Override
 	public boolean castAtEntity(LivingEntity target, float power) {
-		if (target instanceof Player) {
-			return undisguise(null, (Player)target);
-		} else {
-			return false;
-		}
+		if (target instanceof Player) return undisguise(null, (Player)target);
+		return false;
 	}
 
 }
