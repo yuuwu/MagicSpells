@@ -16,18 +16,12 @@ public class HasFactionCondition extends Condition {
 
 	@Override
 	public boolean check(Player player) {
-		if (player != null) {
-			return MPlayer.get(player).hasFaction();
-		}
-		return false;
+		return player != null && MPlayer.get(player).hasFaction();
 	}
 
 	@Override
 	public boolean check(Player player, LivingEntity target) {
-		if (target != null && target instanceof Player) {
-			return MPlayer.get((Player)target).hasFaction();
-		}
-		return false;
+		return target != null && target instanceof Player && MPlayer.get(target).hasFaction();
 	}
 
 	@Override

@@ -73,7 +73,7 @@ public class InvisibilitySpell extends BuffSpell {
 	
 	private boolean cancelOnSpellCast;
 	
-	private HashMap<String,CostCharger> invisibles = new HashMap<String, InvisibilitySpell.CostCharger>();
+	private HashMap<String,CostCharger> invisibles = new HashMap<>();
 	
 	public InvisibilitySpell(MagicConfig config, String spellName) {
 		super(config, spellName);

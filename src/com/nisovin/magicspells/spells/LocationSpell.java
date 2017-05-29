@@ -33,11 +33,11 @@ public class LocationSpell extends InstantSpell {
 			if (split.length > 5) pitch = Float.parseFloat(split[5]);
 			location = new MagicLocation(world, x, y, z, yaw, pitch);
 		} catch (Exception e) {
-			MagicSpells.error("Invalid location on LocationSpell '" + spellName + "'");
+			MagicSpells.error("Invalid location on LocationSpell '" + spellName + '\'');
 		}
 		spell = new Subspell(getConfigString("spell", ""));
 		if (spell == null) {
-			MagicSpells.error("Invalid spell on LocationSpell '" + spellName + "'");
+			MagicSpells.error("Invalid spell on LocationSpell '" + spellName + '\'');
 		}
 	}
 	
@@ -47,7 +47,7 @@ public class LocationSpell extends InstantSpell {
 		if (spell != null) {
 			boolean ok = spell.process();
 			if (!ok || !spell.isTargetedLocationSpell()) {
-				MagicSpells.error("Invalid spell on LocationSpell '" + name + "'");
+				MagicSpells.error("Invalid spell on LocationSpell '" + name + '\'');
 			}
 		}
 	}

@@ -19,7 +19,7 @@ public abstract class Condition {
 	
 	public abstract boolean check(Player player, Location location);
 	
-	private static HashMap<String, Class<? extends Condition>> conditions = new HashMap<String, Class<? extends Condition>>();
+	private static HashMap<String, Class<? extends Condition>> conditions = new HashMap<>();
 	
 	public static void addCondition(String name, Class<? extends Condition> condition) {
 		conditions.put(name.toLowerCase(), condition);

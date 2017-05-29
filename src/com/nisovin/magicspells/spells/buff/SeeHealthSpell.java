@@ -45,7 +45,7 @@ public class SeeHealthSpell extends BuffSpell {
 		
 		if (!mode.equals("attack") && !mode.equals("always")) mode = "attack";
 		
-		bars = new HashMap<String, Integer>();
+		bars = new HashMap<>();
 	}
 	
 	@Override

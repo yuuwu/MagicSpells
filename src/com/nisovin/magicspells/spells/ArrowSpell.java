@@ -196,7 +196,7 @@ public class ArrowSpell extends Spell {
 	
 	class ArrowSpellHandler implements Listener {
 		
-		Map<String, ArrowSpell> spells = new HashMap<String, ArrowSpell>();
+		Map<String, ArrowSpell> spells = new HashMap<>();
 		
 		public ArrowSpellHandler() {
 			registerEvents(this);

@@ -39,7 +39,7 @@ public class RepairSpell extends InstantSpell {
 		
 		repairAmt = getConfigInt("repair-amount", 300);
 		List<String> toRepairList = getConfigStringList("to-repair", null);
-		if (toRepairList == null) toRepairList = new ArrayList<String>();
+		if (toRepairList == null) toRepairList = new ArrayList<>();
 		if (toRepairList.isEmpty()) toRepairList.add(REPAIR_SELECTOR_KEY_HELD);
 		Iterator<String> iter = toRepairList.iterator();
 		while (iter.hasNext()) {

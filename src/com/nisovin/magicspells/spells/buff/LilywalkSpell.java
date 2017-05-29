@@ -68,7 +68,7 @@ public class LilywalkSpell extends BuffSpell {
 		
 		cancelOnTeleport = getConfigBoolean("cancel-on-teleport", true);
 		
-		lilywalkers = new HashMap<String,Lilies>();
+		lilywalkers = new HashMap<>();
 	}
 
 	@Override
@@ -139,7 +139,7 @@ public class LilywalkSpell extends BuffSpell {
 	public class Lilies {
 		
 		private Block center = null;
-		private HashSet<Block> blocks = new HashSet<Block>();
+		private HashSet<Block> blocks = new HashSet<>();
 		
 		public void move(Block center) {
 			this.center = center;

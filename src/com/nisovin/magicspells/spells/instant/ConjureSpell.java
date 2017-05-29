@@ -102,7 +102,7 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 
 		if (expiration > 0 && expirationHandler == null) expirationHandler = new ExpirationHandler();
 		
-		if (itemList != null && itemList.size() > 0) {
+		if (itemList != null && !itemList.isEmpty()) {
 			itemTypes = new ItemStack[itemList.size()];
 			itemMinQuantities = new int[itemList.size()];
 			itemMaxQuantities = new int[itemList.size()];
@@ -176,7 +176,7 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 	
 	private void conjureItems(Player player, float power) {
 		// get items to drop
-		List<ItemStack> items = new ArrayList<ItemStack>();
+		List<ItemStack> items = new ArrayList<>();
 		if (calculateDropsIndividually) {
 			individual(items, rand, power);
 		} else {
@@ -292,7 +292,7 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 	
 	@Override
 	public boolean castAtLocation(Location target, float power) {
-		List<ItemStack> items = new ArrayList<ItemStack>();
+		List<ItemStack> items = new ArrayList<>();
 		if (calculateDropsIndividually) {
 			individual(items, rand, power);
 		} else {
@@ -347,9 +347,9 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 			ItemMeta meta = item.getItemMeta();
 			List<String> lore;
 			if (meta.hasLore()) {
-				lore = new ArrayList<String>(meta.getLore());
+				lore = new ArrayList<>(meta.getLore());
 			} else {
-				lore = new ArrayList<String>();
+				lore = new ArrayList<>();
 			}
 			long expiresAt = System.currentTimeMillis() + (long)(expireHours * 60L * 60L * 1000L);
 			lore.add(getExpiresText(expiresAt));
@@ -460,14 +460,14 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 				} else if (hours >= 2) {
 					return ChatColor.GRAY + "Expires in " + ChatColor.WHITE + (long)hours + ChatColor.GRAY + " hours";
 				} else {
-					return ChatColor.GRAY + "Expires in " + ChatColor.WHITE + "1" + ChatColor.GRAY + " hour";
+					return ChatColor.GRAY + "Expires in " + ChatColor.WHITE + '1' + ChatColor.GRAY + " hour";
 				}
 			}
 		}		
 		
 	}
 	
-	private static enum ExpirationResult {
+	private enum ExpirationResult {
 		
 		NO_UPDATE, UPDATE, EXPIRED
 		

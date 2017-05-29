@@ -50,12 +50,8 @@ public class HasItemLessThanCondition extends Condition {
 	@Override
 	public boolean check(Player player, LivingEntity target) {
 		if (target == null) return false;
-		
-		if (target instanceof InventoryHolder) {
-			return check(((InventoryHolder)target).getInventory());
-		} else {
-			return false;
-		}
+		if (target instanceof InventoryHolder) return check(((InventoryHolder)target).getInventory());
+		return false;
 	}
 
 	@Override
@@ -66,9 +62,7 @@ public class HasItemLessThanCondition extends Condition {
 		BlockState targetState = target.getState();
 		if (targetState == null) return false;
 		
-		if (targetState instanceof InventoryHolder) {
-			return check(((InventoryHolder)targetState).getInventory());
-		}
+		if (targetState instanceof InventoryHolder) return check(((InventoryHolder)targetState).getInventory());
 		
 		return false;
 	}

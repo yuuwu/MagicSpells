@@ -15,7 +15,7 @@ import com.nisovin.magicspells.util.OverridePriority;
 // no trigger variable is used here
 public class FatalDamageListener extends PassiveListener {
 
-	List<PassiveSpell> spells = new ArrayList<PassiveSpell>();
+	List<PassiveSpell> spells = new ArrayList<>();
 	
 	@Override
 	public void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var) {

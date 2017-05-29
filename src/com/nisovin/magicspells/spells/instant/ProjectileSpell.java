@@ -94,7 +94,7 @@ public class ProjectileSpell extends InstantSpell {
 			}
 		}
 		if (projectileClass == null && projectileItem == null) {
-			MagicSpells.error("Invalid projectile type on spell '" + internalName + "'");
+			MagicSpells.error("Invalid projectile type on spell '" + internalName + '\'');
 		}
 		velocity = getConfigFloat("velocity", 0);
 		horizSpread = getConfigFloat("horizontal-spread", 0);
@@ -115,16 +115,16 @@ public class ProjectileSpell extends InstantSpell {
 		strHitTarget = getConfigString("str-hit-target", "");
 		
 		if (projectileClass != null) {
-			projectiles = new HashMap<Projectile, ProjectileInfo>();
+			projectiles = new HashMap<>();
 		} else if (projectileItem != null) {
-			itemProjectiles = new HashMap<Item, ProjectileSpell.ProjectileInfo>();
+			itemProjectiles = new HashMap<>();
 		}
 	}
 	
 	@Override
 	public void initialize() {
 		super.initialize();
-		spells = new ArrayList<Subspell>();
+		spells = new ArrayList<>();
 		if (spellNames != null) {
 			for (String spellName : spellNames) {
 				Subspell spell = new Subspell(spellName);
@@ -203,14 +203,13 @@ public class ProjectileSpell extends InstantSpell {
 				// check player
 				if (!targetPlayers && target instanceof Player) return false;
 				
-				
 				// call target event
 				SpellTargetEvent evt = new SpellTargetEvent(this, info.player, target, power);
 				EventUtil.call(evt);
 				if (evt.isCancelled()) {
 					return false;
 				} else if (allowTargetChange) {
-					target = evt.getTarget(); //TODO make an alternative to overriding the parameter
+					target = evt.getTarget();
 					power = evt.getPower();
 				}
 				
@@ -451,7 +450,7 @@ public class ProjectileSpell extends InstantSpell {
 	}
 	
 	private interface ProjectileMonitor {
-		public void stop();
+		void stop();
 	}
 	
 	private class ItemProjectileMonitor implements Runnable, ProjectileMonitor {

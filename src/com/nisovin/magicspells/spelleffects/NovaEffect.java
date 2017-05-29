@@ -140,7 +140,7 @@ public class NovaEffect extends SpellEffect {
 		Item item = location.getWorld().dropItem(location, new ItemStack(Material.STONE, 0));
 		List<Entity> nearbyEntities = item.getNearbyEntities(range, range, range);
 		item.remove();
-		List<Player> nearby = new ArrayList<Player>();
+		List<Player> nearby = new ArrayList<>();
 		for (Entity e : nearbyEntities) {
 			if (!(e instanceof Player)) continue;
 			nearby.add((Player)e);
@@ -169,7 +169,7 @@ public class NovaEffect extends SpellEffect {
 			this.center = center;
 			this.matNova = mat;
 			this.radiusNova = radius;
-			blocks = new HashSet<Block>();
+			blocks = new HashSet<>();
 			radiusChange = activeRadiusChange;
 		}
 

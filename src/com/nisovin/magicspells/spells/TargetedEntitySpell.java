@@ -5,8 +5,8 @@ import org.bukkit.entity.Player;
 
 public interface TargetedEntitySpell {
 	
-	public boolean castAtEntity(Player caster, LivingEntity target, float power);
+	boolean castAtEntity(Player caster, LivingEntity target, float power);
 	
-	public boolean castAtEntity(LivingEntity target, float power);
+	boolean castAtEntity(LivingEntity target, float power);
 	
 }

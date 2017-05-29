@@ -18,7 +18,7 @@ public class LoreHandler {
 				}
 				meta.setLore(lore);
 			} else if (config.isString("lore")) {
-				List<String> lore = new ArrayList<String>();
+				List<String> lore = new ArrayList<>();
 				lore.add(ChatColor.translateAlternateColorCodes('&', config.getString("lore")));
 				meta.setLore(lore);
 			}

@@ -75,7 +75,7 @@ public class HasteSpell extends BuffSpell {
 		strength = getConfigInt("effect-strength", 3);
 		boostDuration = getConfigInt("boost-duration", 300);
 		
-		hasted = new HashMap<Player,Integer>();
+		hasted = new HashMap<>();
 	}
 
 	@Override

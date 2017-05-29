@@ -33,11 +33,8 @@ public class VariableMoreThanCondition extends Condition {
 
 	@Override
 	public boolean check(Player player, LivingEntity target) {
-		if (target instanceof Player) {
-			return check((Player)target);
-		} else {
-			return check(player);
-		}
+		if (target instanceof Player) return check((Player)target);
+		return check(player);
 	}
 
 	@Override

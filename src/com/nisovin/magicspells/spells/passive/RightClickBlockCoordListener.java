@@ -20,8 +20,8 @@ import com.nisovin.magicspells.util.OverridePriority;
 // where "world" is a string and x, y, and z are integers
 public class RightClickBlockCoordListener extends PassiveListener {
 
-	Map<MagicLocation, PassiveSpell> locs = new HashMap<MagicLocation, PassiveSpell>();
-	Map<MagicLocation, PassiveSpell> offhandLocs = new HashMap<MagicLocation, PassiveSpell>();
+	Map<MagicLocation, PassiveSpell> locs = new HashMap<>();
+	Map<MagicLocation, PassiveSpell> offhandLocs = new HashMap<>();
 	
 	@Override
 	public void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var) {
@@ -41,7 +41,7 @@ public class RightClickBlockCoordListener extends PassiveListener {
 				int z = Integer.parseInt(data[3]);				
 				addTo.put(new MagicLocation(world, x, y, z), spell);
 			} catch (NumberFormatException e) {
-				MagicSpells.error("Invalid coords on rightclickblockcoord trigger for spell '" + spell.getInternalName() + "'");
+				MagicSpells.error("Invalid coords on rightclickblockcoord trigger for spell '" + spell.getInternalName() + '\'');
 			}
 		}
 	}
@@ -57,7 +57,7 @@ public class RightClickBlockCoordListener extends PassiveListener {
 		Location location = event.getClickedBlock().getLocation();
 		MagicLocation loc = new MagicLocation(location.getWorld().getName(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
 		
-		PassiveSpell spell = null;
+		PassiveSpell spell;
 		if (HandHandler.isMainHand(event)) {
 			spell = locs.get(loc);
 		} else {

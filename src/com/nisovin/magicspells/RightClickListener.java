@@ -15,8 +15,8 @@ public class RightClickListener implements Listener {
 
 	MagicSpells plugin;
 	
-	Map<CastItem, Spell> rightClickCastItems = new HashMap<CastItem, Spell>();
-	HashMap<String, Long> lastCast = new HashMap<String, Long>();
+	Map<CastItem, Spell> rightClickCastItems = new HashMap<>();
+	HashMap<String, Long> lastCast = new HashMap<>();
 	
 	public RightClickListener(MagicSpells plugin) {
 		this.plugin = plugin;
@@ -53,11 +53,8 @@ public class RightClickListener implements Listener {
 	    	
 	    	if (!spell.ignoreGlobalCooldown) {
 				Long lastCastTime = lastCast.get(player.getName());
-				if (lastCastTime != null && lastCastTime + plugin.globalCooldown > System.currentTimeMillis()) {
-					return;
-				} else {
-					lastCast.put(player.getName(), System.currentTimeMillis());
-				}
+				if (lastCastTime != null && lastCastTime + plugin.globalCooldown > System.currentTimeMillis()) return;
+				lastCast.put(player.getName(), System.currentTimeMillis());
 	    	}
 			
 	    	MagicSpells.scheduleDelayedTask(new Runnable() {
@@ -67,7 +64,6 @@ public class RightClickListener implements Listener {
 	    		}
 	    	}, 0);
 	    	event.setCancelled(true);
-	    	
 	    }
 	}
 	

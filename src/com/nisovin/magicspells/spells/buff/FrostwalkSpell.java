@@ -32,7 +32,7 @@ public class FrostwalkSpell extends BuffSpell {
 		size = getConfigInt("size", 2);
 		leaveFrozen = getConfigBoolean("leave-frozen", false);
 		
-		frostwalkers = new HashMap<String,BlockPlatform>();
+		frostwalkers = new HashMap<>();
 	}
 
 	@Override

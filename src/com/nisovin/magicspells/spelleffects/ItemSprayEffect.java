@@ -149,7 +149,7 @@ public class ItemSprayEffect extends SpellEffect {
 		for (int i = 0; i < num; i++) {
 			items[i] = loc.getWorld().dropItem(loc, mat.toItemStack(0));
 			items[i].setVelocity(new Vector((rand.nextDouble() - .5) * force, (rand.nextDouble() - .5) * force, (rand.nextDouble() - .5) * force));
-			items[i].setPickupDelay(duration * 2);
+			items[i].setPickupDelay(duration << 1);
 		}
 		
 		// schedule item deletion

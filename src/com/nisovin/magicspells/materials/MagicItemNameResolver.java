@@ -23,8 +23,8 @@ import com.nisovin.magicspells.MagicSpells;
 
 public class MagicItemNameResolver implements ItemNameResolver {
 
-	Map<String, Material> materialMap = new HashMap<String, Material>();
-	Map<String, MaterialData> materialDataMap = new HashMap<String, MaterialData>();
+	Map<String, Material> materialMap = new HashMap<>();
+	Map<String, MaterialData> materialDataMap = new HashMap<>();
 	Random rand = new Random();
 	
 	public MagicItemNameResolver() {
@@ -48,7 +48,7 @@ public class MagicItemNameResolver implements ItemNameResolver {
 			e.printStackTrace();
 		}
 		
-		Map<String, Material> toAdd = new HashMap<String, Material>();
+		Map<String, Material> toAdd = new HashMap<>();
 		for (String s : materialMap.keySet()) {
 			if (s.contains("_")) {
 				toAdd.put(s.replace("_", ""), materialMap.get(s));
@@ -176,7 +176,7 @@ public class MagicItemNameResolver implements ItemNameResolver {
 	}
 	
 	private MagicMaterial resolveRandomBlock(String string) {
-		List<MagicMaterial> materials = new ArrayList<MagicMaterial>();
+		List<MagicMaterial> materials = new ArrayList<>();
 		String[] strings = string.split("\\|");
 		for (String s : strings) {
 			MagicMaterial mat = resolveBlock(s.trim());
@@ -239,7 +239,7 @@ public class MagicItemNameResolver implements ItemNameResolver {
 		} else {
 			DyeColor color = DyeColor.WHITE;
 			if (data != null && data.length() > 0) {
-				data = data.replace("_", "").replace(" ", "").toLowerCase(); //TODO find an alternative to reassigning the parameter
+				data = data.replace("_", "").replace(" ", "").toLowerCase();
 				for (DyeColor c : DyeColor.values()) {
 					if (data.equals(c.name().replace("_", "").toLowerCase())) {
 						color = c;

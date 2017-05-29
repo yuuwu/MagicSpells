@@ -5,8 +5,7 @@ import org.bukkit.event.entity.EntityRegainHealthEvent;
 
 public class MagicSpellsEntityRegainHealthEvent extends EntityRegainHealthEvent implements IMagicSpellsCompatEvent {
 
-	public MagicSpellsEntityRegainHealthEvent(Entity entity, double amount,
-			RegainReason regainReason) {
+	public MagicSpellsEntityRegainHealthEvent(Entity entity, double amount, RegainReason regainReason) {
 		super(entity, amount, regainReason);
 	}
 

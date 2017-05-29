@@ -29,7 +29,7 @@ public class TransmuteSpell extends TargetedSpell implements TargetedLocationSpe
 		super(config, spellName);
 		
 		List<String> list = getConfigStringList("transmutable-types", null);
-		blockTypes = new ArrayList<MagicMaterial>();
+		blockTypes = new ArrayList<>();
 		if (list != null && !list.isEmpty()) {
 			for (String s : list) {
 				MagicMaterial m = MagicSpells.getItemNameResolver().resolveBlock(s);
@@ -69,14 +69,13 @@ public class TransmuteSpell extends TargetedSpell implements TargetedLocationSpe
 			transmuteType.setBlock(block);
 			playSpellEffects(caster, block.getLocation().add(0.5, 0.5, 0.5));
 			return true;
-		} else {
-			Vector v = target.getDirection();
-			block = target.clone().add(v).getBlock();
-			if (canTransmute(block)) {
-				transmuteType.setBlock(block);
-				playSpellEffects(caster, block.getLocation().add(0.5, 0.5, 0.5));
-				return true;
-			}
+		}
+		Vector v = target.getDirection();
+		block = target.clone().add(v).getBlock();
+		if (canTransmute(block)) {
+			transmuteType.setBlock(block);
+			playSpellEffects(caster, block.getLocation().add(0.5, 0.5, 0.5));
+			return true;
 		}
 		return false;
 	}

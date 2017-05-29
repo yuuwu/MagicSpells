@@ -65,7 +65,7 @@ public class SpellHasteSpell extends BuffSpell {
         castTimeModAmt = getConfigInt("cast-time-mod-amt", -25) / 100F;
         cooldownModAmt = getConfigInt("cooldown-mod-amt", -25) / 100F;
         
-        spellTimersModified = new HashMap<String, Float>();
+        spellTimersModified = new HashMap<>();
         
         List<String> spells = getConfigStringList("spells", null);
 		List<String> deniedSpells = getConfigStringList("denied-spells", null);

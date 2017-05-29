@@ -20,7 +20,7 @@ public class EntitySelectSpell extends TargetedSpell {
 	
 	public EntitySelectSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
-		targets = new HashMap<String, WeakReference<LivingEntity>>();
+		targets = new HashMap<>();
 	}
 
 	@Override
@@ -30,7 +30,7 @@ public class EntitySelectSpell extends TargetedSpell {
 			TargetInfo<LivingEntity> targetInfo = getTargetedEntity(player, power);
 			if (targetInfo == null || targetInfo.getTarget() == null) return noTarget(player);
 			
-			targets.put(player.getName(), new WeakReference<LivingEntity>(targetInfo.getTarget()));
+			targets.put(player.getName(), new WeakReference<>(targetInfo.getTarget()));
 			
 			sendMessages(player, targetInfo.getTarget());
 		}

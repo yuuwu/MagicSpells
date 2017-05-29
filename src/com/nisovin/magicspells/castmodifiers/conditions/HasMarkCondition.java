@@ -16,11 +16,10 @@ public class HasMarkCondition extends Condition {
 	@Override
 	public boolean setVar(String var) {
 		Spell s = MagicSpells.getSpellByInternalName(var);
-		if (s != null && s instanceof MarkSpell) {
-			spell = (MarkSpell)s;
-			return true;
-		}
-		return false;
+		if (s == null) return false;
+		if (!(s instanceof MarkSpell)) return false;
+		spell = (MarkSpell)s;
+		return true;
 	}
 
 	@Override
@@ -30,9 +29,7 @@ public class HasMarkCondition extends Condition {
 
 	@Override
 	public boolean check(Player player, LivingEntity target) {
-		if (target instanceof Player) {
-			return check((Player)target);
-		}
+		if (target instanceof Player) return check((Player)target);
 		return false;
 	}
 

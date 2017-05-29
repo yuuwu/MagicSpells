@@ -113,7 +113,7 @@ public class GeyserSpell extends TargetedSpell implements TargetedEntitySpell {
 		if (geyserHeight > 0) {
 			List<Entity> allNearby = target.getNearbyEntities(50, 50, 50);
 			allNearby.add(target);
-			List<Player> playersNearby = new ArrayList<Player>();
+			List<Player> playersNearby = new ArrayList<>();
 			for (Entity e : allNearby) {
 				if (!(e instanceof Player)) continue;
 				playersNearby.add((Player)e);
@@ -154,7 +154,7 @@ public class GeyserSpell extends TargetedSpell implements TargetedEntitySpell {
 
 		@Override
 		protected void onTick(int tick) {
-			if (tick > geyserHeight * 2) {
+			if (tick > geyserHeight << 1) {
 				stop();
 			} else if (tick < geyserHeight) {
 				Block block = start.clone().add(0, tick, 0).getBlock();

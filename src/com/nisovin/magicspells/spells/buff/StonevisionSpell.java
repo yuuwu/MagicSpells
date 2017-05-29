@@ -65,7 +65,7 @@ public class StonevisionSpell extends BuffSpell {
 			glass = new MagicBlockMaterial(new MaterialData(Material.GLASS));
 		}
 		
-		seers = new HashMap<String, TransparentBlockSet>();
+		seers = new HashMap<>();
 	}
 
 	@Override
@@ -122,16 +122,16 @@ public class StonevisionSpell extends BuffSpell {
 			this.range = range;
 			this.types = types;
 			
-			blocks = new ArrayList<Block>();
+			blocks = new ArrayList<>();
 			if (unobfuscate) {
-				chunks = new HashSet<Chunk>();
+				chunks = new HashSet<>();
 			}
 			
 			setTransparency();
 		}
 		
 		public void setTransparency() {
-			List<Block> newBlocks = new ArrayList<Block>();
+			List<Block> newBlocks = new ArrayList<>();
 			
 			// get blocks to set to transparent
 			int px = center.getX();

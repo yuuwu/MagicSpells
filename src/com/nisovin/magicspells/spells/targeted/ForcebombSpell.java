@@ -80,7 +80,7 @@ public class ForcebombSpell extends TargetedSpell implements TargetedLocationSpe
 		Collection<Entity> entities = location.getWorld().getEntitiesByClasses(LivingEntity.class);
 		Vector e, v;
 		for (Entity entity : entities) {
-			if (entity instanceof LivingEntity && (player == null || validTargetList.canTarget(player, (LivingEntity)entity)) && entity.getLocation().distanceSquared(location) <= radiusSquared) {
+			if (entity instanceof LivingEntity && (player == null || validTargetList.canTarget(player, entity)) && entity.getLocation().distanceSquared(location) <= radiusSquared) {
 				float power = basePower;
 				if (callTargetEvents && player != null) {
 					SpellTargetEvent event = new SpellTargetEvent(this, player, (LivingEntity)entity, power);
@@ -89,11 +89,11 @@ public class ForcebombSpell extends TargetedSpell implements TargetedLocationSpe
 					power = event.getPower();
 				}
 				e = entity.getLocation().toVector();
-				v = e.subtract(t).normalize().multiply(force/10.0*power);
+				v = e.subtract(t).normalize().multiply(force/10.0 * power);
 				if (force != 0) {
-					v.setY(v.getY() * (yForce/10.0*power));
+					v.setY(v.getY() * (yForce/10.0 * power));
 				} else {
-					v.setY(yForce/10.0*power);
+					v.setY(yForce/10.0 * power);
 				}
 				if (v.getY() > (maxYForce/10.0)) v.setY(maxYForce/10.0);
 				entity.setVelocity(v);

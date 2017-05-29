@@ -104,7 +104,7 @@ public class ThrowBlockSpell extends InstantSpell implements TargetedLocationSpe
 			}
 		}
 		if (fallDamage > 0 || removeBlocks || preventBlocks || spell != null || ensureSpellCast || stickyBlocks) {
-			fallingBlocks = new HashMap<Entity, ThrowBlockSpell.FallingBlockInfo>();
+			fallingBlocks = new HashMap<>();
 			if (material != null) {
 				registerEvents(new ThrowBlockListener(this));
 			} else if (tntFuse > 0) {
@@ -267,9 +267,8 @@ public class ThrowBlockSpell extends InstantSpell implements TargetedLocationSpe
 					if (evt.isCancelled()) {
 						event.setCancelled(true);
 						return;
-					} else {
-						power = evt.getPower();
 					}
+					power = evt.getPower();
 				}
 				double damage = event.getDamage() * power;
 				if (checkPlugins && info.player != null) {

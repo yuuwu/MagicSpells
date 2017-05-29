@@ -308,7 +308,7 @@ public class Subspell {
 	}
 	
 	// TODO this should be in charge of determining the mode from a string
-	public static enum CastMode {
+	public enum CastMode {
 		
 		HARD,
 		FULL,

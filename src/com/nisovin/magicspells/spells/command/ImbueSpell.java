@@ -63,8 +63,8 @@ public class ImbueSpell extends CommandSpell {
 		rightClickCast = getConfigBoolean("right-click-cast", false);
 		leftClickCast = getConfigBoolean("left-click-cast", true);
 
-		allowedItemTypes = new HashSet<Material>();
-		allowedItemMaterials = new ArrayList<MagicMaterial>();
+		allowedItemTypes = new HashSet<>();
+		allowedItemMaterials = new ArrayList<>();
 		List<String> allowed = getConfigStringList("allowed-items", null);
 		if (allowed != null) {
 			ItemNameResolver resolver = MagicSpells.getItemNameResolver();
@@ -82,7 +82,7 @@ public class ImbueSpell extends CommandSpell {
 		strCantImbueItem = getConfigString("str-cant-imbue-item", "You can't imbue that item.");
 		strCantImbueSpell = getConfigString("str-cant-imbue-spell", "You can't imbue that spell.");
 		
-		nameAndLoreHasUses = (strItemName.contains("%u") || strItemLore.contains("%u"));
+		nameAndLoreHasUses = strItemName.contains("%u") || strItemLore.contains("%u");
 	}
 
 	@Override
@@ -167,7 +167,7 @@ public class ImbueSpell extends CommandSpell {
 			
 			// imbue item
 			setItemNameAndLore(inHand, spell, uses);
-			setImbueData(inHand, spell.getInternalName() + "," + uses);
+			setImbueData(inHand, spell.getInternalName() + ',' + uses);
 			HandHandler.setItemInMainHand(player, inHand);
 		}
 		return PostCastAction.HANDLE_NORMALLY;
@@ -176,10 +176,7 @@ public class ImbueSpell extends CommandSpell {
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void onInteract(PlayerInteractEvent event) {
 		if (event.useItemInHand() == Result.DENY) return;
-		if (event.hasItem() && (
-				(rightClickCast && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) ||
-				(leftClickCast && (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK))
-				)) {
+		if (event.hasItem() && ((rightClickCast && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) || (leftClickCast && (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK)))) {
 			ItemStack item = event.getItem();
 			if (allowedItemTypes.contains(item.getType())) {
 				boolean allowed = false;
@@ -212,7 +209,7 @@ public class ImbueSpell extends CommandSpell {
 							if (nameAndLoreHasUses) {
 								setItemNameAndLore(item, spell, uses);
 							}
-							setImbueData(item, spell.getInternalName() + "," + uses);
+							setImbueData(item, spell.getInternalName() + ',' + uses);
 						}						
 					} else {
 						Util.removeLoreData(item);
@@ -234,14 +231,14 @@ public class ImbueSpell extends CommandSpell {
 	}
 	
 	private void setImbueData(ItemStack item, String data) {
-		Util.setLoreData(item, key + ":" + data);
+		Util.setLoreData(item, key + ':' + data);
 	}
 	
 	private String getImbueData(ItemStack item) {
 		String s = Util.getLoreData(item);
 		
-		if (s != null && s.startsWith(key + ":")) {
-			return s.replace(key + ":", "");
+		if (s != null && s.startsWith(key + ':')) {
+			return s.replace(key + ':', "");
 		}
 		return null;
 	}

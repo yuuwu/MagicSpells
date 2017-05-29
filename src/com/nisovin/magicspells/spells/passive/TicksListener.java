@@ -30,7 +30,7 @@ import com.nisovin.magicspells.util.OverridePriority;
 // the trigger will activate every x ticks
 public class TicksListener extends PassiveListener {
 
-	Map<Integer, Ticker> tickers = new HashMap<Integer, Ticker>();
+	Map<Integer, Ticker> tickers = new HashMap<>();
 	
 	@Override
 	public void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var) {
@@ -126,7 +126,7 @@ public class TicksListener extends PassiveListener {
 	class Ticker implements Runnable {
 
 		int taskId;
-		Map<PassiveSpell, Collection<Player>> spells = new HashMap<PassiveSpell, Collection<Player>>();
+		Map<PassiveSpell, Collection<Player>> spells = new HashMap<>();
 		String profilingKey;
 		
 		public Ticker(int interval) {
@@ -169,7 +169,7 @@ public class TicksListener extends PassiveListener {
 			for (Map.Entry<PassiveSpell, Collection<Player>> entry : spells.entrySet()) {
 				Collection<Player> players = entry.getValue();
 				if (players.isEmpty()) continue;
-				for (Player p : new ArrayList<Player>(players)) {
+				for (Player p : new ArrayList<>(players)) {
 					if (p.isOnline() && p.isValid()) {
 						entry.getKey().activate(p);
 					} else {

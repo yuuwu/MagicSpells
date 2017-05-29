@@ -18,8 +18,8 @@ import com.nisovin.magicspells.Spell;
 
 public class BlockUtils {
 	
-	private static HashMap<NetherWartsState, Integer> wartStateToInt = new HashMap<NetherWartsState, Integer>();
-	private static HashMap<Integer, NetherWartsState> intToWartState = new HashMap<Integer, NetherWartsState>();
+	private static HashMap<NetherWartsState, Integer> wartStateToInt = new HashMap<>();
+	private static HashMap<Integer, NetherWartsState> intToWartState = new HashMap<>();
 	
 	static {
 		wartStateToInt.put(NetherWartsState.SEEDED, 1);

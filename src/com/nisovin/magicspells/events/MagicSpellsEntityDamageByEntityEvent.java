@@ -17,11 +17,11 @@ public class MagicSpellsEntityDamageByEntityEvent extends EntityDamageByEntityEv
 	}
 	
 	private static Map<DamageModifier, Double> getModTemplate(double baseDamage) {
-		return new HashMap<DamageModifier, Double>(ImmutableMap.of(DamageModifier.BASE, baseDamage));
+		return new HashMap<>(ImmutableMap.of(DamageModifier.BASE, baseDamage));
 	}
 	
 	private static Map<DamageModifier, Function<Double, Double>> getModifierFunctionTemplate(final double baseDamage) {
-		return new HashMap<DamageModifier, Function<Double, Double>>(ImmutableMap.of(DamageModifier.BASE, getConstantFunction(baseDamage)));
+		return new HashMap<>(ImmutableMap.of(DamageModifier.BASE, getConstantFunction(baseDamage)));
 	}
 	
 	private static Function<Double, Double> getConstantFunction(final double value) {

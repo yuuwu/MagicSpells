@@ -38,7 +38,7 @@ public class KeybindSpell extends CommandSpell {
 		wandItem = Util.getItemStackFromString(getConfigString("wand-item", "blaze_rod"));
 		defaultSpellIcon = Util.getItemStackFromString(getConfigString("default-spell-icon", "redstone"));
 		
-		playerKeybinds = new HashMap<String, KeybindSpell.Keybinds>();
+		playerKeybinds = new HashMap<>();
 	}
 	
 	@Override
@@ -205,7 +205,7 @@ public class KeybindSpell extends CommandSpell {
 		}
 		
 		public boolean hasKeybind(int slot) {
-			return (keybinds[slot] != null);
+			return keybinds[slot] != null;
 		}
 		
 		public boolean castKeybind(int slot) {

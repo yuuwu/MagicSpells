@@ -47,14 +47,12 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 	public void onEnable() {
 		load();
 		
-		// register events
+		// Register events
 		getServer().getPluginManager().registerEvents(this, this);
 	}
 	
 	public void load() {
-		if (!new File(getDataFolder(), "config.yml").exists()) {
-			saveDefaultConfig();
-		}
+		if (!new File(getDataFolder(), "config.yml").exists()) saveDefaultConfig();
 		
 		Configuration config = getConfig();
 		
@@ -87,16 +85,12 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 	public void onInteract(PlayerInteractEvent event) {
 		if (!ignoreOtherPlugins && event.isCancelled()) return;
 		
-		// check for right-click on sign
-		if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
-			return;
-		}		
+		// Check for right-click on sign
+		if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 		Block block = event.getClickedBlock();
-		if (block.getType() != Material.WALL_SIGN && block.getType() != Material.SIGN_POST) {
-			return;
-		}
+		if (block.getType() != Material.WALL_SIGN && block.getType() != Material.SIGN_POST) return;
 		
-		// get shop sign
+		// Get shop sign
 		Sign sign = (Sign)block.getState();
 		String[] lines = sign.getLines();		
 		if (lines[0].equals(firstLine)) {
@@ -107,74 +101,68 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 	}
 	
 	private void processSpellShopSign(Player player, String[] lines) {
-		// get spell
+		// Get spell
 		String spellName = lines[1];
 		Spell spell = MagicSpells.getSpellByInGameName(spellName);
-		if (spell == null) {
-			return;
-		}
+		if (spell == null) return;
 		
-		// check if already known
+		// Check if already known
 		Spellbook spellbook = MagicSpells.getSpellbook(player);
 		if (spellbook.hasSpell(spell)) {
 			MagicSpells.sendMessage(MagicSpells.formatMessage(strAlreadyKnown, "%s", spellName), player, null);
 			return;
 		}
 		
-		// get cost
+		// Get cost
 		Cost cost = getCost(lines[2]);
 		
-		// check for currency
+		// Check for currency
 		if (!currency.has(player, cost.amount, cost.currency)) {
 			MagicSpells.sendMessage(MagicSpells.formatMessage(strCantAfford, "%s", spellName, "%c", cost+""), player, null);
 			return;
 		}
 		
-		// attempt to teach
+		// Attempt to teach
 		boolean taught = MagicSpells.teachSpell(player, spellName);
 		if (!taught) {
 			MagicSpells.sendMessage(MagicSpells.formatMessage(strCantLearn, "%s", spellName), player, null);
 			return;
 		}
 		
-		// remove currency
+		// Remove currency
 		currency.remove(player, cost.amount, cost.currency);
 		
-		// success!
+		// Success!
 		MagicSpells.sendMessage(MagicSpells.formatMessage(strPurchased, "%s", spellName, "%c", cost+""), player, null);
 	}
 	
 	private void processScrollShopSign(Player player, String[] lines) {
-		// get spell
+		// Get spell
 		String spellName = lines[1];
 		Spell spell = MagicSpells.getSpellByInGameName(spellName);
-		if (spell == null) {
-			return;
-		}
+		if (spell == null) return;
 		
-		// get uses
-		if (!lines[2].matches("^[0-9]+( .+)?$")) {
-			return;
-		}
+		// Get uses
+		if (!lines[2].matches("^[0-9]+( .+)?$")) return;
 		int uses = Integer.parseInt(lines[2].split(" ")[0]);
 		
-		// get cost
+		// Get cost
 		Cost cost = getCost(lines[3]);
 		
-		// check if can afford
+		// Check if can afford
 		if (!currency.has(player, cost.amount, cost.currency)) {
-			MagicSpells.sendMessage(MagicSpells.formatMessage(strCantAffordScroll, "%s", spellName, "%c", cost+"", "%u", uses+""), player, null);
+			MagicSpells.sendMessage(MagicSpells.formatMessage(strCantAffordScroll, "%s", spellName, "%c", cost + "", "%u", uses + ""), player, null);
 			return;
 		}
 		
-		// create scroll
+		// Create scroll
 		ScrollSpell scrollSpell = (ScrollSpell)MagicSpells.getSpellByInternalName(scrollSpellName);
 		ItemStack scroll = scrollSpell.createScroll(spell, uses, null);
 		
-		// remove currency
+		// Remove currency
 		currency.remove(player, cost.amount, cost.currency);
 		
-		// give to player
+		// Give to player
 		int slot = player.getInventory().firstEmpty();
 		if (player.getItemInHand() == null) {
 			player.setItemInHand(scroll);
@@ -186,7 +174,7 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 			player.getWorld().dropItem(player.getLocation(), scroll);
 		}
 		
-		// done!
+		// Done!
 		MagicSpells.sendMessage(MagicSpells.formatMessage(strPurchasedScroll, "%s", spellName, "%c", cost+"", "%u", uses+""), player, null);
 	}
 	
@@ -221,14 +209,14 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 			return;
 		}
 		
-		// check permission
+		// Check permission
 		if (!event.getPlayer().hasPermission("magicspells.createsignshop")) {
 			event.getPlayer().sendMessage(ChatColor.RED + "You do not have permission to do that.");
 			event.setCancelled(true);
 			return;
 		}
 		
-		// check for valid spell
+		// Check for valid spell
 		String spellName = lines[1];
 		Spell spell = MagicSpells.getSpellByInGameName(spellName);
 		if (spell == null) {
@@ -237,7 +225,7 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 			return;
 		}
 		
-		// check permissions
+		// Check permissions
 		Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());
 		if (requireKnownSpell && !spellbook.hasSpell(spell)) {
 			event.getPlayer().sendMessage(ChatColor.RED + "You do not have permission to do that.");
@@ -250,12 +238,12 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 			return;
 		}
 		
-		// get cost
+		// Get cost
 		Cost cost = getCost(lines[isSpellShop?2:3]);
 		
 		event.getPlayer().sendMessage((isSpellShop?"Spell":"Scroll") + " shop created: " + 
-				spellName + (isSpellShop?"":"(" + lines[2] + ")") + 
-				" for " + cost.amount + " " + (currency.isValidCurrency(cost.currency) ? cost.currency : "currency") + ".");
+				spellName + (isSpellShop ? "" : '(' + lines[2] + ')') +
+				" for " + cost.amount + ' ' + (currency.isValidCurrency(cost.currency) ? cost.currency : "currency") + '.');
 		
 	}
 	

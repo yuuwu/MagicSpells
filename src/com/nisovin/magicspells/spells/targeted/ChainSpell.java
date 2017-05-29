@@ -50,7 +50,7 @@ public class ChainSpell extends TargetedSpell implements TargetedEntitySpell, Ta
 			spellToCast = spell;
 			checker = spell.getSpell().getValidTargetChecker();
 		} else {
-			MagicSpells.error("Invalid spell defined for ChainSpell '" + this.name + "'");
+			MagicSpells.error("Invalid spell defined for ChainSpell '" + this.name + '\'');
 		}
 	}
 
@@ -67,15 +67,15 @@ public class ChainSpell extends TargetedSpell implements TargetedEntitySpell, Ta
 	}
 	
 	private void chain(Player player, Location start, LivingEntity target, float power) {
-		List<LivingEntity> targets = new ArrayList<LivingEntity>();
-		List<Float> targetPowers = new ArrayList<Float>();
+		List<LivingEntity> targets = new ArrayList<>();
+		List<Float> targetPowers = new ArrayList<>();
 		targets.add(target);
 		targetPowers.add(power);
 		
 		// get targets
 		LivingEntity current = target;
 		int attempts = 0;
-		while (targets.size() < bounces && attempts++ < bounces * 2) {
+		while (targets.size() < bounces && attempts++ < bounces << 1) {
 			List<Entity> entities = current.getNearbyEntities(bounceRange, bounceRange, bounceRange);
 			for (Entity e : entities) {
 				if (!(e instanceof LivingEntity)) continue;
@@ -119,7 +119,7 @@ public class ChainSpell extends TargetedSpell implements TargetedEntitySpell, Ta
 				}
 				castSpellAt(player, from, targets.get(i), targetPowers.get(i));
 				if (i > 0) {
-					playSpellEffectsTrail(targets.get(i-1).getLocation(), targets.get(i).getLocation());
+					playSpellEffectsTrail(targets.get(i - 1).getLocation(), targets.get(i).getLocation());
 				} else if (i == 0 && player != null) {
 					playSpellEffectsTrail(player.getLocation(), targets.get(i).getLocation());
 				}
@@ -188,15 +188,13 @@ public class ChainSpell extends TargetedSpell implements TargetedEntitySpell, Ta
 			}
 			castSpellAt(caster, from, targets.get(current), power);
 			if (current > 0) {
-				playSpellEffectsTrail(targets.get(current-1).getLocation().add(0, .5, 0), targets.get(current).getLocation().add(0, .5, 0));
+				playSpellEffectsTrail(targets.get(current - 1).getLocation().add(0, .5, 0), targets.get(current).getLocation().add(0, .5, 0));
 			} else if (current == 0 && caster != null) {
 				playSpellEffectsTrail(caster.getLocation().add(0, .5, 0), targets.get(current).getLocation().add(0, .5, 0));
 			}
 			playSpellEffects(EffectPosition.TARGET, targets.get(current));
 			current++;
-			if (current >= targets.size()) {
-				MagicSpells.cancelTask(taskId);
-			}
+			if (current >= targets.size()) MagicSpells.cancelTask(taskId);
 		}
 		
 	}

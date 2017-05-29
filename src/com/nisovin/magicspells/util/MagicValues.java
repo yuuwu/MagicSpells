@@ -8,7 +8,7 @@ import org.bukkit.potion.PotionEffectType;
 
 public class MagicValues {
 
-	public static enum PotionEffect {
+	public enum PotionEffect {
 		SPEED(1, "swiftness"),
 		SLOW(2, "slowness"),
 		FAST_DIGGING(3, "haste"),
@@ -42,7 +42,7 @@ public class MagicValues {
 		private int id;
 		private String[] names;
 		
-		private PotionEffect(int id, String... names) {
+		PotionEffect(int id, String... names) {
 			this.id = id;
 			this.names = names;
 		}
@@ -55,8 +55,8 @@ public class MagicValues {
 		private static void initialize() {
 			if (initialized) return;
 			
-			namesToType = new HashMap<String, PotionEffectType>();
-			potionEffectToId = new HashMap<PotionEffectType, Integer>();
+			namesToType = new HashMap<>();
+			potionEffectToId = new HashMap<>();
 			
 			for (PotionEffect pe: PotionEffect.values()) {
 				PotionEffectType type = PotionEffectType.getByName(pe.name());
@@ -87,11 +87,11 @@ public class MagicValues {
 		}
 	}
 	
-	public static enum Villager {
+	public enum Villager {
 		// Profession
 	}
 	
-	public static enum Enchantments {
+	public enum Enchantments {
 		PROTECTION_ENVIRONMENTAL(0, "prot", "protection"),
 		PROTECTION_FIRE(1, "fireprot" , "fireprotection"),
 		PROTECTION_FALL(2, "featherfalling"),
@@ -127,7 +127,7 @@ public class MagicValues {
 		private String[] names;
 		private int id;
 		
-		private Enchantments(int id, String... labels) {
+		Enchantments(int id, String... labels) {
 			this.id = id;
 			this.names = labels;
 		}
@@ -170,11 +170,11 @@ public class MagicValues {
 		}
 	}
 	
-	public static enum Materials {
+	public enum Materials {
 		//TODO map the materials to ids and such
 	}
 	
-	public static enum Projectile {
+	public enum Projectile {
 		;
 		
 		

@@ -29,7 +29,7 @@ public class DotSpell extends TargetedSpell implements TargetedEntitySpell, Spel
 	boolean preventKnockback;
 	String spellDamageType;
 	
-	Map<Integer, Dot> activeDots = new HashMap<Integer, Dot>();
+	Map<Integer, Dot> activeDots = new HashMap<>();
 	
 	public DotSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -121,9 +121,7 @@ public class DotSpell extends TargetedSpell implements TargetedEntitySpell, Spel
 				// bukkit doesn't call a damage event here, so we'll do it ourselves
 				MagicSpellsEntityDamageByEntityEvent devent = new MagicSpellsEntityDamageByEntityEvent(caster, target, DamageCause.ENTITY_ATTACK, damage);
 				EventUtil.call(devent);
-				if (!devent.isCancelled()) {
-					target.damage(devent.getDamage());
-				}
+				if (!devent.isCancelled()) target.damage(devent.getDamage());
 			} else {
 				target.damage(dam, caster);
 			}

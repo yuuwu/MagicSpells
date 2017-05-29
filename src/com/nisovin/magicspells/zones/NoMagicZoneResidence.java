@@ -21,13 +21,9 @@ public class NoMagicZoneResidence extends NoMagicZone {
 	public boolean inZone(Location location) {
 		if (Bukkit.getServer().getPluginManager().isPluginEnabled("Residence")) {
 			ClaimedResidence res = Residence.getResidenceManager().getByLoc(location);
-			if (res != null) {
-				if (res.getName().equalsIgnoreCase(regionName)) return true;
-				return false;
-			}
-			return false;
+			return res != null && res.getName().equalsIgnoreCase(regionName);
 		}
-		MagicSpells.error("Failed to access Residence region '" + regionName + "'");
+		MagicSpells.error("Failed to access Residence region '" + regionName + '\'');
 		return false;
 	}
 

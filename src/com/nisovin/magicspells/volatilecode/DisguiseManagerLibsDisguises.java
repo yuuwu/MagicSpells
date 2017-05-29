@@ -54,25 +54,20 @@ public class DisguiseManagerLibsDisguises implements Listener, IDisguiseManager 
 	
 	protected boolean hideArmor;
 	
-	protected Set<DisguiseSpell> disguiseSpells = new HashSet<DisguiseSpell>();
-	protected Map<String, DisguiseSpell.Disguise> disguises = new ConcurrentHashMap<String, DisguiseSpell.Disguise>();
-	protected Map<String, me.libraryaddict.disguise.disguisetypes.Disguise> libsDisguises = new ConcurrentHashMap<String, me.libraryaddict.disguise.disguisetypes.Disguise>();
-	protected Map<Integer, DisguiseSpell.Disguise> disguisedEntityIds = new ConcurrentHashMap<Integer, DisguiseSpell.Disguise>();
-	protected Map<Integer, me.libraryaddict.disguise.disguisetypes.Disguise> libsDisguisedEntityIds = new ConcurrentHashMap<Integer, me.libraryaddict.disguise.disguisetypes.Disguise>();
+	protected Set<DisguiseSpell> disguiseSpells = new HashSet<>();
+	protected Map<String, DisguiseSpell.Disguise> disguises = new ConcurrentHashMap<>();
+	protected Map<String, me.libraryaddict.disguise.disguisetypes.Disguise> libsDisguises = new ConcurrentHashMap<>();
+	protected Map<Integer, DisguiseSpell.Disguise> disguisedEntityIds = new ConcurrentHashMap<>();
+	protected Map<Integer, me.libraryaddict.disguise.disguisetypes.Disguise> libsDisguisedEntityIds = new ConcurrentHashMap<>();
 	protected Set<Integer> dragons = Collections.synchronizedSet(new HashSet<Integer>());
-	protected Map<Integer, Integer> mounts = new ConcurrentHashMap<Integer, Integer>();
-
-	
+	protected Map<Integer, Integer> mounts = new ConcurrentHashMap<>();
 	
 	protected Random random = new Random();
-	
-	
 	
 	public DisguiseManagerLibsDisguises(MagicConfig config) {
 		this.hideArmor = config.getBoolean("general.disguise-spell-hide-armor", false);
 		Bukkit.getPluginManager().registerEvents(this, MagicSpells.plugin);
 	}
-	
 	
 	@Override
 	public void registerSpell(DisguiseSpell spell) {
@@ -91,9 +86,7 @@ public class DisguiseManagerLibsDisguises implements Listener, IDisguiseManager 
 
 	@Override
 	public void addDisguise(Player player, Disguise disguise) {
-		if (isDisguised(player)) {
-			removeDisguise(player);
-		}
+		if (isDisguised(player)) removeDisguise(player);
 		me.libraryaddict.disguise.disguisetypes.Disguise libs = getDisguiseLibDisguise(disguise);
 		disguises.put(player.getName().toLowerCase(), disguise);
 		libsDisguises.put(player.getName().toLowerCase(), libs);
@@ -101,9 +94,7 @@ public class DisguiseManagerLibsDisguises implements Listener, IDisguiseManager 
 		disguisedEntityIds.put(player.getEntityId(), disguise);
 		libsDisguisedEntityIds.put(player.getEntityId(), libs);
 		
-		if (disguise.getEntityType() == EntityType.ENDER_DRAGON) {
-			dragons.add(player.getEntityId());
-		}
+		if (disguise.getEntityType() == EntityType.ENDER_DRAGON) dragons.add(player.getEntityId());
 		applyDisguise(player, libs);
 	}
 
@@ -111,8 +102,7 @@ public class DisguiseManagerLibsDisguises implements Listener, IDisguiseManager 
 		disguise.setEntity(player);
 		disguise.startDisguise();
 	}
-
-
+	
 	@Override
 	public void removeDisguise(Player player) {
 		removeDisguise(player, true);
@@ -124,8 +114,7 @@ public class DisguiseManagerLibsDisguises implements Listener, IDisguiseManager 
 	}
 
 	@Override
-	public void removeDisguise(Player player, boolean sendPlayerPackets,
-			boolean delaySpawnPacket) {
+	public void removeDisguise(Player player, boolean sendPlayerPackets, boolean delaySpawnPacket) {
 		DisguiseSpell.Disguise disguise = disguises.get(player.getName().toLowerCase());
 		me.libraryaddict.disguise.disguisetypes.Disguise libsDisguise = libsDisguises.get(player.getName().toLowerCase());
 		
@@ -185,14 +174,10 @@ public class DisguiseManagerLibsDisguises implements Listener, IDisguiseManager 
 		FlagWatcher w = ret.getWatcher();
 		
 		if (disType.isMob()) {
-			if (w instanceof AgeableWatcher) {
-				((AgeableWatcher)w).setBaby(dis.getFlag());
-			}
+			if (w instanceof AgeableWatcher) ((AgeableWatcher)w).setBaby(dis.getFlag());
 			
 			if (w instanceof SkeletonWatcher) {
-				if (dis.getFlag()) {
-					((SkeletonWatcher)w).setType(SkeletonType.WITHER);
-				}
+				if (dis.getFlag()) ((SkeletonWatcher)w).setType(SkeletonType.WITHER);
 			} else if (w instanceof CreeperWatcher) {
 				CreeperWatcher c = (CreeperWatcher)w;
 				c.setPowered(dis.getFlag());
@@ -233,8 +218,8 @@ public class DisguiseManagerLibsDisguises implements Listener, IDisguiseManager 
 				}
 			} else if (w instanceof HorseWatcher) {
 				HorseWatcher h = (HorseWatcher)w;
-				h.setVariant(dis.getVar1()); //var 1 is horse type, donkey, mule, etc
-				//var2 is colors
+				h.setVariant(dis.getVar1()); // Var 1 is horse type, donkey, mule, etc
+				// Var2 is colors
 				int colorId = dis.getVar2() % 256;
 				int patternId = dis.getVar2()/256;
 				Horse.Color horseColor;
@@ -288,12 +273,12 @@ public class DisguiseManagerLibsDisguises implements Listener, IDisguiseManager 
 				h.setColor(horseColor);
 				
 				
-				//var 3 is armor
+				// Var 3 is armor
 				ItemStack horseArmor = null;
 				switch (dis.getVar3()) {
-				case 0: //no armor, already null
+				case 0: // No armor, already null
 					break;
-				case 1: //iron armor
+				case 1: // Iron armor
 					horseArmor = new ItemStack(Material.IRON_BARDING, 1);
 					break;
 				case 2:
@@ -331,8 +316,7 @@ public class DisguiseManagerLibsDisguises implements Listener, IDisguiseManager 
 	private void removeAllDisguises() {
 		
 	}
-
-
+	
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
 		disguisedEntityIds.remove(event.getPlayer().getEntityId());
@@ -352,9 +336,7 @@ public class DisguiseManagerLibsDisguises implements Listener, IDisguiseManager 
 			me.libraryaddict.disguise.disguisetypes.Disguise libsDisguise = getLibsDisguise(p);
 			disguisedEntityIds.put(p.getEntityId(), getDisguise(p));
 			libsDisguisedEntityIds.put(p.getEntityId(), libsDisguise);
-			if (getDisguise(p).getEntityType() == EntityType.ENDER_DRAGON) {
-				dragons.add(p.getEntityId());
-			}
+			if (getDisguise(p).getEntityType() == EntityType.ENDER_DRAGON) dragons.add(p.getEntityId());
 			applyDisguise(p, libsDisguise);
 		}
 	}

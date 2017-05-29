@@ -16,7 +16,7 @@ public class WorldGuardStateFlagCondition extends AbstractWorldGuardFlagConditio
 	static Map<String, StateFlag> nameMap;
 	
 	static {
-		nameMap = new HashMap<String, StateFlag>();
+		nameMap = new HashMap<>();
 		for (Flag<?> f: DefaultFlag.getFlags()) {
 			if (f instanceof StateFlag) {
 				nameMap.put(f.getName(), (StateFlag)f);

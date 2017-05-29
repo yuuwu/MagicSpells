@@ -96,14 +96,10 @@ public class ZapSpell extends TargetedSpell implements TargetedLocationSpell {
 			}
 			if (target != null) {
 				// check for disallowed block
-				if (!canZap(target)) {
-					return noTarget(player, strCantZap);
-				}
+				if (!canZap(target)) return noTarget(player, strCantZap);
 				// zap
 				boolean ok = zap(target, player);
-				if (!ok) {
-					return noTarget(player, strCantZap);
-				}
+				if (!ok) return noTarget(player, strCantZap);
 			} else {
 				return noTarget(player, strCantZap);
 			}
@@ -134,16 +130,10 @@ public class ZapSpell extends TargetedSpell implements TargetedLocationSpell {
 		}
 		
 		// show animation
-		if (playBreakEffect) {
-			target.getWorld().playEffect(target.getLocation(), Effect.STEP_SOUND, target.getType());
-		}
-		if (!playerNull) {
-			playSpellEffects(EffectPosition.CASTER, player);
-		}
+		if (playBreakEffect) target.getWorld().playEffect(target.getLocation(), Effect.STEP_SOUND, target.getType());
+		if (!playerNull) playSpellEffects(EffectPosition.CASTER, player);
 		playSpellEffects(EffectPosition.TARGET, target.getLocation());
-		if (!playerNull) {
-			playSpellEffectsTrail(player.getLocation(), target.getLocation());
-		}
+		if (!playerNull) playSpellEffectsTrail(player.getLocation(), target.getLocation());
 		
 		// remove block
 		target.setType(Material.AIR);
@@ -156,15 +146,13 @@ public class ZapSpell extends TargetedSpell implements TargetedLocationSpell {
 		if (canZap(block)) {
 			zap(block, caster);
 			return true;
-		} else {
-			Vector v = target.getDirection();
-			block = target.clone().add(v).getBlock();
-			if (canZap(block)) {
-				zap(block, caster);
-				return true;
-			}
 		}
-		
+		Vector v = target.getDirection();
+		block = target.clone().add(v).getBlock();
+		if (canZap(block)) {
+			zap(block, caster);
+			return true;
+		}
 		return false;
 	}
 

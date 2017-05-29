@@ -11,11 +11,11 @@ import com.nisovin.magicspells.MagicSpells;
 
 public class PassiveTrigger {
 	
-	private static Map<String, PassiveTrigger> map = new HashMap<String, PassiveTrigger>();
+	private static Map<String, PassiveTrigger> map = new HashMap<>();
 	
 	private static Map<EventPriority, String> triggerPrioritySuffix;
 	static {
-		triggerPrioritySuffix = new HashMap<EventPriority, String>();
+		triggerPrioritySuffix = new HashMap<>();
 		triggerPrioritySuffix.put(EventPriority.LOWEST, "_lowestpriority");
 		triggerPrioritySuffix.put(EventPriority.LOW, "_lowpriority");
 		triggerPrioritySuffix.put(EventPriority.NORMAL, "");
@@ -73,7 +73,7 @@ public class PassiveTrigger {
 	public static Set<PassiveTrigger> SWAP_HAND_ITEMS = addTriggers("swaphanditem", OffhandSwapListener.class);
 	
 	public static Set<PassiveTrigger> addTriggers(String baseName, Class<? extends PassiveListener> listener) {
-		Set<PassiveTrigger> ret = new HashSet<PassiveTrigger>();
+		Set<PassiveTrigger> ret = new HashSet<>();
 		for (Map.Entry<EventPriority, String> entry: triggerPrioritySuffix.entrySet()) {
 			ret.add(addTrigger(baseName + entry.getValue(), listener, entry.getKey()));
 		}

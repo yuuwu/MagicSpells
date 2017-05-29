@@ -16,7 +16,7 @@ public class MagicFixedSetPrompt extends FixedSetPrompt {
 	
 	public MagicFixedSetPrompt(List<String> options) {
 		super();
-		super.fixedSet = new ArrayList<String>(options);
+		super.fixedSet = new ArrayList<>(options);
 	}
 	
 	public MagicFixedSetPrompt(String... options) {

@@ -37,7 +37,7 @@ public class UnbindSpell extends CommandSpell {
 		strCantUnbind = getConfigString("str-cant-unbind", "You cannot unbind this spell");
 		allowedSpellsNames = getConfigStringList("allowed-spells", null);
 		if (allowedSpellsNames != null && !allowedSpellsNames.isEmpty()) {
-			allowedSpells = new HashSet<Spell>();
+			allowedSpells = new HashSet<>();
 			for (String n: allowedSpellsNames) {
 				Spell s = MagicSpells.getSpellByInternalName(n);
 				if (s != null) {

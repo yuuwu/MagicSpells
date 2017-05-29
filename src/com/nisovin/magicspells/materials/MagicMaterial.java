@@ -33,11 +33,7 @@ public abstract class MagicMaterial {
 	
 	public boolean equals(MaterialData matData) {
 		MaterialData d = getMaterialData();
-		if (d != null) {
-			return d.equals(matData);
-		} else {
-			return false;
-		}
+		return (d != null) && d.equals(matData);
 	}
 	
 	public boolean equals(ItemStack itemStack) {

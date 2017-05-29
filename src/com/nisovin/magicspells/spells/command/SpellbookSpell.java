@@ -88,9 +88,9 @@ public class SpellbookSpell extends CommandSpell {
 		strAlreadyKnown = getConfigString("str-already-known", "You already know the %s spell.");
 		strLearned = getConfigString("str-learned", "You have learned the %s spell!");
 		
-		bookLocations = new ArrayList<MagicLocation>();
-		bookSpells = new ArrayList<String>();
-		bookUses = new ArrayList<Integer>();
+		bookLocations = new ArrayList<>();
+		bookSpells = new ArrayList<>();
+		bookUses = new ArrayList<>();
 		
 		loadSpellbooks();
 	}
@@ -104,9 +104,9 @@ public class SpellbookSpell extends CommandSpell {
 			} else {
 				// check for reload
 				if (player.isOp() && args[0].equalsIgnoreCase("reload")) {
-					bookLocations = new ArrayList<MagicLocation>();
-					bookSpells = new ArrayList<String>();
-					bookUses = new ArrayList<Integer>();
+					bookLocations = new ArrayList<>();
+					bookSpells = new ArrayList<>();
+					bookUses = new ArrayList<>();
 					loadSpellbooks();
 					player.sendMessage("Spellbook file reloaded.");
 					return PostCastAction.ALREADY_HANDLED;
@@ -229,9 +229,9 @@ public class SpellbookSpell extends CommandSpell {
 	@Override
 	public boolean castFromConsole(CommandSender sender, String[] args) {
 		if (sender.isOp() && args != null && args.length > 0 && args[0].equalsIgnoreCase("reload")) {
-			bookLocations = new ArrayList<MagicLocation>();
-			bookSpells = new ArrayList<String>();
-			bookUses = new ArrayList<Integer>();
+			bookLocations = new ArrayList<>();
+			bookSpells = new ArrayList<>();
+			bookUses = new ArrayList<>();
 			loadSpellbooks();
 			sender.sendMessage("Spellbook file reloaded.");
 			return true;
@@ -277,8 +277,8 @@ public class SpellbookSpell extends CommandSpell {
 			MagicLocation loc;
 			for (int i = 0; i < bookLocations.size(); i++) {
 				loc = bookLocations.get(i);
-				writer.write(loc.getWorld() + ":" + (int)loc.getX() + ":" + (int)loc.getY() + ":" + (int)loc.getZ() + ":");
-				writer.write(bookSpells.get(i) + ":" + bookUses.get(i));
+				writer.write(loc.getWorld() + ':' + (int)loc.getX() + ':' + (int)loc.getY() + ':' + (int)loc.getZ() + ':');
+				writer.write(bookSpells.get(i) + ':' + bookUses.get(i));
 				writer.newLine();
 			}
 			writer.close();

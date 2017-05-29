@@ -54,7 +54,7 @@ public class VinesSpell extends TargetedSpell {
 		} else {
 			return false;
 		}
-		TreeSet<VineBlock> blocks = new TreeSet<VineBlock>();
+		TreeSet<VineBlock> blocks = new TreeSet<>();
 
 		blocks.add(new VineBlock(air, air));
 		growVinesVert(blocks, air, solid, air);

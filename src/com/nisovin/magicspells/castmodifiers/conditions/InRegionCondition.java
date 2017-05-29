@@ -31,9 +31,8 @@ public class InRegionCondition extends Condition {
 			worldName = split[0];
 			regionName = split[1];
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 	@Override

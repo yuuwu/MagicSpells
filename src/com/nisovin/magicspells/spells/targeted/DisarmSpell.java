@@ -39,7 +39,7 @@ public class DisarmSpell extends TargetedSpell implements TargetedEntitySpell {
 		
 		List<String> disarmableIds = getConfigStringList("disarmable-items", null);
 		if (disarmableIds != null && !disarmableIds.isEmpty()) {
-			disarmable = new HashSet<Material>();
+			disarmable = new HashSet<>();
 			for (String itemName : disarmableIds) {
 				ItemStack item = Util.getItemStackFromString(itemName);
 				if (item != null) disarmable.add(item.getType());
@@ -52,7 +52,7 @@ public class DisarmSpell extends TargetedSpell implements TargetedEntitySpell {
 		strInvalidItem = getConfigString("str-invalid-item", "Your target could not be disarmed.");
 		
 		if (dontDrop) preventTheft = false;
-		if (preventTheft) disarmedItems = new HashMap<Item, String>();
+		if (preventTheft) disarmedItems = new HashMap<>();
 	}
 
 	@Override
@@ -114,11 +114,10 @@ public class DisarmSpell extends TargetedSpell implements TargetedEntitySpell {
 				setItemInHand(target, null);
 				Item item = target.getWorld().dropItemNaturally(target.getLocation(), inHand.clone());
 				item.setPickupDelay(disarmDuration);
-				if (preventTheft && target instanceof Player) disarmedItems.put(item, ((Player)target).getName());
+				if (preventTheft && target instanceof Player) disarmedItems.put(item, target.getName());
 			}
 			return true;
 		}
-		
 		return false;
 	}
 	
@@ -155,12 +154,11 @@ public class DisarmSpell extends TargetedSpell implements TargetedEntitySpell {
 		if (!preventTheft || event.isCancelled()) return;
 		
 		Item item = event.getItem();
-		if (disarmedItems.containsKey(item)) {
-			if (disarmedItems.get(item).equals(event.getPlayer().getName())) {
-				disarmedItems.remove(item);
-			} else {
-				event.setCancelled(true);
-			}
+		if (!disarmedItems.containsKey(item)) return;
+		if (disarmedItems.get(item).equals(event.getPlayer().getName())) {
+			disarmedItems.remove(item);
+		} else {
+			event.setCancelled(true);
 		}
 	}
 

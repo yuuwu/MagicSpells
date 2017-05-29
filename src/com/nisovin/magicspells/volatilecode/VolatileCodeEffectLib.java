@@ -16,19 +16,16 @@ public class VolatileCodeEffectLib extends VolatileCodeDisabled {
 	}
 	
 	@Override
-	public void playParticleEffect(Location location, String name,
-			float spreadHoriz, float spreadVert, float speed, int count,
-			int radius, float yOffset) {
-		ParticleEffect effect = null;
+	public void playParticleEffect(Location location, String name, float spreadHoriz, float spreadVert, float speed, int count, int radius, float yOffset) {
+		ParticleEffect effect;
 		if (name != null) {
 			effect = ParticleEffect.fromName(name);
 		} else {
 			throw new NullPointerException("Particle name cannot be null");
 		}
 		
-		if (effect == null) {
-			effect = ParticleEffect.valueOf(name);
-		}
+		if (effect == null) effect = ParticleEffect.valueOf(name);
+		
 		//ParticleData data, Location center, Color color, double range, float offsetX, float offsetY, float offsetZ, float speed, int amount
 		Location displayLocation = location.add(0, yOffset, 0);
 		effect.display(null, displayLocation, null, radius, spreadHoriz, spreadVert, spreadHoriz, speed, count);

@@ -19,7 +19,7 @@ public class CastItem {
 	private int[][] enchants = null;
 	
 	public CastItem() {
-		//no op
+		// No op
 	}
 	
 	public CastItem(int type) {
@@ -152,20 +152,25 @@ public class CastItem {
 	
 	@Override
 	public String toString() {
-		String s;
+		StringBuilder builder = new StringBuilder();
 		if (data == 0) {
-			s = type + "";
+			builder.append(type);
 		} else {
-			s = type + ":" + data;
+			builder.append(type);
+			builder.append(':');
+			builder.append(data);
 		}
 		if (enchants != null) {
-			s += ';';
+			builder.append(';');
 			for (int i = 0; i < enchants.length; i++) {
-				s += enchants[i][0] + "-" + enchants[i][1];
-				if (i < enchants.length - 1) s += '+';
+				builder.append(enchants[i][0]);
+				builder.append('-');
+				builder.append(enchants[i][1]);
+				if (i < enchants.length - 1) builder.append('+');
 			}
 		}
-		if (name != null && !name.isEmpty()) s += "|" + name;
+		String s = builder.toString();
+		if (name != null && !name.isEmpty()) s += '|' + name;
 		return s;
 	}
 	

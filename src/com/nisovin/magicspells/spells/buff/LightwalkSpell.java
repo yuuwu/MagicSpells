@@ -26,7 +26,7 @@ public class LightwalkSpell extends BuffSpell {
 	public LightwalkSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 				
-		lightwalkers = new HashMap<String, Block>();
+		lightwalkers = new HashMap<>();
 	}
 
 	@Override

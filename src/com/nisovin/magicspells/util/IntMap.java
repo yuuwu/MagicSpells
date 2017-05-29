@@ -7,7 +7,7 @@ import java.util.TreeMap;
 
 public class IntMap<T> {
 
-	private Map<T, Integer> map = new HashMap<T, Integer>();
+	private Map<T, Integer> map = new HashMap<>();
 	
 	public int put(T key, int value) {
 		Integer prev = map.put(key, Integer.valueOf(value));
@@ -99,13 +99,13 @@ public class IntMap<T> {
 	
 	@Override
 	public IntMap<T> clone() {
-		IntMap<T> newMap = new IntMap<T>();
+		IntMap<T> newMap = new IntMap<>();
 		newMap.putAll(map);
 		return newMap;
 	}
 	
 	public void useTreeMap() {
-		Map<T, Integer> newMap = new TreeMap<T, Integer>();
+		Map<T, Integer> newMap = new TreeMap<>();
 		newMap.putAll(map);
 		map.clear();
 		map = newMap;

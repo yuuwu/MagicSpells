@@ -143,8 +143,8 @@ public class DestroySpell extends TargetedSpell implements TargetedLocationSpell
 		int centerY = target.getBlockY();
 		int centerZ = target.getBlockZ();
 
-		List<Block> blocksToThrow = new ArrayList<Block>();
-		List<Block> blocksToRemove = new ArrayList<Block>();
+		List<Block> blocksToThrow = new ArrayList<>();
+		List<Block> blocksToRemove = new ArrayList<>();
 		
 		for (int y = centerY - vertRadius; y <= centerY + vertRadius; y++) {
 			for (int x = centerX - horizRadius; x <= centerX + horizRadius; x++) {
@@ -278,7 +278,15 @@ public class DestroySpell extends TargetedSpell implements TargetedLocationSpell
 	
 	public enum VelocityType {
 		
-		NONE, UP, OUT, UP_OUT, RANDOM, RANDOMUP, DOWN, TOWARD, AWAY
+		NONE,
+		UP,
+		OUT,
+		UP_OUT,
+		RANDOM,
+		RANDOMUP,
+		DOWN,
+		TOWARD,
+		AWAY
 		
 	}
 	

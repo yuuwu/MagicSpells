@@ -68,7 +68,7 @@ public class SoundEffect extends SpellEffect {
 
 	@Override
 	public void loadFromString(String string) {
-		if (string != null && string.length() > 0) {
+		if (string != null && !string.isEmpty()) {
 			String[] data = string.split(" ");
 			sound = data[0];
 			if (data.length > 1) volume = Float.parseFloat(data[1]);
@@ -108,7 +108,7 @@ public class SoundEffect extends SpellEffect {
 		File[] files = folder.listFiles();
 		for (File file : files) {			
 			if (file.isDirectory()) {
-				parseFolder(file, path + file.getName() + ".", sounds);
+				parseFolder(file, path + file.getName() + '.', sounds);
 			} else if (file.getName().endsWith(".ogg")) {
 				String name = path + file.getName().replace(".ogg", "").replaceAll("[0-9]+$", "").replace(" ", "_");
 				if (!sounds.contains(name)) {

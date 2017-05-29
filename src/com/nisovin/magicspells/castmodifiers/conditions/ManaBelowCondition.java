@@ -22,7 +22,7 @@ public class ManaBelowCondition extends Condition {
 		
 		if (var.endsWith("%")) {
 			percent = true;
-			var = var.replace("%", ""); //TODO find an alternative to reassigning the parameter
+			var = var.replace("%", "");
 		} else {
 			percent = false;
 		}
@@ -42,22 +42,19 @@ public class ManaBelowCondition extends Condition {
 			int max = mana.getMaxMana(player);
 			int amt = (int)(max * (num / 100F));
 			return !mana.hasMana(player, amt);
-		} else {
-			return !mana.hasMana(player, num);
 		}
+		return !mana.hasMana(player, num);
 	}
 
 	@Override
 	public boolean check(Player player, LivingEntity target) {
-		if (target instanceof Player) {
-			return check((Player)target);
-		} else {
-			return false;
-		}
+		if (target instanceof Player) return check((Player)target);
+		return false;
 	}
 
 	@Override
 	public boolean check(Player player, Location location) {
 		return false;
 	}
+	
 }

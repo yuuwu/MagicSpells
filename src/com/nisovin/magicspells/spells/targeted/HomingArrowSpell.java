@@ -26,7 +26,7 @@ public class HomingArrowSpell extends TargetedSpell implements TargetedEntitySpe
 	Class<? extends Projectile> projectileType = Snowball.class;
 	String projectileClassName = "org.bukkit.entity.Snowball";
 	
-	List<HomingArrow> arrows = new ArrayList<HomingArrow>();
+	List<HomingArrow> arrows = new ArrayList<>();
 	int monitor = 0;
 	
 	public HomingArrowSpell(MagicConfig config, String spellName) {
@@ -43,7 +43,7 @@ public class HomingArrowSpell extends TargetedSpell implements TargetedEntitySpe
 				projectileType = configProjectileClass;
 			}
 		} catch (ClassNotFoundException e) {
-			MagicSpells.error("Couldn't find class \"" + projectileClassName + "\"");
+			MagicSpells.error("Couldn't find class \"" + projectileClassName + '\"');
 		} catch (ClassCastException e) {
 			MagicSpells.error("Couldn't cast \"" + projectileClassName + "\" as Projectile");
 		}
@@ -146,7 +146,7 @@ public class HomingArrowSpell extends TargetedSpell implements TargetedEntitySpe
 		}
 	}
 	
-	static class HomingArrow {
+	class HomingArrow {
 		
 		Player shooter;
 		Projectile arrow;

@@ -22,7 +22,7 @@ public class CastListener implements Listener {
 
 	MagicSpells plugin;
 	
-	private HashMap<String, Long> noCastUntil = new HashMap<String, Long>();
+	private HashMap<String, Long> noCastUntil = new HashMap<>();
 	//private HashMap<String,Long> lastCast = new HashMap<String, Long>();
 
 	public CastListener(MagicSpells plugin) {
@@ -118,7 +118,7 @@ public class CastListener implements Listener {
 						if (plugin.manaPotionCooldown > 0) {
 							Long c = plugin.manaPotionCooldowns.get(player);
 							if (c != null && c > System.currentTimeMillis()) {
-								MagicSpells.sendMessage(plugin.strManaPotionOnCooldown.replace("%c", ""+(int)((c-System.currentTimeMillis())/1000)), player, MagicSpells.NULL_ARGS);
+								MagicSpells.sendMessage(plugin.strManaPotionOnCooldown.replace("%c", "" + (int)((c - System.currentTimeMillis())/1000)), player, MagicSpells.NULL_ARGS);
 								return;
 							}
 						}
@@ -127,13 +127,13 @@ public class CastListener implements Listener {
 						if (added) {
 							// set cooldown
 							if (plugin.manaPotionCooldown > 0) {
-								plugin.manaPotionCooldowns.put(player, System.currentTimeMillis() + plugin.manaPotionCooldown*1000);
+								plugin.manaPotionCooldowns.put(player, System.currentTimeMillis() + plugin.manaPotionCooldown * 1000);
 							}
 							// remove item
 							if (inHand.getAmount() == 1) { //TODO make sure this is not null
 								inHand = null;
 							} else {
-								inHand.setAmount(inHand.getAmount()-1);
+								inHand.setAmount(inHand.getAmount() - 1);
 							}
 							HandHandler.setItemInMainHand(player, inHand);
 							player.updateInventory();

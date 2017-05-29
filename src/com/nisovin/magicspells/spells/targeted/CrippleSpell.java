@@ -82,6 +82,7 @@ public class CrippleSpell extends TargetedSpell implements TargetedEntitySpell {
 		}
 		
 		// portal cooldown
+		// FIXME provide a version safe handling for this
 		if (applyPortalCooldown) {
 			if (target.getPortalCooldown() < (int)(portalCooldown * power)) target.setPortalCooldown((int)(portalCooldown * power));
 		}

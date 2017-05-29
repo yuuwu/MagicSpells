@@ -111,8 +111,8 @@ public class ScrollSpell extends CommandSpell {
 	public void initialize() {
 		super.initialize();
 		if (predefinedScrolls != null && !predefinedScrolls.isEmpty()) {
-			predefinedScrollSpells = new HashMap<Integer, Spell>();
-			predefinedScrollUses = new HashMap<Integer, Integer>();
+			predefinedScrollSpells = new HashMap<>();
+			predefinedScrollUses = new HashMap<>();
 			for (String s : predefinedScrolls) {
 				String[] data = s.split(" ");
 				try {
@@ -157,7 +157,8 @@ public class ScrollSpell extends CommandSpell {
 				// fail -- no such spell
 				sendMessage(strNoSpell, player, args);
 				return PostCastAction.ALREADY_HANDLED;			
-			} else if (requireTeachPerm && !spellbook.canTeach(spell)) {
+			}
+			if (requireTeachPerm && !spellbook.canTeach(spell)) {
 				sendMessage(strCantTeach, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
@@ -178,10 +179,9 @@ public class ScrollSpell extends CommandSpell {
 					// missing reagents
 					sendMessage(strMissingReagents, player, args);
 					return PostCastAction.ALREADY_HANDLED;
-				} else {
-					// has reagents, so just remove them
-					removeReagents(player, reagents);
 				}
+				// has reagents, so just remove them
+				removeReagents(player, reagents);
 			}
 			
 			// create scroll
@@ -196,20 +196,18 @@ public class ScrollSpell extends CommandSpell {
 	}
 	
 	public ItemStack createScroll(Spell spell, int uses, ItemStack item) {
-		if (item == null) {
-			item = itemType.toItemStack(1); //TODO make an alternative to overriding the parameter
-		}
+		if (item == null) item = itemType.toItemStack(1);
 		item.setDurability((short)0);
 		ItemMeta meta = item.getItemMeta();
-		meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', strScrollName.replace("%s", spell.getName()).replace("%u", (uses>=0?uses+"":"many"))));
+		meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', strScrollName.replace("%s", spell.getName()).replace("%u", (uses >= 0 ? uses + "" : "many"))));
 		if (strScrollSubtext != null && !strScrollSubtext.isEmpty()) {
-			List<String> lore = new ArrayList<String>();
-			lore.add(ChatColor.translateAlternateColorCodes('&', strScrollSubtext.replace("%s", spell.getName()).replace("%u", (uses>=0?uses+"":"many"))));
+			List<String> lore = new ArrayList<>();
+			lore.add(ChatColor.translateAlternateColorCodes('&', strScrollSubtext.replace("%s", spell.getName()).replace("%u", (uses >= 0 ? uses + "" : "many"))));
 			meta.setLore(lore);
 		}
 		item.setItemMeta(meta);
-		Util.setLoreData(item, internalName + ":" + spell.getInternalName() + (uses > 0 ? "," + uses : ""));
-		item = MagicSpells.getVolatileCodeHandler().addFakeEnchantment(item); //TODO make an alternative to overriding the parameter
+		Util.setLoreData(item, internalName + ':' + spell.getInternalName() + (uses > 0 ? "," + uses : ""));
+		item = MagicSpells.getVolatileCodeHandler().addFakeEnchantment(item);
 		return item;
 	}
 	
@@ -230,16 +228,15 @@ public class ScrollSpell extends CommandSpell {
 	
 	private String getSpellDataFromScroll(ItemStack item) {
 		String loreData = Util.getLoreData(item);
-		if (loreData != null && loreData.startsWith(internalName + ":")) {
-			return loreData.replace(internalName + ":", "");
+		if (loreData != null && loreData.startsWith(internalName + ':')) {
+			return loreData.replace(internalName + ':', "");
 		}
 		return null;
 	}
 	
 	@EventHandler(priority=EventPriority.MONITOR)
 	public void onPlayerInteract(PlayerInteractEvent event) {
-		if ((rightClickCast && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) ||
-			(leftClickCast && (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK))) {
+		if ((rightClickCast && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) || (leftClickCast && (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK))) {
 			Player player = event.getPlayer();
 			ItemStack inHand = HandHandler.getItemInMainHand(player);
 			if (itemType.getMaterial() != inHand.getType() || inHand.getAmount() > 1) return;
@@ -309,7 +306,7 @@ public class ScrollSpell extends CommandSpell {
 				}
 				
 				// send msg
-				sendMessage(formatMessage(strOnUse, "%s", spell.getName(), "%u", (uses>=0?uses+"":"many")), player, MagicSpells.NULL_ARGS);
+				sendMessage(formatMessage(strOnUse, "%s", spell.getName(), "%u", (uses >= 0 ? uses + "" : "many")), player, MagicSpells.NULL_ARGS);
 			}
 		}
 	}

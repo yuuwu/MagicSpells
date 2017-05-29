@@ -16,7 +16,7 @@ public class HandHandler {
 	private static boolean offhandExists;
 	
 	public static void initialize() {
-		// only initialize once
+		// Only initialize once
 		if (initialized) return;
 		
 		try {
@@ -96,7 +96,7 @@ public class HandHandler {
 	
 	public static ItemStack getItemInOffHand(EntityEquipment equip) {
 		if (offhandExists) return equip.getItemInOffHand();
-		// no offhand to get from
+		// No offhand to get from
 		return null;
 	}
 	
@@ -108,7 +108,7 @@ public class HandHandler {
 		if (offhandExists) {
 			equip.setItemInOffHand(item);
 		} else {
-			// no op
+			// No op
 		}
 	}
 	
@@ -120,7 +120,7 @@ public class HandHandler {
 		if (offhandExists) {
 			equip.setItemInOffHandDropChance(chance);
 		} else {
-			// no op
+			// No op
 		}
 	}
 	

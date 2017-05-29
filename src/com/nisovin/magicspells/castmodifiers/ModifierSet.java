@@ -57,7 +57,7 @@ public class ModifierSet {
 	private List<Modifier> modifiers;
 	
 	public ModifierSet(List<String> data) {
-		modifiers = new ArrayList<Modifier>();
+		modifiers = new ArrayList<>();
 		for (String s : data) {
 			Modifier m = Modifier.factory(s);
 			if (m != null) {

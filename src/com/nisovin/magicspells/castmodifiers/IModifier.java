@@ -10,11 +10,11 @@ import com.nisovin.magicspells.events.SpellTargetLocationEvent;
 
 public interface IModifier {
 	
-	public boolean apply(SpellCastEvent event);
-	public boolean apply(ManaChangeEvent event);
-	public boolean apply(SpellTargetEvent event);
-	public boolean apply(SpellTargetLocationEvent event);
-	public boolean apply(MagicSpellsGenericPlayerEvent event);
-	public boolean check(Player player);
+	boolean apply(SpellCastEvent event);
+	boolean apply(ManaChangeEvent event);
+	boolean apply(SpellTargetEvent event);
+	boolean apply(SpellTargetLocationEvent event);
+	boolean apply(MagicSpellsGenericPlayerEvent event);
+	boolean check(Player player);
 
 }

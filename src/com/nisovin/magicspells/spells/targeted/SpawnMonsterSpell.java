@@ -111,7 +111,7 @@ public class SpawnMonsterSpell extends TargetedSpell implements TargetedLocation
 		
 		List<String> list = getConfigStringList("potion-effects", null);
 		if (list != null && !list.isEmpty()) {
-			potionEffects = new ArrayList<PotionEffect>();
+			potionEffects = new ArrayList<>();
 			for (String data : list) {
 				String[] split = data.split(" ");
 				try {
@@ -237,9 +237,9 @@ public class SpawnMonsterSpell extends TargetedSpell implements TargetedLocation
 		int x, y, z;
 		Block block, block2;
 		while (attempts < 10) {
-			x = location.getBlockX() + random.nextInt(range * 2) - range;
+			x = location.getBlockX() + random.nextInt(range << 1) - range;
 			y = location.getBlockY() + 2;
-			z = location.getBlockZ() + random.nextInt(range * 2) - range;	
+			z = location.getBlockZ() + random.nextInt(range << 1) - range;
 			
 			block = world.getBlockAt(x, y, z);
 			if (block.getType() == Material.STATIONARY_WATER || block.getType() == Material.WATER) return block.getLocation();
@@ -276,7 +276,7 @@ public class SpawnMonsterSpell extends TargetedSpell implements TargetedLocation
 		if (potionEffects != null) ((LivingEntity)entity).addPotionEffects(potionEffects);
 		
 		// set on fire
-		if (fireTicks > 0) ((LivingEntity)entity).setFireTicks(fireTicks);
+		if (fireTicks > 0) entity.setFireTicks(fireTicks);
 		
 		// add attributes
 		if (attributeTypes != null && attributeTypes.length > 0) {
@@ -367,11 +367,11 @@ public class SpawnMonsterSpell extends TargetedSpell implements TargetedLocation
 		// set nameplate text
 		if (entity instanceof LivingEntity) {
 			if (useCasterName && player != null) {
-				((LivingEntity)entity).setCustomName(player.getDisplayName());
-				((LivingEntity)entity).setCustomNameVisible(true);
+				entity.setCustomName(player.getDisplayName());
+				entity.setCustomNameVisible(true);
 			} else if (nameplateText != null && !nameplateText.isEmpty()) {
-				((LivingEntity)entity).setCustomName(nameplateText);
-				((LivingEntity)entity).setCustomNameVisible(true);
+				entity.setCustomName(nameplateText);
+				entity.setCustomNameVisible(true);
 			}
 		}
 	}
@@ -488,10 +488,9 @@ public class SpawnMonsterSpell extends TargetedSpell implements TargetedLocation
 		
 		@EventHandler
 		void onDeath(EntityDeathEvent event) {
-			if (event.getEntity() == target) {
-				target = null;
-				retarget(event.getEntity());
-			}
+			if (event.getEntity() != target) return;
+			target = null;
+			retarget(event.getEntity());
 		}
 		
 		void retarget(LivingEntity ignore) {
@@ -506,17 +505,13 @@ public class SpawnMonsterSpell extends TargetedSpell implements TargetedLocation
 				if (e instanceof Player) {
 					Player p = (Player)e;
 					GameMode gamemode = p.getGameMode();
-					if (gamemode == GameMode.CREATIVE || gamemode == GameMode.SPECTATOR) {
-						continue;
-					}
+					if (gamemode == GameMode.CREATIVE || gamemode == GameMode.SPECTATOR) continue;
 				}
 				int rr = (int)monster.getLocation().distanceSquared(e.getLocation());
 				if (rr < r) {
 					r = rr;
 					t = (LivingEntity)e;
-					if (r < 25) {
-						break;
-					}
+					if (r < 25) break;
 				}
 			}
 			target = t;
@@ -545,7 +540,7 @@ public class SpawnMonsterSpell extends TargetedSpell implements TargetedLocation
 			}
 			
 			List<Entity> list = entity.getNearbyEntities(targetRange, targetRange, targetRange);
-			List<LivingEntity> targetable = new ArrayList<LivingEntity>();
+			List<LivingEntity> targetable = new ArrayList<>();
 			for (Entity e : list) {
 				if (!(e instanceof LivingEntity)) continue;
 				if (!validTargetList.canTarget(caster, e)) continue;

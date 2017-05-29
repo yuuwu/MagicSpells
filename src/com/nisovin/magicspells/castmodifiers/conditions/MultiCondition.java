@@ -60,31 +60,27 @@ public class MultiCondition extends Condition implements IModifier {
 	public boolean setVar(String var) {
 		configPrefix += var;
 		MagicConfig config = MagicSpells.plugin.getMagicConfig();
-		 if (!(config.contains(configPrefix) && config.isSection(configPrefix))) {
-			return false;
-		}
+		if (!(config.contains(configPrefix) && config.isSection(configPrefix))) return false;
 		
 		List<String> modifierStrings = config.getStringList(configPrefix + ".checks", null);
 		if (modifierStrings == null) return false;
 		
 		String passConditionString = config.getString(configPrefix + ".pass-condition", "ALL").toUpperCase();
 		PassCondition configPassCondition = PassCondition.valueOf(passConditionString);
-		if (configPassCondition != null) {
-			passCondition = configPassCondition;
-		}
+		if (configPassCondition != null) passCondition = configPassCondition;
 		
-		modifiers = new ArrayList<Modifier>();
+		modifiers = new ArrayList<>();
 		for (String modString: modifierStrings) {
 			Modifier m = Modifier.factory(modString);
 			if (m != null) {
 				modifiers.add(m);
 			} else {
-				MagicSpells.error("Problem in reading predefined modifier: \"" + modString + "\" from \"" + var + "\"");
+				MagicSpells.error("Problem in reading predefined modifier: \"" + modString + "\" from \"" + var + '\"');
 			}
 		}
 		
 		if (modifiers == null || modifiers.isEmpty()) {
-			MagicSpells.error("Could not load any modifier checks for predefined modifier \"" + var + "\"");
+			MagicSpells.error("Could not load any modifier checks for predefined modifier \"" + var + '\"');
 			return false;
 		}
 		
@@ -101,9 +97,7 @@ public class MultiCondition extends Condition implements IModifier {
 			} else {
 				fail++;
 			}
-			if (!passCondition.shouldContinue(pass, fail)) {
-				return passCondition.hasPassed(pass, fail);
-			}
+			if (!passCondition.shouldContinue(pass, fail)) return passCondition.hasPassed(pass, fail);
 		}
 		return passCondition.hasPassed(pass, fail);
 	}
@@ -128,9 +122,7 @@ public class MultiCondition extends Condition implements IModifier {
 			} else {
 				fail++;
 			}
-			if (!passCondition.shouldContinue(pass, fail)) {
-				return passCondition.hasPassed(pass, fail);
-			}
+			if (!passCondition.shouldContinue(pass, fail)) return passCondition.hasPassed(pass, fail);
 		}
 		return passCondition.hasPassed(pass, fail);
 	}
@@ -145,9 +137,7 @@ public class MultiCondition extends Condition implements IModifier {
 			} else {
 				fail++;
 			}
-			if (!passCondition.shouldContinue(pass, fail)) {
-				return passCondition.hasPassed(pass, fail);
-			}
+			if (!passCondition.shouldContinue(pass, fail)) return passCondition.hasPassed(pass, fail);
 		}
 		return passCondition.hasPassed(pass, fail);
 	}
@@ -162,9 +152,7 @@ public class MultiCondition extends Condition implements IModifier {
 			} else {
 				fail++;
 			}
-			if (!passCondition.shouldContinue(pass, fail)) {
-				return passCondition.hasPassed(pass, fail);
-			}
+			if (!passCondition.shouldContinue(pass, fail)) return passCondition.hasPassed(pass, fail);
 		}
 		return passCondition.hasPassed(pass, fail);
 	}
@@ -179,9 +167,7 @@ public class MultiCondition extends Condition implements IModifier {
 			} else {
 				fail++;
 			}
-			if (!passCondition.shouldContinue(pass, fail)) {
-				return passCondition.hasPassed(pass, fail);
-			}
+			if (!passCondition.shouldContinue(pass, fail)) return passCondition.hasPassed(pass, fail);
 		}
 		return passCondition.hasPassed(pass, fail);
 	}
@@ -196,14 +182,11 @@ public class MultiCondition extends Condition implements IModifier {
 			} else {
 				fail++;
 			}
-			if (!passCondition.shouldContinue(pass, fail)) {
-				return passCondition.hasPassed(pass, fail);
-			}
+			if (!passCondition.shouldContinue(pass, fail)) return passCondition.hasPassed(pass, fail);
 		}
 		return passCondition.hasPassed(pass, fail);
 	}
 	
-	// TODO see if this can be static
 	public enum PassCondition {
 		ALL{
 
@@ -246,7 +229,7 @@ public class MultiCondition extends Condition implements IModifier {
 		
 		;
 		
-		private PassCondition() {
+		PassCondition() {
 			
 		}
 		

@@ -28,7 +28,7 @@ public class MoneyMoreThanCondition extends Condition {
 
 	@Override
 	public boolean check(Player player, LivingEntity target) {
-		return target instanceof Player ? check((Player)target) : false;
+		return target instanceof Player && check((Player)target);
 	}
 
 	@Override

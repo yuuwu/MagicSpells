@@ -25,11 +25,11 @@ import com.nisovin.magicspells.util.Util;
 // ground, fish, fail, <entity type>
 public class FishListener extends PassiveListener {
 
-	Map<EntityType, List<PassiveSpell>> types = new HashMap<EntityType, List<PassiveSpell>>();
-	List<PassiveSpell> ground = new ArrayList<PassiveSpell>();
-	List<PassiveSpell> fish = new ArrayList<PassiveSpell>();
-	List<PassiveSpell> fail = new ArrayList<PassiveSpell>();
-	List<PassiveSpell> allTypes = new ArrayList<PassiveSpell>();
+	Map<EntityType, List<PassiveSpell>> types = new HashMap<>();
+	List<PassiveSpell> ground = new ArrayList<>();
+	List<PassiveSpell> fish = new ArrayList<>();
+	List<PassiveSpell> fail = new ArrayList<>();
+	List<PassiveSpell> allTypes = new ArrayList<>();
 	
 	@Override
 	public void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var) {
@@ -49,7 +49,7 @@ public class FishListener extends PassiveListener {
 					if (t != null) {
 						List<PassiveSpell> list = types.get(t);
 						if (list == null) {
-							list = new ArrayList<PassiveSpell>();
+							list = new ArrayList<>();
 							types.put(t, list);
 						}
 						list.add(spell);

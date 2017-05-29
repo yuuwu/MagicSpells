@@ -33,17 +33,12 @@ public class FacingCondition extends Condition {
 	
 	public String getDirection(Location loc) {
         float y = loc.getYaw();
-        if( y < 0 ){y += 360;}
+        if (y < 0) y += 360;
         y %= 360;
-        if (y <= 45 || y >= 315) {
-        	return "south";
-        } else if (y >= 45 && y <= 135) {
-        	return "west";
-        } else if (y >= 135 && y <= 225) {
-        	return "north";
-        } else {
-        	return "east";
-        }
+        if (y <= 45 || y >= 315) return "south";
+        if (y >= 45 && y <= 135) return "west";
+        if (y >= 135 && y <= 225) return "north";
+		return "east";
    }
 
 }

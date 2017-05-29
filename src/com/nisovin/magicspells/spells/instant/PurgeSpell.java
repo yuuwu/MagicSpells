@@ -31,7 +31,7 @@ public class PurgeSpell extends InstantSpell implements TargetedLocationSpell {
 		
 		List<String> list = getConfigStringList("entities", null);
 		if (list != null && !list.isEmpty()) {
-			entities = new ArrayList<EntityType>();
+			entities = new ArrayList<>();
 			for (String s : list) {
 				EntityType t = Util.getEntityType(s);
 				if (t != null) {
@@ -53,7 +53,7 @@ public class PurgeSpell extends InstantSpell implements TargetedLocationSpell {
 			for (Entity entity : entities) {
 				// TODO verify that entities cannot enter this loop as null
 				// TODO remove the redundant null check otherwise
-				if (entity instanceof LivingEntity && !(entity instanceof Player) && (entities == null || entities.contains(entity.getType())) && validTargetList.canTarget(player, (LivingEntity)entity)) {
+				if (entity instanceof LivingEntity && !(entity instanceof Player) && (entities == null || entities.contains(entity.getType())) && validTargetList.canTarget(player, entity)) {
 					((LivingEntity)entity).setHealth(0);
 					killed = true;
 					playSpellEffects(EffectPosition.TARGET, entity);

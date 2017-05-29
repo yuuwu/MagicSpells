@@ -43,32 +43,20 @@ import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.ReflectionHelper;
 
 public class DisguiseManager_1_9_R1 extends DisguiseManager {
-
-	@SuppressWarnings("rawtypes")
+	
 	ReflectionHelper<Packet> refPacketNamedEntity = new ReflectionHelper<Packet>(PacketPlayOutNamedEntitySpawn.class, "a", "b");
-	@SuppressWarnings("rawtypes")
 	ReflectionHelper<Packet> refPacketPlayerInfo = new ReflectionHelper<Packet>(PacketPlayOutPlayerInfo.class, "a", "b");
-	@SuppressWarnings("rawtypes")
 	ReflectionHelper<Packet> refPacketSpawnEntityLiving = new ReflectionHelper<Packet>(PacketPlayOutSpawnEntityLiving.class, "a", "i", "j", "k");
-	@SuppressWarnings("rawtypes")
 	ReflectionHelper<Packet> refPacketSpawnEntity = new ReflectionHelper<Packet>(PacketPlayOutSpawnEntity.class, "a");
-	@SuppressWarnings("rawtypes")
 	ReflectionHelper<Packet> refPacketEntityEquipment = new ReflectionHelper<Packet>(PacketPlayOutEntityEquipment.class, "a", "b");
-	@SuppressWarnings("rawtypes")
 	ReflectionHelper<Packet> refPacketRelEntityMove = new ReflectionHelper<Packet>(PacketPlayOutEntity.class, "a", "b", "c", "d");
-	@SuppressWarnings("rawtypes")
 	ReflectionHelper<Packet> refPacketRelEntityMoveLook = new ReflectionHelper<Packet>(PacketPlayOutEntity.class, "a", "b", "c", "d", "e", "f");
-	@SuppressWarnings("rawtypes")
 	ReflectionHelper<Packet> refPacketRelEntityTeleport = new ReflectionHelper<Packet>(PacketPlayOutEntityTeleport.class, "a", "b", "c", "d", "e", "f");
-	@SuppressWarnings("rawtypes")
 	ReflectionHelper<Packet> refPacketEntityLook = new ReflectionHelper<Packet>(PacketPlayOutEntity.class, "a", "e", "f");
-	@SuppressWarnings("rawtypes")
 	ReflectionHelper<Packet> refPacketEntityHeadRot = new ReflectionHelper<Packet>(PacketPlayOutEntityHeadRotation.class, "a", "b");
-	@SuppressWarnings("rawtypes")
 	ReflectionHelper<Packet> refPacketEntityMetadata = new ReflectionHelper<Packet>(PacketPlayOutEntityMetadata.class, "a");
-	@SuppressWarnings("rawtypes")
 	ReflectionHelper<Packet> refPacketAttachEntity = new ReflectionHelper<Packet>(PacketPlayOutAttachEntity.class, "a", "b");
-	ReflectionHelper<Entity> refEntity = new ReflectionHelper<Entity>(Entity.class, "id");
+	ReflectionHelper<Entity> refEntity = new ReflectionHelper<>(Entity.class, "id");
 	
 	protected ProtocolManager protocolManager;
 	protected PacketAdapter packetListener = null;
@@ -93,7 +81,7 @@ public class DisguiseManager_1_9_R1 extends DisguiseManager {
 					uuid = UUID.fromString(data.uuid);
 				}
 			} catch (Exception e) {
-				//no op yet
+				// No op yet
 			}
 			
 			GameProfile profile = new GameProfile(uuid, name);
@@ -127,7 +115,7 @@ public class DisguiseManager_1_9_R1 extends DisguiseManager {
 				}
 				@Override
 				public void sendMessage(IChatBaseComponent arg0) {
-					// no op yet
+					// No op yet
 				}
 				@Override
 				public BlockPosition getChunkCoordinates() {
@@ -155,9 +143,7 @@ public class DisguiseManager_1_9_R1 extends DisguiseManager {
 			
 		} else if (entityType == EntityType.SKELETON) {
 			entity = new EntitySkeleton(world);
-			if (flag) {
-				((EntitySkeleton)entity).setSkeletonType(1);
-			}
+			if (flag) ((EntitySkeleton)entity).setSkeletonType(1);
 			
 		} else if (entityType == EntityType.IRON_GOLEM) {
 			entity = new EntityIronGolem(world);
@@ -250,10 +236,7 @@ public class DisguiseManager_1_9_R1 extends DisguiseManager {
 		} else if (entityType == EntityType.PIG) {
 			entity = new EntityPig(world);
 			((EntityAgeable)entity).setAge(flag ? -24000 : 0);
-			if (var == 1) {
-				((EntityPig)entity).setSaddle(true);
-			}
-			
+			if (var == 1) ((EntityPig)entity).setSaddle(true);
 		} else if (entityType == EntityType.SHEEP) {
 			entity = new EntitySheep(world);
 			((EntityAgeable)entity).setAge(flag ? -24000 : 0);
@@ -276,9 +259,7 @@ public class DisguiseManager_1_9_R1 extends DisguiseManager {
 			
 		} else if (entityType == EntityType.GUARDIAN) {
 			entity = new EntityGuardian(world);
-			if (flag) {
-				((EntityGuardian)entity).setElder(true);
-			}
+			if (flag) ((EntityGuardian)entity).setElder(true);
 			
 		} else if (entityType == EntityType.ENDERMITE) {
 			entity = new EntityEndermite(world);
@@ -298,12 +279,10 @@ public class DisguiseManager_1_9_R1 extends DisguiseManager {
 			
 		} else if (entityType == EntityType.ENDER_DRAGON) {
 			entity = new EntityEnderDragon(world);
-						
 		} else if (entityType == EntityType.FALLING_BLOCK) {
 			int id = disguise.getVar1();
 			int data = disguise.getVar2(); // TODO: fix this
 			entity = new EntityFallingBlock(world, 0, 0, 0, Block.getById(id > 0 ? id : 1).getBlockData());
-			
 		} else if (entityType == EntityType.DROPPED_ITEM) {
 			int id = disguise.getVar1();
 			int data = disguise.getVar2();
@@ -316,17 +295,15 @@ public class DisguiseManager_1_9_R1 extends DisguiseManager {
 			
 			String nameplateText = disguise.getNameplateText();
 			if (entity instanceof EntityInsentient && nameplateText != null && !nameplateText.isEmpty()) {
-				((EntityInsentient)entity).setCustomName(nameplateText);
-				((EntityInsentient)entity).setCustomNameVisible(disguise.alwaysShowNameplate());
+				entity.setCustomName(nameplateText);
+				entity.setCustomNameVisible(disguise.alwaysShowNameplate());
 			}
 			
 			entity.setPositionRotation(location.getX(), location.getY() + yOffset, location.getZ(), location.getYaw(), location.getPitch());
 			
 			return entity;
-			
-		} else {
-			return null;
 		}
+		return null;
 	}
 	
 	@EventHandler(priority=EventPriority.MONITOR)
@@ -465,7 +442,6 @@ public class DisguiseManager_1_9_R1 extends DisguiseManager {
 					PacketType.Play.Server.ENTITY_HEAD_ROTATION);
 		}
 		
-		@SuppressWarnings("rawtypes")
 		@Override
 		public void onPacketSending(PacketEvent event) {
 			final Player player = event.getPlayer();
@@ -490,7 +466,7 @@ public class DisguiseManager_1_9_R1 extends DisguiseManager {
 					event.setCancelled(true);
 				}
 			} else if (packet instanceof PacketPlayOutPlayerInfo) {
-				// no op yet
+				// No op yet
 			} else if (hideArmor && packet instanceof PacketPlayOutEntityEquipment) {
 				if (refPacketEntityEquipment.getInt(packet, "b") > 0 && disguisedEntityIds.containsKey(refPacketEntityEquipment.getInt(packet, "a"))) {
 					event.setCancelled(true);
@@ -506,9 +482,7 @@ public class DisguiseManager_1_9_R1 extends DisguiseManager {
 				int entId = refPacketEntityMetadata.getInt(packet, "a");
 				if (event.getPlayer().getEntityId() != entId) {
 					DisguiseSpell.Disguise disguise = disguisedEntityIds.get(entId);
-					if (disguise != null && disguise.getEntityType() != EntityType.PLAYER) {
-						event.setCancelled(true);
-					}
+					if (disguise != null && disguise.getEntityType() != EntityType.PLAYER) event.setCancelled(true);
 				}
 			} else if (packet instanceof PacketPlayOutRelEntityMoveLook) {
 				int entId = refPacketRelEntityMove.getInt(packet, "a");
@@ -595,7 +569,6 @@ public class DisguiseManager_1_9_R1 extends DisguiseManager {
 		tracker.a(((CraftPlayer)disguised).getHandle(), packet29);
 	}
 	
-	@SuppressWarnings("rawtypes")
 	private void broadcastPacketDisguised(Player disguised, PacketType packetId, Packet packet) {
 		PacketContainer con = new PacketContainer(packetId, packet);
 		for (Player player : protocolManager.getEntityTrackers(disguised)) {
@@ -609,7 +582,6 @@ public class DisguiseManager_1_9_R1 extends DisguiseManager {
 		}
 	}
 
-	@SuppressWarnings("rawtypes")
 	private void broadcastPacketGlobal(PacketType packetId, Packet packet) {
 		PacketContainer con = new PacketContainer(packetId, packet);
 		for (Player player : Bukkit.getOnlinePlayers()) {
@@ -621,12 +593,11 @@ public class DisguiseManager_1_9_R1 extends DisguiseManager {
 		}
 	}
 	
-	@SuppressWarnings("rawtypes")
 	private void sendDisguisedSpawnPacket(Player viewer, Player disguised, DisguiseSpell.Disguise disguise, Entity entity) {
 		if (entity == null) entity = getEntity(disguised, disguise);
 		if (entity != null) {
 			List<Packet> packets = getPacketsToSend(disguised, disguise, entity);
-			if (packets != null && packets.size() > 0) {
+			if (packets != null && !packets.isEmpty()) {
 				EntityPlayer ep = ((CraftPlayer)viewer).getHandle();
 				try {
 					for (Packet packet : packets) {
@@ -647,13 +618,12 @@ public class DisguiseManager_1_9_R1 extends DisguiseManager {
 		}
 	}
 	
-	@SuppressWarnings("rawtypes")
 	@Override
 	protected void sendDisguisedSpawnPackets(final Player disguised, DisguiseSpell.Disguise disguise) {
 		Entity entity = getEntity(disguised, disguise);
 		if (entity != null) {
 			List<Packet> packets = getPacketsToSend(disguised, disguise, entity);
-			if (packets != null && packets.size() > 0) {
+			if (packets != null && !packets.isEmpty()) {
 				final EntityTracker tracker = ((CraftWorld)disguised.getWorld()).getHandle().tracker;
 				for (Packet packet : packets) {
 					if (packet instanceof PacketPlayOutEntityMetadata) {
@@ -676,21 +646,19 @@ public class DisguiseManager_1_9_R1 extends DisguiseManager {
 				GameProfile profile = getGameProfile(disguised.getName(), data);
 				PacketPlayOutPlayerInfo packetinfo = new PacketPlayOutPlayerInfo();
 				refPacketPlayerInfo.set(packetinfo, "a", EnumPlayerInfoAction.ADD_PLAYER);
-				List<PlayerInfoData> list = new ArrayList<PlayerInfoData>();
+				List<PlayerInfoData> list = new ArrayList<>();
 				list.add(packetinfo.new PlayerInfoData(profile, 0, EnumGamemode.SURVIVAL, new ChatComponentText(disguised.getName())));
 				refPacketPlayerInfo.set(packetinfo, "b", list);
 				PacketPlayOutRespawn packetrespawn = new PacketPlayOutRespawn(0, EnumDifficulty.HARD, WorldType.NORMAL, EnumGamemode.getById(disguised.getGameMode().getValue()));
-				List<AttributeInstance> l = new ArrayList<AttributeInstance>();
+				List<AttributeInstance> l = new ArrayList<>();
 				AttributeInstance a = ((CraftPlayer)disguised).getHandle().getAttributeInstance(GenericAttributes.maxHealth);
-				if (a != null) {
-					l.add(a);
-				}
+				if (a != null) l.add(a);
 				PacketPlayOutUpdateAttributes packetattr = new PacketPlayOutUpdateAttributes(disguised.getEntityId(), l);
 				PacketPlayOutUpdateHealth packethealth = new PacketPlayOutUpdateHealth((float)disguised.getHealth(), disguised.getFoodLevel(), disguised.getSaturation());
 				try {
 					protocolManager.sendServerPacket(disguised, new PacketContainer(PacketType.Play.Server.PLAYER_INFO, packetinfo), false);
 					protocolManager.sendServerPacket(disguised, new PacketContainer(PacketType.Play.Server.RESPAWN, packetrespawn), false);
-					if (l.size() > 0) {
+					if (!l.isEmpty()) {
 						protocolManager.sendServerPacket(disguised, new PacketContainer(PacketType.Play.Server.UPDATE_ATTRIBUTES, packetattr), false);
 					}
 					protocolManager.sendServerPacket(disguised, new PacketContainer(PacketType.Play.Server.UPDATE_HEALTH, packethealth), false);
@@ -708,15 +676,14 @@ public class DisguiseManager_1_9_R1 extends DisguiseManager {
 		}
 	}
 	
-	@SuppressWarnings("rawtypes")
 	private List<Packet> getPacketsToSend(Player disguised, DisguiseSpell.Disguise disguise, Entity entity) {
-		List<Packet> packets = new ArrayList<Packet>();
+		List<Packet> packets = new ArrayList<>();
 		if (entity instanceof EntityHuman) {
 			PacketPlayOutNamedEntitySpawn packet20 = new PacketPlayOutNamedEntitySpawn((EntityHuman)entity);
 			refPacketNamedEntity.setInt(packet20, "a", disguised.getEntityId());
 			PacketPlayOutPlayerInfo packetinfo = new PacketPlayOutPlayerInfo();
 			refPacketPlayerInfo.set(packetinfo, "a", EnumPlayerInfoAction.ADD_PLAYER);
-			List<PlayerInfoData> list = new ArrayList<PlayerInfoData>();
+			List<PlayerInfoData> list = new ArrayList<>();
 			list.add(packetinfo.new PlayerInfoData(((EntityHuman)entity).getProfile(), 0, EnumGamemode.SURVIVAL, new ChatComponentText(((EntityHuman)entity).getName())));
 			refPacketPlayerInfo.set(packetinfo, "b", list);
 			packets.add(packetinfo);
@@ -776,7 +743,7 @@ public class DisguiseManager_1_9_R1 extends DisguiseManager {
 			packets.add(packet39);
 		}
 		
-		// handle passengers and vehicles
+		// Handle passengers and vehicles
 		if (disguised.getPassenger() != null) {
 			PacketPlayOutAttachEntity packet39 = new PacketPlayOutAttachEntity();
 			refPacketAttachEntity.setInt(packet39, "a", disguised.getPassenger().getEntityId());
@@ -793,7 +760,6 @@ public class DisguiseManager_1_9_R1 extends DisguiseManager {
 		return packets;
 	}
 	
-	@SuppressWarnings("rawtypes")
 	private void addEquipmentPackets(Player disguised, List<Packet> packets) {
 		ItemStack inHand = disguised.getInventory().getItemInMainHand();
 		if (inHand != null && inHand.getType() != Material.AIR) {
@@ -838,4 +804,5 @@ public class DisguiseManager_1_9_R1 extends DisguiseManager {
 		final EntityTracker tracker = ((CraftWorld)player.getWorld()).getHandle().tracker;
 		tracker.a(((CraftPlayer)player).getHandle(), packet20);
 	}
+	
 }

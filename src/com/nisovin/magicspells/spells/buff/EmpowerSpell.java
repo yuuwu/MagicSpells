@@ -33,7 +33,7 @@ public class EmpowerSpell extends BuffSpell {
 		List<String> deniedTagList = getConfigStringList("denied-spell-tags", null);
 		
 		filter = new SpellFilter(spells, deniedSpells, tagList, deniedTagList);
-		empowered = new HashMap<String, Float>();
+		empowered = new HashMap<>();
 	}
 
 	@Override

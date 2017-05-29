@@ -29,9 +29,9 @@ import com.nisovin.magicspells.util.OverridePriority;
 // of weapons to trigger on
 public class GiveDamageListener extends PassiveListener {
 
-	Set<Material> types = new HashSet<Material>();
-	Map<MagicMaterial, List<PassiveSpell>> weapons = new LinkedHashMap<MagicMaterial, List<PassiveSpell>>();
-	List<PassiveSpell> always = new ArrayList<PassiveSpell>();
+	Set<Material> types = new HashSet<>();
+	Map<MagicMaterial, List<PassiveSpell>> weapons = new LinkedHashMap<>();
+	List<PassiveSpell> always = new ArrayList<>();
 	
 	@Override
 	public void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var) {
@@ -52,7 +52,7 @@ public class GiveDamageListener extends PassiveListener {
 				if (mat != null) {
 					List<PassiveSpell> list = weapons.get(mat);
 					if (list == null) {
-						list = new ArrayList<PassiveSpell>();
+						list = new ArrayList<>();
 						weapons.put(mat, list);
 					}
 					list.add(spell);

@@ -23,9 +23,9 @@ import com.nisovin.magicspells.util.OverridePriority;
 // trigger variable is the item to trigger on
 public class HotBarListener extends PassiveListener {
 
-	Set<Material> materials = new HashSet<Material>();
-	Map<MagicMaterial, List<PassiveSpell>> select = new LinkedHashMap<MagicMaterial, List<PassiveSpell>>();
-	Map<MagicMaterial, List<PassiveSpell>> deselect = new LinkedHashMap<MagicMaterial, List<PassiveSpell>>();
+	Set<Material> materials = new HashSet<>();
+	Map<MagicMaterial, List<PassiveSpell>> select = new LinkedHashMap<>();
+	Map<MagicMaterial, List<PassiveSpell>> deselect = new LinkedHashMap<>();
 	
 	@Override
 	public void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var) {
@@ -43,13 +43,13 @@ public class HotBarListener extends PassiveListener {
 			if (PassiveTrigger.HOT_BAR_SELECT.contains(trigger)) {
 				list = select.get(mat);
 				if (list == null) {
-					list = new ArrayList<PassiveSpell>();
+					list = new ArrayList<>();
 					select.put(mat, list);
 				}
 			} else if (PassiveTrigger.HOT_BAR_DESELECT.contains(trigger)) {
 				list = deselect.get(mat);
 				if (list == null) {
-					list = new ArrayList<PassiveSpell>();
+					list = new ArrayList<>();
 					deselect.put(mat, list);
 				}
 			}

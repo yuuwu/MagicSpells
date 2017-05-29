@@ -18,13 +18,13 @@ import com.nisovin.magicspells.util.OverridePriority;
 // optional trigger variable that can either be set to a dye color to accept or "all"
 public class SheepShearListener extends PassiveListener {
 
-	EnumMap<DyeColor, List<PassiveSpell>> spellMap = new EnumMap<DyeColor, List<PassiveSpell>>(DyeColor.class);
-	List<PassiveSpell> allColorSpells = new ArrayList<PassiveSpell>();
+	EnumMap<DyeColor, List<PassiveSpell>> spellMap = new EnumMap<>(DyeColor.class);
+	List<PassiveSpell> allColorSpells = new ArrayList<>();
 	
-	List<PassiveSpell> spellsLoaded = new ArrayList<PassiveSpell>();
-	List<PassiveSpell> spellsDeclined = new ArrayList<PassiveSpell>();
-	List<PassiveSpell> spellsFailed = new ArrayList<PassiveSpell>();
-	List<PassiveSpell> spellsAccepted = new ArrayList<PassiveSpell>();
+	List<PassiveSpell> spellsLoaded = new ArrayList<>();
+	List<PassiveSpell> spellsDeclined = new ArrayList<>();
+	List<PassiveSpell> spellsFailed = new ArrayList<>();
+	List<PassiveSpell> spellsAccepted = new ArrayList<>();
 	
 	@Override
 	public void initialize() {

@@ -147,7 +147,7 @@ public class LightningSpell extends TargetedSpell implements TargetedLocationSpe
 		return true;
 	}
 	
-	static class ChargeOption {
+	class ChargeOption {
 		
 		boolean chargeCreeper;
 		boolean changePig;

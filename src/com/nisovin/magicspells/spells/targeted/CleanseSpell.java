@@ -36,22 +36,26 @@ public class CleanseSpell extends TargetedSpell implements TargetedEntitySpell {
 		targetPlayers = getConfigBoolean("target-players", true);
 		targetNonPlayers = getConfigBoolean("target-non-players", false);
 		
-		potionEffectTypes = new ArrayList<PotionEffectType>();
-		buffSpells = new ArrayList<BuffSpell>();
+		potionEffectTypes = new ArrayList<>();
+		buffSpells = new ArrayList<>();
 		fire = false;
-		List<String> toCleanse = getConfigStringList("remove", Arrays.asList(new String[] { "fire", "17", "19", "20" }));
+		List<String> toCleanse = getConfigStringList("remove", Arrays.asList("fire", "17", "19", "20"));
 		for (String s : toCleanse) {
 			if (s.equalsIgnoreCase("fire")) {
 				fire = true;
-			} else if (s.startsWith("buff:")) {
+				continue;
+			}
+			
+			if (s.startsWith("buff:")) {
 				Spell spell = MagicSpells.getSpellByInternalName(s.replace("buff:", ""));
 				if (spell != null && spell instanceof BuffSpell) {
 					buffSpells.add((BuffSpell)spell);
 				}
-			} else {
-				PotionEffectType type = Util.getPotionEffectType(s);
-				if (type != null) potionEffectTypes.add(type);
+				continue;
 			}
+			
+			PotionEffectType type = Util.getPotionEffectType(s);
+			if (type != null) potionEffectTypes.add(type);
 		}
 		
 		checker = new ValidTargetChecker() {
@@ -110,20 +114,16 @@ public class CleanseSpell extends TargetedSpell implements TargetedEntitySpell {
 
 	@Override
 	public boolean castAtEntity(Player caster, LivingEntity target, float power) {
-		if (validTargetList.canTarget(caster, target)) {
-			cleanse(caster, target);
-			return true;
-		}
-		return false;
+		if (!validTargetList.canTarget(caster, target)) return false;
+		cleanse(caster, target);
+		return true;
 	}
 
 	@Override
 	public boolean castAtEntity(LivingEntity target, float power) {
-		if (validTargetList.canTarget(target)) {
-			cleanse(null, target);
-			return true;
-		}
-		return false;
+		if (!validTargetList.canTarget(target)) return false;
+		cleanse(null, target);
+		return true;
 	}
 	
 	@Override

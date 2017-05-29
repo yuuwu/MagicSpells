@@ -55,7 +55,7 @@ public final class TargetedMultiSpell extends TargetedSpell implements TargetedE
 		castRandomSpellInstead = getConfigBoolean("cast-random-spell-instead", false);
 		stopOnFail = getConfigBoolean("stop-on-fail", true);
 
-		actions = new ArrayList<Action>();
+		actions = new ArrayList<>();
 		spellList = getConfigStringList("spells", null);
 	}
 	
@@ -73,7 +73,7 @@ public final class TargetedMultiSpell extends TargetedSpell implements TargetedE
 					if (spell.process()) {
 						actions.add(new Action(spell));
 					} else {
-						MagicSpells.error("No such spell '" + s + "' for multi-spell '" + internalName + "'");
+						MagicSpells.error("No such spell '" + s + "' for multi-spell '" + internalName + '\'');
 					}
 				}
 			}
@@ -107,7 +107,7 @@ public final class TargetedMultiSpell extends TargetedSpell implements TargetedE
 			} else if (pointBlank) {
 				locTarget = player.getLocation();
 			} else {
-				Block b = null;
+				Block b;
 				try {
 					b = getTargetedBlock(player, power);
 					if (b != null && b.getType() != Material.AIR) locTarget = b.getLocation();
@@ -156,7 +156,7 @@ public final class TargetedMultiSpell extends TargetedSpell implements TargetedE
 		if (!castRandomSpellInstead) {
 			int delay = 0;
 			Subspell spell;
-			List<DelayedSpell> delayedSpells = new ArrayList<DelayedSpell>();
+			List<DelayedSpell> delayedSpells = new ArrayList<>();
 			for (Action action : actions) {
 				if (action.isDelay()) {
 					delay += action.getDelay();

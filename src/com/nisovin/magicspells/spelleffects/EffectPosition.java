@@ -120,10 +120,10 @@ public enum EffectPosition {
 	private int id;
 	private String[] names;
 	
-	private static Map<String, EffectPosition> nameMap = new HashMap<String, EffectPosition>();
+	private static Map<String, EffectPosition> nameMap = new HashMap<>();
 	private static boolean initialized = false;
 	
-	private EffectPosition(int num, String... names) {
+	EffectPosition(int num, String... names) {
 		this.id = num;
 		this.names = names;
 	}
@@ -133,13 +133,13 @@ public enum EffectPosition {
 	}
 	
 	private static void initializeNameMap() {
-		if (nameMap == null) nameMap = new HashMap<String, EffectPosition>();
+		if (nameMap == null) nameMap = new HashMap<>();
 		nameMap.clear();
 		for (EffectPosition pos: EffectPosition.values()) {
-			//make sure the number id can be mapped
+			// Make sure the number id can be mapped
 			nameMap.put(pos.id + "", pos);
 			
-			//for all of the names
+			// For all of the names
 			for (String name: pos.names) {
 				nameMap.put(name.toLowerCase(), pos);
 			}

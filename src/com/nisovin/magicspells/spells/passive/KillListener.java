@@ -21,8 +21,8 @@ import com.nisovin.magicspells.util.Util;
 // if specified, it should be a comma separated list of entity types to trigger on
 public class KillListener extends PassiveListener {
 
-	Map<EntityType, List<PassiveSpell>> entityTypes = new HashMap<EntityType, List<PassiveSpell>>();
-	List<PassiveSpell> allTypes = new ArrayList<PassiveSpell>();
+	Map<EntityType, List<PassiveSpell>> entityTypes = new HashMap<>();
+	List<PassiveSpell> allTypes = new ArrayList<>();
 	
 	@Override
 	public void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var) {
@@ -35,7 +35,7 @@ public class KillListener extends PassiveListener {
 				if (t == null) continue;
 				List<PassiveSpell> spells = entityTypes.get(t);
 				if (spells == null) {
-					spells = new ArrayList<PassiveSpell>();
+					spells = new ArrayList<>();
 					entityTypes.put(t, spells);
 				}
 				spells.add(spell);

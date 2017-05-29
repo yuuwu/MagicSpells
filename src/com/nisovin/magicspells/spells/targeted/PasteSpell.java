@@ -145,7 +145,7 @@ public class PasteSpell extends TargetedSpell implements TargetedLocationSpell {
 	class Builder {
 
 		Block center;
-		List<BlockState> blocks = new ArrayList<BlockState>();
+		List<BlockState> blocks = new ArrayList<>();
 		
 		int current = 0;
 		int taskId;
@@ -157,9 +157,9 @@ public class PasteSpell extends TargetedSpell implements TargetedLocationSpell {
 			Vector size = clipboard.getSize();
 			Vector offset = clipboard.getOffset();
 
-			List<BlockState> air = new ArrayList<BlockState>();
-			List<BlockState> solids = new ArrayList<BlockState>();
-			List<BlockState> nonsolids = new ArrayList<BlockState>();
+			List<BlockState> air = new ArrayList<>();
+			List<BlockState> solids = new ArrayList<>();
+			List<BlockState> nonsolids = new ArrayList<>();
 			
 			for (int y = 0; y < size.getBlockY(); y++) {
 				for (int x = 0; x < size.getBlockX(); x++) {

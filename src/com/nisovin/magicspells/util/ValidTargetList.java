@@ -19,7 +19,7 @@ import com.nisovin.magicspells.Spell;
 
 public class ValidTargetList {
 	
-	public static enum TargetingElement {
+	public enum TargetingElement {
 		
 		TARGET_SELF,
 		TARGET_PLAYERS,
@@ -38,7 +38,7 @@ public class ValidTargetList {
 	boolean targetMonsters = false;
 	boolean targetAnimals = false;
 	boolean targetNonLivingEntities = false; // this will be kept as false for now during restructuring
-	Set<EntityType> types = new HashSet<EntityType>();
+	Set<EntityType> types = new HashSet<>();
 	
 	public ValidTargetList(Spell spell, String list) {
 		if (list != null) {
@@ -105,7 +105,7 @@ public class ValidTargetList {
 				if (type != null) {
 					types.add(type);
 				} else {
-					MagicSpells.error("Invalid target type '" + s + "' on spell '" + spell.getInternalName() + "'");
+					MagicSpells.error("Invalid target type '" + s + "' on spell '" + spell.getInternalName() + '\'');
 				}
 			}
 		}
@@ -152,7 +152,7 @@ public class ValidTargetList {
 	}
 	
 	public List<LivingEntity> filterTargetListCastingAsLivingEntities(Player caster, List<Entity> targets, boolean targetPlayers) {
-		List<LivingEntity> realTargets = new ArrayList<LivingEntity>();
+		List<LivingEntity> realTargets = new ArrayList<>();
 		for (Entity e : targets) {
 			if (canTarget(caster, e, targetPlayers)) {
 				realTargets.add((LivingEntity)e);
@@ -180,7 +180,7 @@ public class ValidTargetList {
 			+ ",targetAnimals=" + targetAnimals
 			+ ",types=" + types
 			+ ",targetNonLivingEntities=" + targetNonLivingEntities
-			+ "]";
+			+ ']';
 	}
 	
 }

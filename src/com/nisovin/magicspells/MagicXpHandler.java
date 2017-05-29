@@ -34,12 +34,12 @@ public class MagicXpHandler implements Listener {
 	MagicSpells plugin;
 	
 	
-	Map<String, String> schools = new HashMap<String, String>();
-	Map<String, IntMap<String>> xp = new HashMap<String, IntMap<String>>();
-	Set<String> dirty = new HashSet<String>();
-	Map<String, String> currentWorld = new HashMap<String, String>();
+	Map<String, String> schools = new HashMap<>();
+	Map<String, IntMap<String>> xp = new HashMap<>();
+	Set<String> dirty = new HashSet<>();
+	Map<String, String> currentWorld = new HashMap<>();
 	
-	Map<String, List<Spell>> spellSchoolRequirements = new HashMap<String, List<Spell>>();
+	Map<String, List<Spell>> spellSchoolRequirements = new HashMap<>();
 
 	boolean autoLearn;
 	String strXpHeader;
@@ -67,7 +67,7 @@ public class MagicXpHandler implements Listener {
 				for (String school : xpRequired.keySet()) {
 					List<Spell> list = spellSchoolRequirements.get(school.toLowerCase());
 					if (list == null) {
-						list = new ArrayList<Spell>();
+						list = new ArrayList<>();
 						spellSchoolRequirements.put(school.toLowerCase(), list);
 					}
 					list.add(spell);
@@ -93,7 +93,7 @@ public class MagicXpHandler implements Listener {
 		MagicSpells.sendMessage(strXpHeader, player, MagicSpells.NULL_ARGS);
 		IntMap<String> playerXp = xp.get(player.getName());
 		if (playerXp != null) {
-			if (playerXp.size() > 0) {
+			if (!playerXp.isEmpty()) {
 				for (String school : playerXp.keySet()) {
 					String schoolName = schools.get(school);
 					if (schoolName != null) {
@@ -128,7 +128,7 @@ public class MagicXpHandler implements Listener {
 		// get player xp
 		IntMap<String> playerXp = xp.get(event.getCaster().getName());
 		if (playerXp == null) {
-			playerXp = new IntMap<String>();
+			playerXp = new IntMap<>();
 			xp.put(event.getCaster().getName(), playerXp);
 		}
 		
@@ -146,7 +146,7 @@ public class MagicXpHandler implements Listener {
 				public void run() {
 					
 					// get spells to check if learned
-					Set<Spell> toCheck = new HashSet<Spell>();
+					Set<Spell> toCheck = new HashSet<>();
 					for (String school : xpGranted.keySet()) {
 						List<Spell> list = spellSchoolRequirements.get(school.toLowerCase());
 						if (list != null) {
@@ -157,7 +157,7 @@ public class MagicXpHandler implements Listener {
 					}
 					
 					// check for new learned spells
-					if (toCheck.size() > 0) {
+					if (!toCheck.isEmpty()) {
 						boolean learned = false;
 						Spellbook spellbook = MagicSpells.getSpellbook(player);
 						for (Spell spell : toCheck) {
@@ -235,7 +235,7 @@ public class MagicXpHandler implements Listener {
 			YamlConfiguration conf = new YamlConfiguration();
 			try {
 				conf.load(file);
-				IntMap<String> playerXp = new IntMap<String>();
+				IntMap<String> playerXp = new IntMap<>();
 				for (String school : conf.getKeys(false)) {
 					playerXp.put(school.toLowerCase(), conf.getInt(school, 0));
 				}

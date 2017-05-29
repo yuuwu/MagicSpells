@@ -158,7 +158,7 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 				int delay = 0;
 				Player varOwner;
 				if (!useTargetVariablesInstead) {
-					varOwner = (sender != null && sender instanceof Player) ? (Player)sender: null;
+					varOwner = sender != null && sender instanceof Player ? (Player)sender : null;
 				} else{
 					varOwner = target;
 				}
@@ -235,9 +235,8 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 		if (requirePlayerTarget && target instanceof Player) {
 			process(null, (Player)target, MagicSpells.NULL_ARGS);
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 	
 	@Override
@@ -245,9 +244,8 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 		if (!requirePlayerTarget) {
 			process(sender, null, args);
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 	
 	@EventHandler

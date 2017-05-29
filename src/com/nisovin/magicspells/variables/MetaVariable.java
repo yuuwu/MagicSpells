@@ -17,18 +17,18 @@ public abstract class MetaVariable extends Variable {
 	
 	@Override
 	public boolean modify(String player, double amount) {
-		//no op
+		// No op
 		return false;
 	}
 
 	@Override
 	public void set(String player, double amount) {
-		//no op
+		// No op
 	}
 	
 	@Override
 	public void reset(String player) {
-		//no op
+		// No op
 	}
 
 }

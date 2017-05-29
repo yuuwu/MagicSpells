@@ -20,7 +20,7 @@ public class CanPickupItemsCondition extends Condition {
 
 	@Override
 	public boolean check(Player player, LivingEntity target) {
-		return target == null ? false : target.getCanPickupItems();
+		return target != null && target.getCanPickupItems();
 	}
 
 	@Override

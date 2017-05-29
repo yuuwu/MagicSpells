@@ -61,7 +61,7 @@ public class AreaEffectSpell extends TargetedSpell implements TargetedLocationSp
 	public void initialize() {
 		super.initialize();
 		
-		spells = new ArrayList<Subspell>();
+		spells = new ArrayList<>();
 		
 		if (spellNames != null && !spellNames.isEmpty()) {
 			for (String spellName : spellNames) {
@@ -70,10 +70,10 @@ public class AreaEffectSpell extends TargetedSpell implements TargetedLocationSp
 					if (spell.isTargetedEntityFromLocationSpell() || spell.isTargetedEntitySpell() || spell.isTargetedLocationSpell()) {
 						spells.add(spell);
 					} else {
-						MagicSpells.error("AreaEffect spell '" + name + "' attempted to use non-targeted spell '" + spellName + "'");
+						MagicSpells.error("AreaEffect spell '" + name + "' attempted to use non-targeted spell '" + spellName + '\'');
 					}
 				} else {
-					MagicSpells.error("AreaEffect spell '" + name + "' attempted to use invalid spell '" + spellName + "'");
+					MagicSpells.error("AreaEffect spell '" + name + "' attempted to use invalid spell '" + spellName + '\'');
 				}
 			}
 			spellNames.clear();
@@ -137,7 +137,7 @@ public class AreaEffectSpell extends TargetedSpell implements TargetedLocationSp
 		Vector vLoc = player != null ? player.getLocation().toVector() : location.toVector();
 		
 		BoundingBox box = new BoundingBox(location, radius, verticalRadius);
-		List<Entity> entities = new ArrayList<Entity>(location.getWorld().getEntitiesByClasses(LivingEntity.class));
+		List<Entity> entities = new ArrayList<>(location.getWorld().getEntitiesByClasses(LivingEntity.class));
 		Collections.shuffle(entities);
 		for (Entity e : entities) {
 			if (e instanceof LivingEntity && box.contains(e)) {

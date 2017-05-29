@@ -25,11 +25,11 @@ import com.nisovin.magicspells.util.OverridePriority;
 // trigger variable of a comma separated list of items to accept
 public class RightClickItemListener extends PassiveListener {
 
-	Set<Material> materials = new HashSet<Material>();
-	Map<MagicMaterial, List<PassiveSpell>> types = new LinkedHashMap<MagicMaterial, List<PassiveSpell>>();
+	Set<Material> materials = new HashSet<>();
+	Map<MagicMaterial, List<PassiveSpell>> types = new LinkedHashMap<>();
 	
-	Set<Material> materialsOffhand = new HashSet<Material>();
-	Map<MagicMaterial, List<PassiveSpell>> typesOffhand = new LinkedHashMap<MagicMaterial, List<PassiveSpell>>();
+	Set<Material> materialsOffhand = new HashSet<>();
+	Map<MagicMaterial, List<PassiveSpell>> typesOffhand = new LinkedHashMap<>();
 	
 	@Override
 	public void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var) {
@@ -37,8 +37,8 @@ public class RightClickItemListener extends PassiveListener {
 			MagicSpells.error(trigger.getName() + " cannot accept a null variable");
 			return;
 		}
-		Set<Material> materialSetAddTo = null;
-		Map<MagicMaterial, List<PassiveSpell>> typesMapAddTo = null;
+		Set<Material> materialSetAddTo;
+		Map<MagicMaterial, List<PassiveSpell>> typesMapAddTo;
 		if (isMainHand(trigger)) {
 			materialSetAddTo = materials;
 			typesMapAddTo = types;
@@ -61,7 +61,7 @@ public class RightClickItemListener extends PassiveListener {
 			if (mat != null) {
 				List<PassiveSpell> list = typesMapAddTo.get(mat);
 				if (list == null) {
-					list = new ArrayList<PassiveSpell>();
+					list = new ArrayList<>();
 					typesMapAddTo.put(mat, list);
 				}
 				list.add(spell);
@@ -100,7 +100,6 @@ public class RightClickItemListener extends PassiveListener {
 			materialSet = materialsOffhand;
 			spellMap = typesOffhand;
 		}
-		
 		
 		if (materialSet.contains(item.getType())) {
 			for (Entry<MagicMaterial, List<PassiveSpell>> entry : spellMap.entrySet()) {

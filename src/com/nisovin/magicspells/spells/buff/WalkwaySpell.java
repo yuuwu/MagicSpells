@@ -40,7 +40,7 @@ public class WalkwaySpell extends BuffSpell {
 		size = getConfigInt("size", 6);
 		cancelOnTeleport = getConfigBoolean("cancel-on-teleport", true);
 		
-		platforms = new HashMap<String, Platform>();
+		platforms = new HashMap<>();
 		
 	}
 
@@ -153,7 +153,7 @@ public class WalkwaySpell extends BuffSpell {
 			this.player = player;
 			this.materialPlatform = material;
 			this.sizePlatform = size;
-			this.platform = new ArrayList<Block>();
+			this.platform = new ArrayList<>();
 			
 			move();
 		}
@@ -283,7 +283,7 @@ public class WalkwaySpell extends BuffSpell {
 			}
 			
 			// get platform blocks
-			List<Block> blocks = new ArrayList<Block>();
+			List<Block> blocks = new ArrayList<>();
 			blocks.add(origin); // add standing block
 			for (int i = 1; i < sizePlatform; i++) { // add blocks ahead
 				Block b = origin.getRelative(dirX * i, dirY * i, dirZ * i);

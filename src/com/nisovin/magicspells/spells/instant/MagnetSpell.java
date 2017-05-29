@@ -35,7 +35,6 @@ public class MagnetSpell extends InstantSpell implements TargetedLocationSpell {
 		teleport = getConfigBoolean("teleport-items", false);
 		forcepickup = getConfigBoolean("force-pickup", false);
 		removeItemGravity = getConfigBoolean("remove-item-gravity", false);
-		
 	}
 
 	@Override
@@ -109,7 +108,7 @@ public class MagnetSpell extends InstantSpell implements TargetedLocationSpell {
 	private List<Item> getNearbyItems(Entity center, double radius) {
 		List<Entity> entities = center.getNearbyEntities(radius, radius, radius);
 		
-		List<Item> ret = new ArrayList<Item>();
+		List<Item> ret = new ArrayList<>();
 		for (Entity e: entities) {
 			if (e instanceof Item) {
 				Item i = (Item)e;

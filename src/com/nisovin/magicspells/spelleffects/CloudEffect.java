@@ -45,7 +45,7 @@ public class CloudEffect extends SpellEffect {
 	
 	@Override
 	public void loadFromString(String string) {
-		if (string != null && !string.equals("")) {
+		if (string != null && !string.isEmpty()) {
 			try {
 				radius = Integer.parseInt(string);
 			} catch (NumberFormatException e) {

@@ -14,8 +14,8 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 
 public class LifeLengthTracker implements Listener {
 
-	Map<String, Long> lastSpawn = new HashMap<String, Long>();
-	Map<String, Integer> lastLifeLength = new HashMap<String, Integer>();
+	Map<String, Long> lastSpawn = new HashMap<>();
+	Map<String, Integer> lastLifeLength = new HashMap<>();
 	
 	public LifeLengthTracker() {
 		for (Player player : Bukkit.getOnlinePlayers()) {
@@ -28,17 +28,13 @@ public class LifeLengthTracker implements Listener {
 		if (lastSpawn.containsKey(player.getName())) {
 			long spawn = lastSpawn.get(player.getName());
 			return (int)((System.currentTimeMillis() - spawn) / 1000);
-		} else {
-			return 0;
 		}
+		return 0;
 	}
 	
 	public int getLastLifeLength(Player player) {
-		if (lastLifeLength.containsKey(player.getName())) {
-			return lastLifeLength.get(player.getName());
-		} else {
-			return 0;
-		}
+		if (lastLifeLength.containsKey(player.getName())) return lastLifeLength.get(player.getName());
+		return 0;
 	}
 	
 	@EventHandler
@@ -49,17 +45,13 @@ public class LifeLengthTracker implements Listener {
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
 		Long spawn = lastSpawn.remove(event.getPlayer().getName());
-		if (spawn != null) {
-			lastLifeLength.put(event.getPlayer().getName(), (int)((System.currentTimeMillis() - spawn) / 1000));
-		}
+		if (spawn != null) lastLifeLength.put(event.getPlayer().getName(), (int)((System.currentTimeMillis() - spawn) / 1000));
 	}
 	
 	@EventHandler
 	public void onDeath(PlayerDeathEvent event) {
 		Long spawn = lastSpawn.remove(event.getEntity().getName());
-		if (spawn != null) {
-			lastLifeLength.put(event.getEntity().getName(), (int)((System.currentTimeMillis() - spawn) / 1000));
-		}
+		if (spawn != null) lastLifeLength.put(event.getEntity().getName(), (int)((System.currentTimeMillis() - spawn) / 1000));
 	}
 	
 	@EventHandler

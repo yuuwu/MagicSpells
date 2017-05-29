@@ -23,10 +23,10 @@ public class ResourcePackListener extends PassiveListener {
 
 	PacketListener listener;
 	
-	List<PassiveSpell> spellsLoaded = new ArrayList<PassiveSpell>();
-	List<PassiveSpell> spellsDeclined = new ArrayList<PassiveSpell>();
-	List<PassiveSpell> spellsFailed = new ArrayList<PassiveSpell>();
-	List<PassiveSpell> spellsAccepted = new ArrayList<PassiveSpell>();
+	List<PassiveSpell> spellsLoaded = new ArrayList<>();
+	List<PassiveSpell> spellsDeclined = new ArrayList<>();
+	List<PassiveSpell> spellsFailed = new ArrayList<>();
+	List<PassiveSpell> spellsAccepted = new ArrayList<>();
 	
 	@Override
 	public void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var) {

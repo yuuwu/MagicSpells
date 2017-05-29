@@ -29,9 +29,9 @@ public class ReflectSpell extends BuffSpell {
 	public ReflectSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 
-		reflectors = new HashMap<String, Float>();
-		shieldBreakerNames = new HashSet<String>();
-		delayedReflectionSpells = new HashSet<String>();
+		reflectors = new HashMap<>();
+		shieldBreakerNames = new HashSet<>();
+		delayedReflectionSpells = new HashSet<>();
 		shieldBreakerNames.addAll(getConfigStringList("shield-breakers", new ArrayList<String>()));
 		delayedReflectionSpells.addAll(getConfigStringList("delayed-reflection-spells", new ArrayList<String>()));
 		reflectedSpellPowerMultiplier = (float) getConfigDouble("reflected-spell-power-multiplier", 1.0);
@@ -64,7 +64,7 @@ public class ReflectSpell extends BuffSpell {
 				boolean ok = chargeUseCost(target);
 				if (ok) {
 					event.setTarget(event.getCaster());
-					event.setPower(event.getPower()* reflectedSpellPowerMultiplier * (spellPowerAffectsReflectedPower ? power : 1));
+					event.setPower(event.getPower() * reflectedSpellPowerMultiplier * (spellPowerAffectsReflectedPower ? power : 1));
 					addUse(target);
 				}
 			}
@@ -107,7 +107,7 @@ public class ReflectSpell extends BuffSpell {
 				}
 				event.setRedirected(true);
 				float powerMultiplier = 1.0F;
-				powerMultiplier *= reflectedSpellPowerMultiplier * (spellPowerAffectsReflectedPower ? (reflectors.get(target) == null? 1.0: reflectors.get(target)) : 1.0);
+				powerMultiplier *= reflectedSpellPowerMultiplier * (spellPowerAffectsReflectedPower ? (reflectors.get(target) == null ? 1.0: reflectors.get(target)) : 1.0);
 				event.setPower(event.getPower() * powerMultiplier);
 				addUse(target);
 			}

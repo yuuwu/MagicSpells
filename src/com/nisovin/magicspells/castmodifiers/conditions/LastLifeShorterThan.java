@@ -30,9 +30,7 @@ public class LastLifeShorterThan extends Condition {
 
 	@Override
 	public boolean check(Player player, LivingEntity target) {
-		if (target instanceof Player) {
-			return check((Player)target);
-		}
+		if (target instanceof Player) return check((Player)target);
 		return false;
 	}
 

@@ -130,7 +130,7 @@ public class PortalSpell extends InstantSpell {
 		BoundingBox box2;
 		int taskId1 = -1;
 		int taskId2 = -1;
-		Map<String, Long> cooldownUntil = new HashMap<String, Long>();
+		Map<String, Long> cooldownUntil = new HashMap<>();
 		
 		public PortalLink (PortalSpell spell, Player caster, Location loc1, Location loc2) {
 			this.spell = spell;

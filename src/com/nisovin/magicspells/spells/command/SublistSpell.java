@@ -58,7 +58,7 @@ public class SublistSpell extends CommandSpell {
 				Player p = PlayerNameUtils.getPlayer(args[0]);
 				if (p != null) {
 					spellbook = MagicSpells.getSpellbook(p);
-					extra = "(" + p.getDisplayName() + ") ";
+					extra = '(' + p.getDisplayName() + ") ";
 				}
 			}
 			if (spellbook != null && reloadGrantedSpells) {
@@ -78,7 +78,7 @@ public class SublistSpell extends CommandSpell {
 						}
 					}
 				}
-				s = strPrefix + " " + extra + s;
+				s = strPrefix + ' ' + extra + s;
 				while (s.length() > lineLength) {
 					int i = s.substring(0, lineLength).lastIndexOf(' ');
 					sendMessage(s.substring(0, i), player, args);
@@ -122,7 +122,7 @@ public class SublistSpell extends CommandSpell {
 		// create string of spells
 		for (Spell spell : spells) {
 			s.append(spell.getName());
-			s.append(" ");
+			s.append(' ');
 		}
 		
 		// send message

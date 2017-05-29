@@ -18,8 +18,8 @@ import com.nisovin.magicspells.util.OverridePriority;
 // optional trigger variable of comma separated list of teleport causes to accept
 public class TeleportListener extends PassiveListener {
 
-	Map<TeleportCause, List<PassiveSpell>> types = new HashMap<PlayerTeleportEvent.TeleportCause, List<PassiveSpell>>();
-	List<PassiveSpell> allTypes = new ArrayList<PassiveSpell>(); 
+	Map<TeleportCause, List<PassiveSpell>> types = new HashMap<>();
+	List<PassiveSpell> allTypes = new ArrayList<>();
 	
 	@Override
 	public void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var) {
@@ -33,7 +33,7 @@ public class TeleportListener extends PassiveListener {
 					if (cause.name().replace("_", "").equalsIgnoreCase(s)) {
 						List<PassiveSpell> list = types.get(cause);
 						if (list == null) {
-							list = new ArrayList<PassiveSpell>();
+							list = new ArrayList<>();
 							types.put(cause, list);
 						}
 						list.add(spell);

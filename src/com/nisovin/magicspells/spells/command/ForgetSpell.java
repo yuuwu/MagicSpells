@@ -57,7 +57,7 @@ public class ForgetSpell extends CommandSpell {
 			Spellbook casterSpellbook = MagicSpells.getSpellbook(player);
 			
 			// get target
-			Player target = null;
+			Player target;
 			if (args.length == 1 && allowSelfForget) {
 				target = player;
 			} else if (args.length == 2 && casterSpellbook.hasAdvancedPerm("forget")) {
@@ -66,9 +66,8 @@ public class ForgetSpell extends CommandSpell {
 					// fail: no player match
 					sendMessage(strNoTarget, player, args);
 					return PostCastAction.ALREADY_HANDLED;
-				} else {
-					target = players.get(0);
 				}
+				target = players.get(0);
 			} else {
 				// fail: missing args
 				sendMessage(strUsage, player, args);
@@ -119,20 +118,19 @@ public class ForgetSpell extends CommandSpell {
 					playSpellEffects(EffectPosition.CASTER, player);
 				}
 				return PostCastAction.NO_MESSAGES;
-			} else if (all) {
-				targetSpellbook.removeAllSpells();
-				targetSpellbook.addGrantedSpells();
-				targetSpellbook.save();
-				if (!player.equals(target)) {
-					sendMessage(formatMessage(strResetTarget, "%t", target.getDisplayName()), player, args);
-					playSpellEffects(EffectPosition.CASTER, player);
-					playSpellEffects(EffectPosition.TARGET, target);
-				} else {
-					sendMessage(strResetSelf, player, args);
-					playSpellEffects(EffectPosition.CASTER, player);
-				}
-				return PostCastAction.NO_MESSAGES;
 			}
+			targetSpellbook.removeAllSpells();
+			targetSpellbook.addGrantedSpells();
+			targetSpellbook.save();
+			if (!player.equals(target)) {
+				sendMessage(formatMessage(strResetTarget, "%t", target.getDisplayName()), player, args);
+				playSpellEffects(EffectPosition.CASTER, player);
+				playSpellEffects(EffectPosition.TARGET, target);
+			} else {
+				sendMessage(strResetSelf, player, args);
+				playSpellEffects(EffectPosition.CASTER, player);
+			}
+			return PostCastAction.NO_MESSAGES;
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}
@@ -191,7 +189,7 @@ public class ForgetSpell extends CommandSpell {
 		String[] args = Util.splitParams(partial);
 		if (args.length == 1) {
 			// matching player name or spell name
-			List<String> options = new ArrayList<String>();
+			List<String> options = new ArrayList<>();
 			List<String> players = tabCompletePlayerName(sender, args[0]);
 			List<String> spells = tabCompleteSpellName(sender, args[0]);
 			if (players != null) options.addAll(players);

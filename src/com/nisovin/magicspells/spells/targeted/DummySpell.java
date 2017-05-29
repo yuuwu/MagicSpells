@@ -23,13 +23,10 @@ public class DummySpell extends TargetedSpell implements TargetedEntitySpell, Ta
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			TargetInfo<LivingEntity> target = getTargetedEntity(player, power);
-			if (target == null) {
-				return noTarget(player);
-			} else {
-				playSpellEffects(player, target.getTarget());
-				sendMessages(player, target.getTarget());
-				return PostCastAction.NO_MESSAGES;
-			}
+			if (target == null) return noTarget(player);
+			playSpellEffects(player, target.getTarget());
+			sendMessages(player, target.getTarget());
+			return PostCastAction.NO_MESSAGES;
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}

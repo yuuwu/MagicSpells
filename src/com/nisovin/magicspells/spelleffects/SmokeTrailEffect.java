@@ -123,7 +123,7 @@ public class SmokeTrailEffect extends SpellEffect {
 			yVect = y2 - y1;
 			zVect = z2 - z1;
 			double distance = startLoc.distance(endLoc);
-			ArrayList<Location> tmp = new ArrayList<Location>((int)Math.floor(distance));
+			ArrayList<Location> tmp = new ArrayList<>((int)Math.floor(distance));
 			
 			for (double t = 0; t <= 1; t += 1/distance) {
 				tmp.add(new Location(world, x2 - (xVect * t), y2 - (yVect * t) + 1, z2 - (zVect * t)));

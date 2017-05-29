@@ -17,100 +17,101 @@ import com.nisovin.magicspells.util.MagicConfig;
 
 public interface VolatileCodeHandle {
 	
-	public void addPotionGraphicalEffect(LivingEntity entity, int color, int duration);
+	void addPotionGraphicalEffect(LivingEntity entity, int color, int duration);
 	
-	public void entityPathTo(LivingEntity entity, LivingEntity target);
+	void entityPathTo(LivingEntity entity, LivingEntity target);
 	
-	public void sendFakeSlotUpdate(Player player, int slot, ItemStack item);
+	void sendFakeSlotUpdate(Player player, int slot, ItemStack item);
 	
-	public void toggleLeverOrButton(Block block);
+	void toggleLeverOrButton(Block block);
 	
-	public void pressPressurePlate(Block block);
+	void pressPressurePlate(Block block);
 	
-	public boolean simulateTnt(Location target, LivingEntity source, float explosionSize, boolean fire);
+	boolean simulateTnt(Location target, LivingEntity source, float explosionSize, boolean fire);
 	
-	public boolean createExplosionByPlayer(Player player, Location location, float size, boolean fire, boolean breakBlocks);
+	boolean createExplosionByPlayer(Player player, Location location, float size, boolean fire, boolean breakBlocks);
 	
-	public void playExplosionEffect(Location location, float size);
+	void playExplosionEffect(Location location, float size);
 	
-	public void setExperienceBar(Player player, int level, float percent);
+	void setExperienceBar(Player player, int level, float percent);
 	
-	public Fireball shootSmallFireball(Player player);
+	Fireball shootSmallFireball(Player player);
 	
-	public void setTarget(LivingEntity entity, LivingEntity target);
+	void setTarget(LivingEntity entity, LivingEntity target);
 	
-	public void playSound(Location location, String sound, float volume, float pitch);
+	void playSound(Location location, String sound, float volume, float pitch);
 	
-	public void playSound(Player player, String sound, float volume, float pitch);
+	void playSound(Player player, String sound, float volume, float pitch);
 	
-	public ItemStack addFakeEnchantment(ItemStack item);
+	ItemStack addFakeEnchantment(ItemStack item);
 	
-	public void setFallingBlockHurtEntities(FallingBlock block, float damage, int max);
+	void setFallingBlockHurtEntities(FallingBlock block, float damage, int max);
 	
-	//public void addPotionEffect(LivingEntity entity, PotionEffect effect, boolean ambient);
+	//void addPotionEffect(LivingEntity entity, PotionEffect effect, boolean ambient);
 	
-	public void playEntityAnimation(Location location, EntityType entityType, int animationId, boolean instant);
+	void playEntityAnimation(Location location, EntityType entityType, int animationId, boolean instant);
 	
-	public void createFireworksExplosion(Location location, boolean flicker, boolean trail, int type, int[] colors, int[] fadeColors, int flightDuration);
+	void createFireworksExplosion(Location location, boolean flicker, boolean trail, int type, int[] colors, int[] fadeColors, int flightDuration);
 	
-	//public void setHeldItemSlot(Player player, int slot);
+	//void setHeldItemSlot(Player player, int slot);
 	
-	public void playParticleEffect(Location location, String name, float spreadHoriz, float spreadVert, float speed, int count, int radius, float yOffset);
+	void playParticleEffect(Location location, String name, float spreadHoriz, float spreadVert, float speed, int count, int radius, float yOffset);
 	
-	public void playParticleEffect(Location location, String name, float spreadX, float spreadY, float spreadZ, float speed, int count, int radius, float yOffset);
+	void playParticleEffect(Location location, String name, float spreadX, float spreadY, float spreadZ, float speed, int count, int radius, float yOffset);
 	
-	public void setKiller(LivingEntity entity, Player killer);
+	void setKiller(LivingEntity entity, Player killer);
 	
-	public IDisguiseManager getDisguiseManager(MagicConfig config);
+	IDisguiseManager getDisguiseManager(MagicConfig config);
 	
-	public void playDragonDeathEffect(Location location);
+	void playDragonDeathEffect(Location location);
 	
-	public ItemStack addAttributes(ItemStack item, String[] names, String[] types, double[] amounts, int[] operations, String[] slots);
+	// TODO this should be moved to it's own handler
+	ItemStack addAttributes(ItemStack item, String[] names, String[] types, double[] amounts, int[] operations, String[] slots);
+	ItemStack hideTooltipCrap(ItemStack item);
 	
-	public ItemStack hideTooltipCrap(ItemStack item);
+	void addEntityAttribute(LivingEntity entity, String attribute, double amount, int operation);
 	
-	public void addEntityAttribute(LivingEntity entity, String attribute, double amount, int operation);
+	void resetEntityAttributes(LivingEntity entity);
 	
-	public void resetEntityAttributes(LivingEntity entity);
+	void removeAI(LivingEntity entity);
 	
-	public void removeAI(LivingEntity entity);
+	void setNoAIFlag(LivingEntity entity);
 	
-	public void setNoAIFlag(LivingEntity entity);
+	void addAILookAtPlayer(LivingEntity entity, int range);
 	
-	public void addAILookAtPlayer(LivingEntity entity, int range);
+	void setBossBar(Player player, String title, double percent);
 	
-	public void setBossBar(Player player, String title, double percent);
+	void updateBossBar(Player player, String title, double percent);
 	
-	public void updateBossBar(Player player, String title, double percent);
+	void removeBossBar(Player player);
 	
-	public void removeBossBar(Player player);
+	void saveSkinData(Player player, String name);
 	
-	public void saveSkinData(Player player, String name);
+	// TODO this should be moved to it's own handler
+	ItemStack setUnbreakable(ItemStack item);
 	
-	public ItemStack setUnbreakable(ItemStack item);
+	void setArrowsStuck(LivingEntity entity, int count);
 	
-	public void setArrowsStuck(LivingEntity entity, int count);
+	// TODO this should be moved to it's own handler
+	void sendTitleToPlayer(Player player, String title, String subtitle, int fadeIn, int stay, int fadeOut);
+	void sendActionBarMessage(Player player, String message);
 	
-	public void sendTitleToPlayer(Player player, String title, String subtitle, int fadeIn, int stay, int fadeOut);
+	void setTabMenuHeaderFooter(Player player, String header, String footer);
 	
-	public void sendActionBarMessage(Player player, String message);
+	void setClientVelocity(Player player, Vector velocity);
 	
-	public void setTabMenuHeaderFooter(Player player, String header, String footer);
+	double getAbsorptionHearts(LivingEntity entity);
 	
-	public void setClientVelocity(Player player, Vector velocity);
+	void showItemCooldown(Player player, ItemStack item, int duration);
 	
-	public double getAbsorptionHearts(LivingEntity entity);
+	// TODO this should be moved to it's own handler
+	boolean hasGravity(Entity entity);
+	void setGravity(Entity entity, boolean gravity);
 	
-	public void showItemCooldown(Player player, ItemStack item, int duration);
-		
-	public boolean hasGravity(Entity entity);
+	void setTexture(SkullMeta meta, String texture, String signature);
 	
-	public void setGravity(Entity entity, boolean gravity);
+	void setTexture(SkullMeta meta, String texture, String signature, String uuid, String name);
 	
-	public void setTexture(SkullMeta meta, String texture, String signature);
-	
-	public void setTexture(SkullMeta meta, String texture, String signature, String uuid, String name);
-	
-	public void setSkin(Player player, String skin, String signature);
+	void setSkin(Player player, String skin, String signature);
 		
 }

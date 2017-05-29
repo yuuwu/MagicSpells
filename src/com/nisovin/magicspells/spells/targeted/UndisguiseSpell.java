@@ -29,27 +29,23 @@ public class UndisguiseSpell extends TargetedSpell implements TargetedEntitySpel
 		if (manager == null) return PostCastAction.ALREADY_HANDLED;
 		if (state == SpellCastState.NORMAL) {
 			TargetInfo<Player> target = getTargetPlayer(player, power);
-			if (target != null) {
-				undisguise(player, target.getTarget());
-				sendMessages(player, target.getTarget());
-				return PostCastAction.NO_MESSAGES;
-			}
-			return noTarget(player);
+			if (target == null) return noTarget(player);
+			undisguise(player, target.getTarget());
+			sendMessages(player, target.getTarget());
+			return PostCastAction.NO_MESSAGES;
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}
 	
 	private boolean undisguise(Player caster, Player player) {
-		if (manager != null) {
-			manager.removeDisguise(player);
-			if (caster != null) {
-				playSpellEffects(caster, player);
-			} else {
-				playSpellEffects(EffectPosition.TARGET, player);
-			}
-			return true;
+		if (manager == null) return false;
+		manager.removeDisguise(player);
+		if (caster != null) {
+			playSpellEffects(caster, player);
+		} else {
+			playSpellEffects(EffectPosition.TARGET, player);
 		}
-		return false;
+		return true;
 	}
 
 	@Override

@@ -32,7 +32,7 @@ public class SpellReagents {
 	
 	public SpellReagents(SpellReagents other) {
 		if (other.items != null) {
-			this.items = new HashSet<ItemStack>();
+			this.items = new HashSet<>();
 			for (ItemStack item : other.items) {
 				this.items.add(item.clone());
 			}
@@ -44,7 +44,7 @@ public class SpellReagents {
 		this.levels = other.levels;
 		this.money = other.money;
 		if (other.variables != null) {
-			this.variables = new HashMap<String, Double>();
+			this.variables = new HashMap<>();
 			for (String var : other.variables.keySet()) {
 				this.variables.put(var, other.variables.get(var));
 			}
@@ -66,16 +66,17 @@ public class SpellReagents {
 		if (items == null || items.isEmpty()) {
 			this.items = null;
 		} else {
-			this.items = new HashSet<ItemStack>();
+			this.items = new HashSet<>();
 			this.items.addAll(items);
 		}
 	}
 	
+	// TODO can this safely be varargs?
 	public void setItems(ItemStack[] items) {
 		if (items == null || items.length == 0) {
 			this.items = null;
 		} else {
-			this.items = new HashSet<ItemStack>();
+			this.items = new HashSet<>();
 			for (ItemStack i : items) {
 				this.items.add(i);
 			}
@@ -83,7 +84,7 @@ public class SpellReagents {
 	}
 	
 	public void addItem(ItemStack item) {
-		if (this.items == null) this.items = new HashSet<ItemStack>();
+		if (this.items == null) this.items = new HashSet<>();
 		this.items.add(item);
 	}
 	
@@ -148,7 +149,7 @@ public class SpellReagents {
 	}
 	
 	public void addVariable(String var, double val) {
-		if (variables == null) variables = new HashMap<String, Double>();
+		if (variables == null) variables = new HashMap<>();
 		variables.put(var, val);
 	}
 	
@@ -156,7 +157,7 @@ public class SpellReagents {
 		if (variables == null || variables.isEmpty()) {
 			this.variables = null;
 		} else {
-			this.variables = new HashMap<String, Double>();
+			this.variables = new HashMap<>();
 			this.variables.putAll(variables);
 		}
 	}
@@ -165,7 +166,7 @@ public class SpellReagents {
 	public SpellReagents clone() {
 		SpellReagents other = new SpellReagents();
 		if (this.items != null) {
-			other.items = new HashSet<ItemStack>();
+			other.items = new HashSet<>();
 			for (ItemStack item : this.items) {
 				other.items.add(item.clone());
 			}
@@ -178,7 +179,7 @@ public class SpellReagents {
 		other.durability = this.durability;
 		other.money = this.money;
 		if (this.variables != null) {
-			other.variables = new HashMap<String, Double>();
+			other.variables = new HashMap<>();
 			for (String var : this.variables.keySet()) {
 				other.variables.put(var, this.variables.get(var));
 			}
@@ -189,7 +190,7 @@ public class SpellReagents {
 	public SpellReagents multiply(float x) {
 		SpellReagents other = new SpellReagents();
 		if (this.items != null) {
-			other.items = new HashSet<ItemStack>();
+			other.items = new HashSet<>();
 			for (ItemStack item : this.items) {
 				ItemStack i = item.clone();
 				i.setAmount(Math.round(i.getAmount() * x));
@@ -204,7 +205,7 @@ public class SpellReagents {
 		other.durability = Math.round(this.durability * x);
 		other.money = this.money * x;
 		if (this.variables != null) {
-			other.variables = new HashMap<String, Double>();
+			other.variables = new HashMap<>();
 			for (String var : this.variables.keySet()) {
 				other.variables.put(var, this.variables.get(var) * x);
 			}
@@ -224,7 +225,7 @@ public class SpellReagents {
 			+ ",durability=" + durability
 			+ ",money=" + money
 			+ ",variables=" + variables
-			+ "]";
+			+ ']';
 	}
 	
 }

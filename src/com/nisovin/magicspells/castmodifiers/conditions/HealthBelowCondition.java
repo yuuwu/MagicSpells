@@ -17,7 +17,7 @@ public class HealthBelowCondition extends Condition {
 		try {
 			if (var.endsWith("%")) {
 				percent = true;
-				var = var.replace("%", ""); //TODO find an alternative to reassigning the parameter
+				var = var.replace("%", "");
 			}
 			health = Integer.parseInt(var);
 			return true;
@@ -34,11 +34,8 @@ public class HealthBelowCondition extends Condition {
 
 	@Override
 	public boolean check(Player player, LivingEntity target) {
-		if (percent) {
-			return target.getHealth() / target.getMaxHealth() * 100 < health;
-		} else {
-			return target.getHealth() < health;
-		}
+		if (percent) return target.getHealth() / target.getMaxHealth() * 100 < health;
+		return target.getHealth() < health;
 	}
 	
 	@Override

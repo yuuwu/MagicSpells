@@ -24,10 +24,10 @@ public class NoMagicZoneWorldGuard extends NoMagicZone {
 
 	@Override
 	public boolean inZone(Location location) {
-		// check world
+		// Check world
 		if (!worldName.equals(location.getWorld().getName())) return false;
 		
-		// get region, if necessary
+		// Get region, if necessary
 		if (region == null) {
 			WorldGuardPlugin worldGuard = null;
 			if (Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard")) worldGuard = (WorldGuardPlugin)Bukkit.getServer().getPluginManager().getPlugin("WorldGuard");
@@ -40,12 +40,12 @@ public class NoMagicZoneWorldGuard extends NoMagicZone {
 			}
 		}
 		
-		// check if contains
+		// Check if contains
 		if (region != null) {
 			com.sk89q.worldedit.Vector v = new com.sk89q.worldedit.Vector(location.getX(), location.getY(), location.getZ());
 			return region.contains(v);
 		} else {
-			MagicSpells.error("Failed to access WorldGuard region '" + regionName + "'");
+			MagicSpells.error("Failed to access WorldGuard region '" + regionName + '\'');
 			return false;
 		}
 	}

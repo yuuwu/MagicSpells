@@ -33,7 +33,7 @@ public class LeapSpell extends InstantSpell {
 		cancelDamage = getConfigBoolean("cancel-damage", true);
 		clientOnly = getConfigBoolean("client-only", false);
 		
-		if (cancelDamage) jumping = new HashSet<Player>();
+		if (cancelDamage) jumping = new HashSet<>();
 	}
 
 	@Override

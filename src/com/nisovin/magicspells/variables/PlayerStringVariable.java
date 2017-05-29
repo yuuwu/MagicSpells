@@ -10,7 +10,7 @@ public class PlayerStringVariable extends PlayerVariable {
 	Map<String, String> data;
 	
 	public PlayerStringVariable() {
-		data = new HashMap<String, String>();
+		data = new HashMap<>();
 	}
 	
 	@Override

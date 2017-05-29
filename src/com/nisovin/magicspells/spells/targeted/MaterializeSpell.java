@@ -38,7 +38,7 @@ public class MaterializeSpell extends TargetedSpell implements TargetedLocationS
 		
 		String s = getConfigString("block-type", "1");
 		material = MagicSpells.getItemNameResolver().resolveBlock(s);
-		if (material == null) MagicSpells.error("Invalid block-type on materialize spell '" + internalName + "'");
+		if (material == null) MagicSpells.error("Invalid block-type on materialize spell '" + internalName + '\'');
 		resetDelay = getConfigInt("reset-delay", 0);
 		falling = getConfigBoolean("falling", false);
 		applyPhysics = getConfigBoolean("apply-physics", true);
@@ -50,7 +50,7 @@ public class MaterializeSpell extends TargetedSpell implements TargetedLocationS
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
-			List<Block> lastTwo = null;
+			List<Block> lastTwo;
 			try {
 				lastTwo = getLastTwoTargetedBlocks(player, power);
 			} catch (IllegalStateException e) {

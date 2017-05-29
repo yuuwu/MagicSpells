@@ -62,13 +62,13 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 	@ConfigData(field="unique-names", dataType="boolean", defaultValue="false")
 	boolean uniqueNames;
 	
-	Map<String, MenuOption> options = new LinkedHashMap<String, MenuOption>();
+	Map<String, MenuOption> options = new LinkedHashMap<>();
 	
 	int size = 9;
 	
-	Map<String, Float> castPower = new HashMap<String, Float>();
-	Map<String, LivingEntity> castEntityTarget = new HashMap<String, LivingEntity>();
-	Map<String, Location> castLocTarget = new HashMap<String, Location>();
+	Map<String, Float> castPower = new HashMap<>();
+	Map<String, LivingEntity> castEntityTarget = new HashMap<>();
+	Map<String, Location> castLocTarget = new HashMap<>();
 	
 	public MenuSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -126,7 +126,7 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 				option.spell = spell;
 				if (option.modifierList != null) option.menuOptionModifiers = new ModifierSet(option.modifierList);
 			} else {
-				MagicSpells.error("The MenuSpell '" + internalName + "' has an invalid spell listed on '" + option.menuOptionName + "'");
+				MagicSpells.error("The MenuSpell '" + internalName + "' has an invalid spell listed on '" + option.menuOptionName + '\'');
 			}
 		}
 	}
@@ -160,7 +160,7 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 	}
 	
 	String getOptionKey(ItemStack item) {
-		return item.getType().name() + "_" + item.getDurability() + "_" + item.getItemMeta().getDisplayName();
+		return item.getType().name() + '_' + item.getDurability() + '_' + item.getItemMeta().getDisplayName();
 	}
 	
 	void open(final Player caster, Player opener, LivingEntity entityTarget, Location locTarget, final float power, final String[] args) {
@@ -240,7 +240,7 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 						if (spell != null) {
 							float power = option.power;
 							if (castPower.containsKey(playerName)) {
-								power *= castPower.get(playerName).floatValue();
+								power *= castPower.get(playerName);
 							}
 							if (spell.isTargetedEntitySpell() && castEntityTarget.containsKey(playerName)) {
 								spell.castAtEntity(player, castEntityTarget.get(playerName), power);
@@ -319,7 +319,7 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 	public boolean castFromConsole(CommandSender sender, String[] args) {
 		if (args.length >= 1) {
 			Player player = PlayerNameUtils.getPlayer(args[0]);
-			String[] spellArgs = (args.length > 1) ? Arrays.copyOfRange(args, 1, args.length) : null;
+			String[] spellArgs = args.length > 1 ? Arrays.copyOfRange(args, 1, args.length) : null;
 			if (player != null) {
 				open(null, player, null, null, 1, spellArgs);
 				return true;

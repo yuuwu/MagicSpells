@@ -69,27 +69,29 @@ public class RecallSpell extends InstantSpell implements TargetedEntitySpell {
 			if (markLocation == null) {
 				sendMessage(strNoMark, player, args);
 				return PostCastAction.ALREADY_HANDLED;
-			} else if (!allowCrossWorld && !LocationUtil.isSameWorld(markLocation, player.getLocation())) {
+			}
+			if (!allowCrossWorld && !LocationUtil.isSameWorld(markLocation, player.getLocation())) {
 				// can't cross worlds
 				sendMessage(strOtherWorld, player, args);
 				return PostCastAction.ALREADY_HANDLED;
-			} else if (maxRange > 0 && markLocation.toVector().distanceSquared(player.getLocation().toVector()) > maxRange * maxRange) {
+			}
+			if (maxRange > 0 && markLocation.toVector().distanceSquared(player.getLocation().toVector()) > maxRange * maxRange) {
 				// too far
 				sendMessage(strTooFar, player, args);
 				return PostCastAction.ALREADY_HANDLED;
+			}
+			
+			// all good!
+			Location from = player.getLocation();
+			boolean teleported = player.teleport(markLocation);
+			if (teleported) {
+				playSpellEffects(EffectPosition.CASTER, from);
+				playSpellEffects(EffectPosition.TARGET, markLocation);
 			} else {
-				// all good!
-				Location from = player.getLocation();
-				boolean teleported = player.teleport(markLocation);
-				if (teleported) {
-					playSpellEffects(EffectPosition.CASTER, from);
-					playSpellEffects(EffectPosition.TARGET, markLocation);
-				} else {
-					// fail -- teleport prevented
-					MagicSpells.error("Recall teleport blocked for " + player.getName());
-					sendMessage(strRecallFailed, player, args);
-					return PostCastAction.ALREADY_HANDLED;
-				}
+				// fail -- teleport prevented
+				MagicSpells.error("Recall teleport blocked for " + player.getName());
+				sendMessage(strRecallFailed, player, args);
+				return PostCastAction.ALREADY_HANDLED;
 			}
 		}
 		return PostCastAction.HANDLE_NORMALLY;

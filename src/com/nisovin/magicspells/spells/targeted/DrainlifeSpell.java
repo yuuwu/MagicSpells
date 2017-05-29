@@ -1,6 +1,5 @@
 package com.nisovin.magicspells.spells.targeted;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.EntityEffect;
 import org.bukkit.Location;
@@ -89,15 +88,11 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 			if (target == null) {
 				// fail: no target
 				return noTarget(player);
-			} else {
-				boolean drained = drain(player, target.getTarget(), target.getPower());
-				if (!drained) {
-					return noTarget(player);
-				} else {
-					sendMessages(player, target.getTarget());
-					return PostCastAction.NO_MESSAGES;
-				}
 			}
+			boolean drained = drain(player, target.getTarget(), target.getPower());
+			if (!drained) return noTarget(player);
+			sendMessages(player, target.getTarget());
+			return PostCastAction.NO_MESSAGES;
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}
@@ -227,9 +222,7 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 			tempVector.subtract(caster.getLocation().toVector()).normalize();
 			current.subtract(tempVector);
 			Location playAt = current.toLocation(world);
-			if (useSmoke) {
-				world.playEffect(playAt, Effect.SMOKE, 4);
-			}
+			if (useSmoke) world.playEffect(playAt, Effect.SMOKE, 4);
 			playSpellEffects(EffectPosition.SPECIAL, playAt);
 			if (current.distanceSquared(targetVector) < 4 || tick > range * 1.5) {
 				stop();

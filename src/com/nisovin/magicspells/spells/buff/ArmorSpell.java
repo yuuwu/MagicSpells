@@ -63,7 +63,7 @@ public class ArmorSpell extends BuffSpell {
 		
 		strHasArmor = getConfigString("str-has-armor", "You cannot cast this spell if you are wearing armor.");
 		
-		armored = new HashSet<String>();
+		armored = new HashSet<>();
 	}
 	
 	@Override
@@ -96,7 +96,7 @@ public class ArmorSpell extends BuffSpell {
 					if (meta.hasLore()) {
 						lore = meta.getLore();
 					} else {
-						lore = new ArrayList<String>();
+						lore = new ArrayList<>();
 					}
 					lore.add(strLoreText);
 					meta.setLore(lore);
@@ -285,7 +285,7 @@ public class ArmorSpell extends BuffSpell {
 
 	@Override
 	protected void turnOff() {
-		for (String name : new HashSet<String>(armored)) {
+		for (String name : new HashSet<>(armored)) {
 			Player p = PlayerNameUtils.getPlayerExact(name);
 			if (p == null) continue;
 			if (!p.isOnline()) continue;

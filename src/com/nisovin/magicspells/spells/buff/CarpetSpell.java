@@ -45,8 +45,8 @@ public class CarpetSpell extends BuffSpell {
 		size = getConfigInt("size", 2);
 		cancelOnTeleport = getConfigBoolean("cancel-on-teleport", true);
 		
-		windwalkers = new HashMap<String,BlockPlatform>();
-		falling = new HashSet<Player>();
+		windwalkers = new HashMap<>();
+		falling = new HashSet<>();
 	}
 
 	@Override

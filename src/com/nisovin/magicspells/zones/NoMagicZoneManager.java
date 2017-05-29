@@ -21,45 +21,45 @@ public class NoMagicZoneManager {
 	private Set<NoMagicZone> zonesOrdered;
 
 	public NoMagicZoneManager() {
-		// create zone types
-		zoneTypes = new HashMap<String, Class<? extends NoMagicZone>>();
+		// Create zone types
+		zoneTypes = new HashMap<>();
 		zoneTypes.put("cuboid", NoMagicZoneCuboid.class);
 		zoneTypes.put("worldguard", NoMagicZoneWorldGuard.class);
 		zoneTypes.put("residence", NoMagicZoneResidence.class);
 	}
 	
 	public void load(MagicConfig config) {
-		// get zones
-		zones = new HashMap<String, NoMagicZone>();
-		zonesOrdered = new TreeSet<NoMagicZone>();
+		// Get zones
+		zones = new HashMap<>();
+		zonesOrdered = new TreeSet<>();
 				
 		Set<String> zoneNodes = config.getKeys("no-magic-zones");
 		if (zoneNodes != null) {
 			for (String node : zoneNodes) {
 				ConfigurationSection zoneConfig = config.getSection("no-magic-zones." + node);
 				
-				// check enabled
+				// Check enabled
 				if (!zoneConfig.getBoolean("enabled", true)) continue;
 				
-				// get zone type
+				// Get zone type
 				String type = zoneConfig.getString("type", "");
 				if (type.isEmpty()) {
-					MagicSpells.error("Invalid no-magic zone type '" + type + "' on zone '" + node + "'");
+					MagicSpells.error("Invalid no-magic zone type '" + type + "' on zone '" + node + '\'');
 					continue;
 				}
 				
 				Class<? extends NoMagicZone> clazz = zoneTypes.get(type);
 				if (clazz == null) {
-					MagicSpells.error("Invalid no-magic zone type '" + type + "' on zone '" + node + "'");
+					MagicSpells.error("Invalid no-magic zone type '" + type + "' on zone '" + node + '\'');
 					continue;
 				}
 				
-				// create zone
+				// Create zone
 				NoMagicZone zone;
 				try {
 					zone = clazz.newInstance();
 				} catch (Exception e) {
-					MagicSpells.error("Failed to create no-magic zone '" + node + "'");
+					MagicSpells.error("Failed to create no-magic zone '" + node + '\'');
 					e.printStackTrace();
 					continue;
 				}
@@ -92,17 +92,15 @@ public class NoMagicZoneManager {
 	
 	public boolean inZone(Location loc, String zoneName) {
 		NoMagicZone zone = zones.get(zoneName);
-		if (zone != null && zone.inZone(loc)) return true;
-		return false;
+		return zone != null && zone.inZone(loc);
 	}
 	
 	public void sendNoMagicMessage(Player player, Spell spell) {
 		for (NoMagicZone zone : zonesOrdered) {
 			ZoneCheckResult result = zone.check(player.getLocation(), spell);
-			if (result == ZoneCheckResult.DENY) {
-				MagicSpells.sendMessage(zone.getMessage(), player, null);
-				return;
-			}
+			if (result != ZoneCheckResult.DENY) continue;
+			MagicSpells.sendMessage(zone.getMessage(), player, null);
+			return;
 		}
 	}
 	

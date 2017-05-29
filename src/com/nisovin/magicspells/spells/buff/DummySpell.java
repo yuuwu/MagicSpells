@@ -11,7 +11,7 @@ import com.nisovin.magicspells.util.MagicConfig;
 
 public class DummySpell extends BuffSpell {
 
-	private Set<String> players = new HashSet<String>();
+	private Set<String> players = new HashSet<>();
 	
 	public DummySpell(MagicConfig config, String spellName) {
 		super(config, spellName);

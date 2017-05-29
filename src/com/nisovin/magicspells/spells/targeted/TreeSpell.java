@@ -70,7 +70,7 @@ public class TreeSpell extends TargetedSpell implements TargetedLocationSpell {
 		// grow tree
 		Location loc = target.getLocation();				
 		if (speed > 0) {
-			List<BlockState> blockStates = new ArrayList<BlockState>();
+			List<BlockState> blockStates = new ArrayList<>();
 			target.getWorld().generateTree(loc, treeType, new TreeWatch(loc, blockStates));
 			if (!blockStates.isEmpty()) {
 				new GrowAnimation(loc.getBlockX(), loc.getBlockZ(), blockStates, speed);
@@ -84,9 +84,7 @@ public class TreeSpell extends TargetedSpell implements TargetedLocationSpell {
 	@Override
 	public boolean castAtLocation(Player caster, Location target, float power) {
 		boolean ret = growTree(target.getBlock());
-		if (ret) {
-			playSpellEffects(caster, target);
-		}
+		if (ret) playSpellEffects(caster, target);
 		return ret;
 	}
 
@@ -108,21 +106,14 @@ public class TreeSpell extends TargetedSpell implements TargetedLocationSpell {
 			Collections.sort(blockStates, new Comparator<BlockState>() {
 				@Override
 				public int compare(BlockState o1, BlockState o2) {				
-					if (o1.getY() < o2.getY()) {
-						return -1;
-					} else if (o1.getY() > o2.getY()) {
-						return 1;
-					} else {
-						int dist1 = Math.abs(o1.getX() - centerX) + Math.abs(o1.getZ() - centerZ);
-						int dist2 = Math.abs(o2.getX() - centerX) + Math.abs(o2.getZ() - centerZ);
-						if (dist1 > dist2) {
-							return 1;
-						} else if (dist1 < dist2) {
-							return -1;
-						} else {
-							return 0;
-						}
-					}
+					if (o1.getY() < o2.getY()) return -1;
+					if (o1.getY() > o2.getY()) return 1;
+					
+					int dist1 = Math.abs(o1.getX() - centerX) + Math.abs(o1.getZ() - centerZ);
+					int dist2 = Math.abs(o2.getX() - centerX) + Math.abs(o2.getZ() - centerZ);
+					if (dist1 > dist2) return 1;
+					if (dist1 < dist2) return -1;
+					return 0;
 				}
 			});
 		}

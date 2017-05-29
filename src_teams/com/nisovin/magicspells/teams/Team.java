@@ -30,8 +30,8 @@ public class Team {
 	}
 	
 	public void initialize(MagicSpellsTeams plugin) {
-		if (canTargetNames != null && canTargetNames.size() > 0) {
-			canTargetTeams = new ArrayList<Team>();
+		if (canTargetNames != null && !canTargetNames.isEmpty()) {
+			canTargetTeams = new ArrayList<>();
 			for (String name : canTargetNames) {
 				Team team = plugin.getTeamByName(name);
 				if (team != null) {
@@ -40,13 +40,13 @@ public class Team {
 					MagicSpells.error("Invalid team defined in can-target list");
 				}
 			}
-			if (canTargetTeams.size() == 0) {
+			if (canTargetTeams.isEmpty()) {
 				canTargetTeams = null;
 			}
 		}
 		canTargetNames = null;
-		if (cantTargetNames != null && cantTargetNames.size() > 0) {
-			cantTargetTeams = new ArrayList<Team>();
+		if (cantTargetNames != null && !cantTargetNames.isEmpty()) {
+			cantTargetTeams = new ArrayList<>();
 			for (String name : cantTargetNames) {
 				Team team = plugin.getTeamByName(name);
 				if (team != null) {
@@ -55,7 +55,7 @@ public class Team {
 					MagicSpells.error("Invalid team defined in cant-target list");
 				}
 			}
-			if (cantTargetTeams.size() == 0) {
+			if (cantTargetTeams.isEmpty()) {
 				cantTargetTeams = null;
 			}
 		}
@@ -85,11 +85,11 @@ public class Team {
 	}
 	
 	public Set<String> getCanTarget() {
-		return new TreeSet<String>(canTargetNames);
+		return new TreeSet<>(canTargetNames);
 	}
 	
 	public Set<String> getCantTarget() {
-		return new TreeSet<String>(cantTargetNames);
+		return new TreeSet<>(cantTargetNames);
 	}
 	
 }

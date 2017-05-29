@@ -91,7 +91,7 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 		}
 		
 		if (shootInterval <= 0) {
-			final ArrayList<Arrow> arrowList = new ArrayList<Arrow>();
+			final ArrayList<Arrow> arrowList = new ArrayList<>();
 			
 			int arrows = powerAffectsArrowCount ? Math.round(this.arrows * power) : this.arrows;
 			for (int i = 0; i < arrows; i++) {
@@ -217,7 +217,7 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 			if (powerAffectsSpeed) this.speedShooter *= power;
 			this.count = 0;
 			
-			if (removeDelay > 0) this.arrowMap = new HashMap<Integer, Arrow>();
+			if (removeDelay > 0) this.arrowMap = new HashMap<>();
 			
 			this.taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(MagicSpells.plugin, this, 0, shootInterval);
 		}

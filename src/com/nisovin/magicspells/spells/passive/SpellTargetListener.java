@@ -17,8 +17,8 @@ import com.nisovin.magicspells.util.OverridePriority;
 // optional trigger variable of comma separated list of internal spell names to accept
 public class SpellTargetListener extends PassiveListener {
 
-	Map<Spell, List<PassiveSpell>> spells = new HashMap<Spell, List<PassiveSpell>>();
-	List<PassiveSpell> anySpell = new ArrayList<PassiveSpell>();
+	Map<Spell, List<PassiveSpell>> spells = new HashMap<>();
+	List<PassiveSpell> anySpell = new ArrayList<>();
 	
 	@Override
 	public void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var) {
@@ -31,7 +31,7 @@ public class SpellTargetListener extends PassiveListener {
 				if (sp == null) continue;
 				List<PassiveSpell> passives = spells.get(sp);
 				if (passives == null) {
-					passives = new ArrayList<PassiveSpell>();
+					passives = new ArrayList<>();
 					spells.put(sp, passives);
 				}
 				passives.add(spell);

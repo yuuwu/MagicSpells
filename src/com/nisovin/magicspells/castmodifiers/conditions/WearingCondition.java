@@ -65,17 +65,10 @@ public class WearingCondition extends Condition {
 	@Override
 	public boolean check(Player player) {
 		PlayerInventory inv = player.getInventory();
-		if (check(inv.getHelmet())) {
-			return true;
-		} else if (check(inv.getChestplate())) {
-			return true;
-		} else if (check(inv.getLeggings())) {
-			return true;
-		} else if (check(inv.getBoots())) {
-			return true;
-		} else {
-			return false;
-		}
+		if (check(inv.getHelmet())) return true;
+		if (check(inv.getChestplate())) return true;
+		if (check(inv.getLeggings())) return true;
+		return (check(inv.getBoots()));
 	}
 	
 	@Override

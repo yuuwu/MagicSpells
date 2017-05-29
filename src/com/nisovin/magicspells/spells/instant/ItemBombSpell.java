@@ -42,12 +42,8 @@ public class ItemBombSpell extends InstantSpell implements TargetedLocationSpell
 		itemHasGravity = getConfigBoolean("gravity", true);
 		spell = new Subspell(getConfigString("spell", ""));
 		
-		if (item == null) {
-			MagicSpells.error("Invalid item on ItemBombSpell " + internalName);
-		}
-		if (itemName != null) {
-			itemName = ChatColor.translateAlternateColorCodes('&', itemName);
-		}
+		if (item == null) MagicSpells.error("Invalid item on ItemBombSpell " + internalName);
+		if (itemName != null) itemName = ChatColor.translateAlternateColorCodes('&', itemName);
 	}
 	
 	@Override
@@ -73,7 +69,7 @@ public class ItemBombSpell extends InstantSpell implements TargetedLocationSpell
 		i.teleport(l);
 		i.setVelocity(v);
 		MagicSpells.getVolatileCodeHandler().setGravity(i, itemHasGravity);
-		i.setPickupDelay(delay * 2);
+		i.setPickupDelay(delay << 1);
 		if (itemName != null) {
 			MagicSpells.scheduleDelayedTask(new Runnable() {
 				@Override
@@ -98,17 +94,12 @@ public class ItemBombSpell extends InstantSpell implements TargetedLocationSpell
 		} else {
 			playSpellEffects(EffectPosition.CASTER, l);
 		}
-		
 	}
 	
 	private Vector getVector(Location loc, float power) {
 		Vector v = loc.getDirection();
-		if (verticalAdjustment != 0) {
-			v.setY(v.getY() + verticalAdjustment);
-		}
-		if (rotationOffset != 0) {
-			Util.rotateVector(v, rotationOffset);
-		}
+		if (verticalAdjustment != 0) v.setY(v.getY() + verticalAdjustment);
+		if (rotationOffset != 0) Util.rotateVector(v, rotationOffset);
 		v.normalize().multiply(velocity);
 		return v;
 	}

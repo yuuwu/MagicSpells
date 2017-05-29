@@ -55,12 +55,12 @@ public class ParticleCloudSpell extends TargetedSpell implements TargetedLocatio
 		canTargetEntities = getConfigBoolean("can-target-entities", canTargetEntities);
 		canTargetLocation = getConfigBoolean("can-target-location", canTargetLocation);
 		particle = Util_1_9.getParticleFromName(particleName);
-		if (particle == null) MagicSpells.error("could not determine particle from '" + particleName + "'");
+		if (particle == null) MagicSpells.error("could not determine particle from '" + particleName + '\'');
 		
 		List<String> potionEffectStrings = getConfigStringList("potion-effects", null);
-		if (potionEffectStrings == null) potionEffectStrings = new ArrayList<String>();
+		if (potionEffectStrings == null) potionEffectStrings = new ArrayList<>();
 		
-		effects = new HashSet<PotionEffect>();
+		effects = new HashSet<>();
 		
 		for (String effect: potionEffectStrings) {
 			effects.add(getPotionEffectFromString(effect));

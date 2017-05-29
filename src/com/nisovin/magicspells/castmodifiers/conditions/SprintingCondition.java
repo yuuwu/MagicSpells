@@ -20,11 +20,8 @@ public class SprintingCondition extends Condition {
 	
 	@Override
 	public boolean check(Player player, LivingEntity target) {
-		if (target instanceof Player) {
-			return check((Player)target);
-		} else {
-			return false;
-		}
+		if (target instanceof Player) return check((Player)target);
+		return false;
 	}
 	
 	@Override

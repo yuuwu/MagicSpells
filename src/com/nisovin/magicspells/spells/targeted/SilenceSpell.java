@@ -51,9 +51,9 @@ public class SilenceSpell extends TargetedSpell implements TargetedEntitySpell {
 		strSilenced = getConfigString("str-silenced", "You are silenced!");
 		
 		if (preventChat) {
-			silenced = new ConcurrentHashMap<String, Unsilencer>();
+			silenced = new ConcurrentHashMap<>();
 		} else {
-			silenced = new HashMap<String, Unsilencer>();
+			silenced = new HashMap<>();
 		}
 		
 		validTargetList = new ValidTargetList(true, false);
@@ -64,13 +64,13 @@ public class SilenceSpell extends TargetedSpell implements TargetedEntitySpell {
 		super.initialize();
 		
 		if (allowedSpellNames != null && !allowedSpellNames.isEmpty()) {
-			allowedSpells = new HashSet<Spell>();
+			allowedSpells = new HashSet<>();
 			for (String spellName : allowedSpellNames) {
 				Spell spell = MagicSpells.getSpellByInternalName(spellName);
 				if (spell != null) {
 					allowedSpells.add(spell);
 				} else {
-					MagicSpells.error("Invalid allowed spell specified on silence spell '" + this.internalName + "': '" + spellName + "'");
+					MagicSpells.error("Invalid allowed spell specified on silence spell '" + this.internalName + "': '" + spellName + '\'');
 				}
 			}
 			allowedSpellNames.clear();
@@ -78,13 +78,13 @@ public class SilenceSpell extends TargetedSpell implements TargetedEntitySpell {
 		allowedSpellNames = null;
 
 		if (disallowedSpellNames != null && !disallowedSpellNames.isEmpty()) {
-			disallowedSpells = new HashSet<Spell>();
+			disallowedSpells = new HashSet<>();
 			for (String spellName : disallowedSpellNames) {
 				Spell spell = MagicSpells.getSpellByInternalName(spellName);
 				if (spell != null) {
 					disallowedSpells.add(spell);
 				} else {
-					MagicSpells.error("Invalid disallowed spell specified on silence spell '" + this.internalName + "': '" + spellName + "'");
+					MagicSpells.error("Invalid disallowed spell specified on silence spell '" + this.internalName + "': '" + spellName + '\'');
 				}
 			}
 			disallowedSpellNames.clear();
@@ -124,42 +124,35 @@ public class SilenceSpell extends TargetedSpell implements TargetedEntitySpell {
 
 	@Override
 	public boolean castAtEntity(Player caster, LivingEntity target, float power) {
-		if (target instanceof Player) {
-			silence((Player)target, power);
-			playSpellEffects(caster, target);
-			return true;
-		}
-		return false;
+		if (!(target instanceof Player)) return false;
+		silence((Player)target, power);
+		playSpellEffects(caster, target);
+		return true;
 	}
 
 	@Override
 	public boolean castAtEntity(LivingEntity target, float power) {
-		if (target instanceof Player) {
-			silence((Player)target, power);
-			playSpellEffects(EffectPosition.TARGET, target);
-			return true;
-		}
-		return false;
+		if (!(target instanceof Player)) return false;
+		silence((Player)target, power);
+		playSpellEffects(EffectPosition.TARGET, target);
+		return true;
 	}
 	
 	public class CastListener implements Listener {
 		
 		@EventHandler(ignoreCancelled=true)
 		public void onSpellCast(final SpellCastEvent event) {
-			if (
-					event.getCaster() != null && 
-					silenced.containsKey(event.getCaster().getName()) && 
-					(allowedSpells == null || !allowedSpells.contains(event.getSpell())) && 
-					(disallowedSpells == null || disallowedSpells.contains(event.getSpell()))
-					) {
-				event.setCancelled(true);
-				Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
-					@Override
-					public void run() {
-						sendMessage(strSilenced, event.getCaster(), event.getSpellArgs());
-					}
-				});
-			}
+			if (event.getCaster() == null) return;
+			if (!silenced.containsKey(event.getCaster().getName())) return;
+			if (!(allowedSpells == null || !allowedSpells.contains(event.getSpell()))) return;
+			if (!(disallowedSpells == null || disallowedSpells.contains(event.getSpell()))) return;
+			event.setCancelled(true);
+			Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
+				@Override
+				public void run() {
+					sendMessage(strSilenced, event.getCaster(), event.getSpellArgs());
+				}
+			});
 		}
 		
 	}

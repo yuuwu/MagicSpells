@@ -8,14 +8,14 @@ import com.nisovin.magicspells.MagicSpells;
 
 public class VariableMod {
 	
-	public static enum VariableOwner {
+	public enum VariableOwner {
 		
 		CASTER,
 		TARGET
 		
 	}
 	
-	public static enum Operation {
+	public enum Operation {
 		
 		SET,
 		ADD,
@@ -77,14 +77,11 @@ public class VariableMod {
 	
 	public double getValue(Player caster, Player target) {
 		if (modifyingVariableName != null) {
-			if (variableOwner == VariableOwner.CASTER) {
-				return MagicSpells.getVariableManager().getValue(modifyingVariableName, caster) * (negate ? -1 : 1);
-			} else { //variable owner == target
-				return MagicSpells.getVariableManager().getValue(modifyingVariableName, target) * (negate ? -1 : 1);
-			}	
-		} else {
-			return constantModifier * (negate ? -1 : 1);
+			if (variableOwner == VariableOwner.CASTER) return MagicSpells.getVariableManager().getValue(modifyingVariableName, caster) * (negate ? -1 : 1);
+			//variable owner == target
+			return MagicSpells.getVariableManager().getValue(modifyingVariableName, target) * (negate ? -1 : 1);
 		}
+		return constantModifier * (negate ? -1 : 1);
 	}
 	
 	public boolean isConstantValue() {

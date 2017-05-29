@@ -203,7 +203,9 @@ public abstract class SpellEffect {
 	}
 	
 	public interface SpellEffectActiveChecker {
-		public boolean isActive(Entity entity);
+		
+		boolean isActive(Entity entity);
+		
 	}
 	
 	class OrbitTracker implements Runnable {
@@ -263,7 +265,7 @@ public abstract class SpellEffect {
 		
 	}
 	
-	private static HashMap<String, Class<? extends SpellEffect>> effects = new HashMap<String, Class<? extends SpellEffect>>();
+	private static HashMap<String, Class<? extends SpellEffect>> effects = new HashMap<>();
 	
 	/**
 	 * Gets the GraphicalEffect by the provided name.

@@ -24,8 +24,8 @@ import com.nisovin.magicspells.util.OverridePriority;
 // trigger variable accepts a comma separated list of blocks to accept
 public class LeftClickBlockTypeListener extends PassiveListener {
 
-	Set<Material> materials = new HashSet<Material>();
-	Map<MagicMaterial, List<PassiveSpell>> types = new HashMap<MagicMaterial, List<PassiveSpell>>();
+	Set<Material> materials = new HashSet<>();
+	Map<MagicMaterial, List<PassiveSpell>> types = new HashMap<>();
 	
 	@Override
 	public void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var) {
@@ -36,13 +36,13 @@ public class LeftClickBlockTypeListener extends PassiveListener {
 			if (m != null) {
 				List<PassiveSpell> list = types.get(m);
 				if (list == null) {
-					list = new ArrayList<PassiveSpell>();
+					list = new ArrayList<>();
 					types.put(m, list);
 				}
 				list.add(spell);
 				materials.add(m.getMaterial());
 			} else {
-				MagicSpells.error("Invalid type on leftclickblocktype trigger '" + var + "' on passive spell '" + spell.getInternalName() + "'");
+				MagicSpells.error("Invalid type on leftclickblocktype trigger '" + var + "' on passive spell '" + spell.getInternalName() + '\'');
 			}
 		}
 	}

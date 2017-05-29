@@ -134,7 +134,7 @@ public class TomeSpell extends CommandSpell {
 			bookMeta.setTitle(getName() + ": " + spell.getName());
 			item.setItemMeta(bookMeta);
 		}
-		Util.setLoreData(item, internalName + ":" + spell.getInternalName() + (uses>0?","+uses:""));
+		Util.setLoreData(item, internalName + ':' + spell.getInternalName() + (uses > 0 ? "," + uses : ""));
 		return item;
 	}
 
@@ -150,8 +150,8 @@ public class TomeSpell extends CommandSpell {
 	
 	private String getSpellDataFromTome(ItemStack item) {
 		String loreData = Util.getLoreData(item);
-		if (loreData != null && loreData.startsWith(internalName + ":")) {
-			return loreData.replace(internalName + ":", "");
+		if (loreData != null && loreData.startsWith(internalName + ':')) {
+			return loreData.replace(internalName + ':', "");
 		}
 		return null;
 	}
@@ -198,7 +198,7 @@ public class TomeSpell extends CommandSpell {
 					if (uses > 0) {
 						uses--;
 						if (uses > 0) {
-							Util.setLoreData(item, internalName + ":" + data[0] + "," + uses);
+							Util.setLoreData(item, internalName + ':' + data[0] + ',' + uses);
 						} else {
 							Util.removeLoreData(item);
 						}

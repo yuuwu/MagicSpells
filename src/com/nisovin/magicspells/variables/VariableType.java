@@ -5,7 +5,7 @@ import java.util.Map;
 
 public enum VariableType {
 	
-	PLAYER(new String[]{ "player" }) {
+	PLAYER("player") {
 		
 		@Override
 		public Variable newInstance() {
@@ -14,7 +14,7 @@ public enum VariableType {
 		
 	},
 	
-	GLOBAL(new String[]{ "global" }) {
+	GLOBAL("global") {
 		
 		@Override
 		public Variable newInstance() {
@@ -23,7 +23,7 @@ public enum VariableType {
 		
 	},
 	
-	DISTANCE_TO(new String[]{ "distancetolocation" }) {
+	DISTANCE_TO("distancetolocation") {
 		
 		@Override
 		public Variable newInstance() {
@@ -33,7 +33,7 @@ public enum VariableType {
 	},
 	
 	
-	DISTANCE_TO_SQUARED(new String[]{ "squareddistancetolocation" }) {
+	DISTANCE_TO_SQUARED("squareddistancetolocation") {
 		
 		@Override
 		public Variable newInstance() {
@@ -42,7 +42,7 @@ public enum VariableType {
 		
 	},
 	
-	PLAYER_STRING(new String[] { "playerstring" }) {
+	PLAYER_STRING("playerstring") {
 
 		@Override
 		public Variable newInstance() {
@@ -54,7 +54,7 @@ public enum VariableType {
 	
 	private String[] names;
 	
-	private VariableType(String[] names) {
+	VariableType(String... names) {
 		this.names = names;
 	}
 	
@@ -65,7 +65,7 @@ public enum VariableType {
 	
 	public static void initialize() {
 		if (initialized) return;
-		nameMap = new HashMap<String, VariableType>();
+		nameMap = new HashMap<>();
 		for (VariableType type : VariableType.values()) {
 			for (String name: type.names) {
 				nameMap.put(name.toLowerCase(), type);

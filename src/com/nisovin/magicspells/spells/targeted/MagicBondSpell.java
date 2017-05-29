@@ -28,7 +28,7 @@ public class MagicBondSpell extends TargetedSpell implements TargetedEntitySpell
 	
     private int duration;
     private String strDurationEnd;
-    private Map<Player, Player> bondTarget = new HashMap<Player, Player>();
+    private Map<Player, Player> bondTarget = new HashMap<>();
     private SpellFilter filter;
 
     public MagicBondSpell(MagicConfig config, String spellName){
@@ -57,7 +57,7 @@ public class MagicBondSpell extends TargetedSpell implements TargetedEntitySpell
             MagicSpells.scheduleDelayedTask(new Runnable() {
                 @Override
                 public void run() {
-                    if (strDurationEnd != null && !strDurationEnd.equals("")) {
+                    if (strDurationEnd != null && !strDurationEnd.isEmpty()) {
                         MagicSpells.sendMessage(player, strDurationEnd);
                         MagicSpells.sendMessage(targetedPlayer, strDurationEnd);
                     }

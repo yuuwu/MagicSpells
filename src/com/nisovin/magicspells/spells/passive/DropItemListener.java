@@ -23,9 +23,9 @@ import com.nisovin.magicspells.util.OverridePriority;
 // optional trigger variable that may contain a comma separated list of items to accept
 public class DropItemListener extends PassiveListener {
 
-	Set<Material> materials = new HashSet<Material>();
-	Map<MagicMaterial, List<PassiveSpell>> types = new HashMap<MagicMaterial, List<PassiveSpell>>();
-	List<PassiveSpell> allTypes = new ArrayList<PassiveSpell>();
+	Set<Material> materials = new HashSet<>();
+	Map<MagicMaterial, List<PassiveSpell>> types = new HashMap<>();
+	List<PassiveSpell> allTypes = new ArrayList<>();
 	
 	@Override
 	public void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var) {
@@ -35,7 +35,7 @@ public class DropItemListener extends PassiveListener {
 			String[] split = var.split(",");
 			for (String s : split) {
 				s = s.trim();
-				MagicMaterial mat = null;
+				MagicMaterial mat;
 				if (s.contains("|")) {
 					String[] stuff = s.split("\\|");
 					mat = MagicSpells.getItemNameResolver().resolveItem(stuff[0]);
@@ -46,7 +46,7 @@ public class DropItemListener extends PassiveListener {
 				if (mat != null) {
 					List<PassiveSpell> list = types.get(mat);
 					if (list == null) {
-						list = new ArrayList<PassiveSpell>();
+						list = new ArrayList<>();
 						types.put(mat, list);
 					}
 					list.add(spell);

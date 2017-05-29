@@ -61,7 +61,7 @@ public class DisguiseSpell extends TargetedSpell implements TargetedEntitySpell 
 	private boolean toggle;
 	private String strFade;
 	
-	Map<String, Disguise> disguised = new HashMap<String, Disguise>();
+	Map<String, Disguise> disguised = new HashMap<>();
 	
 	public DisguiseSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -122,9 +122,7 @@ public class DisguiseSpell extends TargetedSpell implements TargetedEntitySpell 
 		targetSelf = getConfigBoolean("target-self", true);
 		strFade = getConfigString("str-fade", "");
 				
-		if (entityData.getType() == null) {
-			MagicSpells.error("Invalid entity-type specified for disguise spell '" + spellName + "'");
-		}
+		if (entityData.getType() == null) MagicSpells.error("Invalid entity-type specified for disguise spell '" + spellName + '\'');
 	}
 	
 	@Override
@@ -146,14 +144,11 @@ public class DisguiseSpell extends TargetedSpell implements TargetedEntitySpell 
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			TargetInfo<Player> target = getTargetPlayer(player, power);
-			if (target != null) {
-				disguise(target.getTarget());
-				sendMessages(player, target.getTarget());
-				playSpellEffects(EffectPosition.CASTER, player);
-				return PostCastAction.NO_MESSAGES;
-			} else {
-				return noTarget(player);
-			}
+			if (target == null) return noTarget(player);
+			disguise(target.getTarget());
+			sendMessages(player, target.getTarget());
+			playSpellEffects(EffectPosition.CASTER, player);
+			return PostCastAction.NO_MESSAGES;
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}
@@ -170,66 +165,64 @@ public class DisguiseSpell extends TargetedSpell implements TargetedEntitySpell 
 	
 	public void undisguise(Player player) {
 		Disguise disguise = disguised.remove(player.getName().toLowerCase());
-		if (disguise != null) {
-			disguise.cancelDuration();
-			sendMessage(strFade, player, MagicSpells.NULL_ARGS);
-			playSpellEffects(EffectPosition.DISABLED, player);
-		}
+		if (disguise == null) return;
+		
+		disguise.cancelDuration();
+		sendMessage(strFade, player, MagicSpells.NULL_ARGS);
+		playSpellEffects(EffectPosition.DISABLED, player);
 	}
 	
 	@Override
 	public boolean castAtEntity(Player player, LivingEntity target, float power) {
-		if (target instanceof Player) {
-			disguise((Player)target);
-			return true;
-		}
-		return false;
+		if (!(target instanceof Player)) return false;
+		disguise((Player)target);
+		return true;
 	}
 	
 	@Override
 	public boolean castAtEntity(LivingEntity target, float power) {
-		if (target instanceof Player) {
-			disguise((Player)target);
-			return true;
-		}
-		return false;
+		if (!(target instanceof Player)) return false;
+		disguise((Player)target);
+		return true;
 	}
 	
 	@EventHandler
 	public void onPickup(PlayerPickupItemEvent event) {
-		if (preventPickups && disguised.containsKey(event.getPlayer().getName().toLowerCase())) {
-			event.setCancelled(true);
-		}
+		if (!preventPickups) return;
+		if (!disguised.containsKey(event.getPlayer().getName().toLowerCase())) return;
+		event.setCancelled(true);
 	}
 	
 	@EventHandler
 	public void onDeath(PlayerDeathEvent event) {
-		if (undisguiseOnDeath && disguised.containsKey(event.getEntity().getName().toLowerCase())) {
-			manager.removeDisguise(event.getEntity(), entityData.getType() == EntityType.PLAYER);
-		}
+		if (!undisguiseOnDeath) return;
+		if (!disguised.containsKey(event.getEntity().getName().toLowerCase())) return;
+		manager.removeDisguise(event.getEntity(), entityData.getType() == EntityType.PLAYER);
 	}
 	
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
-		if (undisguiseOnLogout && disguised.containsKey(event.getPlayer().getName().toLowerCase())) {
-			manager.removeDisguise(event.getPlayer(), entityData.getType() == EntityType.PLAYER);
-		}
+		if (!undisguiseOnLogout) return;
+		if (!disguised.containsKey(event.getPlayer().getName().toLowerCase())) return;
+		manager.removeDisguise(event.getPlayer(), entityData.getType() == EntityType.PLAYER);
 	}
 	
 	@EventHandler
 	public void onTarget(EntityTargetEvent event) {
-		if (friendlyMobs && event.getTarget() != null && event.getTarget() instanceof Player && disguised.containsKey(((Player)event.getTarget()).getName().toLowerCase())) {
-			event.setCancelled(true);
-		}
+		if (!friendlyMobs) return;
+		if (event.getTarget() == null) return;
+		if (!(event.getTarget() instanceof Player)) return;
+		if (!disguised.containsKey(event.getTarget().getName().toLowerCase())) return;
+		event.setCancelled(true);
 	}
 	
 	class CastListener implements Listener {
 		
 		@EventHandler
 		void onSpellCast(SpellCastedEvent event) {
-			if (event.getSpell() != thisSpell && disguised.containsKey(event.getCaster().getName().toLowerCase())) {
-				manager.removeDisguise(event.getCaster());
-			}
+			if (event.getSpell() == thisSpell) return;
+			if (!disguised.containsKey(event.getCaster().getName().toLowerCase())) return;
+			manager.removeDisguise(event.getCaster());
 		}
 		
 	}
@@ -238,13 +231,13 @@ public class DisguiseSpell extends TargetedSpell implements TargetedEntitySpell 
 		
 		@EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
 		void onDamage(EntityDamageEvent event) {
-			if (undisguiseOnTakeDamage && event.getEntity() instanceof Player && disguised.containsKey(((Player)event.getEntity()).getName().toLowerCase())) {
+			if (undisguiseOnTakeDamage && event.getEntity() instanceof Player && disguised.containsKey(event.getEntity().getName().toLowerCase())) {
 				manager.removeDisguise((Player)event.getEntity());
 			}
 			if (undisguiseOnGiveDamage && event instanceof EntityDamageByEntityEvent) {
 				Entity e = ((EntityDamageByEntityEvent)event).getDamager();
 				if (e instanceof Player) {
-					if (disguised.containsKey(((Player)e).getName().toLowerCase())) {
+					if (disguised.containsKey(e.getName().toLowerCase())) {
 						manager.removeDisguise((Player)e);
 					}
 				} else if (e instanceof Projectile && ((Projectile)e).getShooter() instanceof Player) {
@@ -265,11 +258,10 @@ public class DisguiseSpell extends TargetedSpell implements TargetedEntitySpell 
 	@Override
 	public void turnOff() {
 		if (manager != null) {
-			for (String name : new ArrayList<String>(disguised.keySet())) {
+			for (String name : new ArrayList<>(disguised.keySet())) {
 				Player player = PlayerNameUtils.getPlayerExact(name);
-				if (player != null) {
-					manager.removeDisguise(player, false);
-				}
+				if (player == null) continue;
+				manager.removeDisguise(player, false);
 			}
 			manager.unregisterSpell(this);
 			if (manager.registeredSpellsCount() == 0) {
@@ -309,9 +301,7 @@ public class DisguiseSpell extends TargetedSpell implements TargetedEntitySpell 
 			this.var1 = var1;
 			this.var2 = var2;
 			this.var3 = var3;
-			if (duration > 0) {
-				startDuration(duration);
-			}
+			if (duration > 0) startDuration(duration);
 			this.spell = spell;
 		}
 		

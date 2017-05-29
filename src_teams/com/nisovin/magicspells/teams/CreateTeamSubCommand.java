@@ -10,21 +10,19 @@ public class CreateTeamSubCommand implements TeamsSubCommand {
 	public CreateTeamSubCommand(MagicSpellsTeams plugin) {
 		this.plugin = plugin;
 	}
-	//teams.<teamname> is the section to make
+	// teams.<teamname> is the section to make
 	
 	@Override
 	public boolean process(CommandSender sender, String[] args) {
-		//magicspellsteams create <name>
+		// magicspellsteams create <name>
 		if (args.length >= 2) {
 			String name = args[1];
 			if (plugin.getTeamByName(name) != null) {
-				sender.sendMessage("'" + name + "' is already a team!");
+				sender.sendMessage('\'' + name + "' is already a team!");
 				return true;
 			}
-			sender.sendMessage("Creating team '" + name + "' with membership permission 'magicspells.team." + name + "'");
-			if (makeTeam(name)) {
-				sender.sendMessage("Team successfully created! Use /cast reload to apply the changes");
-			}
+			sender.sendMessage("Creating team '" + name + "' with membership permission 'magicspells.team." + name + '\'');
+			if (makeTeam(name)) sender.sendMessage("Team successfully created! Use /cast reload to apply the changes");
 			return true;
 		}
 		return false;

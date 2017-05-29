@@ -15,7 +15,7 @@ import com.nisovin.magicspells.util.wrappers.NMSItemStackWrapper;
 public class ItemUtil {
 	
 	public ItemStack setUnbreakable(ItemStack item) {
-		if (!(CraftItemStackWrapper.targetClass.isAssignableFrom(item.getClass()))) {
+		if (!CraftItemStackWrapper.targetClass.isAssignableFrom(item.getClass())) {
 			try {
 				item = (ItemStack) CraftItemStackWrapper.asCraftCopyMethod.invoke(null, item);
 			} catch (Exception e) {
@@ -23,9 +23,7 @@ public class ItemUtil {
 			}
 		}
 		Object tag = getTag(item);
-		if (tag == null) {
-			tag = NBTTagCompoundWrapper.newInstance();
-		}
+		if (tag == null) tag = NBTTagCompoundWrapper.newInstance();
 		try {
 			NBTTagCompoundWrapper.setByteMethod.invoke(tag, "Unbreakable", (byte)1);
 		} catch (Exception e) {
@@ -61,7 +59,7 @@ public class ItemUtil {
 			try {
 				craftItem = CraftItemStackWrapper.asCraftCopyMethod.invoke(null, item);
 			} catch (Exception e) {
-				//no op
+				// No op
 			}
 		}
 		
@@ -96,7 +94,7 @@ public class ItemUtil {
 	}
 	
 	public ItemStack addFakeEnchantment(ItemStack item) {
-		if (!(CraftItemStackWrapper.targetClass.isAssignableFrom(item.getClass()))) {
+		if (!CraftItemStackWrapper.targetClass.isAssignableFrom(item.getClass())) {
 			try {
 				item = (ItemStack) CraftItemStackWrapper.asCraftCopyMethod.invoke(null, item);
 			} catch (Exception e) {
@@ -104,9 +102,7 @@ public class ItemUtil {
 			}
 		}
 		Object tag = getTag(item);		
-		if (tag == null) {
-			tag = NBTTagCompoundWrapper.newInstance();
-		}
+		if (tag == null) tag = NBTTagCompoundWrapper.newInstance();
 		try {
 			if (!(Boolean)NBTTagCompoundWrapper.hasKeyMethod.invoke(tag, "ench")) {
 				NBTTagCompoundWrapper.setMethod.invoke(tag, "ench", NBTTagListWrapper.newInstance());
@@ -118,7 +114,7 @@ public class ItemUtil {
 	}
 	
 	public ItemStack addAttributes(ItemStack item, String[] names, String[] types, double[] amounts, int[] operations) {
-		if (!(CraftItemStackWrapper.targetClass.isAssignableFrom(item.getClass()))) {
+		if (!CraftItemStackWrapper.targetClass.isAssignableFrom(item.getClass())) {
 			//item = CraftItemStack.asCraftCopy(item);
 			try {
 				item = (ItemStack) CraftItemStackWrapper.asCraftCopyMethod.invoke(null, item);
@@ -184,7 +180,7 @@ public class ItemUtil {
 	
 	
 	public ItemStack hideTooltipCrap(ItemStack item) {
-		if (!(CraftItemStackWrapper.targetClass.isAssignableFrom(item.getClass()))) {
+		if (!CraftItemStackWrapper.targetClass.isAssignableFrom(item.getClass())) {
 			try {
 				item = (ItemStack) CraftItemStackWrapper.asCraftCopyMethod.invoke(null, item);
 			} catch (Exception e) {
@@ -192,9 +188,7 @@ public class ItemUtil {
 			}
 		}
 		Object tag = getTag(item);
-		if (tag == null) {
-			tag = NBTTagCompoundWrapper.newInstance();
-		}
+		if (tag == null) tag = NBTTagCompoundWrapper.newInstance();
 		try {
 			NBTTagCompoundWrapper.setIntMethod.invoke(tag, "HideFlags", 63);
 		} catch (Exception e) {

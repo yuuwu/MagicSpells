@@ -32,14 +32,14 @@ public class ModifyCooldownSpell extends TargetedSpell implements TargetedEntity
 	
 	@Override
 	public void initialize() {
-		spells = new ArrayList<Spell>();
+		spells = new ArrayList<>();
 		if (spellNames != null) {
 			for (String spellName : spellNames) {
 				Spell spell = MagicSpells.getSpellByInternalName(spellName);
 				if (spell != null) {
 					spells.add(spell);
 				} else {
-					MagicSpells.error("Invalid spell '" + spellName + "' on ModifyCooldownSpell + '" + internalName + "'");
+					MagicSpells.error("Invalid spell '" + spellName + "' on ModifyCooldownSpell + '" + internalName + '\'');
 				}
 			}
 		}

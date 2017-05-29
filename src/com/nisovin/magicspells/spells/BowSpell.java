@@ -35,7 +35,6 @@ public class BowSpell extends Spell {
 	@ConfigData(field="spell", dataType="String", defaultValue="null")
 	String spellNameOnShoot;
 	
-	
 	Subspell spellOnShoot;
 	
 	@ConfigData(field="use-bow-force", dataType="boolean", defaultValue="true")
@@ -58,7 +57,7 @@ public class BowSpell extends Spell {
 			spellOnShoot = new Subspell(spellNameOnShoot);
 			if (!spellOnShoot.process()) {
 				spellOnShoot = null;
-				MagicSpells.error("Bow spell '" + internalName + "' has invalid spell defined: '" + spellNameOnShoot + "'");
+				MagicSpells.error("Bow spell '" + internalName + "' has invalid spell defined: '" + spellNameOnShoot + '\'');
 			}
 		}
 		
@@ -92,7 +91,7 @@ public class BowSpell extends Spell {
 	
 	class BowSpellHandler implements Listener {
 		
-		Map<String, BowSpell> spells = new HashMap<String, BowSpell>();
+		Map<String, BowSpell> spells = new HashMap<>();
 		
 		public BowSpellHandler() {
 			registerEvents(this);

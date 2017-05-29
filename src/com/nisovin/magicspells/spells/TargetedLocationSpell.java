@@ -5,8 +5,8 @@ import org.bukkit.entity.Player;
 
 public interface TargetedLocationSpell {
 	
-	public boolean castAtLocation(Player caster, Location target, float power);
+	boolean castAtLocation(Player caster, Location target, float power);
 
-	public boolean castAtLocation(Location target, float power);
+	boolean castAtLocation(Location target, float power);
 	
 }

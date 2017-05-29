@@ -15,7 +15,7 @@ public class ConfigReaderUtil {
 	
 	public static MagicLocation readLocation(ConfigurationSection section, String path, String defaultText) {
 		String s = section.getString(path, defaultText);
-		MagicLocation ret = null;
+		MagicLocation ret;
 		try {
 			String[] split = s.split(",");
 			String world = split[0];
@@ -42,7 +42,6 @@ public class ConfigReaderUtil {
 		String type = section.getString("prompt-type");
 		PromptType promptType = PromptType.getPromptType(type);
 		if (promptType == null) return defaultPrompt;
-		
 		return promptType.constructPrompt(section);
 	}
 	
@@ -54,25 +53,23 @@ public class ConfigReaderUtil {
 	public static ConversationFactory readConversationFactory(ConfigurationSection section) {
 		ConversationFactory ret = new ConversationFactory(MagicSpells.plugin);
 		
-		// handle the prefix
+		// Handle the prefix
 		String prefix = section.getString("prefix", null);
-		if (prefix != null && !prefix.isEmpty()) {
-			ret = ret.withPrefix(new MagicConversationPrefix(prefix));
-		}
+		if (prefix != null && !prefix.isEmpty()) ret = ret.withPrefix(new MagicConversationPrefix(prefix));
 		
-		// handle local echo
+		// Handle local echo
 		boolean localEcho = section.getBoolean("local-echo", true);
 		ret = ret.withLocalEcho(localEcho);
 		
-		// handle first prompt loading
+		// Handle first prompt loading
 		Prompt firstPrompt = readPrompt(section.getConfigurationSection("first-prompt"));
 		ret = ret.withFirstPrompt(firstPrompt);
 		
-		// handle timeout
+		// Handle timeout
 		int timeoutSeconds = section.getInt("timeout-seconds", 30);
 		ret = ret.withTimeout(timeoutSeconds);
 		
-		// handle escape sequence
+		// Handle escape sequence
 		String escapeSequence = section.getString("escape-sequence", null);
 		if (escapeSequence != null && !escapeSequence.isEmpty()) ret = ret.withEscapeSequence("");
 		

@@ -40,9 +40,7 @@ public class BiomeCondition extends Condition {
 	public boolean check(Player player, Location location) {
 		Biome biome = location.getBlock().getBiome();
 		for (Biome b : biomes) {
-			if (b == biome) {
-				return true;
-			}
+			if (b == biome) return true;
 		}
 		return false;
 	}

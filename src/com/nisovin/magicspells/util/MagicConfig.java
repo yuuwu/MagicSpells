@@ -106,14 +106,14 @@ public class MagicConfig {
 			File folder = plugin.getDataFolder();
 			File file = new File(folder, "config.yml");
 			
-			// load main config
+			// Load main config
 			mainConfig = new YamlConfiguration();
 			if (file.exists()) mainConfig.load(file);
 			if (!mainConfig.contains("general")) mainConfig.createSection("general");
 			if (!mainConfig.contains("mana")) mainConfig.createSection("mana");
 			if (!mainConfig.contains("spells")) mainConfig.createSection("spells");
 			
-			// load general
+			// Load general
 			File generalConfigFile = new File(folder, "general.yml");
 			if (generalConfigFile.exists()) {
 				YamlConfiguration generalConfig = new YamlConfiguration();
@@ -129,7 +129,7 @@ public class MagicConfig {
 				}
 			}
 			
-			// load mana
+			// Load mana
 			File manaConfigFile = new File(folder, "mana.yml");
 			if (manaConfigFile.exists()) {
 				YamlConfiguration manaConfig = new YamlConfiguration();
@@ -145,7 +145,7 @@ public class MagicConfig {
 				}
 			}
 			
-			// load no magic zones
+			// Load no magic zones
 			File zonesConfigFile = new File(folder, "zones.yml");
 			if (zonesConfigFile.exists()) {
 				YamlConfiguration zonesConfig = new YamlConfiguration();
@@ -161,7 +161,7 @@ public class MagicConfig {
 				}
 			}
 			
-			// load spell configs
+			// Load spell configs
 			for (File spellConfigFile : folder.listFiles(FILENAME_FILTER)) {
 				YamlConfiguration spellConfig = new YamlConfiguration();
 				try {
@@ -196,7 +196,7 @@ public class MagicConfig {
 				}
 			}
 			
-			// load mini configs
+			// Load mini configs
 			File spellConfigsFolder = new File(folder, "spellconfigs");
 			if (spellConfigsFolder.exists()) loadSpellConfigs(spellConfigsFolder);
 		} catch (Exception ex) {
@@ -210,7 +210,7 @@ public class MagicConfig {
 		File[] files = folder.listFiles();
 		for (File file : files) {
 			if (file.isDirectory()) {
-				// recurse into folders
+				// Recurse into folders
 				loadSpellConfigs(file);
 			} else if (file.getName().endsWith(".yml")) {
 				name = file.getName().replace(".yml", "");
@@ -218,7 +218,7 @@ public class MagicConfig {
 				try {
 					conf.load(file);
 					for(String key : conf.getKeys(false)) {
-						mainConfig.set("spells." + name + "." + key, conf.get(key));
+						mainConfig.set("spells." + name + '.' + key, conf.get(key));
 					}
 				} catch (Exception e) {
 					MagicSpells.error("Error reading spell config file: " + file.getName());
@@ -229,12 +229,11 @@ public class MagicConfig {
 	}
 	
 	public boolean isLoaded() {
-		return (mainConfig.contains("general") && mainConfig.contains("spells"));
+		return mainConfig.contains("general") && mainConfig.contains("spells");
 	}
 	
 	public boolean contains(String path) {
-		if (mainConfig.contains(path)) return true;
-		return false;
+		return mainConfig.contains(path);
 	}
 	
 	public int getInt(String path, int def) {
@@ -255,8 +254,7 @@ public class MagicConfig {
 	}
 	
 	public boolean isString(String path) {
-		if (!mainConfig.contains(path)) return false;
-		return mainConfig.isString(path);
+		return mainConfig.contains(path) && mainConfig.isString(path);
 	}
 	
 	public String getString(String path, String def) {
@@ -265,8 +263,7 @@ public class MagicConfig {
 	}
 	
 	public boolean isList(String path) {
-		if (mainConfig.contains(path)) return mainConfig.isList(path);
-		return false;
+		return mainConfig.contains(path) && mainConfig.isList(path);
 	}
 	
 	public List<Integer> getIntList(String path, List<Integer> def) {
@@ -304,8 +301,7 @@ public class MagicConfig {
 	}
 	
 	public boolean isSection(String path) {
-		if (mainConfig.contains(path)) return mainConfig.isConfigurationSection(path);
-		return false;
+		return mainConfig.contains(path) && mainConfig.isConfigurationSection(path);
 	}
 	
 	public ConfigurationSection getSection(String path) {

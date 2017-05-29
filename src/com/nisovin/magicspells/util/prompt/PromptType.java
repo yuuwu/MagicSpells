@@ -65,7 +65,7 @@ public enum PromptType {
 	
 	private static void initialize() {
 		if (initialized) return;
-		nameMap = new HashMap<String, PromptType>();
+		nameMap = new HashMap<>();
 		for (PromptType type: PromptType.values()) {
 			for (String name: type.labels) {
 				nameMap.put(name.toLowerCase(), type);

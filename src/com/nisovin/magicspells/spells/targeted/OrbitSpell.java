@@ -132,30 +132,29 @@ public class OrbitSpell extends TargetedSpell implements TargetedEntitySpell {
 		
 		@Override
 		public void run() {
-			// check for valid and alive caster and target
+			// Check for valid and alive caster and target
 			if (!caster.isValid() || !target.isValid()) {
 				stop();
 				return;
 			}
 			
-			// check if duration is up
+			// Check if duration is up
 			if (maxDuration > 0 && startTime + maxDuration < System.currentTimeMillis()) {
 				stop();
 				return;
 			}
 			
-			// move projectile and calculate new vector
+			// Move projectile and calculate new vector
 			Location loc = getLocation();
 			
-			// show particle
+			// Show particle
 			//MagicSpells.getVolatileCodeHandler().playParticleEffect(loc, particleName, particleHorizontalSpread, particleVerticalSpread, particleSpeed, particleCount, renderDistance, 0F);
 			
 			effect.display(data, loc, particleColor, renderDistance, particleHorizontalSpread, particleVerticalSpread, particleHorizontalSpread, particleSpeed, particleCount);
 			
-			//cast the spell at the location if it isn't null
+			// Cast the spell at the location if it isn't null
 			if (orbitingSpell != null) orbitingSpell.castAtLocation(caster, loc, power);
 			//ParticleData data, Location center, Color color, double range, float offsetX, float offsetY, float offsetZ, float speed, int amount
-			
 		}
 		
 		private Location getLocation() {

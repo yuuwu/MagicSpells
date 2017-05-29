@@ -197,22 +197,14 @@ public class ParticleProjectileSpell extends InstantSpell implements TargetedLoc
 			this.previousLocation = startLocation.clone();
 			this.currentLocation = startLocation.clone();
 			this.currentVelocity = from.getDirection();
-			if (projectileVelocityHorizOffset != 0) {
-				Util.rotateVector(this.currentVelocity, projectileVelocityHorizOffset);
-			}
-			if (projectileVelocityVertOffset != 0) {
-				this.currentVelocity.add(new Vector(0, projectileVelocityVertOffset, 0)).normalize();
-			}
-			if (projectileSpread > 0) {
-				this.currentVelocity.add(new Vector(rand.nextFloat() * projectileSpread, rand.nextFloat() * projectileSpread, rand.nextFloat() * projectileSpread));
-			}
+			if (projectileVelocityHorizOffset != 0) Util.rotateVector(this.currentVelocity, projectileVelocityHorizOffset);
+			if (projectileVelocityVertOffset != 0) this.currentVelocity.add(new Vector(0, projectileVelocityVertOffset, 0)).normalize();
+			if (projectileSpread > 0) this.currentVelocity.add(new Vector(rand.nextFloat() * projectileSpread, rand.nextFloat() * projectileSpread, rand.nextFloat() * projectileSpread));
 			if (hugSurface) {
 				this.currentLocation.setY((int)this.currentLocation.getY() + heightFromSurface);
 				this.currentVelocity.setY(0).normalize();
 			}
-			if (powerAffectsVelocity) {
-				this.currentVelocity.multiply(power);
-			}
+			if (powerAffectsVelocity) this.currentVelocity.multiply(power);
 			this.currentVelocity.multiply(projectileVelocity / ticksPerSecond);
 			this.taskId = MagicSpells.scheduleRepeatingTask(this, 0, tickInterval);
 			if (hitPlayers || hitNonPlayers) {
@@ -234,7 +226,7 @@ public class ParticleProjectileSpell extends InstantSpell implements TargetedLoc
 					}
 				}
 			}
-			this.immune = new HashMap<LivingEntity, Long>();
+			this.immune = new HashMap<>();
 		}
 		
 		@Override

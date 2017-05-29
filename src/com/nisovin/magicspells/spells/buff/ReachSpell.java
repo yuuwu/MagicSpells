@@ -67,7 +67,7 @@ public class ReachSpell extends BuffSpell {
 			}
 		}
 		
-		reaching = new HashSet<String>();
+		reaching = new HashSet<>();
 	}
 
 	@Override

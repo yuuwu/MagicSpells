@@ -19,7 +19,7 @@ public class OffhandCooldownSpell extends InstantSpell {
 	Spell spell;
 	ItemStack item;
 	
-	List<Player> players = new ArrayList<Player>();
+	List<Player> players = new ArrayList<>();
 	
 	public OffhandCooldownSpell(MagicConfig config, String spellName) {
 		super(config, spellName);

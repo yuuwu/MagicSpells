@@ -60,9 +60,7 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 						return true;
 					}
 					String[] spellArgs = null;
-					if (args.length > 3) {
-						spellArgs = Arrays.copyOfRange(args, 3, args.length);
-					}
+					if (args.length > 3) spellArgs = Arrays.copyOfRange(args, 3, args.length);
 					spell.cast(target, spellArgs);
 					sender.sendMessage(plugin.textColor + "Player " + target.getName() + " forced to cast " + spell.getName());
 					// end forcecast command handling
@@ -134,7 +132,7 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 					if (p != null) {
 						int amt = Integer.parseInt(args[2]);
 						plugin.mana.setMaxMana(p, amt);
-						sender.sendMessage(plugin.textColor + p.getName() + "'s max mana set to " + amt + ".");
+						sender.sendMessage(plugin.textColor + p.getName() + "'s max mana set to " + amt + '.');
 					}
 					// end /c setmaxmana handling
 					
@@ -144,7 +142,7 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 					if (p != null) {
 						int amt = Integer.parseInt(args[2]);
 						plugin.mana.addMana(p, amt, ManaChangeReason.OTHER);
-						sender.sendMessage(plugin.textColor + p.getName() + "'s mana modified by " + amt + ".");
+						sender.sendMessage(plugin.textColor + p.getName() + "'s mana modified by " + amt + '.');
 					}
 					// end /c modifymana handling
 					
@@ -154,7 +152,7 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 					if (p != null) {
 						int amt = Integer.parseInt(args[2]);
 						plugin.mana.setMana(p, amt, ManaChangeReason.OTHER);
-						sender.sendMessage(plugin.textColor + p.getName() + "'s mana set to " + amt + ".");
+						sender.sendMessage(plugin.textColor + p.getName() + "'s mana set to " + amt + '.');
 					}
 					// end /c setmana handling
 					
@@ -204,7 +202,6 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 					} else {
 						num = Double.parseDouble(numString);
 					}
-					
 					
 					if (multiply) {
 						MagicSpells.getVariableManager().multiplyBy(var, PlayerNameUtils.getPlayer(player), num);
@@ -332,9 +329,9 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 					} else {
 						String[] spellArgs = null;
 						if (args.length > 1) {
-							spellArgs = new String[args.length-1];
+							spellArgs = new String[args.length - 1];
 							for (int i = 1; i < args.length; i++) {
-								spellArgs[i-1] = args[i];
+								spellArgs[i - 1] = args[i];
 							}
 						}
 						boolean casted = false;

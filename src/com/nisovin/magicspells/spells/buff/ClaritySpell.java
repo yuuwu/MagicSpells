@@ -19,7 +19,7 @@ public class ClaritySpell extends BuffSpell {
 	
 	private SpellFilter filter;
 	
-	Map<String, Float> buffed = new HashMap<String, Float>();
+	Map<String, Float> buffed = new HashMap<>();
 	
 	public ClaritySpell(MagicConfig config, String spellName) {
 		super(config, spellName);

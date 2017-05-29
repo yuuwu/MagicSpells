@@ -71,7 +71,7 @@ public class ResistSpell extends BuffSpell {
 	List<DamageCause> normalDamageTypes;
 	float multiplier;	
 	
-	Map<String, Float> buffed = new HashMap<String, Float>();
+	Map<String, Float> buffed = new HashMap<>();
 	
 	public ResistSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -81,7 +81,7 @@ public class ResistSpell extends BuffSpell {
 		multiplier = getConfigFloat("multiplier", 0.5F);
 		
 		if (list != null) {
-			normalDamageTypes = new ArrayList<DamageCause>();
+			normalDamageTypes = new ArrayList<>();
 			for (String s : list) {
 				for (DamageCause cause : DamageCause.values()) {
 					if (!cause.name().equalsIgnoreCase(s)) continue;

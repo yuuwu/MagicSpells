@@ -352,20 +352,19 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 			if (toggle) {
 				turnOff(target);
 				return PostCastAction.ALREADY_HANDLED;
-			} else {
-				if (normal) {
-					boolean ok = recastBuff(target, power, args);
-					if (ok) {
-						startSpellDuration(target, power);
-						if (caster == null) {
-							playSpellEffects(EffectPosition.TARGET, target);
-						} else {
-							playSpellEffects(caster, target);
-						}
+			}
+			if (normal) {
+				boolean ok = recastBuff(target, power, args);
+				if (ok) {
+					startSpellDuration(target, power);
+					if (caster == null) {
+						playSpellEffects(EffectPosition.TARGET, target);
+					} else {
+						playSpellEffects(caster, target);
 					}
 				}
-				return PostCastAction.HANDLE_NORMALLY;
 			}
+			return PostCastAction.HANDLE_NORMALLY;
 		}
 		if (normal) {
 			boolean ok = castBuff(target, power, args);
@@ -495,10 +494,9 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 			if (hasReagents(player, reagents)) {
 				removeReagents(player, reagents);
 				return true;
-			} else {
-				turnOff(player);
-				return false;
 			}
+			turnOff(player);
+			return false;
 		}
 		return true;
 	}

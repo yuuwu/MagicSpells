@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,7 +21,8 @@ import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.MagicLocation;
 
-public class MarkSpell extends InstantSpell {
+public class MarkSpell extends InstantSpell implements TargetedLocationSpell
+{
 	
 	private boolean permanentMarks;
 	private boolean useAsRespawnLocation;
@@ -37,7 +39,7 @@ public class MarkSpell extends InstantSpell {
 		permanentMarks = getConfigBoolean("permanent-marks", true);
 		useAsRespawnLocation = getConfigBoolean("use-as-respawn-location", false);
 		
-		marks = new HashMap<String,MagicLocation>();
+		marks = new HashMap<>();
 		
 		enableDefaultMarks = getConfigBoolean("enable-default-marks", false);
 		
@@ -51,15 +53,11 @@ public class MarkSpell extends InstantSpell {
 				double z = Double.parseDouble(split[3]);
 				float yaw = 0;
 				float pitch = 0;
-				if (split.length > 4) {
-					yaw = Float.parseFloat(split[4]);
-				}
-				if (split.length > 5) {
-					pitch = Float.parseFloat(split[5]);
-				}
+				if (split.length > 4) yaw = Float.parseFloat(split[4]);
+				if (split.length > 5) pitch = Float.parseFloat(split[5]);
 				defaultMark = new MagicLocation(world, x, y, z, yaw, pitch);
 			} catch (Exception e) {
-				MagicSpells.error("Invalid default mark on MarkSpell '" + spellName + "'");
+				MagicSpells.error("Invalid default mark on MarkSpell '" + spellName + '\'');
 			}
 		}
 		
@@ -106,7 +104,7 @@ public class MarkSpell extends InstantSpell {
 			Scanner scanner = new Scanner(new File(MagicSpells.plugin.getDataFolder(), "marks-" + internalName + ".txt"));
 			while (scanner.hasNext()) {
 				String line = scanner.nextLine();
-				if (!line.equals("")) {
+				if (!line.isEmpty()) {
 					try {
 						String[] data = line.split(":");
 						MagicLocation loc = new MagicLocation(data[1], Double.parseDouble(data[2]), Double.parseDouble(data[3]), Double.parseDouble(data[4]), Float.parseFloat(data[5]), Float.parseFloat(data[6]));
@@ -127,7 +125,7 @@ public class MarkSpell extends InstantSpell {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(new File(MagicSpells.plugin.getDataFolder(), "marks-" + internalName + ".txt"), false));
 			for (String name : marks.keySet()) {
 				MagicLocation loc = marks.get(name);
-				writer.append(name + ":" + loc.getWorld() + ":" + loc.getX() + ":" + loc.getY() + ":" + loc.getZ() + ":" + loc.getYaw() + ":" + loc.getPitch());
+				writer.append(name + ':' + loc.getWorld() + ':' + loc.getX() + ':' + loc.getY() + ':' + loc.getZ() + ':' + loc.getYaw() + ':' + loc.getPitch());
 				writer.newLine();
 			}
 			writer.close();
@@ -138,7 +136,6 @@ public class MarkSpell extends InstantSpell {
 	
 	public String getPlayerKey(Player player) {
 		if (player == null) return null;
-		
 		return player.getName().toLowerCase();
 	}
 	
@@ -152,7 +149,6 @@ public class MarkSpell extends InstantSpell {
 			if (enableDefaultMarks) return defaultMark.getLocation();
 			return null;
 		}
-		
 		return m.getLocation();
 	}
 	
@@ -162,8 +158,21 @@ public class MarkSpell extends InstantSpell {
 			if (enableDefaultMarks) return defaultMark.getLocation();
 			return null;
 		}
-		
 		return m.getLocation();
 	}
-
+	
+	@Override
+	public boolean castAtLocation(Player caster, Location target, float power)
+	{
+		marks.put(getPlayerKey(caster), new MagicLocation(target));
+		if (caster != null) playSpellEffects(caster, target);
+		return true;
+	}
+	
+	@Override
+	public boolean castAtLocation(Location target, float power)
+	{
+		return false;
+	}
+	
 }

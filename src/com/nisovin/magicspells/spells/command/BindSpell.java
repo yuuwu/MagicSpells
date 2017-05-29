@@ -33,7 +33,7 @@ public class BindSpell extends CommandSpell {
 		
 		List<String> bindables = getConfigStringList("bindable-items", null);
 		if (bindables != null) {
-			bindableItems = new HashSet<CastItem>();
+			bindableItems = new HashSet<>();
 			for (String s : bindables) {
 				bindableItems.add(new CastItem(s));
 			}
@@ -46,7 +46,7 @@ public class BindSpell extends CommandSpell {
 		strSpellCantBind = getConfigString("str-spell-cant-bind", "That spell cannot be bound like this.");
 		List<String> allowedSpellNames = getConfigStringList("allowed-spells", null);
 		if (allowedSpellNames != null && !allowedSpellNames.isEmpty()) {
-			allowedSpells = new HashSet<Spell>();
+			allowedSpells = new HashSet<>();
 			for (String name: allowedSpellNames) {
 				Spell s = MagicSpells.getSpellByInternalName(name);
 				if (s != null) {

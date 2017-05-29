@@ -73,7 +73,7 @@ public class FlightPathSpell extends InstantSpell {
 
 		boolean inited = false;
 		
-		Map<String, ActiveFlight> flights = new HashMap<String, ActiveFlight>();
+		Map<String, ActiveFlight> flights = new HashMap<>();
 		int task = -1;
 		
 		public void addFlight(ActiveFlight flight) {
@@ -200,7 +200,7 @@ public class FlightPathSpell extends InstantSpell {
 				player.setFlying(true);
 				double x = entityToPush.getLocation().getX();
 				double z = entityToPush.getLocation().getZ();
-				if ((targetX - 1 <= x && x <= targetX + 1) && (targetZ - 1 <= z && z <= targetZ + 1)) {
+				if (targetX - 1 <= x && x <= targetX + 1 && targetZ - 1 <= z && z <= targetZ + 1) {
 					entityToPush.setVelocity(new Vector(0, 0, 0));
 					state = FlightState.LANDING;
 				} else {
@@ -249,7 +249,7 @@ public class FlightPathSpell extends InstantSpell {
 		
 	}
 	
-	static enum FlightState {
+	enum FlightState {
 		
 		TAKE_OFF,
 		CRUISING,

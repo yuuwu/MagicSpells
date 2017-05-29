@@ -41,8 +41,8 @@ public class ReplaceSpell extends TargetedSpell implements TargetedLocationSpell
 		replaceRandom = getConfigBoolean("replace-random", true);
 		powerAffectsRadius = getConfigBoolean("power-affects-radius", false);
 		
-		replace = new ArrayList<MagicMaterial>();
-		replaceWith = new ArrayList<MagicMaterial>();
+		replace = new ArrayList<>();
+		replaceWith = new ArrayList<>();
 		
 		List<String> list = getConfigStringList("replace-blocks", null);
 		if (list != null) {

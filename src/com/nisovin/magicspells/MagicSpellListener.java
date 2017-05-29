@@ -18,9 +18,7 @@ class MagicSpellListener implements Listener {
 		// check if target has notarget permission
 		LivingEntity target = event.getTarget();
 		if (target instanceof Player) {
-			if (((Player)target).hasPermission("magicspells.notarget")) {
-				event.setCancelled(true);
-			}
+			if (target.hasPermission("magicspells.notarget")) event.setCancelled(true);
 		}
 	}
 	

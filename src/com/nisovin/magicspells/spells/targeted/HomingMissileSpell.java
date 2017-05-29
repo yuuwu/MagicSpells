@@ -247,7 +247,7 @@ public class HomingMissileSpell extends TargetedSpell implements TargetedEntityS
 		}
 		
 		private void playIntermediateEffectLocations(Location old, Vector movement) {
-			int divideFactor = (intermediateSpecialEffects + 1);
+			int divideFactor = intermediateSpecialEffects + 1;
 			movement.setX(movement.getX()/divideFactor);
 			movement.setY(movement.getY()/divideFactor);
 			movement.setZ(movement.getZ()/divideFactor);

@@ -79,11 +79,11 @@ public class SpellPreImpactEvent extends SpellEvent implements Cancellable {
 	
 	@Override
 	public String toString() {
-		String casterLabel = "Caster: " + ((caster == null) ? "null": caster.toString());
-		String targetLabel = "Target: " + ((target == null) ? "null": target.toString());
-		String spellLabel = "SpellPayload: " + ((spell == null)? "null": spell.toString());
-		String payloadSpellLabel = "Delivery Spell: " + ((deliverySpell == null)? "null": deliverySpell.toString());
-		return Arrays.deepToString(new String[]{casterLabel, targetLabel, spellLabel, payloadSpellLabel});
+		String casterLabel = "Caster: " + ((caster == null) ? "null" : caster.toString());
+		String targetLabel = "Target: " + ((target == null) ? "null" : target.toString());
+		String spellLabel = "SpellPayload: " + ((spell == null) ? "null" : spell.toString());
+		String payloadSpellLabel = "Delivery Spell: " + ((deliverySpell == null) ? "null" : deliverySpell.toString());
+		return Arrays.deepToString(new String[]{ casterLabel, targetLabel, spellLabel, payloadSpellLabel });
 	}
 	
 }

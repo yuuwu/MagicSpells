@@ -11,7 +11,7 @@ public class SaturationVariable extends MetaVariable {
 	public double getValue(String player) {
 		Player p = PlayerNameUtils.getPlayerExact(player);
 		if (p != null) return p.getSaturation();
-		return 0;
+		return 0D;
 	}
 	
 	@Override

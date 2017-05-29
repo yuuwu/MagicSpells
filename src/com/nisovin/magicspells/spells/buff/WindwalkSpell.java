@@ -39,8 +39,8 @@ public class WindwalkSpell extends BuffSpell {
 		maxAltitude = getConfigInt("max-altitude", 100);
         cancelOnLand = getConfigBoolean("cancel-on-land", true);
 		
-		flyers = new HashSet<String>();
-		if (useCostInterval > 0) tasks = new HashMap<String, Integer>();
+		flyers = new HashSet<>();
+		if (useCostInterval > 0) tasks = new HashMap<>();
 	}
 	
 	@Override
@@ -147,7 +147,7 @@ public class WindwalkSpell extends BuffSpell {
 	
 	@Override
 	protected void turnOff() {
-		HashSet<String> flyers = new HashSet<String>(this.flyers);
+		HashSet<String> flyers = new HashSet<>(this.flyers);
 		for (String name : flyers) {
 			Player player = PlayerNameUtils.getPlayerExact(name);
 			if (player != null) turnOff(player);

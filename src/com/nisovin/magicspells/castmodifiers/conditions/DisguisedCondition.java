@@ -22,20 +22,15 @@ public class DisguisedCondition extends Condition {
 	public boolean check(Player player) {
 		Disguise disguise = DisguiseSpell.getDisguiseManager().getDisguise(player);
 		if (disguise != null) {
-			if (disguiseName == null || disguiseName.isEmpty()) {
-				return true;
-			} else if (disguise.getSpell().getInternalName().equals(disguiseName)) {
-				return true;
-			}
+			if (disguiseName == null || disguiseName.isEmpty()) return true;
+			if (disguise.getSpell().getInternalName().equals(disguiseName)) return true;
 		}
 		return false;
 	}
 
 	@Override
 	public boolean check(Player player, LivingEntity target) {
-		if (target instanceof Player) {
-			return check((Player)target);
-		}
+		if (target instanceof Player) return check((Player)target);
 		return false;
 	}
 

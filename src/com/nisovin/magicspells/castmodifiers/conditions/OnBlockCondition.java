@@ -24,8 +24,8 @@ public class OnBlockCondition extends Condition {
 	@Override
 	public boolean setVar(String var) {
 		if (var.contains(",")) {
-			types = new HashSet<Material>();
-			mats = new ArrayList<MagicMaterial>();
+			types = new HashSet<>();
+			mats = new ArrayList<>();
 			String[] split = var.split(",");
 			for (String s : split) {
 				MagicMaterial mat = MagicSpells.getItemNameResolver().resolveBlock(s);
@@ -36,10 +36,7 @@ public class OnBlockCondition extends Condition {
 			return true;
 		} else {
 			mat = MagicSpells.getItemNameResolver().resolveBlock(var);
-			if (mat == null) {
-				return false;
-			}
-			return true;
+			return (mat != null);
 		}
 	}
 

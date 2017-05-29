@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.nisovin.magicspells.util.LocationUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -66,14 +67,14 @@ public class PulserSpell extends TargetedSpell implements TargetedLocationSpell 
 
 		strAtCap = getConfigString("str-at-cap", "You have too many effects at once.");
 
-		pulsers = new HashMap<Block, Pulser>();
+		pulsers = new HashMap<>();
 		ticker = new PulserTicker();
 	}
 
 	@Override
 	public void initialize() {
 		super.initialize();
-		spells = new ArrayList<TargetedLocationSpell>();
+		spells = new ArrayList<>();
 		if (spellNames != null && !spellNames.isEmpty()) {
 			for (String spellName : spellNames) {
 				Spell spell = MagicSpells.getSpellByInternalName(spellName);
@@ -227,7 +228,7 @@ public class PulserSpell extends TargetedSpell implements TargetedLocationSpell 
 
 	@Override
 	public void turnOff() {
-		for (Pulser p : new ArrayList<Pulser>(pulsers.values())) {
+		for (Pulser p : new ArrayList<>(pulsers.values())) {
 			p.stop();
 		}
 		pulsers.clear();
@@ -256,7 +257,7 @@ public class PulserSpell extends TargetedSpell implements TargetedLocationSpell 
 				stop();
 				return true;
 			} else if (caster.isValid() && caster.isOnline() && material.equals(block) && block.getChunk().isLoaded()) {
-				if (maxDistanceSquared > 0 && (!location.getWorld().equals(caster.getLocation().getWorld()) || location.distanceSquared(caster.getLocation()) > maxDistanceSquared)) {
+				if (maxDistanceSquared > 0 && (!LocationUtil.isSameWorld(location, caster) || location.distanceSquared(caster.getLocation()) > maxDistanceSquared)) {
 					stop();
 					return true;
 				}
@@ -307,8 +308,7 @@ public class PulserSpell extends TargetedSpell implements TargetedLocationSpell 
 
 		public void start() {
 			if (taskId < 0) {
-				taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(
-						MagicSpells.plugin, this, 0, interval);
+				taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(MagicSpells.plugin, this, 0, interval);
 			}
 		}
 
@@ -321,7 +321,7 @@ public class PulserSpell extends TargetedSpell implements TargetedLocationSpell 
 
 		@Override
 		public void run() {
-			for (Map.Entry<Block, Pulser> entry : new HashMap<Block, Pulser>(pulsers).entrySet()) {
+			for (Map.Entry<Block, Pulser> entry : new HashMap<>(pulsers).entrySet()) {
 				boolean remove = entry.getValue().pulse();
 				if (remove) pulsers.remove(entry.getKey());
 			}

@@ -81,7 +81,7 @@ public class CaptureSpell extends TargetedSpell implements TargetedEntitySpell {
 				ItemMeta meta = item.getItemMeta();
 				if (itemName != null) meta.setDisplayName(itemName.replace("%name%", entityName));
 				if (itemLore != null) {
-					List<String> lore = new ArrayList<String>();
+					List<String> lore = new ArrayList<>();
 					for (String l : itemLore) {
 						lore.add(l.replace("%name%", entityName));
 					}

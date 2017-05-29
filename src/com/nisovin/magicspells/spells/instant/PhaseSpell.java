@@ -28,7 +28,7 @@ public class PhaseSpell extends InstantSpell {
 		range = getConfigInt("range", 5);
 		maxDistance = getConfigInt("max-distance", 15);
 		List<String> passThru = getConfigStringList("allowed-pass-thru-blocks", null);
-		allowedPassThru = new ArrayList<MagicMaterial>();
+		allowedPassThru = new ArrayList<>();
 		for (String s : passThru) {
 			MagicMaterial m = MagicSpells.getItemNameResolver().resolveBlock(s);
 			if (m == null) continue;
@@ -47,7 +47,7 @@ public class PhaseSpell extends InstantSpell {
 			
 			BlockIterator iter;
 			try {
-				iter = new BlockIterator(player, distance * 2);
+				iter = new BlockIterator(player, distance << 1);
 			} catch (IllegalStateException e) {
 				sendMessage(strCantPhase, player, args);
 				return PostCastAction.ALREADY_HANDLED;
@@ -58,7 +58,7 @@ public class PhaseSpell extends InstantSpell {
 			Location location = null;
 			
 			// get wall block
-			while (start == null && i++ < range * 2 && iter.hasNext()) {
+			while (start == null && i++ < range << 1 && iter.hasNext()) {
 				Block b = iter.next();
 				if (b.getType() == Material.AIR) continue;
 				if (player.getLocation().distanceSquared(b.getLocation()) < range * range) {
@@ -71,11 +71,11 @@ public class PhaseSpell extends InstantSpell {
 			if (start != null) {
 				if (allowedPassThru != null && !canPassThru(start)) {
 					// can't phase through the block
-					location = null; //TODO make an alternative to overriding the parameter
+					location = null;
 				} else {
 					// get next empty space
 					Block end = null;
-					while (end == null && i++ < distance * 2 && iter.hasNext()) {
+					while (end == null && i++ < distance << 1 && iter.hasNext()) {
 						Block b = iter.next();
 						// check for suitable landing location
 						if (b.getType() == Material.AIR && b.getRelative(0, 1, 0).getType() == Material.AIR && player.getLocation().distanceSquared(b.getLocation()) < distance * distance) {

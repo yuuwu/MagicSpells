@@ -23,7 +23,7 @@ public class MagicEnumSetPrompt extends FixedSetPrompt {
 	
 	public MagicEnumSetPrompt(List<String> options) {
 		super();
-		super.fixedSet = new ArrayList<String>(options);
+		super.fixedSet = new ArrayList<>(options);
 	}
 	
 	public MagicEnumSetPrompt(String... options) {
@@ -32,7 +32,7 @@ public class MagicEnumSetPrompt extends FixedSetPrompt {
 	
 	private static void initializeEnumToNameMap() {
 		if (initialized) return;
-		if (enumToNames == null) enumToNames = new ConcurrentHashMap<String, List<String>>();
+		if (enumToNames == null) enumToNames = new ConcurrentHashMap<>();
 		initialized = true;
 	}
 	
@@ -85,7 +85,7 @@ public class MagicEnumSetPrompt extends FixedSetPrompt {
 			if (values == null || values.length == 0) {
 				enumToNames.put(clazz.getName(), new ArrayList<String>());
 			} else {
-				List<String> parsedValues = new ArrayList<String>();
+				List<String> parsedValues = new ArrayList<>();
 				for (Enum<?> e: values) {
 					parsedValues.add(e.name());
 				}
@@ -93,7 +93,7 @@ public class MagicEnumSetPrompt extends FixedSetPrompt {
 			}
 		}
 		
-		return new ArrayList<String>(enumToNames.get(clazz.getName()));
+		return new ArrayList<>(enumToNames.get(clazz.getName()));
 	}
 	
 }

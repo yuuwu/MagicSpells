@@ -28,7 +28,7 @@ public class TelekinesisSpell extends TargetedSpell implements TargetedLocationS
 		
 		checkPlugins = getConfigBoolean("check-plugins", true);
 		
-		losTransparentBlocks = new HashSet<Byte>(losTransparentBlocks);
+		losTransparentBlocks = new HashSet<>(losTransparentBlocks);
 		losTransparentBlocks.remove((byte)Material.LEVER.getId());
 		losTransparentBlocks.remove((byte)Material.STONE_PLATE.getId());
 		losTransparentBlocks.remove((byte)Material.WOOD_PLATE.getId());

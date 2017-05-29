@@ -11,7 +11,7 @@ public class WalkSpeedVariable extends MetaVariable {
 	public double getValue(String player) {
 		Player p = PlayerNameUtils.getPlayerExact(player);
 		if (p != null) return p.getWalkSpeed();
-		return 0;
+		return 0D;
 	}
 	
 	@Override

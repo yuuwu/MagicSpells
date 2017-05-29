@@ -20,10 +20,10 @@ public class SprintListener extends PassiveListener {
 	@Override
 	public void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var) {
 		if (PassiveTrigger.SPRINT.contains(trigger)) {
-			if (sprint == null) sprint = new ArrayList<PassiveSpell>();
+			if (sprint == null) sprint = new ArrayList<>();
 			sprint.add(spell);
 		} else if (PassiveTrigger.STOP_SPRINT.contains(trigger)) {
-			if (sprint == null) stopSprint = new ArrayList<PassiveSpell>();
+			if (sprint == null) stopSprint = new ArrayList<>();
 			stopSprint.add(spell);
 		}
 	}

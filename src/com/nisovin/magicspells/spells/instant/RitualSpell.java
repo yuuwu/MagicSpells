@@ -57,7 +57,7 @@ public class RitualSpell extends InstantSpell {
 		strRitualInterrupted = getConfigString("str-ritual-interrupted", null);
 		strRitualFailed = getConfigString("str-ritual-failed", null);
 		
-		activeRituals = new HashMap<Player, ActiveRitual>();
+		activeRituals = new HashMap<>();
 	}
 	
 	@Override
@@ -75,13 +75,9 @@ public class RitualSpell extends InstantSpell {
 		}
 		if (state == SpellCastState.NORMAL) {
 			activeRituals.put(player, new ActiveRitual(player, power, args));
-			if (!chargeReagentsImmediately && !setCooldownImmediately) {
-				return PostCastAction.MESSAGES_ONLY;
-			} else if (!chargeReagentsImmediately) {
-				return PostCastAction.NO_REAGENTS;
-			} else if (!setCooldownImmediately) {
-				return PostCastAction.NO_COOLDOWN;
-			}
+			if (!chargeReagentsImmediately && !setCooldownImmediately) return PostCastAction.MESSAGES_ONLY;
+			if (!chargeReagentsImmediately) return PostCastAction.NO_REAGENTS;
+			if (!setCooldownImmediately) return PostCastAction.NO_COOLDOWN;
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}
@@ -125,7 +121,7 @@ public class RitualSpell extends InstantSpell {
 		private String[] args;
 		private int duration = 0;
 		private int taskId;
-		private HashMap<Player, Location> channelers = new HashMap<Player, Location>();
+		private HashMap<Player, Location> channelers = new HashMap<>();
 		
 		public ActiveRitual(Player caster, float power, String[] args) {
 			this.power = power;

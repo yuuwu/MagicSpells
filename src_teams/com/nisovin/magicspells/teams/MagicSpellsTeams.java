@@ -33,24 +33,22 @@ public class MagicSpellsTeams extends JavaPlugin implements Listener {
 	
 	@Override
 	public void onEnable() {
-		// setup containers
-		teams = new ArrayList<Team>();
-		teamNames = new HashMap<String, Team>();
-		playerTeams = new HashMap<String, Team>();
+		// Setup containers
+		teams = new ArrayList<>();
+		teamNames = new HashMap<>();
+		playerTeams = new HashMap<>();
 		
-		// get config
+		// Get config
 		File file = new File(getDataFolder(), "config.yml");
-		if (!file.exists()) {
-			saveDefaultConfig();
-		}
+		if (!file.exists()) saveDefaultConfig();
 		reloadConfig();
 		Configuration config = getConfig();
 		
-		// get config
+		// Get config
 		useCache = config.getBoolean("use-cache", true);
 		clearCacheOnDeath = config.getBoolean("clear-cache-on-death", false);
 		
-		// setup teams
+		// Setup teams
 		MagicSpells.debug(1, "Loading teams...");
 		Set<String> teamKeys = config.getConfigurationSection("teams").getKeys(false);
 		for (String name : teamKeys) {
@@ -63,7 +61,8 @@ public class MagicSpellsTeams extends JavaPlugin implements Listener {
 			team.initialize(this);
 		}
 		getCommand("magicspellsteams").setExecutor(new MagicSpellsTeamsCommand(this));
-		// register events
+		
+		// Register events
 		getServer().getPluginManager().registerEvents(this, this);
 	}
 	
@@ -81,13 +80,9 @@ public class MagicSpellsTeams extends JavaPlugin implements Listener {
 		if (event.getCaster() != null && event.getTarget() instanceof Player) {
 			boolean beneficial = event.getSpell().isBeneficial();
 			if (!canTarget(event.getCaster(), (Player)event.getTarget())) {
-				if (!beneficial) {
-					event.setCancelled(true);
-				}
+				if (!beneficial) event.setCancelled(true);
 			} else {
-				if (beneficial) {
-					event.setCancelled(true);
-				}
+				if (beneficial) event.setCancelled(true);
 			}
 		}
 	}
@@ -134,17 +129,13 @@ public class MagicSpellsTeams extends JavaPlugin implements Listener {
 		Team casterTeam = getTeam(caster);
 		Team targetTeam = getTeam(target);
 		
-		// allow targeting if one of the players is not in a team
-		if (casterTeam == null || targetTeam == null) {
-			return true;
-		}
+		// Allow targeting if one of the players is not in a team
+		if (casterTeam == null || targetTeam == null) return true;
 		
-		// if same team, check friendly fire
-		if (casterTeam == targetTeam) {
-			return casterTeam.allowFriendlyFire();
-		}
+		// If same team, check friendly fire
+		if (casterTeam == targetTeam) return casterTeam.allowFriendlyFire();
 		
-		// otherwise check if can target
+		// Otherwise check if can target
 		return casterTeam.canTarget(targetTeam);
 	}
 	
@@ -153,7 +144,7 @@ public class MagicSpellsTeams extends JavaPlugin implements Listener {
 	}
 	
 	public Set<String> getTeamNames() {
-		return new TreeSet<String>(teamNames.keySet());
+		return new TreeSet<>(teamNames.keySet());
 	}
 	
 }

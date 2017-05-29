@@ -35,7 +35,7 @@ public class ExperienceUtils {
 		if (newLvl >= MAX_LEVEL_SUPPORTED) return;
 		if (player.getLevel() != newLvl) player.setLevel(newLvl);
 		
-		float pct = ((float)(xp - xpTotalToReachLevel[newLvl]) / (float)xpRequiredForNextLevel[newLvl]);
+		float pct = (float)(xp - xpTotalToReachLevel[newLvl]) / (float)xpRequiredForNextLevel[newLvl];
 		player.setExp(pct);
 	}
 	

@@ -26,7 +26,7 @@ import com.palmergames.bukkit.towny.utils.CombatUtil;
 
 public class MagicSpellsTowny extends JavaPlugin implements Listener {
 	
-	private Set<Spell> disallowedInTowns = new HashSet<Spell>();
+	private Set<Spell> disallowedInTowns = new HashSet<>();
 	//TODO add spell filter to control what is allowed
 	private Towny towny;
 	
@@ -66,12 +66,10 @@ public class MagicSpellsTowny extends JavaPlugin implements Listener {
 	public void onSpellTarget(SpellTargetEvent event) {
 		if (event.getCaster() == null) return;
 		boolean friendlySpell = false;
-		if (event.getSpell() instanceof TargetedSpell && ((TargetedSpell)event.getSpell()).isBeneficial()) {
-			friendlySpell = true;
-		}
+		if (event.getSpell() instanceof TargetedSpell && event.getSpell().isBeneficial()) friendlySpell = true;
 		if (!friendlySpell && CombatUtil.preventDamageCall(towny, event.getCaster(), event.getTarget())) {
 			event.setCancelled(true);
-		} else if (friendlySpell && event.getTarget() instanceof Player && !CombatUtil.isAlly(event.getCaster().getName(), ((Player)event.getTarget()).getName())) {
+		} else if (friendlySpell && event.getTarget() instanceof Player && !CombatUtil.isAlly(event.getCaster().getName(), event.getTarget().getName())) {
 			event.setCancelled(true);
 		}
 	}

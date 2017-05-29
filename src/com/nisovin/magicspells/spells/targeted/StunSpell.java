@@ -40,10 +40,10 @@ public class StunSpell extends TargetedSpell implements TargetedEntitySpell {
 		
 		duration = (int)(getConfigFloat("duration", 10) * 1000);
 		
-		stunnedPlayersUntil = new HashMap<String, Long>();
-		stunnedPlayersLocation = new HashMap<String, Location>();
-		stunnedEntitiesUntil = new HashMap<LivingEntity, Long>();
-		stunnedEntitiesLocation = new HashMap<LivingEntity, Location>();
+		stunnedPlayersUntil = new HashMap<>();
+		stunnedPlayersLocation = new HashMap<>();
+		stunnedEntitiesUntil = new HashMap<>();
+		stunnedEntitiesLocation = new HashMap<>();
 		
 	}
 
@@ -80,7 +80,7 @@ public class StunSpell extends TargetedSpell implements TargetedEntitySpell {
 		playSpellEffectsBuff(target, new SpellEffect.SpellEffectActiveChecker() {
 			@Override
 			public boolean isActive(Entity entity) {
-				return stunnedPlayersUntil.containsKey(((Player)entity).getName());
+				return stunnedPlayersUntil.containsKey(entity.getName());
 			}
 		});
 	}
@@ -134,7 +134,7 @@ public class StunSpell extends TargetedSpell implements TargetedEntitySpell {
 			Long until = stunnedPlayersUntil.get(playerName);
 			if (until == null) return;
 			
-			if (until.longValue() > System.currentTimeMillis()) {
+			if (until > System.currentTimeMillis()) {
 				event.setTo(stunnedPlayersLocation.get(playerName));
 			} else {
 				removePlayer(playerName);
@@ -178,7 +178,7 @@ public class StunSpell extends TargetedSpell implements TargetedEntitySpell {
 			Iterator<Map.Entry<LivingEntity, Long>> iter = stunnedEntitiesUntil.entrySet().iterator();
 			while (iter.hasNext()) {
 				Map.Entry<LivingEntity, Long> entry = iter.next();
-				if (entry.getKey().isValid() && entry.getValue().longValue() > System.currentTimeMillis()) {
+				if (entry.getKey().isValid() && entry.getValue() > System.currentTimeMillis()) {
 					entry.getKey().teleport(stunnedEntitiesLocation.get(entry.getKey()));
 				} else {
 					iter.remove();

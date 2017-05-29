@@ -7,7 +7,7 @@ public class BooleanUtils {
 
 	private static Set<String> yesStrings;
 	static {
-		yesStrings = new HashSet<String>();
+		yesStrings = new HashSet<>();
 		yesStrings.add("yes");
 		yesStrings.add("true");
 	}

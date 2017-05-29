@@ -39,12 +39,8 @@ public class ItemProjectileSpell extends InstantSpell {
 		yOffset = getConfigFloat("y-offset", 0);
 		projectileHasGravity = getConfigBoolean("gravity", true);
 		
-		if (configKeyExists("spell-on-hit-entity")) {
-			spellOnHitEntity = new Subspell(getConfigString("spell-on-hit-entity", ""));
-		}
-		if (configKeyExists("spell-on-hit-ground")) {
-			spellOnHitGround = new Subspell(getConfigString("spell-on-hit-ground", ""));
-		}
+		if (configKeyExists("spell-on-hit-entity")) spellOnHitEntity = new Subspell(getConfigString("spell-on-hit-entity", ""));
+		if (configKeyExists("spell-on-hit-ground")) spellOnHitGround = new Subspell(getConfigString("spell-on-hit-ground", ""));
 		
 		item = Util.getItemStackFromString(getConfigString("item", "iron_sword"));
 	}
@@ -108,9 +104,7 @@ public class ItemProjectileSpell extends InstantSpell {
 					SpellTargetEvent event = new SpellTargetEvent(ItemProjectileSpell.this, caster, (LivingEntity)e, power);
 					EventUtil.call(event);
 					if (!event.isCancelled()) {
-						if (spellOnHitEntity != null) {							
-							spellOnHitEntity.castAtEntity(caster, (LivingEntity)e, event.getPower());
-						}
+						if (spellOnHitEntity != null) spellOnHitEntity.castAtEntity(caster, (LivingEntity)e, event.getPower());
 						stop();
 						return;
 					}
@@ -122,9 +116,7 @@ public class ItemProjectileSpell extends InstantSpell {
 				groundCount = 0;
 			}
 			if (groundCount >= 2) {
-				if (spellOnHitGround != null) {
-					spellOnHitGround.castAtLocation(caster, entity.getLocation(), power);
-				}
+				if (spellOnHitGround != null) spellOnHitGround.castAtLocation(caster, entity.getLocation(), power);
 				stop();
 			}
 		}

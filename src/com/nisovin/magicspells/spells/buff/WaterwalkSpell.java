@@ -54,7 +54,7 @@ public class WaterwalkSpell extends BuffSpell {
 		
 		speed = getConfigFloat("speed", 0.05F);
 		
-		waterwalking = new HashSet<String>();
+		waterwalking = new HashSet<>();
 	}
 
 	@Override

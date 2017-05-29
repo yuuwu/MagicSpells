@@ -28,15 +28,10 @@ public class NameCondition extends Condition {
 
 	@Override
 	public boolean check(Player player, LivingEntity target) {
-		if (target instanceof Player) {
-			return check((Player)target);
-		} else {
-			String n = target.getCustomName();
-			if (n != null && !n.isEmpty()) {
-				return name.equalsIgnoreCase(n);
-			}
-			return false;
-		}
+		if (target instanceof Player) return check((Player)target);
+		String n = target.getCustomName();
+		if (n != null && !n.isEmpty()) return name.equalsIgnoreCase(n);
+		return false;
 	}
 
 	@Override

@@ -16,66 +16,65 @@ public class SpellFilter {
 	private boolean defaultReturn;
 	private boolean emptyFilter = false;
 	
-	public SpellFilter(List<String> allowedSpells, List<String> blacklistedSpells,
-			List<String> allowedTags, List<String> disallowedTags) {
+	public SpellFilter(List<String> allowedSpells, List<String> blacklistedSpells, List<String> allowedTags, List<String> disallowedTags) {
 		
-		//initialize the collections
+		// Initialize the collections
 		if (allowedSpells != null && !allowedSpells.isEmpty()) {
-			this.allowedSpells = new HashSet<String>(allowedSpells);
+			this.allowedSpells = new HashSet<>(allowedSpells);
 		}
 		if (blacklistedSpells != null && !blacklistedSpells.isEmpty()) {
-			this.blacklistedSpells = new HashSet<String>(blacklistedSpells);
+			this.blacklistedSpells = new HashSet<>(blacklistedSpells);
 		}
 		if (allowedTags != null && !allowedTags.isEmpty()) {
-			this.allowedTags = new HashSet<String>(allowedTags);
+			this.allowedTags = new HashSet<>(allowedTags);
 		}
 		if (disallowedTags != null && !disallowedTags.isEmpty()) {
-			this.disallowedTags = new HashSet<String>(disallowedTags);
+			this.disallowedTags = new HashSet<>(disallowedTags);
 		}
 		
-		//determine the default outcome if nothing catches
+		// Determine the default outcome if nothing catches
 		defaultReturn = determineDefaultValue();
 	}
 	
 	private boolean determineDefaultValue() {
-		//this means there is a tag whitelist check
+		// This means there is a tag whitelist check
 		if (allowedTags != null) return false;
 		
-		//if there is a spell whitelist check
+		// If there is a spell whitelist check
 		if (allowedSpells != null) return false;
 		
-		//this means there is a tag blacklist
+		// This means there is a tag blacklist
 		if (disallowedTags != null) return true;
 		
-		//if there is a spell blacklist
+		// If there is a spell blacklist
 		if (blacklistedSpells != null) return true;
 		
-		//if all of the collections are null, then there is no filter
+		// If all of the collections are null, then there is no filter
 		emptyFilter = true;
 		return true;
 	}
 	
 	public boolean check(Spell spell) {
-		//can't do anything if null anyway
+		// Can't do anything if null anyway
 		if (spell == null) return false;
 		
-		//quick check to exit early if possible
+		// Quick check to exit early if possible
 		if (emptyFilter) return true;
 		
-		//is it whitelisted explicitly?
+		// Is it whitelisted explicitly?
 		if (allowedSpells != null && allowedSpells.contains(spell.getInternalName())) return true;
 		
-		//is it blacklisted?
+		// Is it blacklisted?
 		if (blacklistedSpells != null && blacklistedSpells.contains(spell.getInternalName())) return false;
 		
-		//does it have a blacklisted tag?
+		// Does it have a blacklisted tag?
 		if (disallowedTags != null) {
 			for (String tag: disallowedTags) {
 				if (spell.hasTag(tag)) return false;
 			}
 		}
 		
-		//does it have a whitelisted tag?
+		// Does it have a whitelisted tag?
 		if (allowedTags != null) {
 			for (String tag: allowedTags) {
 				if (spell.hasTag(tag)) return true;

@@ -47,7 +47,7 @@ public class ManaRegenSpell extends BuffSpell {
 	public ManaRegenSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		regenModAmt = getConfigInt("regen-mod-amt", 3);
-		regenning = new HashSet<String>();
+		regenning = new HashSet<>();
 	}
 
 	@Override

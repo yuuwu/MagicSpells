@@ -87,6 +87,7 @@ public class RandomSpell extends InstantSpell {
 		Subspell spell;
 		int weight;
 		int adjustedWeight;
+		
 		public SpellOption(Subspell spell, int weight) {
 			this.spell = spell;
 			this.weight = weight;
@@ -97,7 +98,7 @@ public class RandomSpell extends InstantSpell {
 	
 	class RandomOptionSet {
 		
-		List<SpellOption> randomOptionSetOptions = new ArrayList<SpellOption>();
+		List<SpellOption> randomOptionSetOptions = new ArrayList<>();
 		int total = 0;
 		
 		public void add(SpellOption option) {
@@ -127,6 +128,7 @@ public class RandomSpell extends InstantSpell {
 			}
 			return spell;
 		}
+		
 	}
 	
 }

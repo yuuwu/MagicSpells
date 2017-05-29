@@ -27,7 +27,7 @@ public class HasItemCondition extends Condition {
 		try {
 			if (var.contains("|")) {
 				String[] subvardata = var.split("\\|");
-				var = subvardata[0]; //TODO find an alternative to reassigning the parameter
+				var = subvardata[0];
 				name = ChatColor.translateAlternateColorCodes('&', subvardata[1]).replace("__", " ");
 				if (name.isEmpty()) name = null;
 				checkName = true;
@@ -65,24 +65,20 @@ public class HasItemCondition extends Condition {
 		if (inventory == null) return false;
 		if (checkData || checkName) {
 			for (ItemStack item : inventory.getContents()) {
-				if (item != null) {
-					String thisname = null;
-					try {
-						if (item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
-							thisname = item.getItemMeta().getDisplayName();
-						}
-					} catch (Exception e) {
-						DebugHandler.debugGeneral(e);
+				if (item == null) continue;
+				String thisname = null;
+				try {
+					if (item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
+						thisname = item.getItemMeta().getDisplayName();
 					}
-					if (item.getTypeId() == id && (!checkData || item.getDurability() == data) && (!checkName || strEquals(thisname, name))) {
-						return true;
-					}
+				} catch (Exception e) {
+					DebugHandler.debugGeneral(e);
 				}
+				if (item.getTypeId() == id && (!checkData || item.getDurability() == data) && (!checkName || strEquals(thisname, name))) return true;
 			}
 			return false;
-		} else {
-			return inventory.contains(Material.getMaterial(id));
 		}
+		return inventory.contains(Material.getMaterial(id));
 	}
 	
 	private boolean strEquals(String s1, String s2) {
@@ -95,11 +91,8 @@ public class HasItemCondition extends Condition {
 	public boolean check(Player player, LivingEntity target) {
 		if (target == null) return false;
 		
-		if (target instanceof InventoryHolder) {
-			return check(((InventoryHolder)target).getInventory());
-		} else {
-			return false;
-		}
+		if (target instanceof InventoryHolder) return check(((InventoryHolder)target).getInventory());
+		return false;
 	}
 	
 	@Override
@@ -110,9 +103,7 @@ public class HasItemCondition extends Condition {
 		BlockState targetState = target.getState();
 		if (targetState == null) return false;
 		
-		if (targetState instanceof InventoryHolder) {
-			return check(((InventoryHolder)targetState).getInventory());
-		}
+		if (targetState instanceof InventoryHolder) return check(((InventoryHolder)targetState).getInventory());
 		
 		return false;
 	}

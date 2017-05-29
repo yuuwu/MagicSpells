@@ -14,7 +14,7 @@ public class ParticleNameUtil {
 	public static ParticleEffect findEffect(String name) {
 		ParticleEffect effect = null;
 		effect = ParticleEffect.fromName(name);
-		if (effect == null) throw new NullPointerException("No particle could be found from: \"" + name + "\"");
+		if (effect == null) throw new NullPointerException("No particle could be found from: \"" + name + '\"');
 		return effect;
 	}
 	
@@ -40,7 +40,7 @@ public class ParticleNameUtil {
 				data = new ItemData(mat, (byte) materialData);
 			}
 		}
-		if (effect == null) throw new NullPointerException("No particle could be found from: \"" + splits[0] + "\" + from \"" + name + "\"");
+		if (effect == null) throw new NullPointerException("No particle could be found from: \"" + splits[0] + "\" + from \"" + name + '\"');
 		
 		return new EffectPackage(effect, data);
 		

@@ -22,14 +22,14 @@ public class ProxyCondition extends Condition {
 	//format this will accept is
 	//<addonAPITag>:<externalConditionName>
 	public ProxyCondition(String data) {
-		if (uninitialized == null) uninitialized = new ConcurrentHashMap<String, List<ProxyCondition>>();
+		if (uninitialized == null) uninitialized = new ConcurrentHashMap<>();
 		if (!uninitialized.containsKey(data.toLowerCase())) uninitialized.put(data.toLowerCase(), new ArrayList<ProxyCondition>());
 		uninitialized.get(data.toLowerCase()).add(this);
 	}
 	
 	public static void loadBackends(Map<String, Class<? extends Condition>> externalConditionClasses) {
 		if (uninitialized != null && externalConditionClasses != null) {
-			Set<String> keysToRemove = new HashSet<String>();
+			Set<String> keysToRemove = new HashSet<>();
 			for (String key: uninitialized.keySet()) {
 				if (externalConditionClasses.containsKey(key)) {
 					Class<? extends Condition> clazz = externalConditionClasses.get(key);

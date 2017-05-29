@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class ReflectionHelper<E> {
 
-	Map<String, Field> fields = new HashMap<String, Field>();
+	Map<String, Field> fields = new HashMap<>();
 	
 	public ReflectionHelper(Class<? extends E> type, String... fields) {
 		for (String fieldName : fields) {

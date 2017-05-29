@@ -30,8 +30,8 @@ public class GillsSpell extends BuffSpell {
 		
 		glassHeadEffect = getConfigBoolean("glass-head-effect", true);
 		
-		fishes = new HashSet<String>();
-		if (glassHeadEffect) helmets = new HashMap<Player,ItemStack>();
+		fishes = new HashSet<>();
+		if (glassHeadEffect) helmets = new HashMap<>();
 	}
 
 	@Override

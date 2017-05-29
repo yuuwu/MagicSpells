@@ -16,7 +16,7 @@ public class StealthSpell extends BuffSpell {
 	public StealthSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		stealthy = new HashSet<String>();
+		stealthy = new HashSet<>();
 	}
 	
 	@Override

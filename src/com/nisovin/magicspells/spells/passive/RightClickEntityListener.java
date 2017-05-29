@@ -22,11 +22,11 @@ import com.nisovin.magicspells.util.Util;
 // if specified, it should be a comma separated list of entity types to accept
 public class RightClickEntityListener extends PassiveListener {
 
-	Map<EntityType, List<PassiveSpell>> types = new HashMap<EntityType, List<PassiveSpell>>();
-	List<PassiveSpell> allTypes = new ArrayList<PassiveSpell>();
+	Map<EntityType, List<PassiveSpell>> types = new HashMap<>();
+	List<PassiveSpell> allTypes = new ArrayList<>();
 	
-	Map<EntityType, List<PassiveSpell>> typesOffhand = new HashMap<EntityType, List<PassiveSpell>>();
-	List<PassiveSpell> allTypesOffhand = new ArrayList<PassiveSpell>();
+	Map<EntityType, List<PassiveSpell>> typesOffhand = new HashMap<>();
+	List<PassiveSpell> allTypesOffhand = new ArrayList<>();
 	
 	@Override
 	public void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var) {
@@ -51,7 +51,7 @@ public class RightClickEntityListener extends PassiveListener {
 				if (t != null) {
 					List<PassiveSpell> list = typeMapLocal.get(t);
 					if (list == null) {
-						list = new ArrayList<PassiveSpell>();
+						list = new ArrayList<>();
 						typeMapLocal.put(t, list);
 					}
 					list.add(spell);

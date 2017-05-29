@@ -23,7 +23,7 @@ public class UnconjureSpell extends InstantSpell {
 	
 	@Override
 	public void initialize() {
-		items = new ArrayList<ItemStack>();
+		items = new ArrayList<>();
 		for (String s : itemNames) {
 			ItemStack i = Util.getItemStackFromString(s);
 			if (i == null) continue;

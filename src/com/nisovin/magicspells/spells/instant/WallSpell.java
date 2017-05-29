@@ -24,6 +24,8 @@ import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TemporaryBlockSet;
 import com.nisovin.magicspells.util.TemporaryBlockSet.BlockSetRemovalCallback;
 
+// TODO see about adding options to define more complex wall shapes/patterns
+// TODO add a spell on block broken option
 public class WallSpell extends InstantSpell {
 
 	private int distance;
@@ -60,7 +62,7 @@ public class WallSpell extends InstantSpell {
 		checkPluginsPerBlock = getConfigBoolean("check-plugins-per-block", checkPlugins);
 		strNoTarget = getConfigString("str-no-target", "Unable to create a wall.");
 		
-		blockSets = new ArrayList<TemporaryBlockSet>();
+		blockSets = new ArrayList<>();
 	}
 	
 	@Override
@@ -104,8 +106,8 @@ public class WallSpell extends InstantSpell {
 				TemporaryBlockSet blockSet = new TemporaryBlockSet(Material.AIR, wallMaterial, checkPluginsPerBlock, player);
 				Location loc = target.getLocation();
 				Vector dir = player.getLocation().getDirection();
-				int wallWidth = Math.round(this.wallWidth*power);
-				int wallHeight = Math.round(this.wallHeight*power);
+				int wallWidth = Math.round(this.wallWidth * power);
+				int wallHeight = Math.round(this.wallHeight * power);
 				if (Math.abs(dir.getX()) > Math.abs(dir.getZ())) {
 					int depthDir = dir.getX() > 0 ? 1 : -1;
 					for (int z = loc.getBlockZ() - (wallWidth/2); z <= loc.getBlockZ() + (wallWidth/2); z++) {

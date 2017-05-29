@@ -31,10 +31,10 @@ import com.nisovin.magicspells.util.OverridePriority;
 // damage causes to accept or damaging weapons to accept
 public class TakeDamageListener extends PassiveListener {
 
-	Map<DamageCause, List<PassiveSpell>> damageCauses = new HashMap<EntityDamageEvent.DamageCause, List<PassiveSpell>>();
-	Set<Material> types = new HashSet<Material>();
-	Map<MagicMaterial, List<PassiveSpell>> weapons = new LinkedHashMap<MagicMaterial, List<PassiveSpell>>();
-	List<PassiveSpell> always = new ArrayList<PassiveSpell>();
+	Map<DamageCause, List<PassiveSpell>> damageCauses = new HashMap<>();
+	Set<Material> types = new HashSet<>();
+	Map<MagicMaterial, List<PassiveSpell>> weapons = new LinkedHashMap<>();
+	List<PassiveSpell> always = new ArrayList<>();
 	
 	@Override
 	public void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var) {
@@ -49,7 +49,7 @@ public class TakeDamageListener extends PassiveListener {
 					if (!s.equalsIgnoreCase(c.name())) continue;
 					List<PassiveSpell> spells = damageCauses.get(c);
 					if (spells == null) {
-						spells = new ArrayList<PassiveSpell>();
+						spells = new ArrayList<>();
 						damageCauses.put(c, spells);
 					}
 					spells.add(spell);
@@ -70,7 +70,7 @@ public class TakeDamageListener extends PassiveListener {
 					if (mat != null) {
 						List<PassiveSpell> list = weapons.get(mat);
 						if (list == null) {
-							list = new ArrayList<PassiveSpell>();
+							list = new ArrayList<>();
 							weapons.put(mat, list);
 						}
 						list.add(spell);

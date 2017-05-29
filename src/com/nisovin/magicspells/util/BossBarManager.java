@@ -4,10 +4,10 @@ import org.bukkit.entity.Player;
 
 public interface BossBarManager {
 
-	public void setPlayerBar(Player player, String title, double percent);
+	void setPlayerBar(Player player, String title, double percent);
 	
-	public void removePlayerBar(Player player);
+	void removePlayerBar(Player player);
 	
-	public void turnOff();
+	void turnOff();
 	
 }

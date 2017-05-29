@@ -9,7 +9,7 @@ import com.nisovin.magicspells.MagicSpells;
 
 public class ExperienceBarManager {
 
-	private HashMap<Player, Object> locks = new HashMap<Player, Object>();
+	private HashMap<Player, Object> locks = new HashMap<>();
 	
 	public void update(Player player, int level, float percent) {
 		update(player, level, percent, null);

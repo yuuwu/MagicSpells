@@ -27,7 +27,7 @@ public class CombustSpell extends TargetedSpell implements TargetedEntitySpell {
 	private boolean preventImmunity;
 	private boolean checkPlugins;
 	
-	HashMap<Integer, CombustData> combusting = new HashMap<Integer, CombustData>();
+	HashMap<Integer, CombustData> combusting = new HashMap<>();
 	
 	public CombustSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -103,7 +103,7 @@ public class CombustSpell extends TargetedSpell implements TargetedEntitySpell {
 		}
 	}
 	
-	private static class CombustData {
+	private class CombustData {
 		
 		float power;
 		

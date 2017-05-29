@@ -123,7 +123,7 @@ public class SpawnTntSpell extends TargetedSpell implements TargetedLocationSpel
 		}
 	}
 	
-	static class TntInfo {
+	class TntInfo {
 		
 		Player caster;
 		float power;

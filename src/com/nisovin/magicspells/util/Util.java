@@ -51,7 +51,7 @@ import de.slikey.effectlib.util.VectorUtils;
 
 public class Util {
 
-	public static Map<String, ItemStack> predefinedItems = new HashMap<String, ItemStack>();
+	public static Map<String, ItemStack> predefinedItems = new HashMap<>();
 	
 	private static Random random = new Random();
 	public static int getRandomInt(int bound) {
@@ -99,7 +99,7 @@ public class Util {
 			if (s.contains(";")) {
 				String[] temp = s.split(";", 2);
 				s = temp[0];
-				enchants = new HashMap<Enchantment, Integer>();
+				enchants = new HashMap<>();
 				if (!temp[1].isEmpty()) {
 					String[] split = temp[1].split("\\+");
 					for (int i = 0; i < split.length; i++) {
@@ -129,15 +129,9 @@ public class Util {
 			if (name != null || lore != null || color >= 0) {
 				try {
 					ItemMeta meta = item.getItemMeta();
-					if (name != null) {
-						meta.setDisplayName(name);
-					}
-					if (lore != null) {
-						meta.setLore(Arrays.asList(lore));
-					}
-					if (color >= 0 && meta instanceof LeatherArmorMeta) {
-						((LeatherArmorMeta)meta).setColor(Color.fromRGB(color));
-					}
+					if (name != null) meta.setDisplayName(name);
+					if (lore != null) meta.setLore(Arrays.asList(lore));
+					if (color >= 0 && meta instanceof LeatherArmorMeta) ((LeatherArmorMeta)meta).setColor(Color.fromRGB(color));
 					item.setItemMeta(meta);
 				} catch (Exception e) {
 					MagicSpells.error("Failed to process item meta for item: " + s);
@@ -289,27 +283,24 @@ public class Util {
 		try {
 			if (!config.contains("type")) return null;
 			
-			// basic item
+			// Basic item
 			MagicMaterial material = MagicSpells.getItemNameResolver().resolveItem(config.getString("type"));
 			if (material == null) return null;
 			ItemStack item = material.toItemStack();
 			ItemMeta meta = item.getItemMeta();
 			
-			// name and lore
+			// Name and lore
 			meta = NameHandler.process(config, meta);
 			meta = LoreHandler.process(config, meta);
 			
-			// enchants
+			// Enchants
 			boolean emptyEnchants = false;
 			if (config.contains("enchants") && config.isList("enchants")) {
 				List<String> enchants = config.getStringList("enchants");
 				for (String enchant : enchants) {
 					String[] data = enchant.split(" ");
-					Enchantment e = null;
-					e = MagicValues.Enchantments.getEnchantmentType(data[0]);
-					if (e == null) {
-						MagicSpells.error("'" + data[0] + "' could not be connected to an enchantment");
-					}
+					Enchantment e = MagicValues.Enchantments.getEnchantmentType(data[0]);
+					if (e == null) MagicSpells.error('\'' + data[0] + "' could not be connected to an enchantment");
 					if (e != null) {
 						int level = 0;
 						if (data.length > 1) {
@@ -326,22 +317,20 @@ public class Util {
 						}
 					}
 				}
-				if (enchants.isEmpty()) {
-					emptyEnchants = true;
-				}
+				if (enchants.isEmpty()) emptyEnchants = true;
 			}
 			
-			// armor color
+			// Armor color
 			meta = LeatherArmorHandler.process(config, meta);
 			
-			// potioneffects
-			// potioncolor
+			// Potioneffects
+			// Potioncolor
 			meta = PotionHandler.process(config, meta);
 			
-			// skull owner
+			// Skull owner
 			meta = SkullHandler.process(config, meta);
 			
-			// flower pot
+			// Flower pot
 			/*if (config.contains("flower") && item.getType() == Material.FLOWER_POT && meta instanceof BlockStateMeta) {
 				MagicMaterial flower = MagicSpells.getItemNameResolver().resolveBlock(config.getString("flower"));
 				BlockState state = ((BlockStateMeta)meta).getBlockState();
@@ -445,14 +434,13 @@ public class Util {
 			lore = meta.getLore();
 			if (!lore.isEmpty()) {
 				for (int i = 0; i < lore.size(); i++) {
-					if (isLoreData(lore.get(i))) {
-						lore.remove(i);
-						break;
-					}
+					if (!isLoreData(lore.get(i))) continue;
+					lore.remove(i);
+					break;
 				}
 			}
 		} else {
-			lore = new ArrayList<String>();
+			lore = new ArrayList<>();
 		}
 		lore.add(ChatColor.BLACK.toString() + ChatColor.MAGIC.toString() + "MS$:" + data);
 		meta.setLore(lore);
@@ -466,9 +454,7 @@ public class Util {
 			if (!lore.isEmpty()) {
 				for (int i = 0; i < lore.size(); i++) {
 					String s = ChatColor.stripColor(lore.get(lore.size() - 1));
-					if (s.startsWith("MS$:")) {
-						return s.substring(4);
-					}
+					if (s.startsWith("MS$:")) return s.substring(4);
 				}
 			}
 		}
@@ -502,7 +488,7 @@ public class Util {
 		}
 	}
 
-	static Map<String, EntityType> entityTypeMap = new HashMap<String, EntityType>();
+	static Map<String, EntityType> entityTypeMap = new HashMap<>();
 	static {
 		for (EntityType type : EntityType.values()) {
 			if (type != null && type.getName() != null) {
@@ -517,9 +503,9 @@ public class Util {
 		entityTypeMap.put("golem", EntityType.IRON_GOLEM);
 		entityTypeMap.put("snowgolem", EntityType.SNOWMAN);
 		entityTypeMap.put("dragon", EntityType.ENDER_DRAGON);
-		Map<String, EntityType> toAdd = new HashMap<String, EntityType>();
+		Map<String, EntityType> toAdd = new HashMap<>();
 		for (String s : entityTypeMap.keySet()) {
-			toAdd.put(s + "s", entityTypeMap.get(s));
+			toAdd.put(s + 's', entityTypeMap.get(s));
 		}
 		entityTypeMap.putAll(toAdd);
 		entityTypeMap.put("endermen", EntityType.ENDERMAN);
@@ -588,7 +574,7 @@ public class Util {
 	public static String arrayJoin(String[] array, char with) {
 		if (array == null || array.length == 0) return "";
 		int len = array.length;
-		StringBuilder sb = new StringBuilder(16 + len * 8);
+		StringBuilder sb = new StringBuilder(16 + len << 3);
 		sb.append(array[0]);
 		for (int i = 1; i < len; i++) {
 			sb.append(with);
@@ -612,7 +598,7 @@ public class Util {
 	public static String[] splitParams(String string, int max) {
 		String[] words = string.trim().split(" ");
 		if (words.length <= 1) return words;
-		ArrayList<String> list = new ArrayList<String>();		
+		ArrayList<String> list = new ArrayList<>();
 		char quote = ' ';
 		String building = "";
 		
@@ -662,7 +648,7 @@ public class Util {
 	}
 	
 	public static List<String> tabCompleteSpellName(CommandSender sender, String partial) {
-		List<String> matches = new ArrayList<String>();
+		List<String> matches = new ArrayList<>();
 		if (sender instanceof Player) {
 			Spellbook spellbook = MagicSpells.getSpellbook((Player)sender);
 			for (Spell spell : spellbook.getSpells()) {
@@ -835,7 +821,7 @@ public class Util {
 	}
 	
 	public static String getStringNumber(String textNumber, int places) {
-		String ret = "";
+		String ret;
 		try {
 			ret = getStringNumber(Double.parseDouble(textNumber), places);
 		} catch (NumberFormatException nfe) {
@@ -844,7 +830,7 @@ public class Util {
 		return ret;
 	}
 	
-	private static Map<String, String> uniqueIds = new HashMap<String, String>();
+	private static Map<String, String> uniqueIds = new HashMap<>();
 	
 	public static String getUniqueId(Player player) {
 		String uid = player.getUniqueId().toString().replace("-", "");

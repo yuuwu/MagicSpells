@@ -95,7 +95,7 @@ public class PassiveSpell extends Spell {
 		super.initialize();
 		
 		// create spell list
-		spells = new ArrayList<Subspell>();
+		spells = new ArrayList<>();
 		if (spellNames != null) {
 			for (String spellName : spellNames) {
 				Subspell spell = new Subspell(spellName);
@@ -126,7 +126,7 @@ public class PassiveSpell extends Spell {
 					manager.registerSpell(this, trigger, var);
 					trigCount++;
 				} else {
-					MagicSpells.error("Invalid trigger '" + strigger + "' on passive spell '" + internalName + "'");
+					MagicSpells.error("Invalid trigger '" + strigger + "' on passive spell '" + internalName + '\'');
 				}
 			}
 		}
@@ -177,7 +177,7 @@ public class PassiveSpell extends Spell {
 	
 	boolean activateSpells(Player caster, LivingEntity target, Location location, float basePower) {
 		SpellCastState state = getCastState(caster);
-		MagicSpells.debug(3, "Activating passive spell '" + name + "' for player " + caster.getName() + " (state: " + state + ")");
+		MagicSpells.debug(3, "Activating passive spell '" + name + "' for player " + caster.getName() + " (state: " + state + ')');
 		if (!disabled && (chance >= .999 || random.nextFloat() <= chance) && state == SpellCastState.NORMAL) {
 			disabled = true;
 			SpellCastEvent event = new SpellCastEvent(this, caster, SpellCastState.NORMAL, basePower, null, this.cooldown, this.reagents.clone(), 0);
@@ -191,7 +191,7 @@ public class PassiveSpell extends Spell {
 				basePower = event.getPower();
 				boolean spellEffectsDone = false;
 				for (Subspell spell : spells) {
-					MagicSpells.debug(3, "    Casting spell effect '" + spell.getSpell().getName() + "'");
+					MagicSpells.debug(3, "    Casting spell effect '" + spell.getSpell().getName() + '\'');
 					if (castWithoutTarget) {
 						MagicSpells.debug(3, "    Casting without target");
 						spell.cast(caster, basePower);
@@ -281,7 +281,7 @@ public class PassiveSpell extends Spell {
 			} else if (state == SpellCastState.MISSING_REAGENTS) {
 				MagicSpells.sendMessage(strMissingReagents, caster, MagicSpells.NULL_ARGS);
 				if (MagicSpells.showStrCostOnMissingReagents() && strCost != null && !strCost.isEmpty()) {
-					MagicSpells.sendMessage("    (" + strCost + ")", caster, MagicSpells.NULL_ARGS);
+					MagicSpells.sendMessage("    (" + strCost + ')', caster, MagicSpells.NULL_ARGS);
 				}
 			}
 		}

@@ -47,21 +47,15 @@ public class WearingInSlotCondition extends Condition {
 	@Override
 	public boolean check(Player player) {
 		ItemStack item = player.getInventory().getArmorContents()[slot];
-		if (mat == null && (item == null || item.getType() == Material.AIR)) {
-			return true;
-		} else if (mat != null && item != null && mat.getMaterial() == item.getType()) {
-			return true;
-		}
+		if (mat == null && (item == null || item.getType() == Material.AIR)) return true;
+		if (mat != null && item != null && mat.getMaterial() == item.getType()) return true;
 		return false;
 	}
 
 	@Override
 	public boolean check(Player player, LivingEntity target) {
-		if (target instanceof Player) {
-			return check((Player)target);
-		} else {
-			return false;
-		}
+		if (target instanceof Player) return check((Player)target);
+		return false;
 	}
 
 	@Override

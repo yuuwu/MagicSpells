@@ -25,7 +25,7 @@ public class InventoryUtil {
 	 *     slot number: serialized itemstack
 	 */
 	public static Map<Object, Object> serializeInventoryContents(Inventory inv) {
-		Map<Object, Object> ret = new HashMap<Object, Object>();
+		Map<Object, Object> ret = new HashMap<>();
 		ItemStack[] contents = inv.getContents();
 		String inventoryType = inv.getType().name();
 		int size = inv.getSize();
@@ -42,8 +42,9 @@ public class InventoryUtil {
 		return ret;
 	}
 	
+	// TODO can this safely be made varargs?
 	private static Map<Object, Object> createContentsMap(ItemStack[] items) {
-		Map<Object, Object> serialized = new HashMap<Object, Object>();
+		Map<Object, Object> serialized = new HashMap<>();
 		int maxSlot = items.length - 1;
 		for (int currentSlot = 0; currentSlot <= maxSlot; currentSlot++) {
 			ItemStack currentItem = items[currentSlot];
@@ -64,7 +65,7 @@ public class InventoryUtil {
 			ret = Bukkit.createInventory(null, InventoryType.valueOf(strInventoryType), title);
 		}
 		
-		// handle the item contents
+		// Handle the item contents
 		Map<Object, Object> serializedItems = (Map<Object, Object>) serialized.get(SERIALIZATION_KEY_CONTENTS);
 		ret.setContents(deserializeContentsMap(serializedItems, inventorySize));
 		
@@ -74,7 +75,7 @@ public class InventoryUtil {
 	private static ItemStack[] deserializeContentsMap(Map<Object, Object> contents, int size) {
 		ItemStack[] ret = new ItemStack[size];
 		
-		// can we exit early?
+		// Can we exit early?
 		if (contents == null) return ret;
 		
 		for (int i = 0; i < size; i++) {
@@ -89,8 +90,7 @@ public class InventoryUtil {
 	public static boolean isNothing(ItemStack itemStack) {
 		if (itemStack == null) return true;
 		if (itemStack.getType() == Material.AIR) return true;
-		if (itemStack.getAmount() == 0) return true;
-		return false;
+		return itemStack.getAmount() == 0;
 	}
 	
 }

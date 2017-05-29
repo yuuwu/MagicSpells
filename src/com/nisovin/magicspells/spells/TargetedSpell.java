@@ -84,7 +84,7 @@ public abstract class TargetedSpell extends InstantSpell {
 					message = message.replace(varText, sval);
 				}
 			}
-			if (caster != null && MagicSpells.getVariableManager() != null && message.contains("%castervar")) { 
+			if (MagicSpells.getVariableManager() != null && message.contains("%castervar")) {
 				Matcher matcher = chatVarCasterMatchPattern.matcher(message);
 				while (matcher.find()) {
 					String varText = matcher.group();

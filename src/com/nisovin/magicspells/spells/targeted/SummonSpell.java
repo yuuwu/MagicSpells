@@ -50,8 +50,8 @@ public class SummonSpell extends TargetedSpell implements TargetedEntitySpell, T
 		strSummonExpired = getConfigString("str-summon-expired", "The summon has expired.");
 
 		if (requireAcceptance) {
-			pendingSummons = new HashMap<Player,Location>();
-			pendingTimes = new HashMap<Player,Long>();
+			pendingSummons = new HashMap<>();
+			pendingTimes = new HashMap<>();
 		}
 		
 	}
@@ -123,7 +123,7 @@ public class SummonSpell extends TargetedSpell implements TargetedEntitySpell, T
 	@EventHandler(priority=EventPriority.LOW)
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
 		if (!requireAcceptance) return;
-		if (!event.getMessage().equalsIgnoreCase("/" + acceptCommand)) return;
+		if (!event.getMessage().equalsIgnoreCase('/' + acceptCommand)) return;
 		if (!pendingSummons.containsKey(event.getPlayer())) return;
 		
 		Player player = event.getPlayer();

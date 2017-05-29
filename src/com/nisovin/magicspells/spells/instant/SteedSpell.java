@@ -29,7 +29,7 @@ public class SteedSpell extends InstantSpell {
 
 	Random random = new Random();
 	boolean gravity;
-	Map<String, Integer> mounted = new HashMap<String, Integer>();
+	Map<String, Integer> mounted = new HashMap<>();
 	
 	EntityType type;
 	Horse.Color color = null;

@@ -109,7 +109,7 @@ public class VolatileCodeEnabled_1_10_R1 implements VolatileCodeHandle {
 			try {
 				return ((net.minecraft.server.v1_10_R1.ItemStack)craftItemStackHandleField.get(item)).getTag();
 			} catch (Exception e) {
-				//no op currently
+				// No op currently
 			}
 		}
 		return null;
@@ -125,9 +125,9 @@ public class VolatileCodeEnabled_1_10_R1 implements VolatileCodeHandle {
 		
 		net.minecraft.server.v1_10_R1.ItemStack nmsItem = null;
 		try {
-			nmsItem = ((net.minecraft.server.v1_10_R1.ItemStack)craftItemStackHandleField.get(item));
+			nmsItem = (net.minecraft.server.v1_10_R1.ItemStack)craftItemStackHandleField.get(item);
 		} catch (Exception e) {
-			//no op currently
+			// No op currently
 		}
 		if (nmsItem == null) {
 			nmsItem = CraftItemStack.asNMSCopy(craftItem);
@@ -138,7 +138,7 @@ public class VolatileCodeEnabled_1_10_R1 implements VolatileCodeHandle {
 			try {
 				craftItemStackHandleField.set(craftItem, nmsItem);
 			} catch (Exception e) {
-				//no op currently
+				// No op currently
 			}
 		}
 		
@@ -178,7 +178,7 @@ public class VolatileCodeEnabled_1_10_R1 implements VolatileCodeHandle {
 		} else {
 			nmsItem = null;
 		}
-		PacketPlayOutSetSlot packet = new PacketPlayOutSetSlot(0, (short)slot+36, nmsItem);
+		PacketPlayOutSetSlot packet = new PacketPlayOutSetSlot(0, (short)slot + 36, nmsItem);
 		((CraftPlayer)player).getHandle().playerConnection.sendPacket(packet);
 	}
 
@@ -213,7 +213,6 @@ public class VolatileCodeEnabled_1_10_R1 implements VolatileCodeHandle {
 
 	@Override
 	public void playExplosionEffect(Location location, float size) {
-		@SuppressWarnings({ "rawtypes", "unchecked" })
 		PacketPlayOutExplosion packet = new PacketPlayOutExplosion(location.getX(), location.getY(), location.getZ(), size, new ArrayList(), null);
 		for (Player player : location.getWorld().getPlayers()) {
 			if (player.getLocation().distanceSquared(location) < 50 * 50) {
@@ -274,16 +273,10 @@ public class VolatileCodeEnabled_1_10_R1 implements VolatileCodeHandle {
 
 	@Override
 	public ItemStack addFakeEnchantment(ItemStack item) {
-		if (!(item instanceof CraftItemStack)) {
-			item = CraftItemStack.asCraftCopy(item);
-		}
+		if (!(item instanceof CraftItemStack)) item = CraftItemStack.asCraftCopy(item);
 		NBTTagCompound tag = getTag(item);		
-		if (tag == null) {
-			tag = new NBTTagCompound();
-		}
-		if (!tag.hasKey("ench")) {
-			tag.set("ench", new NBTTagList());
-		}		
+		if (tag == null) tag = new NBTTagCompound();
+		if (!tag.hasKey("ench")) tag.set("ench", new NBTTagList());
 		return setTag(item, tag);
 	}
 	
@@ -291,11 +284,8 @@ public class VolatileCodeEnabled_1_10_R1 implements VolatileCodeHandle {
 	public void setFallingBlockHurtEntities(FallingBlock block, float damage, int max) {
 		EntityFallingBlock efb = ((CraftFallingSand)block).getHandle();
 		try {
-			Field field = null;
 			entityFallingBlockHurtEntitiesField.setBoolean(efb, true);
-			
 			entityFallingBlockFallHurtAmountField.setFloat(efb, damage);
-			
 			entityFallingBlockFallHurtMaxField.setInt(efb, max);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -335,16 +325,14 @@ public class VolatileCodeEnabled_1_10_R1 implements VolatileCodeHandle {
 
 	@Override
 	public void createFireworksExplosion(Location location, boolean flicker, boolean trail, int type, int[] colors, int[] fadeColors, int flightDuration) {
-		// create item
+		// Create item
 		net.minecraft.server.v1_10_R1.ItemStack item = new net.minecraft.server.v1_10_R1.ItemStack(Item.getById(401), 1, 0);
 		
-		// get tag
+		// Get tag
 		NBTTagCompound tag = item.getTag();
-		if (tag == null) {
-			tag = new NBTTagCompound();
-		}
+		if (tag == null) tag = new NBTTagCompound();
 		
-		// create explosion tag
+		// Create explosion tag
 		NBTTagCompound explTag = new NBTTagCompound();
 		explTag.setByte("Flicker", flicker ? (byte)1 : (byte)0);
 		explTag.setByte("Trail", trail ? (byte)1 : (byte)0);
@@ -352,7 +340,7 @@ public class VolatileCodeEnabled_1_10_R1 implements VolatileCodeHandle {
 		explTag.setIntArray("Colors", colors);
 		explTag.setIntArray("FadeColors", fadeColors);
 		
-		// create fireworks tag
+		// Create fireworks tag
 		NBTTagCompound fwTag = new NBTTagCompound();
 		fwTag.setByte("Flight", (byte)flightDuration);
 		NBTTagList explList = new NBTTagList();
@@ -360,14 +348,14 @@ public class VolatileCodeEnabled_1_10_R1 implements VolatileCodeHandle {
 		fwTag.set("Explosions", explList);
 		tag.set("Fireworks", fwTag);
 		
-		// set tag
+		// Set tag
 		item.setTag(tag);
 		
-		// create fireworks entity
+		// Create fireworks entity
 		EntityFireworks fireworks = new EntityFireworks(((CraftWorld)location.getWorld()).getHandle(), location.getX(), location.getY(), location.getZ(), item);
 		((CraftWorld)location.getWorld()).getHandle().addEntity(fireworks);
 		
-		// cause explosion
+		// Cause explosion
 		if (flightDuration == 0) {
 			((CraftWorld)location.getWorld()).getHandle().broadcastEntityEffect(fireworks, (byte)17);
 			fireworks.die();
@@ -375,11 +363,13 @@ public class VolatileCodeEnabled_1_10_R1 implements VolatileCodeHandle {
 	}
 	
 	Field[] packet63Fields = new Field[11];
-	Map<String, EnumParticle> particleMap = new HashMap<String, EnumParticle>();
+	Map<String, EnumParticle> particleMap = new HashMap<>();
+	
 	@Override
 	public void playParticleEffect(Location location, String name, float spreadHoriz, float spreadVert, float speed, int count, int radius, float yOffset) {
 		playParticleEffect(location, name, spreadHoriz, spreadVert, spreadHoriz, speed, count, radius, yOffset);
 	}
+	
 	@Override
 	public void playParticleEffect(Location location, String name, float spreadX, float spreadY, float spreadZ, float speed, int count, int radius, float yOffset) {
 		//location.getWorld().spawnParticle(null, location.getX(), location.getY() + yOffset, location.getZ(), count, spreadX, spreadY, spreadZ, speed);
@@ -388,7 +378,7 @@ public class VolatileCodeEnabled_1_10_R1 implements VolatileCodeHandle {
 		int[] data = null;
 		if (name.contains("_")) {
 			String[] split = name.split("_");
-			name = split[0] + "_";
+			name = split[0] + '_';
 			particle = particleMap.get(name);
 			if (split.length > 1) {
 				String[] split2 = split[1].split(":");
@@ -422,7 +412,7 @@ public class VolatileCodeEnabled_1_10_R1 implements VolatileCodeHandle {
 				if (player.getLocation().distanceSquared(location) <= rSq) {
 					((CraftPlayer)player).getHandle().playerConnection.sendPacket(packet);
 				} else {
-					//no op yet
+					// No op yet
 				}
 			}
 		} catch (Exception e) {
@@ -440,7 +430,7 @@ public class VolatileCodeEnabled_1_10_R1 implements VolatileCodeHandle {
 		final PacketPlayOutEntityDestroy packet29 = new PacketPlayOutEntityDestroy(dragon.getBukkitEntity().getEntityId());
 		
 		BoundingBox box = new BoundingBox(location, 64);
-		final List<Player> players = new ArrayList<Player>();
+		final List<Player> players = new ArrayList<>();
 		for (Player player : location.getWorld().getPlayers()) {
 			if (box.contains(player)) {
 				players.add(player);
@@ -474,16 +464,13 @@ public class VolatileCodeEnabled_1_10_R1 implements VolatileCodeHandle {
 			} catch (Exception e) {
 				return new DisguiseManagerEmpty(config);
 			}
-		} else {
-			return new DisguiseManagerEmpty(config);
 		}
+		return new DisguiseManagerEmpty(config);
 	}
 
 	@Override
 	public ItemStack addAttributes(ItemStack item, String[] names, String[] types, double[] amounts, int[] operations, String[] slots) {
-		if (!(item instanceof CraftItemStack)) {
-			item = CraftItemStack.asCraftCopy(item);
-		}
+		if (!(item instanceof CraftItemStack)) item = CraftItemStack.asCraftCopy(item);
 		NBTTagCompound tag = getTag(item);
 		
 		NBTTagList list = new NBTTagList();
@@ -509,9 +496,7 @@ public class VolatileCodeEnabled_1_10_R1 implements VolatileCodeHandle {
 		attr.setInt("Operation", operation);
 		attr.setLong("UUIDLeast", uuid.getLeastSignificantBits());
 		attr.setLong("UUIDMost", uuid.getMostSignificantBits());
-		if (slot != null) {
-			attr.setString("Slot", slot);
-		}
+		if (slot != null) attr.setString("Slot", slot);
 		return attr;
 	}
 	
@@ -556,9 +541,7 @@ public class VolatileCodeEnabled_1_10_R1 implements VolatileCodeHandle {
 		} else if (operation == 2) {
 			oper = Operation.ADD_SCALAR;
 		}
-		if (attr != null && oper != null) {
-			entity.getAttribute(attr).addModifier(new AttributeModifier("MagicSpells " + attribute, amount, oper));
-		}
+		if (attr != null && oper != null) entity.getAttribute(attr).addModifier(new AttributeModifier("MagicSpells " + attribute, amount, oper));
 	}
 
 	@Override
@@ -590,7 +573,6 @@ public class VolatileCodeEnabled_1_10_R1 implements VolatileCodeHandle {
 		}		
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
 	public void removeAI(LivingEntity entity) {
         try {
@@ -769,7 +751,7 @@ public class VolatileCodeEnabled_1_10_R1 implements VolatileCodeHandle {
 
 	@Override
 	public void setNoAIFlag(LivingEntity entity) {
-		//no op yet
+		// No op yet
 	}
 
 	@Override
@@ -805,11 +787,7 @@ public class VolatileCodeEnabled_1_10_R1 implements VolatileCodeHandle {
 			GameProfile profile = (GameProfile) craftMetaSkullProfileField.get(meta);
 			setTexture(profile, texture, signature);
 			craftMetaSkullProfileField.set(meta, profile);
-		} catch (SecurityException e) {
-			MagicSpells.handleException(e);
-		} catch (IllegalArgumentException e) {
-			MagicSpells.handleException(e);
-		} catch (IllegalAccessException e) {
+		} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
 			MagicSpells.handleException(e);
 		}
 	}
@@ -830,17 +808,12 @@ public class VolatileCodeEnabled_1_10_R1 implements VolatileCodeHandle {
 	}
 	
 	@Override
-	public void setTexture(SkullMeta meta, String texture, String signature,
-			String uuid, String name) {
+	public void setTexture(SkullMeta meta, String texture, String signature, String uuid, String name) {
 		try {
 			GameProfile profile = new GameProfile(uuid != null ? UUID.fromString(uuid) : null, name);
 			setTexture(profile, texture, signature);
 			craftMetaSkullProfileField.set(meta, profile);
-		} catch (SecurityException e) {
-			MagicSpells.handleException(e);
-		} catch (IllegalArgumentException e) {
-			MagicSpells.handleException(e);
-		} catch (IllegalAccessException e) {
+		} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
 			MagicSpells.handleException(e);
 		}
 	}

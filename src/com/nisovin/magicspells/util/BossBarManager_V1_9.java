@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 
 public class BossBarManager_V1_9 implements BossBarManager {
 
-	Map<String, BossBar> bars = new HashMap<String, BossBar>();
+	Map<String, BossBar> bars = new HashMap<>();
 	
 	@Override
 	public void setPlayerBar(Player player, String title, double percent) {

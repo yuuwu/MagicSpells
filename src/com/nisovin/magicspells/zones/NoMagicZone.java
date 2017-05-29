@@ -39,8 +39,8 @@ public abstract class NoMagicZone implements Comparable<NoMagicZone> {
 		disallowedSpells = config.getStringList("disallowed-spells");
 		allowAll = config.getBoolean("allow-all", false);
 		disallowAll = config.getBoolean("disallow-all", true);
-		if (allowedSpells != null && allowedSpells.size() == 0) allowedSpells = null;
-		if (disallowedSpells != null && disallowedSpells.size() == 0) disallowedSpells = null;
+		if (allowedSpells != null && allowedSpells.isEmpty()) allowedSpells = null;
+		if (disallowedSpells != null && disallowedSpells.isEmpty()) disallowedSpells = null;
 		if (disallowedSpells != null) disallowAll = false;
 		if (allowedSpells != null) allowAll = false;
 		initialize(config);
@@ -80,7 +80,9 @@ public abstract class NoMagicZone implements Comparable<NoMagicZone> {
 	
 	public enum ZoneCheckResult {
 		
-		ALLOW, DENY, IGNORED
+		ALLOW,
+		DENY,
+		IGNORED
 		
 	}
 	

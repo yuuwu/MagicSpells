@@ -27,7 +27,7 @@ public class HoldRightSpell extends TargetedSpell implements TargetedEntitySpell
 	float maxDistance;
 	
 	// TODO: fix leak
-	Map<String, CastData> casting = new HashMap<String, CastData>();
+	Map<String, CastData> casting = new HashMap<>();
 	
 	public HoldRightSpell(MagicConfig config, String spellName) {
 		super(config, spellName);

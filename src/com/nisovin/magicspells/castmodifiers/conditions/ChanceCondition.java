@@ -19,9 +19,7 @@ public class ChanceCondition extends Condition {
 		random = new Random();
 		try {
 			chance = Integer.parseInt(var);
-			if (chance < 1 || chance > 100) {
-				return false;
-			}
+			if (chance < 1 || chance > 100) return false;
 			return true;
 		} catch (NumberFormatException e) {
 			DebugHandler.debugNumberFormat(e);
@@ -31,11 +29,8 @@ public class ChanceCondition extends Condition {
 
 	@Override
 	public boolean check(Player player) {
-		if (random.nextInt(100) < chance) {
-			return true;
-		} else {
-			return false;
-		}
+		if (random.nextInt(100) < chance) return true;
+		return false;
 	}
 
 	@Override

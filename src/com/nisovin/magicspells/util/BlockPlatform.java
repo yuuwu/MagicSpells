@@ -27,15 +27,15 @@ public class BlockPlatform {
 		this.moving = moving;
 		this.type = type;
 		
-		if (moving) blocks = new ArrayList<Block>();
+		if (moving) blocks = new ArrayList<>();
 		
 		createPlatform();
 	}
 	
 	public void createPlatform() {
-		List<Block> platform = new ArrayList<Block>();
+		List<Block> platform = new ArrayList<>();
 		
-		// get platform blocks
+		// Get platform blocks
 		if (type.equals("square")) {
 			Block block, above;
 			int cx = center.getX();
@@ -48,7 +48,7 @@ public class BlockPlatform {
 					block = world.getBlockAt(x, cy, z);
 					above = block.getRelative(0, 1, 0);
 					if ((block.getType() == replaceType && (cy >= max - 1 || (blocks != null && blocks.contains(above)) || above.getType() == Material.AIR)) || (blocks != null && blocks.contains(block))) {
-						// only add if it's a replaceable block and has air above, or if it is already part of the platform
+						// Only add if it's a replaceable block and has air above, or if it is already part of the platform
 						platform.add(block);
 					}
 				}
@@ -60,7 +60,7 @@ public class BlockPlatform {
 					for (int z = center.getZ()-size; z <= center.getZ() + size; z++) {
 						block = center.getWorld().getBlockAt(x, y, z);
 						if (block.getType() == replaceType || (blocks != null && blocks.contains(block))) {
-							// only add if it's a replaceable block or if it is already part of the block set
+							// Only add if it's a replaceable block or if it is already part of the block set
 							platform.add(block);
 						}
 					}
@@ -68,7 +68,7 @@ public class BlockPlatform {
 			}
 		}
 		
-		// remove old platform blocks
+		// Remove old platform blocks
 		if (moving) {
 			for (Block block : blocks) {
 				if (!platform.contains(block) && block.getType() == platformType) {
@@ -79,7 +79,7 @@ public class BlockPlatform {
 			}
 		}
 		
-		// add new platform blocks
+		// Add new platform blocks
 		for (Block block : platform) {
 			if (blocks == null || !blocks.contains(block)) {
 				BlockState state = block.getState();
@@ -88,7 +88,7 @@ public class BlockPlatform {
 			}
 		}
 		
-		// update platform block set
+		// Update platform block set
 		if (moving) blocks = platform;
 	}
 	
@@ -125,7 +125,7 @@ public class BlockPlatform {
 	}
 	
 	public void destroyPlatform() {		
-		// remove platform blocks
+		// Remove platform blocks
 		if (moving) {
 			for (Block block : blocks) {
 				if (block.getType() != platformType) continue;
@@ -136,7 +136,6 @@ public class BlockPlatform {
 		}
 		blocks = null;
 	}
-	
 	
 	public Block getCenter () {
 		return this.center;

@@ -38,7 +38,7 @@ public class EntombSpell extends TargetedSpell implements TargetedEntitySpell {
 		closeTopAndBottom = getConfigBoolean("close-top-and-bottom", true);
 		allowBreaking = getConfigBoolean("allow-breaking", true);
 		
-		blocks = new HashSet<Block>();
+		blocks = new HashSet<>();
 		
 		if (tombBlockType == null) MagicSpells.error("Entomb spell '" + spellName + "' has an invalid tomb-block-type!");
 	}
@@ -69,7 +69,7 @@ public class EntombSpell extends TargetedSpell implements TargetedEntitySpell {
 	}
 	
 	private void createTomb(LivingEntity target, float power) {		
-		ArrayList<Block> tombBlocks = new ArrayList<Block>();
+		ArrayList<Block> tombBlocks = new ArrayList<>();
 		Block feet = target.getLocation().getBlock();
 		
 		Block temp = feet.getRelative(1, 0, 0);
@@ -137,7 +137,7 @@ public class EntombSpell extends TargetedSpell implements TargetedEntitySpell {
 		
 		if (tombDuration > 0 && !tombBlocks.isEmpty()) {
 			blocks.addAll(tombBlocks);
-			MagicSpells.plugin.getServer().getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new TombRemover(tombBlocks), Math.round(tombDuration*20*power));
+			MagicSpells.plugin.getServer().getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new TombRemover(tombBlocks), Math.round(tombDuration * 20 * power));
 		}
 	}
 

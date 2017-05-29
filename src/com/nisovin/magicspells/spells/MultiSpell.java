@@ -36,7 +36,7 @@ public final class MultiSpell extends InstantSpell {
 		this.customSpellCastChance = getConfigBoolean("enable-custom-spell-cast-chance", false);
 		this.enableIndividualChances = getConfigBoolean("enable-individual-chances", false);
 
-		this.actions = new ArrayList<ActionChance>();
+		this.actions = new ArrayList<>();
 		this.spellList = getConfigStringList("spells", null);
 	}
 
@@ -61,7 +61,7 @@ public final class MultiSpell extends InstantSpell {
 					if (spell.process()) {
 						this.actions.add(new ActionChance(new Action(spell), chance));
 					} else {
-						MagicSpells.error("No such spell '" + s + "' for multi-spell '" + this.internalName + "'");
+						MagicSpells.error("No such spell '" + s + "' for multi-spell '" + this.internalName + '\'');
 					}
 				}
 			}
@@ -110,7 +110,7 @@ public final class MultiSpell extends InstantSpell {
 					}
 					Action action = this.actions.get(Math.max(0, i - 1)).getAction();
 					if (action.isSpell()) {
-						if ((this.checkIndividualCooldowns) && (action.getSpell().getSpell().onCooldown(player))) {
+						if ((this.checkIndividualCooldowns) && action.getSpell().getSpell().onCooldown(player)) {
 							sendMessage(this.strOnCooldown, player, args);
 							return Spell.PostCastAction.ALREADY_HANDLED;
 						}
@@ -119,9 +119,9 @@ public final class MultiSpell extends InstantSpell {
 				} else if (this.enableIndividualChances) {
 					for (ActionChance actionChance : this.actions) {
 						double chance = Math.random();
-						if ((actionChance.getChance() / 100.0D > chance) && (actionChance.getAction().isSpell())) {
+						if ((actionChance.getChance() / 100.0D > chance) && actionChance.getAction().isSpell()) {
 							Action action = actionChance.getAction();
-							if ((this.checkIndividualCooldowns) && (action.getSpell().getSpell().onCooldown(player))) {
+							if (this.checkIndividualCooldowns && action.getSpell().getSpell().onCooldown(player)) {
 								sendMessage(this.strOnCooldown, player, args);
 								return Spell.PostCastAction.ALREADY_HANDLED;
 							}
@@ -130,7 +130,7 @@ public final class MultiSpell extends InstantSpell {
 					}
 				} else {
 					Action action = this.actions.get(this.random.nextInt(this.actions.size())).getAction();
-					if ((this.checkIndividualCooldowns) && (action.getSpell().getSpell().onCooldown(player))) {
+					if (this.checkIndividualCooldowns && action.getSpell().getSpell().onCooldown(player)) {
 						sendMessage(this.strOnCooldown, player, args);
 						return Spell.PostCastAction.ALREADY_HANDLED;
 					}
@@ -185,7 +185,7 @@ public final class MultiSpell extends InstantSpell {
 			} else if (this.enableIndividualChances) {
 				for (ActionChance actionChance : this.actions) {
 					double chance = Math.random();
-					if ((actionChance.getChance() / 100.0D > chance) && (actionChance.getAction().isSpell())) {
+					if ((actionChance.getChance() / 100.0D > chance) && actionChance.getAction().isSpell()) {
 						actionChance.getAction().getSpell().getSpell().castFromConsole(sender, args);
 					}
 				}
@@ -250,7 +250,7 @@ public final class MultiSpell extends InstantSpell {
 		}
 		
 		public int getDelay() {
-			return (isRangedDelay ? getRandomDelay() : delay);
+			return isRangedDelay ? getRandomDelay() : delay;
 		}
 		
 	}
@@ -270,7 +270,7 @@ public final class MultiSpell extends InstantSpell {
 		@Override
 		public void run() {
 			Player player = Bukkit.getPlayerExact(this.playerName);
-			if ((player != null) && (player.isValid())) {
+			if (player != null && player.isValid()) {
 				this.spell.cast(player, this.power);
 			}
 		}

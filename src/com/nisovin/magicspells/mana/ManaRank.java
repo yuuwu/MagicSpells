@@ -22,7 +22,7 @@ public class ManaRank {
 			+ ",prefix=" + prefix
 			+ ",colorFull=" + colorFull
 			+ ",colorEmpty=" + colorEmpty
-			+ "]";
+			+ ']';
 	}
 	
 }

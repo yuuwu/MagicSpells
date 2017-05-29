@@ -23,16 +23,12 @@ public class PowerGreaterThanCondition extends Condition {
 
 	@Override
 	public boolean check(Player player) {
-		if (player == null) return false;
-		return MPlayer.get(player).getPower() > power;
+		return player != null && MPlayer.get(player).getPower() > power;
 	}
 
 	@Override
 	public boolean check(Player player, LivingEntity target) {
-		if (target != null && target instanceof Player) {
-			return MPlayer.get((Player)target).getPower() > power;
-		}
-		return false;
+		return target != null && target instanceof Player && MPlayer.get(target).getPower() > power;
 	}
 
 	@Override

@@ -20,10 +20,10 @@ public class SneakListener extends PassiveListener {
 	@Override
 	public void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var) {
 		if (PassiveTrigger.SNEAK.contains(trigger)) {
-			if (sneak == null) sneak = new ArrayList<PassiveSpell>();
+			if (sneak == null) sneak = new ArrayList<>();
 			sneak.add(spell);
 		} else if (PassiveTrigger.STOP_SNEAK.contains(trigger)) {
-			if (stopSneak == null) stopSneak = new ArrayList<PassiveSpell>();
+			if (stopSneak == null) stopSneak = new ArrayList<>();
 			stopSneak.add(spell);
 		}
 	}

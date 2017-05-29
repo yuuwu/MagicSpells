@@ -15,8 +15,8 @@ import com.nisovin.magicspells.MagicSpells;
 
 public class BossBarManager_V1_8 implements BossBarManager, Listener {
 
-	Map<String, String> bossBarTitles = new HashMap<String, String>();
-	Map<String, Double> bossBarValues = new HashMap<String, Double>();
+	Map<String, String> bossBarTitles = new HashMap<>();
+	Map<String, Double> bossBarValues = new HashMap<>();
 	
 	public BossBarManager_V1_8() {
 		MagicSpells.registerEvents(this);

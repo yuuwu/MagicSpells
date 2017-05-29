@@ -35,8 +35,8 @@ public class MagicSpellsFactions extends MassivePlugin {
 		
 		Rel rel = caster.getRelationTo(target);
 		
-		//make only check relations if friendly fire is disabled
-		if ((faction == null || !faction.getFlag(MFlag.ID_FRIENDLYFIRE)) || (targetFaction == null || !targetFaction.getFlag(MFlag.ID_FRIENDLYFIRE))) {
+		// Make only check relations if friendly fire is disabled
+		if (faction == null || !faction.getFlag(MFlag.ID_FRIENDLYFIRE) || targetFaction == null || !targetFaction.getFlag(MFlag.ID_FRIENDLYFIRE)) {
 			if (rel.isFriend() && !beneficial) {
 				event.setCancelled(true);
 			} else if (!rel.isFriend() && beneficial) {
@@ -44,13 +44,8 @@ public class MagicSpellsFactions extends MassivePlugin {
 			}
 		}
 		
-		if (faction != null && !faction.getFlag(MFlag.ID_PVP)) {
-			event.setCancelled(true);
-		}
-		
-		if (targetFaction != null && !targetFaction.getFlag(MFlag.ID_PVP)) {
-			event.setCancelled(true);
-		}
+		if (faction != null && !faction.getFlag(MFlag.ID_PVP)) event.setCancelled(true);
+		if (targetFaction != null && !targetFaction.getFlag(MFlag.ID_PVP)) event.setCancelled(true);
 	}
 	
 	@EventHandler

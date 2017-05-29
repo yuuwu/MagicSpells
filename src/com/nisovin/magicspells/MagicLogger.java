@@ -114,7 +114,7 @@ public class MagicLogger implements Listener {
 	}
 	
 	private String formatLoc(Location location) {
-		return location.getWorld().getName() + "," + location.getBlockX() + "," + location.getBlockY() + "," + location.getBlockZ();
+		return location.getWorld().getName() + ',' + location.getBlockX() + ',' + location.getBlockY() + ',' + location.getBlockZ();
 	}
 	
 	private String getTargetName(LivingEntity target) {
@@ -142,7 +142,7 @@ public class MagicLogger implements Listener {
 	private void log(String string) {
 		if (writer != null) {
 			try {
-				writer.write("[" + dateFormat.format(new Date()) + "] " + string + "\n");
+				writer.write('[' + dateFormat.format(new Date()) + "] " + string + '\n');
 			} catch (IOException e) {
 				DebugHandler.debugIOException(e);
 			}

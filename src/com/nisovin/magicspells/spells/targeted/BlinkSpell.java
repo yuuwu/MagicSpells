@@ -44,7 +44,7 @@ public class BlinkSpell extends TargetedSpell implements TargetedLocationSpell {
 			}
 			HashSet<Location> smokes = null;
 			if (smokeTrail) {
-				smokes = new HashSet<Location>();
+				smokes = new HashSet<>();
 			}
 			Block prev = null;
 			Block found = null;

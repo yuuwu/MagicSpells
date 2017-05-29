@@ -15,7 +15,7 @@ public class WorldGuardBooleanFlagCondition extends AbstractWorldGuardFlagCondit
 	
 	static Map<String, BooleanFlag> nameMap;
 	static {
-		nameMap = new HashMap<String, BooleanFlag>();
+		nameMap = new HashMap<>();
 		for (Flag<?> f: DefaultFlag.getFlags()) {
 			if (f instanceof BooleanFlag) {
 				nameMap.put(f.getName().toLowerCase(), (BooleanFlag)f);
@@ -31,7 +31,7 @@ public class WorldGuardBooleanFlagCondition extends AbstractWorldGuardFlagCondit
 
 	@Override
 	protected boolean check(ProtectedRegion region, LocalPlayer player) {
-		return region.getFlag(flag).booleanValue();
+		return region.getFlag(flag);
 	}
 
 }

@@ -43,7 +43,7 @@ public class MinionSpell extends BuffSpell {
 		
 		// formatted as <entity type> <chance>
 		List<String> c = getConfigStringList("mob-chances", null);
-		if (c == null) c = new ArrayList<String>();
+		if (c == null) c = new ArrayList<>();
 		if (c.isEmpty()) {
 			c.add("Zombie 100");
 		}
@@ -66,8 +66,8 @@ public class MinionSpell extends BuffSpell {
 		preventCombust = getConfigBoolean("prevent-sun-burn", true);
 		targetPlayers = getConfigBoolean("target-players", false);
 		
-		minions = new HashMap<String,LivingEntity>();
-		targets = new HashMap<String,LivingEntity>();
+		minions = new HashMap<>();
+		targets = new HashMap<>();
 		random = new Random();
 	}
 	

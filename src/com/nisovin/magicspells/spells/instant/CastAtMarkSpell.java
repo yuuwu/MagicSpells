@@ -56,7 +56,7 @@ public class CastAtMarkSpell extends InstantSpell {
 		}
 		
 		if (!toCast.isTargetedLocationSpell()) {
-			MagicSpells.error(getLoggingSpellPrefix() + " " + toCast.getSpell().getInternalName() + " is not a targeted location spell");
+			MagicSpells.error(getLoggingSpellPrefix() + ' ' + toCast.getSpell().getInternalName() + " is not a targeted location spell");
 			return;
 		}
 		

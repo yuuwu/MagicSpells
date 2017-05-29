@@ -369,9 +369,7 @@ public enum ModifierType {
 		public boolean apply(SpellCastEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) {
 				Spell spell = MagicSpells.getSpellByInternalName(modifierVar);
-				if (spell != null) {
-					spell.cast(event.getCaster(), event.getPower(), event.getSpellArgs());
-				}
+				if (spell != null) spell.cast(event.getCaster(), event.getPower(), event.getSpellArgs());
 				event.setCancelled(true);
 			}
 			return true;
@@ -603,7 +601,7 @@ public enum ModifierType {
 	static HashMap<String, ModifierType> nameMap;
 	
 	static void initialize() {
-		nameMap = new HashMap<String, ModifierType>();
+		nameMap = new HashMap<>();
 		for (ModifierType type: ModifierType.values()) {
 			for (String key: type.keys) {
 				nameMap.put(key.toLowerCase(), type);

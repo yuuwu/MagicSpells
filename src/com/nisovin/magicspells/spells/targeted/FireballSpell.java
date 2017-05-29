@@ -79,7 +79,7 @@ public class FireballSpell extends TargetedSpell implements TargetedEntityFromLo
 		fireballGravity = getConfigBoolean("gravity", false);
 		
 		
-		fireballs = new HashMap<Fireball, Float>();
+		fireballs = new HashMap<>();
 		taskId = MagicSpells.scheduleRepeatingTask(new Runnable() {
 			
 			@Override
@@ -201,12 +201,12 @@ public class FireballSpell extends TargetedSpell implements TargetedEntityFromLo
 				for (Entity entity : inRange) {
 					if (!(entity instanceof LivingEntity)) continue;
 					
-					if (!validTargetList.canTarget((LivingEntity)entity)) continue;
+					if (!validTargetList.canTarget(entity)) continue;
 					((LivingEntity)entity).damage(Math.round(noExplosionDamage * power), (LivingEntity)fireball.getShooter());
 				}
 			}
 			if (!noFire) {
-				final HashSet<Block> fires = new HashSet<Block>();
+				final HashSet<Block> fires = new HashSet<>();
 				for (int x = loc.getBlockX() - 1; x <= loc.getBlockX() + 1; x++) {
 					for (int y = loc.getBlockY() - 1; y <= loc.getBlockY() + 1; y++) {
 						for (int z = loc.getBlockZ() - 1; z <= loc.getBlockZ() + 1; z++) {
@@ -265,7 +265,7 @@ public class FireballSpell extends TargetedSpell implements TargetedEntityFromLo
 		if (!(event instanceof EntityDamageByEntityEvent)) return;
 		
 		EntityDamageByEntityEvent evt = (EntityDamageByEntityEvent)event;
-		if ((event.getCause() == DamageCause.ENTITY_EXPLOSION || event.getCause() == DamageCause.PROJECTILE)) {
+		if (event.getCause() == DamageCause.ENTITY_EXPLOSION || event.getCause() == DamageCause.PROJECTILE) {
 			if (evt.getDamager() instanceof Fireball || evt.getDamager() instanceof SmallFireball) {
 				Fireball fireball = (Fireball)evt.getDamager();
 				ProjectileSource shooter = fireball.getShooter();
@@ -273,7 +273,7 @@ public class FireballSpell extends TargetedSpell implements TargetedEntityFromLo
 				if (!fireballs.containsKey(fireball)) return;
 				
 				float power = fireballs.get(fireball);
-				if (!validTargetList.canTarget((Player)shooter, (LivingEntity)event.getEntity())) {
+				if (!validTargetList.canTarget((Player)shooter, event.getEntity())) {
 					event.setCancelled(true);
 				} else if (damageMultiplier > 0) {
 					event.setDamage(Math.round(event.getDamage() * damageMultiplier * power));

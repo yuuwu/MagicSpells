@@ -20,18 +20,31 @@ import com.nisovin.magicspells.variables.meta.FireTicksVariable;
 import com.nisovin.magicspells.variables.meta.FlySpeedVariable;
 import com.nisovin.magicspells.variables.meta.FoodLevelVariable;
 import com.nisovin.magicspells.variables.meta.HealthScaleVariable;
+import com.nisovin.magicspells.variables.meta.LastDamageVariable;
 import com.nisovin.magicspells.variables.meta.MaxHealthVariable;
+import com.nisovin.magicspells.variables.meta.MaximumAirVariable;
+import com.nisovin.magicspells.variables.meta.MaximumNoDamageTicksVariable;
+import com.nisovin.magicspells.variables.meta.NoDamageTicksVariable;
 import com.nisovin.magicspells.variables.meta.PlayersOnlineVariable;
 import com.nisovin.magicspells.variables.meta.RemainingAirVariable;
 import com.nisovin.magicspells.variables.meta.SaturationVariable;
+import com.nisovin.magicspells.variables.meta.VelocityXVariable;
+import com.nisovin.magicspells.variables.meta.VelocityYVariable;
+import com.nisovin.magicspells.variables.meta.VelocityZVariable;
 import com.nisovin.magicspells.variables.meta.WalkSpeedVariable;
 
+// TODO add meta_attribute_base_attack
+// TODO add meta_attribute_knockback_resistance
+// TODO add meta_attribute_luck
+// TODO add meta_attribute_attack_speed
+// TODO add meta_attribute_armor
+// TODO add meta_attribute_armor_toughness
 public class SpecialVariables {
 
 	private static Map<String, Variable> specialVariables;
 	
 	static {
-		specialVariables = new HashMap<String, Variable>();
+		specialVariables = new HashMap<>();
 		specialVariables.put("meta_location_x", new CoordXVariable());
 		specialVariables.put("meta_location_y", new CoordYVariable());
 		specialVariables.put("meta_location_z", new CoordZVariable());
@@ -41,6 +54,7 @@ public class SpecialVariables {
 		specialVariables.put("meta_experience_level", new ExperienceLevelVariable());
 		specialVariables.put("meta_experience_points", new ExperienceVariable());
 		specialVariables.put("meta_remaining_air", new RemainingAirVariable());
+		specialVariables.put("meta_max_air", new MaximumAirVariable());
 		specialVariables.put("meta_fly_speed", new FlySpeedVariable());
 		specialVariables.put("meta_walk_speed", new WalkSpeedVariable());
 		specialVariables.put("meta_food_level", new FoodLevelVariable());
@@ -53,7 +67,12 @@ public class SpecialVariables {
 		specialVariables.put("meta_compass_target_x", new CompassTargetXVariable());
 		specialVariables.put("meta_compass_target_y", new CompassTargetYVariable());
 		specialVariables.put("meta_compass_target_z", new CompassTargetZVariable());
-		
+		specialVariables.put("meta_velocity_x", new VelocityXVariable());
+		specialVariables.put("meta_velocity_y", new VelocityYVariable());
+		specialVariables.put("meta_velocity_z", new VelocityZVariable());
+		specialVariables.put("meta_no_damage_ticks", new NoDamageTicksVariable());
+		specialVariables.put("meta_max_no_damage_ticks", new MaximumNoDamageTicksVariable());
+		specialVariables.put("meta_last_damage", new LastDamageVariable());
 	}
 	
 	public static Map<String, Variable> getSpecialVariables() {

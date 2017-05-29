@@ -20,10 +20,10 @@ public class FlyListener extends PassiveListener {
 	@Override
 	public void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var) {
 		if (PassiveTrigger.FLY.contains(trigger)) {
-			if (fly == null) fly = new ArrayList<PassiveSpell>();
+			if (fly == null) fly = new ArrayList<>();
 			fly.add(spell);
 		} else if (PassiveTrigger.STOP_FLY.contains(trigger)) {
-			if (stopFly == null) stopFly = new ArrayList<PassiveSpell>();
+			if (stopFly == null) stopFly = new ArrayList<>();
 			stopFly.add(spell);
 		}
 	}

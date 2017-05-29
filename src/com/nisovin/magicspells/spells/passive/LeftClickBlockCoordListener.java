@@ -20,7 +20,7 @@ import com.nisovin.magicspells.util.OverridePriority;
 // and x, y, and z are integers
 public class LeftClickBlockCoordListener extends PassiveListener {
 
-	Map<MagicLocation, PassiveSpell> locs = new HashMap<MagicLocation, PassiveSpell>();
+	Map<MagicLocation, PassiveSpell> locs = new HashMap<>();
 	
 	@Override
 	public void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var) {
@@ -34,7 +34,7 @@ public class LeftClickBlockCoordListener extends PassiveListener {
 				int z = Integer.parseInt(data[3]);				
 				locs.put(new MagicLocation(world, x, y, z), spell);
 			} catch (NumberFormatException e) {
-				MagicSpells.error("Invalid coords on leftclickblockcoord trigger for spell '" + spell.getInternalName() + "'");
+				MagicSpells.error("Invalid coords on leftclickblockcoord trigger for spell '" + spell.getInternalName() + '\'');
 			}
 		}
 	}

@@ -10,9 +10,9 @@ import com.nisovin.magicspells.spells.TargetedLocationSpell;
 
 public class CastAtSubCommand {
 
-	//handles the /c castat command
+	// Handles the /c castat command
 	public static boolean onCommand(CommandSender sender, Command command, String label, String [] args) {
-		// begin /c castat handling
+		// Begin /c castat handling
 		
 		if (args.length == 3 || args.length == 4) {
 			// /c castat <spell> <player name> [power]
@@ -31,18 +31,15 @@ public class CastAtSubCommand {
 			if (target == null) {
 				sender.sendMessage("Could not find player:" + args[2]);
 				return true;
-			} else {
-				float cPower = 1;
-				if (args.length == 4) {
-					cPower = Float.parseFloat(args[3]);
-				}
-				if (tes != null) {
-					tes.castAtEntity(target, cPower);
-				} else {
-					tls.castAtLocation(target.getLocation(), cPower);
-				}
-				return true;
 			}
+			float cPower = 1;
+			if (args.length == 4) cPower = Float.parseFloat(args[3]);
+			if (tes != null) {
+				tes.castAtEntity(target, cPower);
+			} else {
+				tls.castAtLocation(target.getLocation(), cPower);
+			}
+			return true;
 		}
 		
 		// end /c castat handling

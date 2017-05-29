@@ -46,7 +46,7 @@ public class LevitateSpell extends TargetedSpell implements TargetedEntitySpell 
 		cancelOnSpellCast = getConfigBoolean("cancel-on-spell-cast", false);
 		cancelOnTakeDamage = getConfigBoolean("cancel-on-take-damage", true);
 		
-		levitating = new HashMap<Player,Levitator>();
+		levitating = new HashMap<>();
 	}
 	
 	@Override
@@ -131,7 +131,7 @@ public class LevitateSpell extends TargetedSpell implements TargetedEntitySpell 
 	
 	@Override
 	public void turnOff() {
-		for (Levitator l : new ArrayList<Levitator>(levitating.values())) {
+		for (Levitator l : new ArrayList<>(levitating.values())) {
 			l.stop();
 		}
 		levitating.clear();

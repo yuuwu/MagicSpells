@@ -73,7 +73,7 @@ public class ManaSystem extends ManaHandler {
 		defaultRank.colorFull = manaBarColorFull;
 		defaultRank.colorEmpty = manaBarColorEmpty;
 		
-		ranks = new ArrayList<ManaRank>();
+		ranks = new ArrayList<>();
 		Set<String> rankKeys = config.getKeys("mana.ranks");
 		if (rankKeys != null) {
 			for (String key : rankKeys) {
@@ -89,7 +89,7 @@ public class ManaSystem extends ManaHandler {
 			}
 		}
 		
-		manaBars = new HashMap<String, ManaBar>();
+		manaBars = new HashMap<>();
 		taskId = MagicSpells.scheduleRepeatingTask(new Regenerator(), regenInterval, regenInterval);
 	}
 	
@@ -255,7 +255,7 @@ public class ManaSystem extends ManaHandler {
 		for (; i < manaBarSize; i++) {
 			text += "=";
 		}
-		text += MagicSpells.getTextColor() + "} [" + bar.getMana() + "/" + bar.getMaxMana() + "]";
+		text += MagicSpells.getTextColor() + "} [" + bar.getMana() + '/' + bar.getMaxMana() + ']';
 		player.sendMessage(text);
 	}
 	

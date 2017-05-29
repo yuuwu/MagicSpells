@@ -6,15 +6,15 @@ import com.nisovin.magicspells.spells.targeted.DisguiseSpell;
 
 public interface IDisguiseManager {
 	
-	public void registerSpell(DisguiseSpell spell);
-	public void unregisterSpell(DisguiseSpell spell);
-	public int registeredSpellsCount();
-	public void addDisguise(Player player, DisguiseSpell.Disguise disguise);
-	public void removeDisguise(Player player);
-	public void removeDisguise(Player player, boolean sendPlayerPackets);
-	public void removeDisguise(Player player, boolean sendPlayerPackets, boolean delaySpawnPacket);
-	public boolean isDisguised(Player player);
-	public DisguiseSpell.Disguise getDisguise(Player player);
-	public void destroy();
+	void registerSpell(DisguiseSpell spell);
+	void unregisterSpell(DisguiseSpell spell);
+	int registeredSpellsCount();
+	void addDisguise(Player player, DisguiseSpell.Disguise disguise);
+	void removeDisguise(Player player);
+	void removeDisguise(Player player, boolean sendPlayerPackets);
+	void removeDisguise(Player player, boolean sendPlayerPackets, boolean delaySpawnPacket);
+	boolean isDisguised(Player player);
+	DisguiseSpell.Disguise getDisguise(Player player);
+	void destroy();
 	
 }

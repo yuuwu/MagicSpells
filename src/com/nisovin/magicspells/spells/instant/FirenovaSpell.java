@@ -1,7 +1,12 @@
 package com.nisovin.magicspells.spells.instant;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
+import com.google.common.collect.Sets;
+import com.nisovin.magicspells.Subspell;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -21,6 +26,12 @@ import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.util.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 
+// TODO make this a targeted spell
+
+// TODO make a migration aid which interprets old class names as the new versions
+// TODO the migration aid should have a very verbose warning and warn any ops if it did anything on login
+
+// TODO allow this to cast a spell at each location it puts a block
 /*
  * The special position for effects is implemented here to run on each nova block placed.
  */
@@ -34,6 +45,19 @@ public class FirenovaSpell extends InstantSpell implements TargetedLocationSpell
 	int expandRate = 1;
 	
 	HashSet<Player> fireImmunity;
+	Subspell subSpell = null;
+	
+	// Using the names to be version safe
+	private Set<String> activeDamageCauses = null;
+	
+	private static final Map<String, Set<String>> materialsToImmunities = new HashMap<>();
+	static {
+		materialsToImmunities.put("FIRE", Sets.newHashSet("FIRE", "FIRE_TICK"));
+		materialsToImmunities.put("STATIONARY_LAVA", Sets.newHashSet("FIRE_TICK", "LAVA"));
+		materialsToImmunities.put("LAVA", Sets.newHashSet("FIRE_TICK", "LAVA"));
+		materialsToImmunities.put("MAGMA", Sets.newHashSet("HOT_FLOOR"));
+		materialsToImmunities.put("CACTUS", Sets.newHashSet("CONTACT"));
+	}
 	
 	public FirenovaSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -48,8 +72,16 @@ public class FirenovaSpell extends InstantSpell implements TargetedLocationSpell
 		expandRate = getConfigInt("expanding-radius-change", expandRate);
 		if (expandRate < 1) expandRate = 1;
 		
-		// FIXME change this to map materials to immunities instead of only with the fire block
-		if (mat.getMaterial() == Material.FIRE) fireImmunity = new HashSet<Player>();
+		if (materialsToImmunities.containsKey(mat.getMaterial().name())) {
+			activeDamageCauses = materialsToImmunities.get(mat.getMaterial().name());
+			fireImmunity = new HashSet<>();
+		}
+		
+		subSpell = new Subspell(getConfigString("spell", ""));
+		if (!subSpell.process()) subSpell = null;
+		if (subSpell != null) {
+			if (!subSpell.isTargetedLocationSpell()) subSpell = null;
+		}
 	}
 
 	@Override
@@ -74,29 +106,30 @@ public class FirenovaSpell extends InstantSpell implements TargetedLocationSpell
 	}
 
 	@EventHandler
-	public void onEntityDamage(EntityDamageEvent event) {
+	public void doFireImmunity(EntityDamageEvent event) {
 		if (event.isCancelled() || fireImmunity == null) return;
 		if (!(event.getEntity() instanceof Player)) return;
 		if (fireImmunity.isEmpty()) return;
-		if ((event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK)) {
-			Player player = (Player)event.getEntity();
-			if (fireImmunity.contains(player)) {
-				// caster is taking damage, cancel it
-				event.setCancelled(true);
-				player.setFireTicks(0);
-			} else if (checkPlugins) {
-				// check if nearby players are taking damage
-				Location loc = player.getLocation();
-				for (Player p : fireImmunity) {
-					if (Math.abs(p.getLocation().getX() - loc.getX()) < range + 2 && Math.abs(p.getLocation().getZ() - loc.getZ()) < range + 2 && Math.abs(p.getLocation().getY() - loc.getY()) < range) {
-						// nearby, check plugins for pvp
-						MagicSpellsEntityDamageByEntityEvent evt = new MagicSpellsEntityDamageByEntityEvent(p, player, DamageCause.ENTITY_ATTACK, event.getDamage());
-						EventUtil.call(evt);
-						if (evt.isCancelled()) {
-							event.setCancelled(true);
-							player.setFireTicks(0);
-							break;
-						}
+		if (activeDamageCauses == null) return;
+		if (!activeDamageCauses.contains(event.getCause().name())) return;
+		Player player = (Player)event.getEntity();
+		
+		if (fireImmunity.contains(player)) {
+			// Caster is taking damage, cancel it
+			event.setCancelled(true);
+			player.setFireTicks(0);
+		} else if (checkPlugins) {
+			// Check if nearby players are taking damage
+			Location loc = player.getLocation();
+			for (Player p : fireImmunity) {
+				if (Math.abs(p.getLocation().getX() - loc.getX()) < range + 2 && Math.abs(p.getLocation().getZ() - loc.getZ()) < range + 2 && Math.abs(p.getLocation().getY() - loc.getY()) < range) {
+					// Nearby, check plugins for pvp
+					MagicSpellsEntityDamageByEntityEvent evt = new MagicSpellsEntityDamageByEntityEvent(p, player, DamageCause.ENTITY_ATTACK, event.getDamage());
+					EventUtil.call(evt);
+					if (evt.isCancelled()) {
+						event.setCancelled(true);
+						player.setFireTicks(0);
+						break;
 					}
 				}
 			}
@@ -108,7 +141,7 @@ public class FirenovaSpell extends InstantSpell implements TargetedLocationSpell
 		Player player;
 		int i = 0;
 		Block center;
-		HashSet<Block> fireBlocks = new HashSet<Block>();
+		HashSet<Block> fireBlocks = new HashSet<>();
 		int taskId;
 		
 		public FirenovaAnimation(Player player) {
@@ -124,7 +157,7 @@ public class FirenovaSpell extends InstantSpell implements TargetedLocationSpell
 		
 		@Override
 		public void run() {
-			// remove old fire blocks
+			// Remove old fire blocks
 			for (Block block : fireBlocks) {
 				if (block.getType() != mat.getMaterial()) continue;
 				block.setType(Material.AIR);
@@ -133,33 +166,34 @@ public class FirenovaSpell extends InstantSpell implements TargetedLocationSpell
 						
 			i += expandRate;
 			if (i <= range) {
-				// set next ring on fire
+				// Set next ring on fire
 				int bx = center.getX();
 				int y = center.getY();
 				int bz = center.getZ();
 				for (int x = bx - i; x <= bx + i; x++) {
 					for (int z = bz - i; z <= bz + i; z++) {
-						if (Math.abs(x - bx) == i || Math.abs(z - bz) == i) {
-							Block b = center.getWorld().getBlockAt(x, y, z);
-							if (b.getType() == Material.AIR || (burnTallGrass && b.getType() == Material.LONG_GRASS)) {
-								Block under = b.getRelative(BlockFace.DOWN);
-								if (under.getType() == Material.AIR || (burnTallGrass && under.getType() == Material.LONG_GRASS)) {
-									b = under;
-								}
-								mat.setBlock(b, false);
-								playSpellEffects(EffectPosition.SPECIAL, b.getLocation());
-								fireBlocks.add(b);
-							} else if (b.getRelative(BlockFace.UP).getType() == Material.AIR || (burnTallGrass && b.getRelative(BlockFace.UP).getType() == Material.LONG_GRASS)) {
-								b = b.getRelative(BlockFace.UP);
-								mat.setBlock(b, false);
-								playSpellEffects(EffectPosition.SPECIAL, b.getLocation());
-								fireBlocks.add(b);
+						if (!(Math.abs(x - bx) == i || Math.abs(z - bz) == i)) continue;
+						Block b = center.getWorld().getBlockAt(x, y, z);
+						if (b.getType() == Material.AIR || (burnTallGrass && b.getType() == Material.LONG_GRASS)) {
+							Block under = b.getRelative(BlockFace.DOWN);
+							if (under.getType() == Material.AIR || (burnTallGrass && under.getType() == Material.LONG_GRASS)) {
+								b = under;
 							}
+							mat.setBlock(b, false);
+							playSpellEffects(EffectPosition.SPECIAL, b.getLocation());
+							if (subSpell != null) subSpell.castAtLocation(player, b.getLocation(), 1);
+							fireBlocks.add(b);
+						} else if (b.getRelative(BlockFace.UP).getType() == Material.AIR || (burnTallGrass && b.getRelative(BlockFace.UP).getType() == Material.LONG_GRASS)) {
+							b = b.getRelative(BlockFace.UP);
+							mat.setBlock(b, false);
+							playSpellEffects(EffectPosition.SPECIAL, b.getLocation());
+							if (subSpell != null) subSpell.castAtLocation(player, b.getLocation(), 1);
+							fireBlocks.add(b);
 						}
 					}
 				}
 			} else if (i > range + 1) {
-				// stop if done
+				// Stop if done
 				Bukkit.getServer().getScheduler().cancelTask(taskId);
 				if (fireImmunity != null && player != null) {
 					fireImmunity.remove(player);

@@ -23,9 +23,9 @@ import com.nisovin.magicspells.util.OverridePriority;
 // optional trigger variable of comma separated list of blocks to accept
 public class BlockPlaceListener extends PassiveListener {
 
-	Set<Material> materials = new HashSet<Material>();
-	Map<MagicMaterial, List<PassiveSpell>> types = new HashMap<MagicMaterial, List<PassiveSpell>>();
-	List<PassiveSpell> allTypes = new ArrayList<PassiveSpell>();
+	Set<Material> materials = new HashSet<>();
+	Map<MagicMaterial, List<PassiveSpell>> types = new HashMap<>();
+	List<PassiveSpell> allTypes = new ArrayList<>();
 	
 	@Override
 	public void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var) {
@@ -39,7 +39,7 @@ public class BlockPlaceListener extends PassiveListener {
 				if (m == null) continue;
 				List<PassiveSpell> list = types.get(m);
 				if (list == null) {
-					list = new ArrayList<PassiveSpell>();
+					list = new ArrayList<>();
 					types.put(m, list);
 				}
 				list.add(spell);

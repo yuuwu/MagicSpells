@@ -11,7 +11,7 @@ public class FireTicksVariable extends MetaVariable {
 	public double getValue(String player) {
 		Player p = PlayerNameUtils.getPlayerExact(player);
 		if (p != null) return p.getFireTicks();
-		return 0D;
+		return 0;
 	}
 	
 	@Override

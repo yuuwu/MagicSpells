@@ -7,7 +7,7 @@ import org.bukkit.Particle;
 
 public class Util_1_9 {
 
-	static Map<String, Particle> particleMap = new HashMap<String, Particle>();
+	static Map<String, Particle> particleMap = new HashMap<>();
 	
 	public static Particle getParticleFromName(String name) {
 		for (Particle p : Particle.values()) {

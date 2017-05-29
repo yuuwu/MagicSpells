@@ -20,7 +20,7 @@ public class TargetingCondition extends Condition {
 	
 	@Override
 	public boolean setVar(String var) {
-		if (var == null || var.equals("")) {
+		if (var == null || var.isEmpty()) {
 			anyType = true;
 			return true;
 		}
@@ -30,7 +30,7 @@ public class TargetingCondition extends Condition {
 		}
 		
 		String[] entityTypes = var.split(",");
-		allowedTypes = new HashSet<EntityType>();
+		allowedTypes = new HashSet<>();
 		for (String type: entityTypes) {
 			EntityType entityType = Util.getEntityType(type);
 			if (entityType != null) {

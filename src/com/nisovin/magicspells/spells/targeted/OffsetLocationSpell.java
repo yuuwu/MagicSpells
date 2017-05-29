@@ -27,7 +27,7 @@ public class OffsetLocationSpell extends TargetedSpell implements TargetedLocati
 		
 		spell = new Subspell(getConfigString("spell", ""));
 		if (spell == null) {
-			MagicSpells.error("Invalid spell on OffsetLocationSpell '" + spellName + "'");
+			MagicSpells.error("Invalid spell on OffsetLocationSpell '" + spellName + '\'');
 		}
 	}
 	
@@ -37,7 +37,7 @@ public class OffsetLocationSpell extends TargetedSpell implements TargetedLocati
 		if (spell != null) {
 			boolean ok = spell.process();
 			if (!ok || !spell.isTargetedLocationSpell()) {
-				MagicSpells.error("Invalid spell on OffsetLocationSpell '" + name + "'");
+				MagicSpells.error("Invalid spell on OffsetLocationSpell '" + name + '\'');
 			}
 		}
 	}

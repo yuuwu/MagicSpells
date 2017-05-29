@@ -9,7 +9,7 @@ import com.nisovin.magicspells.util.PlayerNameUtils;
 
 public class PlayerVariable extends Variable {
 
-	Map<String, Double> map = new HashMap<String, Double>();
+	Map<String, Double> map = new HashMap<>();
 	
 	@Override
 	public boolean modify(String player, double amount) {
@@ -36,7 +36,7 @@ public class PlayerVariable extends Variable {
 
 	@Override
 	public double getValue(String player) {
-		if (map.containsKey(player)) return map.get(player).doubleValue();
+		if (map.containsKey(player)) return map.get(player);
 		return defaultValue;
 	}
 

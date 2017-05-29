@@ -40,18 +40,14 @@ public class MagicXpAboveCondition extends Condition {
 	@Override
 	public boolean check(Player player) {
 		for (int i = 0; i < school.length; i++) {
-			if (handler.getXp(player, school[i]) < amount[i]) {
-				return false;
-			}
+			if (handler.getXp(player, school[i]) < amount[i]) return false;
 		}
 		return true;
 	}
 
 	@Override
 	public boolean check(Player player, LivingEntity target) {
-		if (target instanceof Player) {
-			return check((Player)target);
-		}
+		if (target instanceof Player) return check((Player)target);
 		return false;
 	}
 

@@ -20,7 +20,7 @@ public class CustomNameVisibleCondition extends Condition {
 
 	@Override
 	public boolean check(Player player, LivingEntity target) {
-		return target == null ? false : target.isCustomNameVisible();
+		return target != null && target.isCustomNameVisible();
 	}
 
 	@Override

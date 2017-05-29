@@ -11,7 +11,7 @@ public class MaxHealthVariable extends MetaVariable {
 	public double getValue(String player) {
 		Player p = PlayerNameUtils.getPlayerExact(player);
 		if (p != null) return p.getMaxHealth();
-		return 0;
+		return 0D;
 	}
 	
 	@Override

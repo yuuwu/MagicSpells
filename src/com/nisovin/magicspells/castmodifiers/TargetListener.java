@@ -16,8 +16,8 @@ public class TargetListener implements Listener {
 	private List<IModifier> postModifierHooks;
 	
 	public TargetListener() {
-		preModifierHooks = new CopyOnWriteArrayList<IModifier>();
-		postModifierHooks = new CopyOnWriteArrayList<IModifier>();
+		preModifierHooks = new CopyOnWriteArrayList<>();
+		postModifierHooks = new CopyOnWriteArrayList<>();
 	}
 	
 	@EventHandler(priority=EventPriority.LOW, ignoreCancelled=true)

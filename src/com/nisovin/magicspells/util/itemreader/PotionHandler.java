@@ -47,7 +47,7 @@ public class PotionHandler {
 			String[] data = effectString.split(" ");
 			PotionEffectType t = MagicValues.PotionEffect.getPotionEffectType(data[0]);
 			
-			if (t == null) MagicSpells.error("'" + data[0] + "' could not be connected to a potion effect type");
+			if (t == null) MagicSpells.error('\'' + data[0] + "' could not be connected to a potion effect type");
 			if (t != null) {
 				int level = 0;
 				if (data.length > 1) {

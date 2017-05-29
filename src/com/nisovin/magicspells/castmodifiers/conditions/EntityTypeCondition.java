@@ -18,7 +18,7 @@ public class EntityTypeCondition extends Condition {
 	boolean player = false;
 	boolean monster = false;
 	boolean animal = false;
-	Set<EntityType> types = new HashSet<EntityType>();
+	Set<EntityType> types = new HashSet<>();
 	
 	@Override
 	public boolean setVar(String var) {
@@ -47,17 +47,10 @@ public class EntityTypeCondition extends Condition {
 	
 	@Override
 	public boolean check(Player player, LivingEntity target) {
-		if (this.player && target instanceof Player) {
-			return true;
-		} else if (monster && target instanceof Monster) {
-			return true;
-		} else if (animal && target instanceof Animals) {
-			return true;
-		} else if (types.contains(target.getType())) {
-			return true;
-		} else {
-			return false;
-		}
+		if (this.player && target instanceof Player) return true;
+		if (monster && target instanceof Monster) return true;
+		if (animal && target instanceof Animals) return true;
+		return (types.contains(target.getType()));
 	}
 	
 	@Override

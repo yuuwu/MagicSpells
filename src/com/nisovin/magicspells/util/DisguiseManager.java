@@ -23,11 +23,11 @@ public abstract class DisguiseManager implements Listener, IDisguiseManager {
 
 	protected boolean hideArmor;
 	
-	protected Set<DisguiseSpell> disguiseSpells = new HashSet<DisguiseSpell>();
-	protected Map<String, DisguiseSpell.Disguise> disguises = new ConcurrentHashMap<String, DisguiseSpell.Disguise>();
-	protected Map<Integer, DisguiseSpell.Disguise> disguisedEntityIds = new ConcurrentHashMap<Integer, DisguiseSpell.Disguise>();
+	protected Set<DisguiseSpell> disguiseSpells = new HashSet<>();
+	protected Map<String, DisguiseSpell.Disguise> disguises = new ConcurrentHashMap<>();
+	protected Map<Integer, DisguiseSpell.Disguise> disguisedEntityIds = new ConcurrentHashMap<>();
 	protected Set<Integer> dragons = Collections.synchronizedSet(new HashSet<Integer>());
-	protected Map<Integer, Integer> mounts = new ConcurrentHashMap<Integer, Integer>();
+	protected Map<Integer, Integer> mounts = new ConcurrentHashMap<>();
 
 	protected Random random = new Random();
 
@@ -53,14 +53,10 @@ public abstract class DisguiseManager implements Listener, IDisguiseManager {
 	
 	@Override
 	public void addDisguise(Player player, DisguiseSpell.Disguise disguise) {
-		if (isDisguised(player)) {
-			removeDisguise(player);
-		}
+		if (isDisguised(player)) removeDisguise(player);
 		disguises.put(player.getName().toLowerCase(), disguise);
 		disguisedEntityIds.put(player.getEntityId(), disguise);
-		if (disguise.getEntityType() == EntityType.ENDER_DRAGON) {
-			dragons.add(player.getEntityId());
-		}
+		if (disguise.getEntityType() == EntityType.ENDER_DRAGON) dragons.add(player.getEntityId());
 		applyDisguise(player, disguise);
 	}
 	
@@ -122,12 +118,8 @@ public abstract class DisguiseManager implements Listener, IDisguiseManager {
 	}
 	
 	private void clearDisguise(final Player player, boolean sendPlayerPackets, boolean delaySpawnPacket) {
-		if (sendPlayerPackets) {
-			sendDestroyEntityPackets(player);
-		}
-		if (mounts.containsKey(player.getEntityId())) {
-			sendDestroyEntityPackets(player, mounts.remove(player.getEntityId()));
-		}
+		if (sendPlayerPackets) sendDestroyEntityPackets(player);
+		if (mounts.containsKey(player.getEntityId())) sendDestroyEntityPackets(player, mounts.remove(player.getEntityId()));
 		if (sendPlayerPackets && player.isValid()) {
 			if (delaySpawnPacket) {
 				MagicSpells.scheduleDelayedTask(new Runnable() {
@@ -154,20 +146,17 @@ public abstract class DisguiseManager implements Listener, IDisguiseManager {
 	public void onQuit(PlayerQuitEvent event) {
 		disguisedEntityIds.remove(event.getPlayer().getEntityId());
 		dragons.remove(event.getPlayer().getEntityId());
-		if (mounts.containsKey(event.getPlayer().getEntityId())) {
-			sendDestroyEntityPackets(event.getPlayer(), mounts.remove(event.getPlayer().getEntityId()));
-		}
+		if (!mounts.containsKey(event.getPlayer().getEntityId())) return;;
+		sendDestroyEntityPackets(event.getPlayer(), mounts.remove(event.getPlayer().getEntityId()));
 	}
 	
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
 		Player p = event.getPlayer();
-		if (isDisguised(p)) {
-			disguisedEntityIds.put(p.getEntityId(), getDisguise(p));
-			if (getDisguise(p).getEntityType() == EntityType.ENDER_DRAGON) {
-				dragons.add(p.getEntityId());
-			}
-		}
+		if (!isDisguised(p)) return;
+		disguisedEntityIds.put(p.getEntityId(), getDisguise(p));
+		if (getDisguise(p).getEntityType() != EntityType.ENDER_DRAGON) return;
+		dragons.add(p.getEntityId());
 	}
 	
 }

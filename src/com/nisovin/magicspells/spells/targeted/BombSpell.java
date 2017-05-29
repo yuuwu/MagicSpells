@@ -37,7 +37,7 @@ public class BombSpell extends TargetedSpell implements TargetedLocationSpell {
 		super.initialize();
 		if (!spell.process() || !spell.isTargetedLocationSpell()) {
 			spell = null;
-			MagicSpells.error("Invalid spell on BombSpell '" + internalName + "'");
+			MagicSpells.error("Invalid spell on BombSpell '" + internalName + '\'');
 		}
 	}
 

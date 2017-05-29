@@ -17,7 +17,7 @@ import com.nisovin.magicspells.util.ExperienceUtils;
 
 public class CurrencyHandler {
 
-	private HashMap<String,String> currencies = new HashMap<String,String>();
+	private HashMap<String,String> currencies = new HashMap<>();
 	private String defaultCurrency;
 	private Economy economy;
 	
@@ -29,9 +29,7 @@ public class CurrencyHandler {
 		} else {
 			Set<String> keys = sec.getKeys(false);
 			for (String key : keys) {
-				if (defaultCurrency == null) {
-					defaultCurrency = key;
-				}
+				if (defaultCurrency == null) defaultCurrency = key;
 				currencies.put(key.toLowerCase(), sec.getString(key).toLowerCase());
 			}
 			if (defaultCurrency == null) {
@@ -40,12 +38,10 @@ public class CurrencyHandler {
 			}
 		}
 
-		// set up vault hook
+		// Set up vault hook
 		if (currencies.containsValue("vault") && Bukkit.getPluginManager().isPluginEnabled("Vault")) {
 			RegisteredServiceProvider<Economy> provider = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
-			if (provider != null) {
-				economy = provider.getProvider();
-			}
+			if (provider != null) economy = provider.getProvider();
 		}
 	}
 	
@@ -57,24 +53,18 @@ public class CurrencyHandler {
 		String c = currency == null ? null : currencies.get(currency.toLowerCase());
 		if (c == null) c = currencies.get(defaultCurrency);
 		
-		if (c == null) {
-			return false;
-		} else if (c.equalsIgnoreCase("vault") && economy != null) {
-			return economy.has(player.getName(), amount);
-		} else if (c.equalsIgnoreCase("levels")) {
-			return player.getLevel() >= (int)amount;
-		} else if (c.equalsIgnoreCase("experience") || c.equalsIgnoreCase("xp")) {
-			return ExperienceUtils.hasExp(player, (int)amount);
-		} else if (c.matches("^[0-9]+$")) {
-			return inventoryContains(player.getInventory(), new ItemStack(Integer.parseInt(c), (int)amount));
-		} else if (c.matches("^[0-9]+:[0-9]+$")) {
+		if (c == null) return false;
+		if (c.equalsIgnoreCase("vault") && economy != null) return economy.has(player.getName(), amount);
+		if (c.equalsIgnoreCase("levels")) return player.getLevel() >= (int)amount;
+		if (c.equalsIgnoreCase("experience") || c.equalsIgnoreCase("xp")) return ExperienceUtils.hasExp(player, (int)amount);
+		if (c.matches("^[0-9]+$")) return inventoryContains(player.getInventory(), new ItemStack(Integer.parseInt(c), (int)amount));
+		if (c.matches("^[0-9]+:[0-9]+$")) {
 			String[] s = c.split(":");
 			int type = Integer.parseInt(s[0]);
 			short data = Short.parseShort(s[1]);
 			return inventoryContains(player.getInventory(), new ItemStack(type, (int)amount, data));
-		} else {
-			return false;
 		}
+		return false;
 	}
 	
 	public void remove(Player player, double amount) {
@@ -105,7 +95,7 @@ public class CurrencyHandler {
 	}
 	
 	public boolean isValidCurrency(String currency) {
-		return ((currency == null) ? false : currencies.containsKey(currency));
+		return currency != null && currencies.containsKey(currency);
 	}
 	
 	private boolean inventoryContains(Inventory inventory, ItemStack item) {
@@ -115,9 +105,7 @@ public class CurrencyHandler {
 			if (items[i] != null && items[i].getType() == item.getType() && items[i].getDurability() == item.getDurability()) {
 				count += items[i].getAmount();
 			}
-			if (count >= item.getAmount()) {
-				return true;
-			}
+			if (count >= item.getAmount()) return true;
 		}
 		return false;
 	}

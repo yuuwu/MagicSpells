@@ -10,8 +10,8 @@ import com.nisovin.magicspells.spells.PassiveSpell;
 
 public class PassiveManager {
 
-	Set<PassiveListener> listeners = new HashSet<PassiveListener>();
-	Set<PassiveTrigger> triggers = new HashSet<PassiveTrigger>();
+	Set<PassiveListener> listeners = new HashSet<>();
+	Set<PassiveTrigger> triggers = new HashSet<>();
 	boolean initialized = false;
 	
 	public void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var) {

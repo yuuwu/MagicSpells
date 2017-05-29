@@ -29,7 +29,7 @@ public class TemporaryBlockSet implements Runnable {
 		this.callPlaceEvent = callPlaceEvent;
 		this.player = player;
 		
-		this.blocks = new ArrayList<Block>();
+		this.blocks = new ArrayList<>();
 	}
 	
 	public void add(Block block) {
@@ -80,7 +80,7 @@ public class TemporaryBlockSet implements Runnable {
 	
 	public interface BlockSetRemovalCallback {
 	
-		public void run(TemporaryBlockSet set);
+		void run(TemporaryBlockSet set);
 	
 	}
 	

@@ -26,10 +26,10 @@ public class ConfusionSpell extends InstantSpell {
 		if (state == SpellCastState.NORMAL) {
 			int range = Math.round(this.range * power);
 			List<Entity> entities = player.getNearbyEntities(range, range, range);
-			List<LivingEntity> monsters = new ArrayList<LivingEntity>();
+			List<LivingEntity> monsters = new ArrayList<>();
 			for (Entity e : entities) {
 				if (!(e instanceof LivingEntity)) continue;
-				if (!validTargetList.canTarget(player, (LivingEntity)e)) continue;
+				if (!validTargetList.canTarget(player, e)) continue;
 				monsters.add((LivingEntity)e);
 			}
 			for (int i = 0; i < monsters.size(); i++) {

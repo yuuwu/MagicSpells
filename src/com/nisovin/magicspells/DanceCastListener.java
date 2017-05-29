@@ -2,6 +2,7 @@ package com.nisovin.magicspells;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -22,7 +23,9 @@ import com.nisovin.magicspells.util.PlayerNameUtils;
 import com.nisovin.magicspells.util.Util;
 
 public class DanceCastListener implements Listener {
-
+	
+	private static final Pattern DANCE_CAST_PATTERN = Pattern.compile("[CSUJLRFBA]+");
+	
 	MagicSpells plugin;
 	
 	@ConfigData(field="general.dance-cast-item", dataType="String")
@@ -31,11 +34,11 @@ public class DanceCastListener implements Listener {
 	@ConfigData(field="general.dance-cast-duration", dataType="int")
 	int duration;
 	
-	Map<String, Spell> spells = new HashMap<String, Spell>();
+	Map<String, Spell> spells = new HashMap<>();
 	
-	Map<String, String> playerCasts = new HashMap<String, String>();
-	Map<String, Location> playerLocations = new HashMap<String, Location>();
-	Map<String, Integer> playerTasks = new HashMap<String, Integer>();
+	Map<String, String> playerCasts = new HashMap<>();
+	Map<String, Location> playerLocations = new HashMap<>();
+	Map<String, Integer> playerTasks = new HashMap<>();
 	
 	@ConfigData(field="general.dance-cast-dynamic", dataType="boolean", defaultValue="false")
 	boolean dynamicCasting = false;
@@ -82,15 +85,14 @@ public class DanceCastListener implements Listener {
 		for (Spell spell : MagicSpells.spells()) {
 			String seq = spell.getDanceCastSequence();
 			if (seq == null) continue;
-			if (seq.matches("[CSUJLRFBA]+")) {
-				spells.put(seq, spell);
-				if (seq.contains("D")) enableDoubleJump = true;
-				if (seq.contains("F") || seq.contains("B") || seq.contains("L") || seq.contains("R") || seq.contains("J")) enableMovement = true;
-				MagicSpells.debug("Dance cast registered: " + spell.getInternalName() + " - " + seq);
-			}
+			if (!DANCE_CAST_PATTERN.matcher(seq).matches()) continue;
+			spells.put(seq, spell);
+			if (seq.contains("D")) enableDoubleJump = true;
+			if (seq.contains("F") || seq.contains("B") || seq.contains("L") || seq.contains("R") || seq.contains("J")) enableMovement = true;
+			MagicSpells.debug("Dance cast registered: " + spell.getInternalName() + " - " + seq);
 		}
 		
-		if (spells.size() > 0) {
+		if (!spells.isEmpty()) {
 			MagicSpells.registerEvents(this);
 		}
 	}
@@ -149,15 +151,13 @@ public class DanceCastListener implements Listener {
 						MagicSpells.getVolatileCodeHandler().playSound(player, startSound, startSoundVolume, startSoundPitch);
 						//SoundUtils.playSound(player, startSound, startSoundVolume, startSoundPitch); //the new system again
 					}
-					if (duration > 0) {
-						playerTasks.put(playerName, MagicSpells.scheduleDelayedTask(new DanceCastDuration(playerName), duration));
-					}
+					if (duration > 0) playerTasks.put(playerName, MagicSpells.scheduleDelayedTask(new DanceCastDuration(playerName), duration));
 				}
 			}
 		} else if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
 			String castSequence = playerCasts.get(playerName);
 			if (castSequence != null) {
-				castSequence = processMovement(player, castSequence) + "C";
+				castSequence = processMovement(player, castSequence) + 'C';
 				playerCasts.put(playerName, castSequence);
 				if (dynamicCasting) processDanceCast(player, castSequence, false);
 			}
@@ -185,7 +185,7 @@ public class DanceCastListener implements Listener {
 		if (castSequence != null && event.isFlying()) {
 			event.setCancelled(true);
 			castSequence = processMovement(player, castSequence);
-			playerCasts.put(playerName, castSequence + "D");
+			playerCasts.put(playerName, castSequence + 'D');
 		}
 	}
 	
@@ -205,18 +205,16 @@ public class DanceCastListener implements Listener {
 		if (diff < 0) diff += 360;
 		
 		if (diff < 20 || diff > 340) {
-			castSequence += "F"; //TODO find an alternative to reassigning the parameter
+			castSequence += "F";
 		} else if (70 < diff && diff < 110) {
-			castSequence += "L"; //TODO find an alternative to reassigning the parameter
+			castSequence += "L";
 		} else if (160 < diff && diff < 200) {
-			castSequence += "B"; //TODO find an alternative to reassigning the parameter
+			castSequence += "B";
 		} else if (250 < diff && diff < 290) {
-			castSequence += "R"; //TODO find an alternative to reassigning the parameter
+			castSequence += "R";
 		}
 		
-		if (player.getLocation().getY() - firstLoc.getY() > 0.4) {
-			castSequence += "J"; //TODO find an alternative to reassigning the parameter
-		}
+		if (player.getLocation().getY() - firstLoc.getY() > 0.4) castSequence += "J";
 		
 		return castSequence;
 	}
@@ -236,9 +234,7 @@ public class DanceCastListener implements Listener {
 			playerTasks.remove(playerName);
 			if (cast != null) {
 				Player player = PlayerNameUtils.getPlayerExact(playerName);
-				if (player != null) {
-					MagicSpells.sendMessage(strDanceFail, player, MagicSpells.NULL_ARGS);
-				}
+				if (player != null) MagicSpells.sendMessage(strDanceFail, player, MagicSpells.NULL_ARGS);
 			}
 		}
 	}

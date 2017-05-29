@@ -16,7 +16,7 @@ public abstract class Variable {
 	protected boolean expBar;
 	
 	public Variable() {
-		//no op
+		// No op
 	}
 	
 	public final void init(double defaultValue, double minValue, double maxValue, boolean permanent, Objective objective, String bossBar, boolean expBar) {
@@ -32,7 +32,7 @@ public abstract class Variable {
 	}
 	
 	protected void init() {
-		//no op
+		// No op
 	}
 	
 	public final boolean modify(Player player, double amount) {
@@ -69,7 +69,7 @@ public abstract class Variable {
 	public abstract void reset(String player);
 	
 	public void loadExtraData(ConfigurationSection section) {
-		// no op from here, but subclasses may add behavior
+		// No op from here, but subclasses may add behavior
 	}
 	
 	public String getStringValue(Player player) {

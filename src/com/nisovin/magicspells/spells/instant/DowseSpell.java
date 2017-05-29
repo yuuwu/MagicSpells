@@ -131,7 +131,7 @@ public class DowseSpell extends InstantSpell {
 					// find nearest entity
 					List<Entity> nearby = player.getNearbyEntities(radius, radius, radius);
 					Location playerLoc = player.getLocation();
-					TreeSet<NearbyEntity> ordered = new TreeSet<NearbyEntity>();
+					TreeSet<NearbyEntity> ordered = new TreeSet<>();
 					for (Entity e : nearby) {
 						if (e.getType() == entityType) {
 							double d = e.getLocation().distanceSquared(playerLoc);
@@ -163,7 +163,7 @@ public class DowseSpell extends InstantSpell {
 					return PostCastAction.ALREADY_HANDLED;
 				} else {
 					if (rotatePlayer) {
-						Location l = (foundEntity instanceof LivingEntity ? ((LivingEntity)foundEntity).getEyeLocation() : foundEntity.getLocation());
+						Location l = foundEntity instanceof LivingEntity ? ((LivingEntity)foundEntity).getEyeLocation() : foundEntity.getLocation();
 						Vector v = l.subtract(player.getEyeLocation()).toVector().normalize();
 						Util.setFacing(player, v);
 					}

@@ -44,25 +44,25 @@ public class DistanceToVariable extends Variable {
 		
 		if (!crossWorld && !LocationUtil.isSameWorld(originLocation, targetLoc)) return defaultValue;
 		
-		double multiplier = (!LocationUtil.isSameWorld(originLocation, targetLoc) ? crossWorldDistanceMultiplier : 1.0);
+		double multiplier = !LocationUtil.isSameWorld(originLocation, targetLoc) ? crossWorldDistanceMultiplier : 1.0;
 		targetLoc.setWorld(originLocation.getWorld());
 		return calculateReportedDistance(multiplier, originLocation, targetLoc);
 	}
 
 	@Override
 	public boolean modify(String player, double amount) {
-		//no op
+		// No op
 		return false;
 	}
 
 	@Override
 	public void set(String player, double amount) {
-		//no op
+		// No op
 	}
 
 	@Override
 	public void reset(String player) {
-		// no op with this
+		// No op with this
 	}
 	
 	@Override

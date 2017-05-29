@@ -46,7 +46,7 @@ public class CarpetSpell extends TargetedSpell implements TargetedLocationSpell 
 			touchCheckInterval = getConfigInt("touch-check-interval", 3);
 			removeOnTouch = getConfigBoolean("remove-on-touch", true);
 			spellOnTouch = new Subspell(getConfigString("spell-on-touch", ""));
-			blockMap = new HashMap<Block, Player>();
+			blockMap = new HashMap<>();
 			checker = new TouchChecker();
 		}
 	}
@@ -98,7 +98,7 @@ public class CarpetSpell extends TargetedSpell implements TargetedLocationSpell 
 		int rad = Math.round(radius * power);
 		Block b;
 		int y = loc.getBlockY();
-		final List<Block> blocks = new ArrayList<Block>();
+		final List<Block> blocks = new ArrayList<>();
 		for (int x = loc.getBlockX() - rad; x <= loc.getBlockX() + rad; x++) {
 			for (int z = loc.getBlockZ() - rad; z <= loc.getBlockZ() + rad; z++) {
 				b = loc.getWorld().getBlockAt(x, y, z);

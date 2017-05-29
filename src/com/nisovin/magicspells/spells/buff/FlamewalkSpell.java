@@ -37,7 +37,7 @@ public class FlamewalkSpell extends BuffSpell {
 		targetPlayers = getConfigBoolean("target-players", false);
 		checkPlugins = getConfigBoolean("check-plugins", true);
 		
-		flamewalkers = new HashMap<String, Float>();
+		flamewalkers = new HashMap<>();
 	}
 
 	@Override
