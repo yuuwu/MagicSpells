@@ -19,7 +19,7 @@ import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 
 public class ZapSpell extends TargetedSpell implements TargetedLocationSpell {
@@ -78,7 +78,7 @@ public class ZapSpell extends TargetedSpell implements TargetedLocationSpell {
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
-			// get targeted block
+			// Get targeted block
 			Block target;
 			try {
 				target = getTargetedBlock(player, power);
@@ -95,9 +95,9 @@ public class ZapSpell extends TargetedSpell implements TargetedLocationSpell {
 				}
 			}
 			if (target != null) {
-				// check for disallowed block
+				// Check for disallowed block
 				if (!canZap(target)) return noTarget(player, strCantZap);
-				// zap
+				// Zap
 				boolean ok = zap(target, player);
 				if (!ok) return noTarget(player, strCantZap);
 			} else {
@@ -110,17 +110,17 @@ public class ZapSpell extends TargetedSpell implements TargetedLocationSpell {
 	private boolean zap(Block target, Player player) {
 		boolean playerNull = player == null;
 		
-		// check for protection
+		// Check for protection
 		if (checkPlugins && !playerNull) {
 			MagicSpellsBlockBreakEvent event = new MagicSpellsBlockBreakEvent(target, player);
 			MagicSpells.plugin.getServer().getPluginManager().callEvent(event);
 			if (event.isCancelled()) {
-				// a plugin cancelled the event
+				// A plugin cancelled the event
 				return false;
 			}
 		}
 		
-		// drop block
+		// Drop block
 		if (dropBlock) {
 			if (dropNormal) {
 				target.breakNaturally();
@@ -129,13 +129,13 @@ public class ZapSpell extends TargetedSpell implements TargetedLocationSpell {
 			}
 		}
 		
-		// show animation
+		// Show animation
 		if (playBreakEffect) target.getWorld().playEffect(target.getLocation(), Effect.STEP_SOUND, target.getType());
 		if (!playerNull) playSpellEffects(EffectPosition.CASTER, player);
 		playSpellEffects(EffectPosition.TARGET, target.getLocation());
 		if (!playerNull) playSpellEffectsTrail(player.getLocation(), target.getLocation());
 		
-		// remove block
+		// Remove block
 		target.setType(Material.AIR);
 		return true;
 	}

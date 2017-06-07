@@ -20,31 +20,30 @@ public class RoarSpell extends InstantSpell {
 	public RoarSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		radius = getConfigInt("range", 8);
-		cancelIfNoTargets = getConfigBoolean("cancel-if-no-targets", true);
-		strNoTarget = getConfigString("str-no-target", "No targets found.");
+		this.radius = getConfigInt("range", 8);
+		this.cancelIfNoTargets = getConfigBoolean("cancel-if-no-targets", true);
+		this.strNoTarget = getConfigString("str-no-target", "No targets found.");
 	}
 
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			int count = 0;
-			List<Entity> entities = player.getNearbyEntities(radius, radius, radius);
+			List<Entity> entities = player.getNearbyEntities(this.radius, this.radius, this.radius);
 			for (Entity entity : entities) {
-				if (entity instanceof LivingEntity && !(entity instanceof Player) && validTargetList.canTarget(player, entity)) {
+				if (entity instanceof LivingEntity && !(entity instanceof Player) && this.validTargetList.canTarget(player, entity)) {
 					MagicSpells.getVolatileCodeHandler().setTarget((LivingEntity)entity, player);
 					count++;
 					playSpellEffects(EffectPosition.TARGET, entity);
 				}
 			}
 			
-			if (cancelIfNoTargets && count == 0) {
+			if (this.cancelIfNoTargets && count == 0) {
 				// nothing affected
-				sendMessage(strNoTarget, player, args);
+				sendMessage(this.strNoTarget, player, args);
 				return PostCastAction.ALREADY_HANDLED;
-			} else {
-				playSpellEffects(EffectPosition.CASTER, player);
 			}
+			playSpellEffects(EffectPosition.CASTER, player);
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}

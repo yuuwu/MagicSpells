@@ -1,5 +1,6 @@
 package com.nisovin.magicspells.zones;
 
+import com.nisovin.magicspells.util.compat.CompatBasics;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -25,29 +26,28 @@ public class NoMagicZoneWorldGuard extends NoMagicZone {
 	@Override
 	public boolean inZone(Location location) {
 		// Check world
-		if (!worldName.equals(location.getWorld().getName())) return false;
+		if (!this.worldName.equals(location.getWorld().getName())) return false;
 		
 		// Get region, if necessary
-		if (region == null) {
+		if (this.region == null) {
 			WorldGuardPlugin worldGuard = null;
-			if (Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard")) worldGuard = (WorldGuardPlugin)Bukkit.getServer().getPluginManager().getPlugin("WorldGuard");
+			if (CompatBasics.pluginEnabled("WorldGuard")) worldGuard = (WorldGuardPlugin)CompatBasics.getPlugin("WorldGuard");
 			if (worldGuard != null) {
-				World w = Bukkit.getServer().getWorld(worldName);
+				World w = Bukkit.getServer().getWorld(this.worldName);
 				if (w != null) {
 					RegionManager rm = worldGuard.getRegionManager(w);
-					if (rm != null) region = rm.getRegion(regionName);
+					if (rm != null) this.region = rm.getRegion(this.regionName);
 				}
 			}
 		}
 		
 		// Check if contains
-		if (region != null) {
+		if (this.region != null) {
 			com.sk89q.worldedit.Vector v = new com.sk89q.worldedit.Vector(location.getX(), location.getY(), location.getZ());
-			return region.contains(v);
-		} else {
-			MagicSpells.error("Failed to access WorldGuard region '" + regionName + '\'');
-			return false;
+			return this.region.contains(v);
 		}
+		MagicSpells.error("Failed to access WorldGuard region '" + this.regionName + '\'');
+		return false;
 	}
 
 }

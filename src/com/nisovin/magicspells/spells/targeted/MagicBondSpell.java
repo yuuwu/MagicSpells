@@ -83,13 +83,13 @@ public class MagicBondSpell extends TargetedSpell implements TargetedEntitySpell
         playSpellEffects(EffectPosition.TARGET, target);
         return true;
     }
-
+    
     class SpellMonitor implements Listener {
     	
         Player caster;
         Player target;
         float power;
-
+        
         public SpellMonitor(Player caster, Player target, float power) {
             this.caster = caster;
             this.target = bondTarget.get(caster);

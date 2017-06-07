@@ -26,11 +26,10 @@ public class PassiveManager {
 	}
 	
 	public void initialize() {
-		if (!initialized) {
-			initialized = true;
-			for (PassiveListener listener : listeners) {
-				listener.initialize();
-			}
+		if (initialized) return;
+		initialized = true;
+		for (PassiveListener listener : listeners) {
+			listener.initialize();
 		}
 	}
 	

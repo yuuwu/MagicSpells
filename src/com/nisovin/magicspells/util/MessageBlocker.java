@@ -21,8 +21,8 @@ public class MessageBlocker {
 	
 	public MessageBlocker() {
 		ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
-		packetListener = new PacketListener();
-		protocolManager.addPacketListener(packetListener);
+		this.packetListener = new PacketListener();
+		protocolManager.addPacketListener(this.packetListener);
 	}
 	
 	public void addPlayer(Player player) {
@@ -34,10 +34,10 @@ public class MessageBlocker {
 	}
 	
 	public void turnOff() {
-		if (packetListener == null) return;
+		if (this.packetListener == null) return;
 		ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
-		protocolManager.removePacketListener(packetListener);
-		packetListener = null;
+		protocolManager.removePacketListener(this.packetListener);
+		this.packetListener = null;
 	}
 	
 	class PacketListener extends PacketAdapter {

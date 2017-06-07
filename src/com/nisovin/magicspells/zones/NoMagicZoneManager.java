@@ -22,16 +22,16 @@ public class NoMagicZoneManager {
 
 	public NoMagicZoneManager() {
 		// Create zone types
-		zoneTypes = new HashMap<>();
-		zoneTypes.put("cuboid", NoMagicZoneCuboid.class);
-		zoneTypes.put("worldguard", NoMagicZoneWorldGuard.class);
-		zoneTypes.put("residence", NoMagicZoneResidence.class);
+		this.zoneTypes = new HashMap<>();
+		this.zoneTypes.put("cuboid", NoMagicZoneCuboid.class);
+		this.zoneTypes.put("worldguard", NoMagicZoneWorldGuard.class);
+		this.zoneTypes.put("residence", NoMagicZoneResidence.class);
 	}
 	
 	public void load(MagicConfig config) {
 		// Get zones
-		zones = new HashMap<>();
-		zonesOrdered = new TreeSet<>();
+		this.zones = new HashMap<>();
+		this.zonesOrdered = new TreeSet<>();
 				
 		Set<String> zoneNodes = config.getKeys("no-magic-zones");
 		if (zoneNodes != null) {
@@ -48,7 +48,7 @@ public class NoMagicZoneManager {
 					continue;
 				}
 				
-				Class<? extends NoMagicZone> clazz = zoneTypes.get(type);
+				Class<? extends NoMagicZone> clazz = this.zoneTypes.get(type);
 				if (clazz == null) {
 					MagicSpells.error("Invalid no-magic zone type '" + type + "' on zone '" + node + '\'');
 					continue;
@@ -64,13 +64,13 @@ public class NoMagicZoneManager {
 					continue;
 				}
 				zone.create(node, zoneConfig);
-				zones.put(node, zone);
-				zonesOrdered.add(zone);
+				this.zones.put(node, zone);
+				this.zonesOrdered.add(zone);
 				MagicSpells.debug(3, "Loaded no-magic zone: " + node);
 			}
 		}
 		
-		MagicSpells.debug(1, "No-magic zones loaded: " + zones.size());
+		MagicSpells.debug(1, "No-magic zones loaded: " + this.zones.size());
 	}
 	
 	public boolean willFizzle(Player player, Spell spell) {
@@ -78,7 +78,7 @@ public class NoMagicZoneManager {
 	}
 	
 	public boolean willFizzle(Location location, Spell spell) {
-		for (NoMagicZone zone : zonesOrdered) {
+		for (NoMagicZone zone : this.zonesOrdered) {
 			ZoneCheckResult result = zone.check(location, spell);
 			if (result == ZoneCheckResult.DENY) return true;
 			if (result == ZoneCheckResult.ALLOW) return false;
@@ -91,12 +91,12 @@ public class NoMagicZoneManager {
 	}
 	
 	public boolean inZone(Location loc, String zoneName) {
-		NoMagicZone zone = zones.get(zoneName);
+		NoMagicZone zone = this.zones.get(zoneName);
 		return zone != null && zone.inZone(loc);
 	}
 	
 	public void sendNoMagicMessage(Player player, Spell spell) {
-		for (NoMagicZone zone : zonesOrdered) {
+		for (NoMagicZone zone : this.zonesOrdered) {
 			ZoneCheckResult result = zone.check(player.getLocation(), spell);
 			if (result != ZoneCheckResult.DENY) continue;
 			MagicSpells.sendMessage(zone.getMessage(), player, null);
@@ -105,18 +105,18 @@ public class NoMagicZoneManager {
 	}
 	
 	public int zoneCount() {
-		return zones.size();
+		return this.zones.size();
 	}
 	
 	public void addZoneType(String name, Class<? extends NoMagicZone> clazz) {
-		zoneTypes.put(name, clazz);
+		this.zoneTypes.put(name, clazz);
 	}
 	
 	public void turnOff() {
-		zoneTypes.clear();
-		zones.clear();
-		zoneTypes = null;
-		zones = null;
+		this.zoneTypes.clear();
+		this.zones.clear();
+		this.zoneTypes = null;
+		this.zones = null;
 	}
 	
 }

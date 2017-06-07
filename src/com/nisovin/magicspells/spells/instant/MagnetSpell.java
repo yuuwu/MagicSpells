@@ -29,12 +29,12 @@ public class MagnetSpell extends InstantSpell implements TargetedLocationSpell {
 	
 	public MagnetSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
-
-		range = getConfigDouble("range", 5D);
-		velocity = getConfigDouble("velocity", 1D);
-		teleport = getConfigBoolean("teleport-items", false);
-		forcepickup = getConfigBoolean("force-pickup", false);
-		removeItemGravity = getConfigBoolean("remove-item-gravity", false);
+		
+		this.range = getConfigDouble("range", 5D);
+		this.velocity = getConfigDouble("velocity", 1D);
+		this.teleport = getConfigBoolean("teleport-items", false);
+		this.forcepickup = getConfigBoolean("force-pickup", false);
+		this.removeItemGravity = getConfigBoolean("remove-item-gravity", false);
 	}
 
 	@Override
@@ -59,16 +59,16 @@ public class MagnetSpell extends InstantSpell implements TargetedLocationSpell {
 		
 	private void magnet(Location origin, Item item, float power) {
 		
-		// handle gravity removal
-		if (removeItemGravity) {
+		// Handle gravity removal
+		if (this.removeItemGravity) {
 			MagicSpells.getVolatileCodeHandler().setGravity(item, false);
 		}
 		
-		// handle item entity movement
-		if (teleport) {
+		// Handle item entity movement
+		if (this.teleport) {
 			item.teleport(origin);	
 		} else {
-			item.setVelocity(origin.toVector().subtract(item.getLocation().toVector()).normalize().multiply(velocity * power));
+			item.setVelocity(origin.toVector().subtract(item.getLocation().toVector()).normalize().multiply(this.velocity * power));
 		}
 		
 		playSpellEffects(EffectPosition.PROJECTILE, item);
@@ -76,13 +76,13 @@ public class MagnetSpell extends InstantSpell implements TargetedLocationSpell {
 
 	@Override
 	public boolean castAtLocation(Player caster, Location target, float power) {
-		// can't have a null caster
+		// Can't have a null caster
 		if (caster == null) return false;
 		
-		// get the items nearby
-		Collection<Item> targetItems = getNearbyItems(target, range * power);
+		// Get the items nearby
+		Collection<Item> targetItems = getNearbyItems(target, this.range * power);
 		
-		// magnet them
+		// Magnet them
 		magnet(caster, targetItems, power);
 		
 		return true;
@@ -110,16 +110,15 @@ public class MagnetSpell extends InstantSpell implements TargetedLocationSpell {
 		
 		List<Item> ret = new ArrayList<>();
 		for (Entity e: entities) {
-			if (e instanceof Item) {
-				Item i = (Item)e;
-				ItemStack stack = i.getItemStack();
-				if (!InventoryUtil.isNothing(stack) && !i.isDead()) {
-					if (forcepickup) {
-						i.setPickupDelay(0);
-						ret.add(i);
-					} else if (i.getPickupDelay() < i.getTicksLived()){
-						ret.add(i);
-					}
+			if (!(e instanceof Item)) continue;;
+			Item i = (Item)e;
+			ItemStack stack = i.getItemStack();
+			if (!InventoryUtil.isNothing(stack) && !i.isDead()) {
+				if (this.forcepickup) {
+					i.setPickupDelay(0);
+					ret.add(i);
+				} else if (i.getPickupDelay() < i.getTicksLived()){
+					ret.add(i);
 				}
 			}
 		}

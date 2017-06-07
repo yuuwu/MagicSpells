@@ -24,7 +24,7 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedEntityFromLocationSpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 
 public class VolleySpell extends TargetedSpell implements TargetedLocationSpell, TargetedEntityFromLocationSpell {
@@ -93,11 +93,11 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 		if (shootInterval <= 0) {
 			final ArrayList<Arrow> arrowList = new ArrayList<>();
 			
-			int arrows = powerAffectsArrowCount ? Math.round(this.arrows * power) : this.arrows;
-			for (int i = 0; i < arrows; i++) {
+			int castingArrows = powerAffectsArrowCount ? Math.round(this.arrows * power) : this.arrows;
+			for (int i = 0; i < castingArrows; i++) {
 				float speed = this.speed / 10F;
 				if (powerAffectsSpeed) speed *= power;
-				Arrow a = from.getWorld().spawnArrow(spawn, v, speed, (spread/10.0F));
+				Arrow a = from.getWorld().spawnArrow(spawn, v, speed, spread/10.0F);
 				a.setVelocity(a.getVelocity());
 				MagicSpells.getVolatileCodeHandler().setGravity(a, arrowsHaveGravity);
 				if (player != null) a.setShooter(player);
@@ -133,9 +133,7 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 				playSpellEffects(EffectPosition.CASTER, player);
 			}
 		} else {
-			if (from != null) { //TODO check null checks
-				playSpellEffects(EffectPosition.CASTER, from);
-			}
+			playSpellEffects(EffectPosition.CASTER, from);
 			if (target != null) playSpellEffects(EffectPosition.TARGET, target);
 		}
 	}
@@ -174,21 +172,21 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 	
 	@EventHandler
 	public void onArrowHit(EntityDamageByEntityEvent event) {
-		//if it isn't from a projectile, don't care about it here
+		// If it isn't from a projectile, don't care about it here
 		if (event.getCause() != DamageCause.PROJECTILE) return;
-		//damaged entity has to be a player
+		// Damaged entity has to be a player
 		if (!(event.getEntity() instanceof Player)) return;
 		Entity damagerEntity = event.getDamager();
-		//gotta be an arrow and have some metadata
+		// Gotta be an arrow and have some metadata
 		if (!(damagerEntity instanceof Arrow) || !damagerEntity.hasMetadata(METADATA_KEY)) return;
 		MetadataValue meta = damagerEntity.getMetadata(METADATA_KEY).iterator().next();
-		//make sure it is actually from this spell
+		// Make sure it is actually from this spell
 		if (!meta.value().equals("VolleySpell" + internalName)) return;
 		Player p = (Player) event.getEntity();
 		Arrow a = (Arrow)damagerEntity;
 		SpellPreImpactEvent preImpactEvent = new SpellPreImpactEvent(thisSpell, thisSpell, (Player) a.getShooter(), p, 1);
 		EventUtil.call(preImpactEvent);
-		//let's see if this can redirect it
+		// Let's see if this can redirect it
 		if (preImpactEvent.getRedirected()) {
 			event.setCancelled(true);
 			//TODO: if this doesn't work, make a new arrow and copy values over to it
@@ -224,9 +222,9 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 		
 		@Override
 		public void run() {			
-			// fire an arrow
+			// Fire an arrow
 			if (count < arrowsShooter) {
-				Arrow a = spawn.getWorld().spawnArrow(spawn, dir, speedShooter, (spread/10.0F));
+				Arrow a = spawn.getWorld().spawnArrow(spawn, dir, speedShooter, spread/10.0F);
 				MagicSpells.getVolatileCodeHandler().setGravity(a, arrowsHaveGravity);
 				playSpellEffects(EffectPosition.PROJECTILE, a);
 				playTrackingLinePatterns(EffectPosition.DYNAMIC_CASTER_PROJECTILE_LINE, player.getLocation(), a.getLocation(), player, a);
@@ -237,7 +235,7 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 				if (removeDelay > 0) arrowMap.put(count, a);
 			}
 			
-			// remove old arrow
+			// Remove old arrow
 			if (removeDelay > 0) {
 				int old = count - removeDelay;
 				if (old > 0) {
@@ -246,7 +244,7 @@ public class VolleySpell extends TargetedSpell implements TargetedLocationSpell,
 				}
 			}
 			
-			// end if it's done
+			// End if it's done
 			if (count >= arrowsShooter + removeDelay) Bukkit.getScheduler().cancelTask(taskId);
 
 			count++;

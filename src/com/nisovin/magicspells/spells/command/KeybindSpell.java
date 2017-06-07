@@ -35,18 +35,16 @@ public class KeybindSpell extends CommandSpell {
 	public KeybindSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		wandItem = Util.getItemStackFromString(getConfigString("wand-item", "blaze_rod"));
-		defaultSpellIcon = Util.getItemStackFromString(getConfigString("default-spell-icon", "redstone"));
+		this.wandItem = Util.getItemStackFromString(getConfigString("wand-item", "blaze_rod"));
+		this.defaultSpellIcon = Util.getItemStackFromString(getConfigString("default-spell-icon", "redstone"));
 		
-		playerKeybinds = new HashMap<>();
+		this.playerKeybinds = new HashMap<>();
 	}
 	
 	@Override
 	protected void initialize() {
 		super.initialize();
-		for (Player p : Bukkit.getOnlinePlayers()) {
-			loadKeybinds(p);
-		}
+		Util.forEachPlayerOnline(this::loadKeybinds);
 	}
 
 	private void loadKeybinds(Player player) {
@@ -62,7 +60,7 @@ public class KeybindSpell extends CommandSpell {
 					Spell spell = MagicSpells.getSpellByInternalName(spellName);
 					if (spell != null) keybinds.setKeybind(slot, spell);
 				}
-				playerKeybinds.put(player.getName(), keybinds);
+				this.playerKeybinds.put(player.getName(), keybinds);
 			} catch (Exception e) {
 				MagicSpells.plugin.getLogger().severe("Failed to load player keybinds for " + player.getName());
 				e.printStackTrace();
@@ -90,15 +88,15 @@ public class KeybindSpell extends CommandSpell {
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			if (args.length != 1) {
-				// fail
+				// Fail
 				player.sendMessage("invalid args");
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			
-			Keybinds keybinds = playerKeybinds.get(player.getName());
+			Keybinds keybinds = this.playerKeybinds.get(player.getName());
 			if (keybinds == null) {
 				keybinds = new Keybinds(player);
-				playerKeybinds.put(player.getName(), keybinds);
+				this.playerKeybinds.put(player.getName(), keybinds);
 			}
 			
 			int slot = player.getInventory().getHeldItemSlot();
@@ -112,14 +110,14 @@ public class KeybindSpell extends CommandSpell {
 				saveKeybinds(keybinds);
 			} else {
 				if (item != null && item.getType() != Material.AIR) {
-					// fail
+					// Fail
 					player.sendMessage("not empty");
 					return PostCastAction.ALREADY_HANDLED;
 				}
 				
 				Spell spell = MagicSpells.getSpellbook(player).getSpellByName(args[0]);
 				if (spell == null) {
-					// fail
+					// Fail
 					player.sendMessage("no spell");
 					return PostCastAction.ALREADY_HANDLED;
 				}
@@ -134,7 +132,7 @@ public class KeybindSpell extends CommandSpell {
 
 	@EventHandler
 	public void onItemHeldChange(PlayerItemHeldEvent event) {
-		Keybinds keybinds = playerKeybinds.get(event.getPlayer().getName());
+		Keybinds keybinds = this.playerKeybinds.get(event.getPlayer().getName());
 		if (keybinds == null) return;
 		keybinds.deselect(event.getPreviousSlot());
 		keybinds.select(event.getNewSlot());
@@ -142,7 +140,7 @@ public class KeybindSpell extends CommandSpell {
 	
 	@EventHandler
 	public void onAnimate(PlayerAnimationEvent event) {
-		Keybinds keybinds = playerKeybinds.get(event.getPlayer().getName());
+		Keybinds keybinds = this.playerKeybinds.get(event.getPlayer().getName());
 		if (keybinds == null) return;
 		boolean casted = keybinds.castKeybind(event.getPlayer().getInventory().getHeldItemSlot());
 		if (casted) event.setCancelled(true);
@@ -152,7 +150,7 @@ public class KeybindSpell extends CommandSpell {
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		if (event.isCancelled()) return;
 		
-		Keybinds keybinds = playerKeybinds.get(event.getPlayer().getName());
+		Keybinds keybinds = this.playerKeybinds.get(event.getPlayer().getName());
 		if (keybinds == null) return;
 		
 		if (keybinds.hasKeybind(event.getPlayer().getInventory().getHeldItemSlot())) {
@@ -190,45 +188,45 @@ public class KeybindSpell extends CommandSpell {
 		}
 		
 		public void deselect(int slot) {
-			Spell spell = keybinds[slot];
+			Spell spell = this.keybinds[slot];
 			if (spell == null) return;
 			ItemStack spellIcon = spell.getSpellIcon();
 			if (spellIcon == null) spellIcon = defaultSpellIcon;
 			//player.getInventory().setItem(slot, new ItemStack(spellIcon.getType(), 0, spellIcon.getDurability()));
-			sendFakeSlotUpdate(player, slot, spellIcon);
+			sendFakeSlotUpdate(this.player, slot, spellIcon);
 		}
 		
 		public void select(int slot) {
-			Spell spell = keybinds[slot];
+			Spell spell = this.keybinds[slot];
 			if (spell == null) return;
-			sendFakeSlotUpdate(player, slot, wandItem);
+			sendFakeSlotUpdate(this.player, slot, wandItem);
 		}
 		
 		public boolean hasKeybind(int slot) {
-			return keybinds[slot] != null;
+			return this.keybinds[slot] != null;
 		}
 		
 		public boolean castKeybind(int slot) {
-			Spell spell = keybinds[slot];
+			Spell spell = this.keybinds[slot];
 			if (spell == null) return false;
-			spell.cast(player);
+			spell.cast(this.player);
 			return true;
 		}
 		
 		public void setKeybind(int slot, Spell spell) {
-			keybinds[slot] = spell;
+			this.keybinds[slot] = spell;
 		}
 		
 		public void clearKeybind(int slot) {
-			keybinds[slot] = null;
-			sendFakeSlotUpdate(player, slot, null);
+			this.keybinds[slot] = null;
+			sendFakeSlotUpdate(this.player, slot, null);
 		}
 		
 		public void clearKeybinds() {
-			for (int i = 0; i < keybinds.length; i++) {
-				if (keybinds[i] == null) continue;
-				keybinds[i] = null;
-				sendFakeSlotUpdate(player, i, null);
+			for (int i = 0; i < this.keybinds.length; i++) {
+				if (this.keybinds[i] == null) continue;
+				this.keybinds[i] = null;
+				sendFakeSlotUpdate(this.player, i, null);
 			}
 		}
 		

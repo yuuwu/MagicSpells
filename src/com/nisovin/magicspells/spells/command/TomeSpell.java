@@ -18,7 +18,7 @@ import com.nisovin.magicspells.events.SpellLearnEvent;
 import com.nisovin.magicspells.events.SpellLearnEvent.LearnSource;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.CommandSpell;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.Util;
@@ -62,20 +62,20 @@ public class TomeSpell extends CommandSpell {
 	public TomeSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		cancelReadOnLearn = getConfigBoolean("cancel-read-on-learn", true);
-		consumeBook = getConfigBoolean("consume-book", false);
-		allowOverwrite = getConfigBoolean("allow-overwrite", false);
-		defaultUses = getConfigInt("default-uses", -1);
-		maxUses = getConfigInt("max-uses", 5);
-		requireTeachPerm = getConfigBoolean("require-teach-perm", true);
-		strUsage = getConfigString("str-usage", "Usage: While holding a book, /cast " + name + " <spell> [uses]");
-		strNoSpell = getConfigString("str-no-spell", "You do not know a spell with that name.");
-		strCantTeach = getConfigString("str-cant-teach", "You cannot create a tome with that spell.");
-		strNoBook = getConfigString("str-no-book", "You must be holding a book.");
-		strAlreadyHasSpell = getConfigString("str-already-has-spell", "That book already contains a spell.");
-		strAlreadyKnown = getConfigString("str-already-known", "You already know the %s spell.");
-		strCantLearn = getConfigString("str-cant-learn", "You cannot learn the spell in this tome.");
-		strLearned = getConfigString("str-learned", "You have learned the %s spell.");
+		this.cancelReadOnLearn = getConfigBoolean("cancel-read-on-learn", true);
+		this.consumeBook = getConfigBoolean("consume-book", false);
+		this.allowOverwrite = getConfigBoolean("allow-overwrite", false);
+		this.defaultUses = getConfigInt("default-uses", -1);
+		this.maxUses = getConfigInt("max-uses", 5);
+		this.requireTeachPerm = getConfigBoolean("require-teach-perm", true);
+		this.strUsage = getConfigString("str-usage", "Usage: While holding a book, /cast " + this.name + " <spell> [uses]");
+		this.strNoSpell = getConfigString("str-no-spell", "You do not know a spell with that name.");
+		this.strCantTeach = getConfigString("str-cant-teach", "You cannot create a tome with that spell.");
+		this.strNoBook = getConfigString("str-no-book", "You must be holding a book.");
+		this.strAlreadyHasSpell = getConfigString("str-already-has-spell", "That book already contains a spell.");
+		this.strAlreadyKnown = getConfigString("str-already-known", "You already know the %s spell.");
+		this.strCantLearn = getConfigString("str-cant-learn", "You cannot learn the spell in this tome.");
+		this.strLearned = getConfigString("str-learned", "You have learned the %s spell.");
 	}
 
 	@Override
@@ -83,17 +83,17 @@ public class TomeSpell extends CommandSpell {
 		if (state == SpellCastState.NORMAL) {
 			Spell spell;
 			if (args == null || args.length == 0) {
-				// fail -- no args
-				sendMessage(strUsage, player, args);
+				// Fail -- no args
+				sendMessage(this.strUsage, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			} else {
 				Spellbook spellbook = MagicSpells.getSpellbook(player);
 				spell = MagicSpells.getSpellByInGameName(args[0]);
 				if (spell == null || spellbook == null || !spellbook.hasSpell(spell)) {
-					// fail -- no spell
-					sendMessage(strNoSpell, player, args);
+					// Fail -- no spell
+					sendMessage(this.strNoSpell, player, args);
 					return PostCastAction.ALREADY_HANDLED;
-				} else if (requireTeachPerm && !MagicSpells.getSpellbook(player).canTeach(spell)) {
+				} else if (this.requireTeachPerm && !MagicSpells.getSpellbook(player).canTeach(spell)) {
 					sendMessage(strCantTeach, player, args);
 					return PostCastAction.ALREADY_HANDLED;
 				}
@@ -101,17 +101,17 @@ public class TomeSpell extends CommandSpell {
 			
 			ItemStack item = HandHandler.getItemInMainHand(player);
 			if (item.getType() != Material.WRITTEN_BOOK) {
-				// fail -- no book
-				sendMessage(strNoBook, player, args);
+				// Fail -- no book
+				sendMessage(this.strNoBook, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			
-			if (!allowOverwrite && getSpellDataFromTome(item) != null) {
-				// fail -- already has a spell
-				sendMessage(strAlreadyHasSpell, player, args);
+			if (!this.allowOverwrite && getSpellDataFromTome(item) != null) {
+				// Fail -- already has a spell
+				sendMessage(this.strAlreadyHasSpell, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			} else {
-				int uses = defaultUses;
+				int uses = this.defaultUses;
 				if (args.length > 1 && args[1].matches("^[0-9]+$")) {
 					uses = Integer.parseInt(args[1]);
 				}
@@ -123,10 +123,10 @@ public class TomeSpell extends CommandSpell {
 	}
 	
 	public ItemStack createTome(Spell spell, int uses, ItemStack item) {
-		if (maxUses > 0 && uses > maxUses) {
-			uses = maxUses;
+		if (this.maxUses > 0 && uses > this.maxUses) {
+			uses = this.maxUses;
 		} else if (uses < 0) {
-			uses = defaultUses;
+			uses = this.defaultUses;
 		}
 		if (item == null) {
 			item = new ItemStack(Material.WRITTEN_BOOK, 1);
@@ -134,7 +134,7 @@ public class TomeSpell extends CommandSpell {
 			bookMeta.setTitle(getName() + ": " + spell.getName());
 			item.setItemMeta(bookMeta);
 		}
-		Util.setLoreData(item, internalName + ':' + spell.getInternalName() + (uses > 0 ? "," + uses : ""));
+		Util.setLoreData(item, this.internalName + ':' + spell.getInternalName() + (uses > 0 ? "," + uses : ""));
 		return item;
 	}
 
@@ -150,8 +150,8 @@ public class TomeSpell extends CommandSpell {
 	
 	private String getSpellDataFromTome(ItemStack item) {
 		String loreData = Util.getLoreData(item);
-		if (loreData != null && loreData.startsWith(internalName + ':')) {
-			return loreData.replace(internalName + ':', "");
+		if (loreData != null && loreData.startsWith(this.internalName + ':')) {
+			return loreData.replace(this.internalName + ':', "");
 		}
 		return null;
 	}
@@ -173,42 +173,43 @@ public class TomeSpell extends CommandSpell {
 			uses = Integer.parseInt(data[1]);
 		}
 		Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());
-		if (spell != null && spellbook != null) {
-			if (spellbook.hasSpell(spell)) {
-				// fail -- already known
-				sendMessage(formatMessage(strAlreadyKnown, "%s", spell.getName()), event.getPlayer(), MagicSpells.NULL_ARGS);
-			} else if (!spellbook.canLearn(spell)) {
-				// fail -- can't learn
-				sendMessage(formatMessage(strCantLearn, "%s", spell.getName()), event.getPlayer(), MagicSpells.NULL_ARGS);
+		if (spell == null) return;
+		if (spellbook == null) return;
+		
+		if (spellbook.hasSpell(spell)) {
+			// Fail -- already known
+			sendMessage(formatMessage(this.strAlreadyKnown, "%s", spell.getName()), event.getPlayer(), MagicSpells.NULL_ARGS);
+		} else if (!spellbook.canLearn(spell)) {
+			// Fail -- can't learn
+			sendMessage(formatMessage(this.strCantLearn, "%s", spell.getName()), event.getPlayer(), MagicSpells.NULL_ARGS);
+		} else {
+			// Call event
+			SpellLearnEvent learnEvent = new SpellLearnEvent(spell, event.getPlayer(), LearnSource.TOME, HandHandler.getItemInMainHand(event.getPlayer()));
+			EventUtil.call(learnEvent);
+			if (learnEvent.isCancelled()) {
+				// Fail -- plugin cancelled
+				sendMessage(formatMessage(this.strCantLearn, "%s", spell.getName()), event.getPlayer(), MagicSpells.NULL_ARGS);
 			} else {
-				// call event
-				SpellLearnEvent learnEvent = new SpellLearnEvent(spell, event.getPlayer(), LearnSource.TOME, HandHandler.getItemInMainHand(event.getPlayer()));
-				EventUtil.call(learnEvent);
-				if (learnEvent.isCancelled()) {
-					// fail -- plugin cancelled
-					sendMessage(formatMessage(strCantLearn, "%s", spell.getName()), event.getPlayer(), MagicSpells.NULL_ARGS);
-				} else {
-					// give spell
-					spellbook.addSpell(spell);
-					spellbook.save();
-					sendMessage(formatMessage(strLearned, "%s", spell.getName()), event.getPlayer(), MagicSpells.NULL_ARGS);
-					if (cancelReadOnLearn) event.setCancelled(true);
-					
-					// remove use
+				// Give spell
+				spellbook.addSpell(spell);
+				spellbook.save();
+				sendMessage(formatMessage(this.strLearned, "%s", spell.getName()), event.getPlayer(), MagicSpells.NULL_ARGS);
+				if (this.cancelReadOnLearn) event.setCancelled(true);
+				
+				// Remove use
+				if (uses > 0) {
+					uses--;
 					if (uses > 0) {
-						uses--;
-						if (uses > 0) {
-							Util.setLoreData(item, internalName + ':' + data[0] + ',' + uses);
-						} else {
-							Util.removeLoreData(item);
-						}
+						Util.setLoreData(item, this.internalName + ':' + data[0] + ',' + uses);
+					} else {
+						Util.removeLoreData(item);
 					}
-					// consume
-					if (uses <= 0 && consumeBook) {
-						HandHandler.setItemInMainHand(event.getPlayer(), null);
-					}
-					playSpellEffects(EffectPosition.DELAYED, event.getPlayer());
 				}
+				// Consume
+				if (uses <= 0 && this.consumeBook) {
+					HandHandler.setItemInMainHand(event.getPlayer(), null);
+				}
+				playSpellEffects(EffectPosition.DELAYED, event.getPlayer());
 			}
 		}
 	}

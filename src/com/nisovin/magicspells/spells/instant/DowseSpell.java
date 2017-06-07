@@ -17,7 +17,7 @@ import com.nisovin.magicspells.events.SpellTargetEvent;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
 import com.nisovin.magicspells.util.Util;
@@ -114,11 +114,11 @@ public class DowseSpell extends InstantSpell {
 				
 			} else if (entityType != null) {
 
-				// find entity
+				// Find entity
 				Entity foundEntity = null;
 				double distanceSq = radius * radius;
 				if (entityType == EntityType.PLAYER && playerName != null) {
-					// find specific player
+					// Find specific player
 					foundEntity = PlayerNameUtils.getPlayerExact(playerName);
 					if (foundEntity != null) {
 						if (!foundEntity.getWorld().equals(player.getWorld())) {
@@ -128,7 +128,7 @@ public class DowseSpell extends InstantSpell {
 						}
 					}
 				} else {
-					// find nearest entity
+					// Find nearest entity
 					List<Entity> nearby = player.getNearbyEntities(radius, radius, radius);
 					Location playerLoc = player.getLocation();
 					TreeSet<NearbyEntity> ordered = new TreeSet<>();

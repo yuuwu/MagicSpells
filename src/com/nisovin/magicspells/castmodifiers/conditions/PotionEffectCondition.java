@@ -39,9 +39,8 @@ public class PotionEffectCondition extends Condition {
 	@Override
 	public boolean check(Player player, LivingEntity target) {
 		boolean has = target.hasPotionEffect(effectType);
-		if (value == -1) {
-			return has;
-		} else if (has) {
+		if (value == -1) return has;
+		if (has) {
 			for (PotionEffect effect : target.getActivePotionEffects()) {
 				if (effect.getType() == effectType) {
 					return effect.getAmplifier() == value;

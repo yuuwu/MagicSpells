@@ -3,6 +3,7 @@ package com.nisovin.magicspells.spells.targeted;
 import java.util.HashMap;
 import java.util.List;
 
+import com.nisovin.magicspells.util.TimeUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -59,7 +60,7 @@ public class SummonSpell extends TargetedSpell implements TargetedEntitySpell, T
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
-			// get target name and landing location
+			// Get target name and landing location
 			String targetName = "";
 			Location landLoc = null;
 			if (args != null && args.length > 0) {
@@ -74,20 +75,20 @@ public class SummonSpell extends TargetedSpell implements TargetedEntitySpell, T
 				}
 			}
 			
-			// check usage
+			// Check usage
 			if (targetName.isEmpty()) {
-				// fail -- show usage
+				// Fail -- show usage
 				sendMessage(strUsage, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			
-			// check location
+			// Check location
 			if (landLoc == null || !BlockUtils.isSafeToStand(landLoc.clone())) {
 				sendMessage(strUsage, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			
-			// get player
+			// Get player
 			Player target = null;
 			if (requireExactName) {
 				target = PlayerNameUtils.getPlayer(targetName);
@@ -99,11 +100,11 @@ public class SummonSpell extends TargetedSpell implements TargetedEntitySpell, T
 				}
 			}
 			if (target == null) {
-				// fail -- no player target
+				// Fail -- no player target
 				return noTarget(player);
 			}
 			
-			// teleport player
+			// Teleport player
 			if (requireAcceptance) {
 				pendingSummons.put(target, landLoc);
 				pendingTimes.put(target, System.currentTimeMillis());
@@ -127,11 +128,11 @@ public class SummonSpell extends TargetedSpell implements TargetedEntitySpell, T
 		if (!pendingSummons.containsKey(event.getPlayer())) return;
 		
 		Player player = event.getPlayer();
-		if (maxAcceptDelay > 0 && pendingTimes.get(player) + maxAcceptDelay * 1000 < System.currentTimeMillis()) {
-			// waited too long
+		if (maxAcceptDelay > 0 && pendingTimes.get(player) + maxAcceptDelay * TimeUtil.MILLISECONDS_PER_SECOND < System.currentTimeMillis()) {
+			// Waited too long
 			sendMessage(strSummonExpired, player, MagicSpells.NULL_ARGS);
 		} else {
-			// all ok, teleport
+			// All ok, teleport
 			player.teleport(pendingSummons.get(player));
 			sendMessage(strSummonAccepted, player, MagicSpells.NULL_ARGS);
 		}

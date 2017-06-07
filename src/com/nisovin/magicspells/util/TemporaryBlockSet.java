@@ -33,26 +33,26 @@ public class TemporaryBlockSet implements Runnable {
 	}
 	
 	public void add(Block block) {
-		if (block.getType() == original) {
-			if (callPlaceEvent) {
+		if (block.getType() == this.original) {
+			if (this.callPlaceEvent) {
 				BlockState state = block.getState();
-				replaceWith.setBlock(block, false);
-				MagicSpellsBlockPlaceEvent event = new MagicSpellsBlockPlaceEvent(block, state, block, HandHandler.getItemInMainHand(player), player, true);
+				this.replaceWith.setBlock(block, false);
+				MagicSpellsBlockPlaceEvent event = new MagicSpellsBlockPlaceEvent(block, state, block, HandHandler.getItemInMainHand(this.player), this.player, true);
 				Bukkit.getPluginManager().callEvent(event);
 				if (event.isCancelled()) {
-					BlockUtils.setTypeAndData(block, original, (byte)0, false);
+					BlockUtils.setTypeAndData(block, this.original, (byte)0, false);
 				} else {
-					blocks.add(block);
+					this.blocks.add(block);
 				}
 			} else {
-				replaceWith.setBlock(block);
-				blocks.add(block);
+				this.replaceWith.setBlock(block);
+				this.blocks.add(block);
 			}
 		}
 	}
 	
 	public boolean contains(Block block) {
-		return blocks.contains(block);
+		return this.blocks.contains(block);
 	}
 	
 	public void removeAfter(int seconds) {
@@ -60,22 +60,22 @@ public class TemporaryBlockSet implements Runnable {
 	}
 	
 	public void removeAfter(int seconds, BlockSetRemovalCallback callback) {
-		if (blocks.isEmpty()) return;
+		if (this.blocks.isEmpty()) return;
 		this.callback = callback;
-		MagicSpells.scheduleDelayedTask(this, seconds * 20);
+		MagicSpells.scheduleDelayedTask(this, seconds * TimeUtil.TICKS_PER_SECOND);
 	}
 	
 	@Override
 	public void run() {
-		if (callback != null) callback.run(this);
+		if (this.callback != null) this.callback.run(this);
 		remove();
 	}
 	
 	public void remove() {
-		for (Block block : blocks) {
-			if (replaceWith.equals(block)) block.setType(original);
+		for (Block block : this.blocks) {
+			if (this.replaceWith.equals(block)) block.setType(this.original);
 		}
-		player = null;
+		this.player = null;
 	}
 	
 	public interface BlockSetRemovalCallback {

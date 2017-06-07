@@ -8,7 +8,12 @@ import org.bukkit.entity.Entity;
 public class BoundingBox {
 
 	World world;
-	double lowX, lowY, lowZ, highX, highY, highZ;
+	double lowX;
+	double lowY;
+	double lowZ;
+	double highX;
+	double highY;
+	double highZ;
 	double horizRadius;
 	double vertRadius;
 	
@@ -31,40 +36,40 @@ public class BoundingBox {
 	}
 	
 	public BoundingBox(Location corner1, Location corner2) {
-		world = corner1.getWorld();
-		lowX = min(corner1.getX(), corner2.getX());
-		highX = max(corner1.getX(), corner2.getX());
-		lowY = min(corner1.getY(), corner2.getY());
-		highY = max(corner1.getY(), corner2.getY());
-		lowZ = min(corner1.getZ(), corner2.getZ());
-		highZ = max(corner1.getZ(), corner2.getZ());
+		this.world = corner1.getWorld();
+		this.lowX = min(corner1.getX(), corner2.getX());
+		this.highX = max(corner1.getX(), corner2.getX());
+		this.lowY = min(corner1.getY(), corner2.getY());
+		this.highY = max(corner1.getY(), corner2.getY());
+		this.lowZ = min(corner1.getZ(), corner2.getZ());
+		this.highZ = max(corner1.getZ(), corner2.getZ());
 	}
 	
 	public void setCenter(Location center) {
-		world = center.getWorld();
-		lowX = center.getX() - horizRadius;
-		lowY = center.getY() - vertRadius;
-		lowZ = center.getZ() - horizRadius;
-		highX = center.getX() + horizRadius;
-		highY = center.getY() + vertRadius;
-		highZ = center.getZ() + horizRadius;
+		this.world = center.getWorld();
+		this.lowX = center.getX() - this.horizRadius;
+		this.lowY = center.getY() - this.vertRadius;
+		this.lowZ = center.getZ() - this.horizRadius;
+		this.highX = center.getX() + this.horizRadius;
+		this.highY = center.getY() + this.vertRadius;
+		this.highZ = center.getZ() + this.horizRadius;
 	}
 	
 	public void expand(double amount) {
-		lowX -= amount;
-		lowY -= amount;
-		lowZ -= amount;
-		highX += amount;
-		highY += amount;
-		highZ += amount;
+		this.lowX -= amount;
+		this.lowY -= amount;
+		this.lowZ -= amount;
+		this.highX += amount;
+		this.highY += amount;
+		this.highZ += amount;
 	}
 	
 	public boolean contains(Location location) {
-		if (!location.getWorld().equals(world)) return false;
+		if (!location.getWorld().equals(this.world)) return false;
 		double x = location.getX();
 		double y = location.getY();
 		double z = location.getZ();
-		return lowX <= x && x <= highX && lowY <= y && y <= highY && lowZ <= z && z <= highZ;
+		return this.lowX <= x && x <= this.highX && this.lowY <= y && y <= this.highY && this.lowZ <= z && z <= this.highZ;
 	}
 	
 	public boolean contains(Entity entity) {

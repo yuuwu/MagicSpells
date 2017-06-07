@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.nisovin.magicspells.util.TimeUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -38,13 +39,12 @@ public class StunSpell extends TargetedSpell implements TargetedEntitySpell {
 	public StunSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		duration = (int)(getConfigFloat("duration", 10) * 1000);
+		duration = (int)(getConfigFloat("duration", 10) * TimeUtil.MILLISECONDS_PER_SECOND);
 		
 		stunnedPlayersUntil = new HashMap<>();
 		stunnedPlayersLocation = new HashMap<>();
 		stunnedEntitiesUntil = new HashMap<>();
 		stunnedEntitiesLocation = new HashMap<>();
-		
 	}
 
 	@Override
@@ -77,12 +77,7 @@ public class StunSpell extends TargetedSpell implements TargetedEntitySpell {
 		} else {
 			playSpellEffects(EffectPosition.TARGET, target);
 		}
-		playSpellEffectsBuff(target, new SpellEffect.SpellEffectActiveChecker() {
-			@Override
-			public boolean isActive(Entity entity) {
-				return stunnedPlayersUntil.containsKey(entity.getName());
-			}
-		});
+		playSpellEffectsBuff(target, (Entity entity) -> stunnedPlayersUntil.containsKey(entity.getName()));
 	}
 	
 	void stunEntity(Player caster, LivingEntity target, int duration) {
@@ -96,12 +91,7 @@ public class StunSpell extends TargetedSpell implements TargetedEntitySpell {
 		} else {
 			playSpellEffects(EffectPosition.TARGET, target);
 		}
-		playSpellEffectsBuff(target, new SpellEffect.SpellEffectActiveChecker() {
-			@Override
-			public boolean isActive(Entity entity) {
-				return stunnedEntitiesUntil.containsKey(entity);
-			}
-		});
+		playSpellEffectsBuff(target, (Entity entity) -> stunnedEntitiesUntil.containsKey(entity));
 	}
 
 	@Override

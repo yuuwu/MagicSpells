@@ -23,20 +23,14 @@ public class NamePatternCondition extends Condition {
 
 	@Override
 	public boolean check(Player player) {
-		return (Pattern.matches(rawPattern, player.getName()) || Pattern.matches(rawPattern, player.getDisplayName()));
+		return Pattern.matches(rawPattern, player.getName()) || Pattern.matches(rawPattern, player.getDisplayName());
 	}
 
 	@Override
 	public boolean check(Player player, LivingEntity target) {
-		if (target instanceof Player) {
-			return check((Player)target);
-		} else {
-			String n = target.getCustomName();
-			if (n != null && !n.isEmpty()) {
-				return Pattern.matches(rawPattern, n);
-			}
-			return false;
-		}
+		if (target instanceof Player) return check((Player)target);
+		String n = target.getCustomName();
+		return n != null && !n.isEmpty() && Pattern.matches(rawPattern, n);
 	}
 
 	@Override

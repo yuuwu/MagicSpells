@@ -6,7 +6,7 @@ import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import com.nisovin.magicspells.events.MagicSpellsEntityRegainHealthEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 
 public class PrayerSpell extends InstantSpell {
@@ -18,22 +18,23 @@ public class PrayerSpell extends InstantSpell {
 	public PrayerSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		amountHealed = getConfigInt("amount-healed", 10);
-		strAtFullHealth = getConfigString("str-at-full-health", "You are already at full health.");
-		checkPlugins = getConfigBoolean("check-plugins", true);
+		this.amountHealed = getConfigInt("amount-healed", 10);
+		this.strAtFullHealth = getConfigString("str-at-full-health", "You are already at full health.");
+		this.checkPlugins = getConfigBoolean("check-plugins", true);
 	}
 
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
-			if (player.getHealth() >= player.getMaxHealth() && amountHealed > 0) {
-				sendMessage(strAtFullHealth, player, args);
+			if (player.getHealth() >= player.getMaxHealth() && this.amountHealed > 0) {
+				sendMessage(this.strAtFullHealth, player, args);
 				return PostCastAction.ALREADY_HANDLED;
-			} else if (player.isValid()) {
+			}
+			if (player.isValid()) {
 				double health = player.getHealth();
 				if (health > 0) {
-					double amt = amountHealed * power;
-					if (checkPlugins && amt > 0) {
+					double amt = this.amountHealed * power;
+					if (this.checkPlugins && amt > 0) {
 						MagicSpellsEntityRegainHealthEvent evt = new MagicSpellsEntityRegainHealthEvent(player, amt, RegainReason.CUSTOM);
 						EventUtil.call(evt);
 						if (evt.isCancelled()) return PostCastAction.ALREADY_HANDLED;

@@ -23,29 +23,29 @@ public class HelpSpell extends CommandSpell {
 	public HelpSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		requireKnownSpell = getConfigBoolean("require-known-spell", true);
-		strUsage = getConfigString("str-usage", "Usage: /cast " + name + " <spell>");
-		strNoSpell = getConfigString("str-no-spell", "You do not know a spell by that name.");
-		strDescLine = getConfigString("str-desc-line", "%s - %d");
-		strCostLine = getConfigString("str-cost-line", "Cost: %c");
+		this.requireKnownSpell = getConfigBoolean("require-known-spell", true);
+		this.strUsage = getConfigString("str-usage", "Usage: /cast " + this.name + " <spell>");
+		this.strNoSpell = getConfigString("str-no-spell", "You do not know a spell by that name.");
+		this.strDescLine = getConfigString("str-desc-line", "%s - %d");
+		this.strCostLine = getConfigString("str-cost-line", "Cost: %c");
 	}
 
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			if (args == null || args.length == 0) {
-				sendMessage(strUsage, player, args);
+				sendMessage(this.strUsage, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			} else {
 				Spell spell = MagicSpells.getSpellByInGameName(Util.arrayJoin(args, ' '));
 				Spellbook spellbook = MagicSpells.getSpellbook(player);
-				if (spell == null || (requireKnownSpell && (spellbook == null || !spellbook.hasSpell(spell)))) {
-					sendMessage(strNoSpell, player, args);
+				if (spell == null || (this.requireKnownSpell && (spellbook == null || !spellbook.hasSpell(spell)))) {
+					sendMessage(this.strNoSpell, player, args);
 					return PostCastAction.ALREADY_HANDLED;
 				} else {
-					sendMessage(formatMessage(strDescLine, "%s", spell.getName(), "%d", spell.getDescription()), player, args);
+					sendMessage(formatMessage(this.strDescLine, "%s", spell.getName(), "%d", spell.getDescription()), player, args);
 					if (spell.getCostStr() != null && !spell.getCostStr().isEmpty()) {
-						sendMessage(formatMessage(strCostLine, "%c", spell.getCostStr()), player, args);
+						sendMessage(formatMessage(this.strCostLine, "%c", spell.getCostStr()), player, args);
 					}
 				}
 			}

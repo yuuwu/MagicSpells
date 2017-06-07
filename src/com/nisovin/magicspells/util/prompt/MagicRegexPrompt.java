@@ -33,7 +33,7 @@ public class MagicRegexPrompt extends RegexPrompt {
 	
 	
 	public static MagicRegexPrompt fromConfigSection(ConfigurationSection section) {
-		// handle the regex
+		// Handle the regex
 		String regexp = section.getString("regexp", null);
 		if (regexp == null || regexp.isEmpty()) return null;
 		MagicRegexPrompt ret = new MagicRegexPrompt(regexp);

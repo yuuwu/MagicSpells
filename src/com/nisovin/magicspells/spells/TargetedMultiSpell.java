@@ -48,63 +48,63 @@ public final class TargetedMultiSpell extends TargetedSpell implements TargetedE
 	public TargetedMultiSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		checkIndividualCooldowns = getConfigBoolean("check-individual-cooldowns", false);
-		requireEntityTarget = getConfigBoolean("require-entity-target", false);
-		pointBlank = getConfigBoolean("point-blank", false);
-		yOffset = getConfigInt("y-offset", 0);
-		castRandomSpellInstead = getConfigBoolean("cast-random-spell-instead", false);
-		stopOnFail = getConfigBoolean("stop-on-fail", true);
-
-		actions = new ArrayList<>();
-		spellList = getConfigStringList("spells", null);
+		this.checkIndividualCooldowns = getConfigBoolean("check-individual-cooldowns", false);
+		this.requireEntityTarget = getConfigBoolean("require-entity-target", false);
+		this.pointBlank = getConfigBoolean("point-blank", false);
+		this.yOffset = getConfigInt("y-offset", 0);
+		this.castRandomSpellInstead = getConfigBoolean("cast-random-spell-instead", false);
+		this.stopOnFail = getConfigBoolean("stop-on-fail", true);
+		
+		this.actions = new ArrayList<>();
+		this.spellList = getConfigStringList("spells", null);
 	}
 	
 	@Override
 	public void initialize() {
 		super.initialize();
 
-		if (spellList != null) {
-			for (String s : spellList) {
+		if (this.spellList != null) {
+			for (String s : this.spellList) {
 				if (s.matches("DELAY [0-9]+")) {
 					int delay = Integer.parseInt(s.split(" ")[1]);
-					actions.add(new Action(delay));
+					this.actions.add(new Action(delay));
 				} else {
 					Subspell spell = new Subspell(s);
 					if (spell.process()) {
-						actions.add(new Action(spell));
+						this.actions.add(new Action(spell));
 					} else {
 						MagicSpells.error("No such spell '" + s + "' for multi-spell '" + internalName + '\'');
 					}
 				}
 			}
 		}
-		spellList = null;
+		this.spellList = null;
 	}
 
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
-			// check cooldowns
-			if (checkIndividualCooldowns) {
-				for (Action action : actions) {
+			// Check cooldowns
+			if (this.checkIndividualCooldowns) {
+				for (Action action : this.actions) {
 					if (!action.isSpell()) continue;
 					if (!action.getSpell().getSpell().onCooldown(player)) continue;
-					// a spell is on cooldown
-					sendMessage(strOnCooldown, player, args);
+					// A spell is on cooldown
+					sendMessage(this.strOnCooldown, player, args);
 					return PostCastAction.ALREADY_HANDLED;
 				}
 			}
 			
-			// get target
+			// Get target
 			Location locTarget = null;
 			LivingEntity entTarget = null;
-			if (requireEntityTarget) {
+			if (this.requireEntityTarget) {
 				TargetInfo<LivingEntity> info = getTargetedEntity(player, power);
 				if (info != null) {
 					entTarget = info.getTarget();
 					power = info.getPower();
 				}
-			} else if (pointBlank) {
+			} else if (this.pointBlank) {
 				locTarget = player.getLocation();
 			} else {
 				Block b;
@@ -117,7 +117,7 @@ public final class TargetedMultiSpell extends TargetedSpell implements TargetedE
 				}
 			}
 			if (locTarget == null && entTarget == null) return noTarget(player);
-			if (locTarget != null) locTarget.setY(locTarget.getY() + yOffset);
+			if (locTarget != null) locTarget.setY(locTarget.getY() + this.yOffset);
 			
 			boolean somethingWasDone = runSpells(player, entTarget, locTarget, power);
 			
@@ -153,11 +153,11 @@ public final class TargetedMultiSpell extends TargetedSpell implements TargetedE
 	
 	boolean runSpells(Player player, LivingEntity entTarget, Location locTarget, float power) {
 		boolean somethingWasDone = false;
-		if (!castRandomSpellInstead) {
+		if (!this.castRandomSpellInstead) {
 			int delay = 0;
 			Subspell spell;
 			List<DelayedSpell> delayedSpells = new ArrayList<>();
-			for (Action action : actions) {
+			for (Action action : this.actions) {
 				if (action.isDelay()) {
 					delay += action.getDelay();
 				} else if (action.isSpell()) {
@@ -167,8 +167,8 @@ public final class TargetedMultiSpell extends TargetedSpell implements TargetedE
 						if (ok) {
 							somethingWasDone = true;
 						} else {
-							// spell failed - exit loop
-							if (stopOnFail) break;
+							// Spell failed - exit loop
+							if (this.stopOnFail) break;
 							continue;
 						}
 					} else {
@@ -180,7 +180,7 @@ public final class TargetedMultiSpell extends TargetedSpell implements TargetedE
 				}
 			}
 		} else {
-			Action action = actions.get(random.nextInt(actions.size()));
+			Action action = this.actions.get(this.random.nextInt(this.actions.size()));
 			if (action.isSpell()) {
 				somethingWasDone = castTargetedSpell(action.getSpell(), player, entTarget, locTarget, power);
 			} else {
@@ -237,24 +237,24 @@ public final class TargetedMultiSpell extends TargetedSpell implements TargetedE
 		}
 		
 		public boolean isSpell() {
-			return spell != null;
+			return this.spell != null;
 		}
 		
 		public Subspell getSpell() {
-			return spell;
+			return this.spell;
 		}
 		
 		public boolean isDelay() {
-			return delay > 0;
+			return this.delay > 0;
 		}
 		
 		public int getDelay() {
-			return delay;
+			return this.delay;
 		}
 		
 	}
 	
-	private class DelayedSpell implements Runnable {	
+	private class DelayedSpell implements Runnable {
 		
 		private Subspell spell;
 		private Player player;
@@ -276,31 +276,31 @@ public final class TargetedMultiSpell extends TargetedSpell implements TargetedE
 		}
 		
 		public void cancel() {
-			cancelled = true;
-			delayedSpells = null;
+			this.cancelled = true;
+			this.delayedSpells = null;
 		}
 		
 		public void cancelAll() {
-			for (DelayedSpell ds : delayedSpells) {
+			for (DelayedSpell ds : this.delayedSpells) {
 				if (ds == this) continue;
 				ds.cancel();
 			}
-			delayedSpells.clear();
+			this.delayedSpells.clear();
 			cancel();
 		}
 		
 		@Override
 		public void run() {
-			if (!cancelled) {
-				if (player == null || player.isValid()) {
-					boolean ok = castTargetedSpell(spell, player, entTarget, locTarget, power);
-					delayedSpells.remove(this);
+			if (!this.cancelled) {
+				if (this.player == null || this.player.isValid()) {
+					boolean ok = castTargetedSpell(this.spell, this.player, this.entTarget, this.locTarget, this.power);
+					this.delayedSpells.remove(this);
 					if (!ok && stopOnFail) cancelAll();
 				} else {
 					cancelAll();
 				}
 			}
-			delayedSpells = null;
+			this.delayedSpells = null;
 		}
 		
 	}

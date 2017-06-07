@@ -36,15 +36,16 @@ public class BlockPlatform {
 		List<Block> platform = new ArrayList<>();
 		
 		// Get platform blocks
-		if (type.equals("square")) {
-			Block block, above;
-			int cx = center.getX();
-			int cy = center.getY();
-			int cz = center.getZ();
-			World world = center.getWorld();
+		if (this.type.equals("square")) {
+			Block block;
+			Block above;
+			int cx = this.center.getX();
+			int cy = this.center.getY();
+			int cz = this.center.getZ();
+			World world = this.center.getWorld();
 			int max = world.getMaxHeight();
-			for (int x = cx - size; x <= cx + size; x++) {
-				for (int z = cz - size; z <= cz + size; z++) {
+			for (int x = cx - this.size; x <= cx + this.size; x++) {
+				for (int z = cz - this.size; z <= cz + this.size; z++) {
 					block = world.getBlockAt(x, cy, z);
 					above = block.getRelative(0, 1, 0);
 					if ((block.getType() == replaceType && (cy >= max - 1 || (blocks != null && blocks.contains(above)) || above.getType() == Material.AIR)) || (blocks != null && blocks.contains(block))) {
@@ -53,12 +54,12 @@ public class BlockPlatform {
 					}
 				}
 			}
-		} else if (type.equals("cube")) {
+		} else if (this.type.equals("cube")) {
 			Block block;
-			for (int x = center.getX() - size; x <= center.getX() + size; x++) {
-				for (int y = center.getY() - size; y <= center.getY() + size; y++) {
-					for (int z = center.getZ()-size; z <= center.getZ() + size; z++) {
-						block = center.getWorld().getBlockAt(x, y, z);
+			for (int x = this.center.getX() - size; x <= this.center.getX() + this.size; x++) {
+				for (int y = this.center.getY() - size; y <= this.center.getY() + this.size; y++) {
+					for (int z = this.center.getZ()-size; z <= this.center.getZ() + this.size; z++) {
+						block = this.center.getWorld().getBlockAt(x, y, z);
 						if (block.getType() == replaceType || (blocks != null && blocks.contains(block))) {
 							// Only add if it's a replaceable block or if it is already part of the block set
 							platform.add(block);
@@ -69,11 +70,11 @@ public class BlockPlatform {
 		}
 		
 		// Remove old platform blocks
-		if (moving) {
-			for (Block block : blocks) {
-				if (!platform.contains(block) && block.getType() == platformType) {
+		if (this.moving) {
+			for (Block block : this.blocks) {
+				if (!platform.contains(block) && block.getType() == this.platformType) {
 					BlockState state = block.getState();
-					state.setType(replaceType);
+					state.setType(this.replaceType);
 					state.update(true, false);
 				}
 			}
@@ -81,9 +82,9 @@ public class BlockPlatform {
 		
 		// Add new platform blocks
 		for (Block block : platform) {
-			if (blocks == null || !blocks.contains(block)) {
+			if (this.blocks == null || !this.blocks.contains(block)) {
 				BlockState state = block.getState();
-				state.setType(platformType);
+				state.setType(this.platformType);
 				state.update(true, false);
 			}
 		}

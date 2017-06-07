@@ -15,7 +15,7 @@ import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.spells.PassiveSpell;
 import com.nisovin.magicspells.util.OverridePriority;
 
-// optional trigger variable of comma separated list of teleport causes to accept
+// Optional trigger variable of comma separated list of teleport causes to accept
 public class TeleportListener extends PassiveListener {
 
 	Map<TeleportCause, List<PassiveSpell>> types = new HashMap<>();
@@ -55,9 +55,7 @@ public class TeleportListener extends PassiveListener {
 				if (!isCancelStateOk(spell, event.isCancelled())) continue;
 				if (spellbook.hasSpell(spell)) {
 					boolean casted = spell.activate(player);
-					if (PassiveListener.cancelDefaultAction(spell, casted)) {
-						event.setCancelled(true);
-					}
+					if (PassiveListener.cancelDefaultAction(spell, casted)) event.setCancelled(true);
 				}
 			}
 		}
@@ -68,9 +66,7 @@ public class TeleportListener extends PassiveListener {
 				if (!isCancelStateOk(spell, event.isCancelled())) continue;
 				if (!spellbook.hasSpell(spell)) continue;
 				boolean casted = spell.activate(player);
-				if (PassiveListener.cancelDefaultAction(spell, casted)) {
-					event.setCancelled(true);
-				}
+				if (PassiveListener.cancelDefaultAction(spell, casted)) event.setCancelled(true);
 			}
 		}
 	}

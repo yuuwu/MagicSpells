@@ -37,7 +37,7 @@ public class RepairSpell extends InstantSpell {
 	public RepairSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		repairAmt = getConfigInt("repair-amount", 300);
+		this.repairAmt = getConfigInt("repair-amount", 300);
 		List<String> toRepairList = getConfigStringList("to-repair", null);
 		if (toRepairList == null) toRepairList = new ArrayList<>();
 		if (toRepairList.isEmpty()) toRepairList.add(REPAIR_SELECTOR_KEY_HELD);
@@ -50,10 +50,10 @@ public class RepairSpell extends InstantSpell {
 				iter.remove();
 			}
 		}
-		toRepair = new String[toRepairList.size()];
-		toRepair = toRepairList.toArray(toRepair);
+		this.toRepair = new String[toRepairList.size()];
+		this.toRepair = toRepairList.toArray(this.toRepair);
 		
-		ignoreItems = EnumSet.noneOf(Material.class);
+		this.ignoreItems = EnumSet.noneOf(Material.class);
 		List<String> list = getConfigStringList("ignore-items", null);
 		if (list != null) {
 			for (String s : list) {
@@ -61,12 +61,12 @@ public class RepairSpell extends InstantSpell {
 				if (m == null) continue;
 				Material material = m.getMaterial();
 				if (material == null) continue;
-				ignoreItems.add(material);
+				this.ignoreItems.add(material);
 			}
 		}
-		if (ignoreItems.isEmpty()) ignoreItems = null;
+		if (this.ignoreItems.isEmpty()) this.ignoreItems = null;
 		
-		allowedItems = EnumSet.noneOf(Material.class);
+		this.allowedItems = EnumSet.noneOf(Material.class);
 		list = getConfigStringList("allowed-items", null);
 		if (list != null) {
 			for (String s : list) {
@@ -74,19 +74,19 @@ public class RepairSpell extends InstantSpell {
 				if (m == null) continue;
 				Material material = m.getMaterial();
 				if (material == null) continue;
-				allowedItems.add(material);
+				this.allowedItems.add(material);
 			}
 		}
-		if (allowedItems.isEmpty()) allowedItems = null;
+		if (this.allowedItems.isEmpty()) this.allowedItems = null;
 		
-		strNothingToRepair = getConfigString("str-nothing-to-repair", "Nothing to repair.");
+		this.strNothingToRepair = getConfigString("str-nothing-to-repair", "Nothing to repair.");
 	}
 
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			int repaired = 0;
-			for (String s : toRepair) {
+			for (String s : this.toRepair) {
 				if (s.equals(REPAIR_SELECTOR_KEY_HELD)) {
 					ItemStack item = HandHandler.getItemInMainHand(player);
 					if (item == null) continue;
@@ -100,7 +100,8 @@ public class RepairSpell extends InstantSpell {
 				}
 				
 				if (s.equals(REPAIR_SELECTOR_KEY_HOTBAR) || s.equals(REPAIR_SELECTOR_KEY_INVENTORY)) {
-					int start, end;
+					int start;
+					int end;
 					ItemStack[] items = player.getInventory().getContents();
 					
 					if (s.equals(REPAIR_SELECTOR_KEY_HOTBAR)) {
@@ -174,7 +175,7 @@ public class RepairSpell extends InstantSpell {
 				}
 			}
 			if (repaired == 0) {
-				sendMessage(strNothingToRepair, player, args);
+				sendMessage(this.strNothingToRepair, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			
@@ -185,15 +186,17 @@ public class RepairSpell extends InstantSpell {
 	
 	private short newDura(ItemStack item) {
 		short dura = item.getDurability();
-		dura -= repairAmt;
+		dura -= this.repairAmt;
 		if (dura < 0) dura = 0;
 		return dura;
 	}
 	
 	// TODO is it version safe to check for the repairable interface on the item?
+	// TODO move this to check the itemstack itself
+	// TODO make sure the new behavior is safe with the unbreakable tag
 	private boolean isRepairable(Material material) {
-		if (ignoreItems != null && ignoreItems.contains(material)) return false;
-		if (allowedItems != null && !allowedItems.contains(material)) return false;
+		if (this.ignoreItems != null && this.ignoreItems.contains(material)) return false;
+		if (this.allowedItems != null && !this.allowedItems.contains(material)) return false;
 		String s = material.name();
 		return 
 				material == Material.BOW ||

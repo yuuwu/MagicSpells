@@ -58,10 +58,10 @@ public class DisarmSpell extends TargetedSpell implements TargetedEntitySpell {
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
-			// get target
+			// Get target
 			TargetInfo<LivingEntity> target = getTargetedEntity(player, power);
 			if (target == null) {
-				// fail
+				// Fail
 				return noTarget(player);
 			}
 			
@@ -70,12 +70,12 @@ public class DisarmSpell extends TargetedSpell implements TargetedEntitySpell {
 			boolean disarmed = disarm(realTarget);
 			if (disarmed) {
 				playSpellEffects(player, realTarget);
-				// send messages
+				// Send messages
 				sendMessages(player, realTarget);
 				return PostCastAction.NO_MESSAGES;
 			}
 			
-			// fail
+			// Fail
 			return noTarget(player, strInvalidItem);
 		}
 		return PostCastAction.HANDLE_NORMALLY;
@@ -85,24 +85,24 @@ public class DisarmSpell extends TargetedSpell implements TargetedEntitySpell {
 		final ItemStack inHand = getItemInHand(target);
 		if (disarmable == null || disarmable.contains(inHand.getType())) {
 			if (dontDrop) {
-				// hide item
+				// Hide item
 				setItemInHand(target, null);
 				Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
 					@Override
 					public void run() {
-						// give the item back
+						// Give the item back
 						ItemStack inHand2 = getItemInHand(target);
 						if (inHand2 == null || inHand2.getType() == Material.AIR) {
-							// put back in hand
+							// Put back in hand
 							setItemInHand(target, inHand);
 						} else if (target instanceof Player) {
-							// hand is full
+							// Hand is full
 							int slot = ((Player)target).getInventory().firstEmpty();
 							if (slot >= 0) {
-								// put in first available slot
+								// Put in first available slot
 								((Player)target).getInventory().setItem(slot, inHand);
 							} else {
-								// no slots available, drop at feet
+								// No slots available, drop at feet
 								Item item = target.getWorld().dropItem(target.getLocation(), inHand);
 								item.setPickupDelay(0);
 							}
@@ -110,7 +110,7 @@ public class DisarmSpell extends TargetedSpell implements TargetedEntitySpell {
 					}
 				}, disarmDuration);
 			} else {
-				// drop item
+				// Drop item
 				setItemInHand(target, null);
 				Item item = target.getWorld().dropItemNaturally(target.getLocation(), inHand.clone());
 				item.setPickupDelay(disarmDuration);

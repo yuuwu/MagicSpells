@@ -8,7 +8,7 @@ import org.bukkit.conversations.Prompt;
 
 public enum PromptType {
 
-	REGEX_PROMPT(new String[]{ "regex" }) {
+	REGEX_PROMPT("regex") {
 
 		@Override
 		public Prompt constructPrompt(ConfigurationSection section) {
@@ -17,7 +17,7 @@ public enum PromptType {
 		
 	},
 	
-	FIXED_SET_PROMOT(new String[] { "fixed-set" }) {
+	FIXED_SET_PROMOT("fixed-set") {
 
 		@Override
 		public Prompt constructPrompt(ConfigurationSection section) {
@@ -26,7 +26,7 @@ public enum PromptType {
 		
 	},
 	
-	ENUM_SET_PROMPT(new String[] { "enum" }) {
+	ENUM_SET_PROMPT("enum") {
 
 		@Override
 		public Prompt constructPrompt(ConfigurationSection section) {
@@ -47,7 +47,7 @@ public enum PromptType {
 	private static boolean initialized = false;
 	private static Map<String, PromptType> nameMap = null;
 	
-	private PromptType(String[] names) {
+	PromptType(String... names) {
 		labels = names;
 	}
 	

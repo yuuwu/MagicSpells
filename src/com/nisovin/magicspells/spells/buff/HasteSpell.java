@@ -114,9 +114,7 @@ public class HasteSpell extends BuffSpell {
 	
 	@Override
 	protected void turnOff() {
-		for (Player p : hasted.keySet()) {
-			p.removePotionEffect(PotionEffectType.SPEED);
-		}
+		hasted.keySet().stream().forEachOrdered(p -> p.removePotionEffect(PotionEffectType.SPEED));
 		hasted.clear();
 	}
 

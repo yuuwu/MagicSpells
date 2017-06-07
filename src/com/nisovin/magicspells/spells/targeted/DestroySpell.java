@@ -25,7 +25,7 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedEntityFromLocationSpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 
 public class DestroySpell extends TargetedSpell implements TargetedLocationSpell, TargetedEntityFromLocationSpell {
@@ -53,6 +53,7 @@ public class DestroySpell extends TargetedSpell implements TargetedLocationSpell
 		velocity = getConfigFloat("velocity", 0);
 		
 		String vType = getConfigString("velocity-type", "none");
+		// TODO use a switch here
 		if (vType.equalsIgnoreCase("out")) {
 			velocityType = VelocityType.OUT;
 		} else if (vType.equalsIgnoreCase("up")) {
@@ -102,6 +103,7 @@ public class DestroySpell extends TargetedSpell implements TargetedLocationSpell
 		
 		if (preventLandingBlocks) {
 			registerEvents(new FallingBlockListener());
+			// TODO convert this to lambda
 			MagicSpells.scheduleRepeatingTask(new Runnable() {
 				@Override
 				public void run() {
@@ -111,6 +113,7 @@ public class DestroySpell extends TargetedSpell implements TargetedLocationSpell
 						if (!iter.next().isValid()) iter.remove();
 					}
 				}
+				// TODO convert this to terms of time unit values
 			}, 600, 600);
 		}
 	}
@@ -173,6 +176,7 @@ public class DestroySpell extends TargetedSpell implements TargetedLocationSpell
 			}
 		}
 		
+		// TODO Java 8 this
 		for (Block b : blocksToRemove) {
 			b.setType(Material.AIR);
 		}
@@ -184,7 +188,7 @@ public class DestroySpell extends TargetedSpell implements TargetedLocationSpell
 			playSpellEffects(EffectPosition.PROJECTILE, fb);
 			playTrackingLinePatterns(EffectPosition.DYNAMIC_CASTER_PROJECTILE_LINE, source, fb.getLocation(), null, fb);
 			fb.setDropItem(false);
-			Vector v = null;
+			Vector v;
 			if (velocityType == VelocityType.OUT) {
 				v = l.toVector().subtract(target.toVector()).normalize();
 				v.setX(v.getX() + ((Math.random() - .5) / 4));
@@ -266,6 +270,7 @@ public class DestroySpell extends TargetedSpell implements TargetedLocationSpell
 		return true;
 	}
 	
+	// TODO move to its own file or use lambda
 	class FallingBlockListener implements Listener {
 		
 		@EventHandler
@@ -276,6 +281,7 @@ public class DestroySpell extends TargetedSpell implements TargetedLocationSpell
 		
 	}
 	
+	// TODO does this belong in its own file?
 	public enum VelocityType {
 		
 		NONE,

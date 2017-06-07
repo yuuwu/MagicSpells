@@ -20,7 +20,7 @@ import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.Util;
 
-// the special position plays on the dropped items
+// The special position plays on the dropped items
 public class ConjureFireworkSpell extends InstantSpell implements TargetedLocationSpell {
 
 	boolean addToInventory;
@@ -39,12 +39,12 @@ public class ConjureFireworkSpell extends InstantSpell implements TargetedLocati
 		FireworkMeta meta = (FireworkMeta)firework.getItemMeta();
 		
 		meta.setPower(getConfigInt("flight", 2));
-		String name = getConfigString("firework-name", "");
-		if (!name.isEmpty()) meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
+		String fireworkName = getConfigString("firework-name", "");
+		if (!fireworkName.isEmpty()) meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', fireworkName));
 		
-		List<String> effects = getConfigStringList("firework-effects", null);
-		if (effects != null && !effects.isEmpty()) {
-			for (String e : effects) {
+		List<String> fireworkEffects = getConfigStringList("firework-effects", null);
+		if (fireworkEffects != null && !fireworkEffects.isEmpty()) {
+			for (String e : fireworkEffects) {
 				FireworkEffect.Type type = Type.BALL;
 				boolean trail = false;
 				boolean twinkle = false;
@@ -100,7 +100,6 @@ public class ConjureFireworkSpell extends InstantSpell implements TargetedLocati
 		}
 		
 		firework.setItemMeta(meta);
-				
 	}
 
 	@Override

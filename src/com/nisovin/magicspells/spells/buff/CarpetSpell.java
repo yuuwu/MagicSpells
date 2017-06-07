@@ -3,6 +3,7 @@ package com.nisovin.magicspells.spells.buff;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import com.nisovin.magicspells.util.Util;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -52,12 +53,8 @@ public class CarpetSpell extends BuffSpell {
 	@Override
 	public void initialize() {
 		super.initialize();
-		if (cancelOnLogout) {
-			registerEvents(new QuitListener());
-		}
-		if (cancelOnTeleport) {
-			registerEvents(new TeleportListener());
-		}
+		if (cancelOnLogout) registerEvents(new QuitListener());
+		if (cancelOnTeleport) registerEvents(new TeleportListener());
 	}
 	
 	@Override
@@ -122,29 +119,23 @@ public class CarpetSpell extends BuffSpell {
 			
 			if (isExpired(player)) {
 				turnOff(player);
-			} else {
-				Block block = player.getLocation().subtract(0, 2, 0).getBlock();
-				boolean moved = windwalkers.get(playerName).movePlatform(block);
-				if (moved) {
-					falling.add(player);
-					addUse(player);
-					chargeUseCost(player);
-				}
+				return;
+			}
+			Block block = player.getLocation().subtract(0, 2, 0).getBlock();
+			boolean moved = windwalkers.get(playerName).movePlatform(block);
+			if (moved) {
+				falling.add(player);
+				addUse(player);
+				chargeUseCost(player);
 			}
 		}
 	
 		@EventHandler(priority=EventPriority.NORMAL, ignoreCancelled=true)
 		public void onBlockBreak(BlockBreakEvent event) {
 			if (windwalkers.isEmpty()) return;
-			Block block = event.getBlock();
+			final Block block = event.getBlock();
 			if (block.getType() != platformBlock) return;
-			
-			for (BlockPlatform platform : windwalkers.values()) {
-				if (platform.blockInPlatform(block)) {
-					event.setCancelled(true);
-					break;
-				}
-			}
+			if (Util.containsValueParallel(windwalkers, platform -> platform.blockInPlatform(block))) event.setCancelled(true);
 		}
 		
 	}
@@ -158,7 +149,7 @@ public class CarpetSpell extends BuffSpell {
 			
 			Location locationFrom = event.getFrom();
 			Location locationTo = event.getTo();
-			if (!LocationUtil.isSameWorld(locationFrom, locationTo) || locationFrom.toVector().distanceSquared(locationTo.toVector()) > 50 * 50) {
+			if (LocationUtil.differentWorldDistanceGreaterThan(locationFrom, locationTo, 50)) {
 				turnOff(player);
 			}
 		}
@@ -167,7 +158,6 @@ public class CarpetSpell extends BuffSpell {
 		public void onPlayerPortal(PlayerPortalEvent event) {
 			Player player = event.getPlayer();
 			if (!windwalkers.containsKey(player.getName())) return;
-			
 			turnOff(player);
 		}
 		
@@ -186,9 +176,7 @@ public class CarpetSpell extends BuffSpell {
 	
 	@Override
 	protected void turnOff() {
-		for (BlockPlatform platform : windwalkers.values()) {
-			platform.destroyPlatform();
-		}
+		Util.forEachValueOrdered(windwalkers, BlockPlatform::destroyPlatform);
 		windwalkers.clear();
 		unregisterListener();
 	}

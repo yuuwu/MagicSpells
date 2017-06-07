@@ -1,5 +1,6 @@
 package com.nisovin.magicspells.util;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,9 +34,7 @@ public class SpellReagents {
 	public SpellReagents(SpellReagents other) {
 		if (other.items != null) {
 			this.items = new HashSet<>();
-			for (ItemStack item : other.items) {
-				this.items.add(item.clone());
-			}
+			other.items.forEach(item -> this.items.add(item.clone()));
 		}
 		this.mana = other.mana;
 		this.health = other.health;
@@ -45,41 +44,35 @@ public class SpellReagents {
 		this.money = other.money;
 		if (other.variables != null) {
 			this.variables = new HashMap<>();
-			for (String var : other.variables.keySet()) {
-				this.variables.put(var, other.variables.get(var));
-			}
+			this.variables.putAll(other.variables);
 		}
 	}
 	
 	public HashSet<ItemStack> getItems() {
-		return items;
+		return this.items;
 	}
 	
 	public ItemStack[] getItemsAsArray() {
-		if (items == null || items.isEmpty()) return null;
-		ItemStack[] arr = new ItemStack[items.size()];
-		arr = items.toArray(arr);
+		if (this.items == null || this.items.isEmpty()) return null;
+		ItemStack[] arr = new ItemStack[this.items.size()];
+		arr = this.items.toArray(arr);
 		return arr;
 	}
 	
-	public void setItems(Collection<ItemStack> items) {
-		if (items == null || items.isEmpty()) {
+	public void setItems(Collection<ItemStack> newItems) {
+		if (newItems == null || newItems.isEmpty()) {
 			this.items = null;
 		} else {
-			this.items = new HashSet<>();
-			this.items.addAll(items);
+			this.items = new HashSet<>(newItems);
 		}
 	}
 	
 	// TODO can this safely be varargs?
-	public void setItems(ItemStack[] items) {
-		if (items == null || items.length == 0) {
+	public void setItems(ItemStack[] newItems) {
+		if (newItems == null || newItems.length == 0) {
 			this.items = null;
 		} else {
-			this.items = new HashSet<>();
-			for (ItemStack i : items) {
-				this.items.add(i);
-			}
+			this.items = new HashSet<>(Arrays.asList(newItems));
 		}
 	}
 	
@@ -89,76 +82,76 @@ public class SpellReagents {
 	}
 	
 	public int getMana() {
-		return mana;
+		return this.mana;
 	}
 	
-	public void setMana(int mana) {
-		this.mana = mana;
+	public void setMana(int newMana) {
+		this.mana = newMana;
 	}
 	
 	public int getHealth() {
-		return health;
+		return this.health;
 	}
 	
-	public void setHealth(int health) {
-		this.health = health;
+	public void setHealth(int newHealth) {
+		this.health = newHealth;
 	}
 	
 	public int getHunger() {
-		return hunger;
+		return this.hunger;
 	}
 	
-	public void setHunger(int hunger) {
-		this.hunger = hunger;
+	public void setHunger(int newHunger) {
+		this.hunger = newHunger;
 	}
 	
 	public int getExperience() {
-		return experience;
+		return this.experience;
 	}
 	
-	public void setExperience(int experience) {
-		this.experience = experience;
+	public void setExperience(int newExperience) {
+		this.experience = newExperience;
 	}
 	
 	public int getLevels() {
-		return levels;
+		return this.levels;
 	}
 	
-	public void setLevels(int levels) {
-		this.levels = levels;
+	public void setLevels(int newLevels) {
+		this.levels = newLevels;
 	}
 	
 	public int getDurability() {
-		return durability;
+		return this.durability;
 	}
 	
-	public void setDurability(int durability) {
-		this.durability = durability;
+	public void setDurability(int newDurability) {
+		this.durability = newDurability;
 	}
 	
 	public float getMoney() {
-		return money;
+		return this.money;
 	}
 	
-	public void setMoney(float money) {
-		this.money = money;
+	public void setMoney(float newMoney) {
+		this.money = newMoney;
 	}
 	
 	public HashMap<String, Double> getVariables() {
-		return variables;
+		return this.variables;
 	}
 	
 	public void addVariable(String var, double val) {
-		if (variables == null) variables = new HashMap<>();
-		variables.put(var, val);
+		if (this.variables == null) this.variables = new HashMap<>();
+		this.variables.put(var, val);
 	}
 	
-	public void setVariables(Map<String, Double> variables) {
-		if (variables == null || variables.isEmpty()) {
+	public void setVariables(Map<String, Double> newVariables) {
+		if (newVariables == null || newVariables.isEmpty()) {
 			this.variables = null;
 		} else {
 			this.variables = new HashMap<>();
-			this.variables.putAll(variables);
+			this.variables.putAll(newVariables);
 		}
 	}
 	
@@ -180,8 +173,8 @@ public class SpellReagents {
 		other.money = this.money;
 		if (this.variables != null) {
 			other.variables = new HashMap<>();
-			for (String var : this.variables.keySet()) {
-				other.variables.put(var, this.variables.get(var));
+			for (Map.Entry<String, Double> entry : this.variables.entrySet()) {
+				other.variables.put(entry.getKey(), entry.getValue());
 			}
 		}
 		return other;
@@ -206,8 +199,8 @@ public class SpellReagents {
 		other.money = this.money * x;
 		if (this.variables != null) {
 			other.variables = new HashMap<>();
-			for (String var : this.variables.keySet()) {
-				other.variables.put(var, this.variables.get(var) * x);
+			for (Map.Entry<String, Double> entry : this.variables.entrySet()) {
+				other.variables.put(entry.getKey(), entry.getValue() * x);
 			}
 		}
 		return other;
@@ -216,15 +209,15 @@ public class SpellReagents {
 	@Override
 	public String toString() {
 		return "SpellReagents:["
-			+ "items=" + items
-			+ ",mana=" + mana
-			+ ",health=" + health
-			+ ",hunger=" + hunger
-			+ ",experience=" + experience
-			+ ",levels=" + levels
-			+ ",durability=" + durability
-			+ ",money=" + money
-			+ ",variables=" + variables
+			+ "items=" + this.items
+			+ ",mana=" + this.mana
+			+ ",health=" + this.health
+			+ ",hunger=" + this.hunger
+			+ ",experience=" + this.experience
+			+ ",levels=" + this.levels
+			+ ",durability=" + this.durability
+			+ ",money=" + this.money
+			+ ",variables=" + this.variables
 			+ ']';
 	}
 	

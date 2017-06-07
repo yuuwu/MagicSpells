@@ -24,19 +24,24 @@
 	<property name="factions.version" value="1.0"/>
 	<property name="factions.src.dir" location="src_factions"/>
 	<property name="factions.build.dir" location="bin_factions"/>
-	
+
 	<property name="dist.dir" location="dist"/>
 	<property name="lib.dir" location="lib"/>
 	<property name="doc.dir" location="doc"/>
-	
-	<property name="java.core.version" value="1.7" />
-	<property name="java.teams.version" value="1.7" />
-	<property name="java.memory.version" value="1.7" />
-	<property name="java.shop.version" value="1.7" />
-	<property name="java.towny.version" value="1.7" />
-	<property name="java.factions.version" value="1.7" />
+
+	<!-- Java versions-->
+	<property name="java.core.version" value="1.8" />
+	<property name="java.teams.version" value="1.8" />
+	<property name="java.memory.version" value="1.8" />
+	<property name="java.shop.version" value="1.8" />
+	<property name="java.towny.version" value="1.8" />
+	<property name="java.factions.version" value="1.8" />
+
 	<tstamp><format property="datestamp" pattern="yyMMddHHmm"/></tstamp>
-		
+
+	<!-- Resource retrieving -->
+	<property name="resource.residence.url" value="http://nexus.hc.to/content/repositories/pub_releases/com/bekvon/bukkit/residence/Residence/4.5.3.0/Residence-4.5.3.0.jar"/>
+
 	<target name="build" depends="build-version, clean, core-jar, teams-jar, memory-jar, shop-jar, towny-jar, factions-jar, zip"/>
 	<target name="build-version">
 		<property name="version.suffix" value="dev-${datestamp}"/>
@@ -60,10 +65,17 @@
 		<mkdir dir="${dist.dir}"/>
 	</target>
 
-	<!-- this just runs an echo for now, but will be used for ensuring resources -->
+	<!-- This just runs an echo for now, but will be used for ensuring resources -->
 	<target name="get-resources">
 		<echo>
 			Running the get resources phase
+		</echo>
+		<!-- Get Residence -->
+		<get src="${resource.residence.url}"
+			dest="${lib.dir}/Residence.jar"
+			skipexisting="true"/>
+		<echo>
+			Finished running the get resources phase
 		</echo>
 	</target>
 

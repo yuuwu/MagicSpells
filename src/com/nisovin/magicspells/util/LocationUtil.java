@@ -10,7 +10,11 @@ import org.bukkit.command.BlockCommandSender;
 import org.bukkit.entity.Entity;
 
 public class LocationUtil {
-
+	
+	// -------------------------------------------- //
+	// IS SAME X LOGIC
+	// -------------------------------------------- //
+	
 	public static boolean isSameWorld(Object loc1, Object loc2) {
 		World world1 = getWorld(loc1);
 		if (world1 == null) return false;
@@ -41,6 +45,57 @@ public class LocationUtil {
 		if (location1.getBlockZ() >> 4 != location2.getBlockZ() >> 4) return false;
 		return Objects.equals(location1.getWorld(), location2.getWorld());
 	}
+	
+	// -------------------------------------------- //
+	// DISTANCE
+	// -------------------------------------------- //
+	
+	// Returns -1.0 if something didn't work
+	// TODO see if this should do the vector convert first for cross world
+	public static double distanceSquared(Object one, Object two) {
+		Location location1 = getLocation(one);
+		if (location1 == null) return -1D;
+		Location location2 = getLocation(two);
+		if (location2 == null) return -1D;
+		
+		try {
+			return location1.distanceSquared(location2);
+		} catch (Exception exception) {
+			// In case we had some issue with distances between two worlds
+			return -1D;
+		}
+	}
+	
+	public static boolean distanceLessThan(Object one, Object two, double distance) {
+		double actualDistanceSquared = distanceSquared(one, two);
+		if (actualDistanceSquared == -1D) return false;
+		return actualDistanceSquared < distance * distance;
+	}
+	
+	public static boolean distanceGreaterThan(Object one, Object two, double distance) {
+		double actualDistanceSquared = distanceSquared(one, two);
+		if (actualDistanceSquared == -1D) return false;
+		return actualDistanceSquared > distance * distance;
+	}
+	
+	// -------------------------------------------- //
+	// COMMON COMBINED LOGIC
+	// -------------------------------------------- //
+	
+	// Are the locations in a different world or further away than distance
+	// Returns false if either of the locations are null
+	public static boolean differentWorldDistanceGreaterThan(Object location1, Object location2, double distance) {
+		Location loc1 = getLocation(location1);
+		if (loc1 == null) return false;
+		Location loc2 = getLocation(location2);
+		if (loc2 == null) return false;
+		if (!isSameWorld(loc1, loc2)) return true;
+		return distanceGreaterThan(loc1, loc2, distance);
+	}
+	
+	// -------------------------------------------- //
+	// EXTRACTOR LOGIC
+	// -------------------------------------------- //
 	
 	// This should redirect to other internal methods depending on what the type of object is
 	public static Location getLocation(Object object) {

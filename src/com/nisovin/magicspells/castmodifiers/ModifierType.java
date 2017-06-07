@@ -345,7 +345,7 @@ public enum ModifierType {
 		public boolean apply(SpellTargetLocationEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) {
 				Spell spell = MagicSpells.getSpellByInternalName(modifierVar);
-				if (spell != null && spell instanceof TargetedLocationSpell) {
+				if (spell instanceof TargetedLocationSpell) {
 					((TargetedLocationSpell)spell).castAtLocation(event.getCaster(), event.getTargetLocation(), 1F);
 				}
 			}
@@ -405,7 +405,7 @@ public enum ModifierType {
 		public boolean apply(SpellTargetLocationEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) {
 				Spell spell = MagicSpells.getSpellByInternalName(modifierVar);
-				if (spell != null && spell instanceof TargetedLocationSpell) {
+				if (spell instanceof TargetedLocationSpell) {
 					((TargetedLocationSpell)spell).castAtLocation(event.getCaster(), event.getTargetLocation(), 1F);
 					event.setCancelled(true);
 				}
@@ -563,8 +563,8 @@ public enum ModifierType {
 	private boolean usesModifierVar = false;
 	private boolean usesModifierVarFloat = false;
 	private boolean usesModifierVarInt = false;
-
-	private ModifierType(boolean usesModVarString, boolean usesModVarFloat, boolean usesModVarInt, boolean usesCustomData, String... keys) {
+	
+	ModifierType(boolean usesModVarString, boolean usesModVarFloat, boolean usesModVarInt, boolean usesCustomData, String... keys) {
 		this.keys = keys;
 		this.usesCustomData = usesCustomData;
 		this.usesModifierVar = usesModVarString;

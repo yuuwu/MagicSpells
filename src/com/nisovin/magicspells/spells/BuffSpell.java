@@ -2,6 +2,7 @@ package com.nisovin.magicspells.spells;
 
 import java.util.HashMap;
 
+import com.nisovin.magicspells.util.TimeUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -272,54 +273,54 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 	
 	public BuffSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
-		thisSpell = this;
+		this.thisSpell = this;
 		
-		targeted = getConfigBoolean("targeted", false);
-		toggle = getConfigBoolean("toggle", true);
-		reagents = getConfigReagents("use-cost");
-		useCostInterval = getConfigInt("use-cost-interval", 0);
-		numUses = getConfigInt("num-uses", 0);
-		duration = getConfigFloat("duration", 0);
-		powerAffectsDuration = getConfigBoolean("power-affects-duration", true);
-		cancelOnGiveDamage = getConfigBoolean("cancel-on-give-damage", false);
-		cancelOnTakeDamage = getConfigBoolean("cancel-on-take-damage", false);
-		cancelOnDeath = getConfigBoolean("cancel-on-death", false);
-		cancelOnTeleport = getConfigBoolean("cancel-on-teleport", false);
-		cancelOnChangeWorld = getConfigBoolean("cancel-on-change-world", false);
-		cancelOnSpellCast = getConfigBoolean("cancel-on-spell-cast", false);
-		cancelOnLogout = getConfigBoolean("cancel-on-logout", false);
-		if (cancelOnGiveDamage || cancelOnTakeDamage) registerEvents(new DamageListener());
-		if (cancelOnDeath) registerEvents(new DeathListener());
-		if (cancelOnTeleport) registerEvents(new TeleportListener());
-		if (cancelOnChangeWorld) registerEvents(new ChangeWorldListener());
-		if (cancelOnSpellCast) registerEvents(new SpellCastListener());
-		if (cancelOnLogout) registerEvents(new QuitListener());
+		this.targeted = getConfigBoolean("targeted", false);
+		this.toggle = getConfigBoolean("toggle", true);
+		this.reagents = getConfigReagents("use-cost");
+		this.useCostInterval = getConfigInt("use-cost-interval", 0);
+		this.numUses = getConfigInt("num-uses", 0);
+		this.duration = getConfigFloat("duration", 0);
+		this.powerAffectsDuration = getConfigBoolean("power-affects-duration", true);
+		this.cancelOnGiveDamage = getConfigBoolean("cancel-on-give-damage", false);
+		this.cancelOnTakeDamage = getConfigBoolean("cancel-on-take-damage", false);
+		this.cancelOnDeath = getConfigBoolean("cancel-on-death", false);
+		this.cancelOnTeleport = getConfigBoolean("cancel-on-teleport", false);
+		this.cancelOnChangeWorld = getConfigBoolean("cancel-on-change-world", false);
+		this.cancelOnSpellCast = getConfigBoolean("cancel-on-spell-cast", false);
+		this.cancelOnLogout = getConfigBoolean("cancel-on-logout", false);
+		if (this.cancelOnGiveDamage || this.cancelOnTakeDamage) registerEvents(new DamageListener());
+		if (this.cancelOnDeath) registerEvents(new DeathListener());
+		if (this.cancelOnTeleport) registerEvents(new TeleportListener());
+		if (this.cancelOnChangeWorld) registerEvents(new ChangeWorldListener());
+		if (this.cancelOnSpellCast) registerEvents(new SpellCastListener());
+		if (this.cancelOnLogout) registerEvents(new QuitListener());
 		
-		strFade = getConfigString("str-fade", "");
+		this.strFade = getConfigString("str-fade", "");
 		
-		if (numUses > 0 || (reagents != null && useCostInterval > 0)) {
-			useCounter = new HashMap<String,Integer>();
+		if (this.numUses > 0 || (this.reagents != null && this.useCostInterval > 0)) {
+			this.useCounter = new HashMap<>();
 		}
-		if (duration > 0) durationEndTime = new HashMap<String,Long>();
+		if (this.duration > 0) this.durationEndTime = new HashMap<>();
 		
-		castWithItem = getConfigBoolean("can-cast-with-item", true);
-		castByCommand = getConfigBoolean("can-cast-by-command", true);
+		this.castWithItem = getConfigBoolean("can-cast-with-item", true);
+		this.castByCommand = getConfigBoolean("can-cast-by-command", true);
 	}
 	
 	@Override
 	public boolean canCastWithItem() {
-		return castWithItem;
+		return this.castWithItem;
 	}
 	
 	@Override
 	public boolean canCastByCommand() {
-		return castByCommand;
+		return this.castByCommand;
 	}
 	
 	@Override
 	public final PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		Player target;
-		if (targeted) {
+		if (this.targeted) {
 			TargetInfo<Player> targetInfo = getTargetedPlayer(player, power);
 			if (targetInfo == null) return noTarget(player);
 			target = targetInfo.getTarget();
@@ -328,7 +329,7 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 			target = player;
 		}
 		PostCastAction action = activate(player, target, power, args, state == SpellCastState.NORMAL);
-		if (targeted && action == PostCastAction.HANDLE_NORMALLY) {
+		if (this.targeted && action == PostCastAction.HANDLE_NORMALLY) {
 			sendMessages(player, target);
 			return PostCastAction.NO_MESSAGES;
 		}
@@ -349,7 +350,7 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 	
 	private PostCastAction activate(Player caster, Player target, float power, String[] args, boolean normal) {
 		if (isActive(target)) {
-			if (toggle) {
+			if (this.toggle) {
 				turnOff(target);
 				return PostCastAction.ALREADY_HANDLED;
 			}
@@ -387,9 +388,9 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 	}
 	
 	public void setAsEverlasting() {
-		duration = 0;
-		numUses = 0;
-		useCostInterval = 0;
+		this.duration = 0;
+		this.numUses = 0;
+		this.useCostInterval = 0;
 	}
 	
 	/**
@@ -397,23 +398,23 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 	 * @param player the player to begin counting duration
 	 */
 	private void startSpellDuration(final Player player, float power) {
-		if (duration > 0 && durationEndTime != null) {
-			float dur = duration;
-			if (powerAffectsDuration) dur *= power;
-			durationEndTime.put(player.getName(), System.currentTimeMillis() + Math.round(dur * 1000));
+		if (this.duration > 0 && this.durationEndTime != null) {
+			float dur = this.duration;
+			if (this.powerAffectsDuration) dur *= power;
+			this.durationEndTime.put(player.getName(), System.currentTimeMillis() + Math.round(dur * TimeUtil.MILLISECONDS_PER_SECOND));
 			final String name = player.getName();
+			// TODO convert this to lambda
 			Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
 				@Override
 				public void run() {
 					Player p = PlayerNameUtils.getPlayerExact(name);
 					if (p == null) p = player;
-					if (p != null && isExpired(p)) {
-						turnOff(p);
-					}
+					if (isExpired(p)) turnOff(p);
 				}
-			}, Math.round(dur * 20) + 20); // overestimate ticks, since the duration is real-time ms based			
+			}, Math.round(dur * TimeUtil.TICKS_PER_SECOND) + 20); // overestimate ticks, since the duration is real-time ms based
 		}
 		
+		// TODO use lambda
 		playSpellEffectsBuff(player, new SpellEffect.SpellEffectActiveChecker() {
 			@Override
 			public boolean isActive(Entity entity) {
@@ -431,15 +432,15 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 	 * @return true if the spell has expired, false otherwise
 	 */
 	protected boolean isExpired(Player player) {
-		if (duration <= 0 || durationEndTime == null) return false;
-		Long endTime = durationEndTime.get(player.getName());
+		if (this.duration <= 0 || this.durationEndTime == null) return false;
+		Long endTime = this.durationEndTime.get(player.getName());
 		if (endTime == null) return false;
 		if (endTime > System.currentTimeMillis()) return false;
 		return true;
 	}
 	
 	public boolean isActiveAndNotExpired(Player player) {
-		if (duration > 0 && isExpired(player)) return false;
+		if (this.duration > 0 && isExpired(player)) return false;
 		return isActive(player);
 	}
 	
@@ -457,19 +458,19 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 	 * @return the player's current number of uses (returns 0 if the use counting feature is disabled)
 	 */
 	protected int addUse(Player player) {
-		if (numUses > 0 || (reagents != null && useCostInterval > 0)) {
+		if (this.numUses > 0 || (this.reagents != null && this.useCostInterval > 0)) {
 			String playerName = player.getName();
-			Integer uses = useCounter.get(playerName);
+			Integer uses = this.useCounter.get(playerName);
 			if (uses == null) {
 				uses = 1;
 			} else {
 				uses++;
 			}
 			
-			if (numUses > 0 && uses >= numUses) {
+			if (this.numUses > 0 && uses >= this.numUses) {
 				turnOff(player);
 			} else {
-				useCounter.put(playerName, uses);
+				this.useCounter.put(playerName, uses);
 			}
 			return uses;
 		}
@@ -482,17 +483,17 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 	 * @return true if the reagents were removed, or if the use cost is disabled, false otherwise
 	 */
 	protected boolean chargeUseCost(Player player) {
-		if (reagents == null) return true;
-		if (useCostInterval <= 0) return true;
-		if (useCounter == null) return true;
+		if (this.reagents == null) return true;
+		if (this.useCostInterval <= 0) return true;
+		if (this.useCounter == null) return true;
 		
 		String playerName = player.getName();
-		Integer uses = useCounter.get(playerName);
+		Integer uses = this.useCounter.get(playerName);
 		if (uses == null) return true;
 		
-		if (uses % useCostInterval == 0) {
-			if (hasReagents(player, reagents)) {
-				removeReagents(player, reagents);
+		if (uses % this.useCostInterval == 0) {
+			if (hasReagents(player, this.reagents)) {
+				removeReagents(player, this.reagents);
 				return true;
 			}
 			turnOff(player);
@@ -518,17 +519,16 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 	 * @param player
 	 */
 	public final void turnOff(Player player) {
-		if (isActive(player)) {
-			String playerName = player.getName();
-			if (useCounter != null) useCounter.remove(playerName);
-			if (durationEndTime != null) durationEndTime.remove(playerName);
-			BuffManager buffman = MagicSpells.getBuffManager();
-			if (buffman != null) buffman.removeBuff(player, this);
-			sendMessage(strFade, player, null);
-			playSpellEffects(EffectPosition.DISABLED, player);
-			turnOffBuff(player);
-			cancelEffects(EffectPosition.CASTER, player.getUniqueId().toString());
-		}
+		if (!isActive(player)) return;
+		String playerName = player.getName();
+		if (this.useCounter != null) this.useCounter.remove(playerName);
+		if (this.durationEndTime != null) this.durationEndTime.remove(playerName);
+		BuffManager buffman = MagicSpells.getBuffManager();
+		if (buffman != null) buffman.removeBuff(player, this);
+		sendMessage(this.strFade, player, null);
+		playSpellEffects(EffectPosition.DISABLED, player);
+		turnOffBuff(player);
+		cancelEffects(EffectPosition.CASTER, player.getUniqueId().toString());
 	}
 	
 	protected abstract void turnOffBuff(Player player);
@@ -542,14 +542,15 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 	}
 	
 	public boolean isTargeted() {
-		return targeted;
+		return this.targeted;
 	}
 	
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
-		if (isActive(event.getPlayer()) && isExpired(event.getPlayer())) {
-			turnOff(event.getPlayer());
-		}
+		Player player = event.getPlayer();
+		if (!isActive(player)) return;
+		if (!isExpired(player)) return;
+		turnOff(player);
 	}
 	
 	public class DamageListener implements Listener {
@@ -592,7 +593,7 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 			if (isActive(player)) {
 				Location locationFrom = event.getFrom();
 				Location locationTo = event.getTo();
-				if (!LocationUtil.isSameWorld(locationFrom, locationTo) || locationFrom.toVector().distanceSquared(locationTo.toVector()) > 25) {
+				if (LocationUtil.differentWorldDistanceGreaterThan(locationFrom, locationTo, 5)) {
 					turnOff(player);
 				}
 			}

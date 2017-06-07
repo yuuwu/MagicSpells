@@ -53,7 +53,7 @@ public class MagicEnumSetPrompt extends FixedSetPrompt {
 	}
 	
 	public static MagicEnumSetPrompt fromConfigSection(ConfigurationSection section) {
-		// get the options
+		// Get the options
 		String enumClassName = section.getString("enum-class");
 		Class<? extends Enum<?>> enumClass;
 		try {
@@ -83,7 +83,7 @@ public class MagicEnumSetPrompt extends FixedSetPrompt {
 		if (!enumToNames.containsKey(clazz.getName())) {
 			Enum<?>[] values =  clazz.getEnumConstants();
 			if (values == null || values.length == 0) {
-				enumToNames.put(clazz.getName(), new ArrayList<String>());
+				enumToNames.put(clazz.getName(), new ArrayList<>());
 			} else {
 				List<String> parsedValues = new ArrayList<>();
 				for (Enum<?> e: values) {

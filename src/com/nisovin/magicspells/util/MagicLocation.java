@@ -8,13 +8,21 @@ import org.bukkit.World;
 import com.nisovin.magicspells.MagicSpells;
 
 public class MagicLocation {
-
+	
+	// -------------------------------------------- //
+	// FIELDS
+	// -------------------------------------------- //
+	
 	private String world;
 	private double x;
 	private double y;
 	private double z;
 	private float yaw;
 	private float pitch;
+	
+	// -------------------------------------------- //
+	// CONSTRUCT
+	// -------------------------------------------- //
 	
 	public MagicLocation(String world, int x, int y, int z) {
 		this(world, x, y, z, 0, 0);
@@ -32,6 +40,10 @@ public class MagicLocation {
 		this.yaw = yaw;
 		this.pitch = pitch;
 	}
+	
+	// -------------------------------------------- //
+	// ACCESS
+	// -------------------------------------------- //
 	
 	public Location getLocation() {
 		World realWorld = MagicSpells.plugin.getServer().getWorld(world);
@@ -63,6 +75,10 @@ public class MagicLocation {
 		return this.pitch;
 	}
 	
+	// -------------------------------------------- //
+	// HASHCODE
+	// -------------------------------------------- //
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(
@@ -75,14 +91,15 @@ public class MagicLocation {
 		);
 	}
 	
+	// -------------------------------------------- //
+	// EQUALS
+	// -------------------------------------------- //
+	
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof MagicLocation) {
 			MagicLocation loc = (MagicLocation)o;
-			if (loc.world.equals(this.world) && loc.x == this.x && loc.y == this.y && loc.z == this.z && loc.yaw == this.yaw && loc.pitch == this.pitch) {
-				return true;
-			}
-			return false;
+			return loc.world.equals(this.world) && loc.x == this.x && loc.y == this.y && loc.z == this.z && loc.yaw == this.yaw && loc.pitch == this.pitch;
 		} else if (o instanceof Location) {
 			Location loc = (Location)o;
 			if (!LocationUtil.isSameWorld(loc, this.world)) return false;

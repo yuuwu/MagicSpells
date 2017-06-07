@@ -3,6 +3,7 @@ package com.nisovin.magicspells;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.nisovin.magicspells.util.TimeUtil;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -33,7 +34,7 @@ public class CastListener implements Listener {
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		final Player player = event.getPlayer();
 		
-		// first check if player is interacting with a special block
+		// First check if player is interacting with a special block
 		boolean noInteract = false;
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			Material m = event.getClickedBlock().getType();
@@ -55,25 +56,25 @@ public class CastListener implements Listener {
 				noInteract = true;
 			}
 			if (m == Material.ENCHANTMENT_TABLE) {
-				// force exp bar back to show exp when trying to enchant
+				// Force exp bar back to show exp when trying to enchant
 				MagicSpells.getExpBarManager().update(player, player.getLevel(), player.getExp());
 			}
 		}
 		if (noInteract) {
-			// special block -- don't do normal interactions
+			// Special block -- don't do normal interactions
 			noCastUntil.put(event.getPlayer().getName(), System.currentTimeMillis() + 150);
 		} else if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK) {
-			// left click - cast
+			// Left click - cast
 			if (!plugin.castOnAnimate) {
 				castSpell(event.getPlayer());
 			}
 		} else if ((event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) && (plugin.cycleSpellsOnOffhandAction || HandHandler.isMainHand(event))) {
-			// right click -- cycle spell and/or process mana pots
+			// Right click -- cycle spell and/or process mana pots
 			ItemStack inHand = HandHandler.getItemInMainHand(player);
 			
 			if ((inHand != null && inHand.getType() != Material.AIR) || plugin.allowCastWithFist) {
 			
-				// cycle spell
+				// Cycle spell
 				Spell spell = null;
 				if (!player.isSneaking()) {
 					spell = MagicSpells.getSpellbook(player).nextSpell(inHand);
@@ -81,31 +82,26 @@ public class CastListener implements Listener {
 					spell = MagicSpells.getSpellbook(player).prevSpell(inHand);
 				}
 				if (spell != null) {
-					// send message
+					// Send message
 					MagicSpells.sendMessageAndFormat(player, plugin.strSpellChange, "%s", spell.getName());
-					// show spell icon
+					// Show spell icon
 					if (plugin.spellIconSlot >= 0) {
 						showIcon(player, plugin.spellIconSlot, spell.getSpellIcon());
 					}
-					// use cool new text thingy
+					// Use cool new text thingy
 					boolean yay = false;
 					if (yay) {
 						final ItemStack fake = inHand.clone(); //TODO ensure this is not null
 						ItemMeta meta = fake.getItemMeta();
 						meta.setDisplayName("Spell: " + spell.getName());
 						fake.setItemMeta(meta);
-						MagicSpells.scheduleDelayedTask(new Runnable() {
-							@Override
-							public void run() {
-								MagicSpells.getVolatileCodeHandler().sendFakeSlotUpdate(player, player.getInventory().getHeldItemSlot(), fake);
-							}
-						}, 0);
+						MagicSpells.scheduleDelayedTask(() -> MagicSpells.getVolatileCodeHandler().sendFakeSlotUpdate(player, player.getInventory().getHeldItemSlot(), fake), 0);
 					}
 				}
 				
-				// check for mana pots
+				// Check for mana pots
 				if (plugin.enableManaBars && plugin.manaPotions != null) {
-					// find mana potion TODO: fix this, it's not good
+					// Find mana potion TODO: fix this, it's not good
 					int restoreAmt = 0;
 					for (Map.Entry<ItemStack, Integer> entry : plugin.manaPotions.entrySet()) {
 						if (inHand.isSimilar(entry.getKey())) { //TODO make sure this is not null
@@ -114,22 +110,22 @@ public class CastListener implements Listener {
 						}
 					}
 					if (restoreAmt > 0) {
-						// check cooldown
+						// Check cooldown
 						if (plugin.manaPotionCooldown > 0) {
 							Long c = plugin.manaPotionCooldowns.get(player);
 							if (c != null && c > System.currentTimeMillis()) {
-								MagicSpells.sendMessage(plugin.strManaPotionOnCooldown.replace("%c", "" + (int)((c - System.currentTimeMillis())/1000)), player, MagicSpells.NULL_ARGS);
+								MagicSpells.sendMessage(plugin.strManaPotionOnCooldown.replace("%c", "" + (int)((c - System.currentTimeMillis())/TimeUtil.MILLISECONDS_PER_SECOND)), player, MagicSpells.NULL_ARGS);
 								return;
 							}
 						}
-						// add mana
+						// Add mana
 						boolean added = plugin.mana.addMana(player, restoreAmt, ManaChangeReason.POTION);
 						if (added) {
-							// set cooldown
+							// Set cooldown
 							if (plugin.manaPotionCooldown > 0) {
-								plugin.manaPotionCooldowns.put(player, System.currentTimeMillis() + plugin.manaPotionCooldown * 1000);
+								plugin.manaPotionCooldowns.put(player, System.currentTimeMillis() + plugin.manaPotionCooldown * TimeUtil.MILLISECONDS_PER_SECOND);
 							}
-							// remove item
+							// Remove item
 							if (inHand.getAmount() == 1) { //TODO make sure this is not null
 								inHand = null;
 							} else {
@@ -176,12 +172,12 @@ public class CastListener implements Listener {
 		
 		Spell spell = MagicSpells.getSpellbook(player).getActiveSpell(inHand);
 		if (spell != null && spell.canCastWithItem()) {			
-			// first check global cooldown
+			// First check global cooldown
 			if (plugin.globalCooldown > 0 && !spell.ignoreGlobalCooldown) {
 				if (noCastUntil.containsKey(player.getName()) && noCastUntil.get(player.getName()) > System.currentTimeMillis()) return;
 				noCastUntil.put(player.getName(), System.currentTimeMillis() + plugin.globalCooldown);
 			}
-			// cast spell
+			// Cast spell
 			spell.cast(player);
 		}		
 	}

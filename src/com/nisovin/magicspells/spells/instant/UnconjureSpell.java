@@ -18,16 +18,16 @@ public class UnconjureSpell extends InstantSpell {
 	public UnconjureSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		itemNames = getConfigStringList("items", null);
+		this.itemNames = getConfigStringList("items", null);
 	}
 	
 	@Override
 	public void initialize() {
-		items = new ArrayList<>();
-		for (String s : itemNames) {
+		this.items = new ArrayList<>();
+		for (String s : this.itemNames) {
 			ItemStack i = Util.getItemStackFromString(s);
 			if (i == null) continue;
-			items.add(i);
+			this.items.add(i);
 		}
 	}
 
@@ -50,7 +50,7 @@ public class UnconjureSpell extends InstantSpell {
 		boolean chg = false;
 		for (int i = 0; i < inv.length; i++) {
 			if (inv[i] == null) continue;
-			for (ItemStack item : items) {
+			for (ItemStack item : this.items) {
 				if (!item.isSimilar(inv[i])) continue;
 				inv[i] = null;
 				chg = true;

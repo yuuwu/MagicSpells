@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.nisovin.magicspells.util.TimeUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -160,12 +161,7 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 		if (itemTypes == null) return PostCastAction.ALREADY_HANDLED;
 		if (state == SpellCastState.NORMAL) {
 			if (delay >= 0) {
-				MagicSpells.scheduleDelayedTask(new Runnable() {
-					@Override
-					public void run() {
-						conjureItems(player, power);
-					}
-				}, delay);
+				MagicSpells.scheduleDelayedTask(() -> conjureItems(player, power), delay);
 			} else {
 				conjureItems(player, power);
 			}
@@ -175,15 +171,15 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 	}
 	
 	private void conjureItems(Player player, float power) {
-		// get items to drop
+		// Get items to drop
 		List<ItemStack> items = new ArrayList<>();
 		if (calculateDropsIndividually) {
-			individual(items, rand, power);
+			individual(items, power);
 		} else {
-			together(items, rand, power);
+			together(items, power);
 		}
 		
-		// drop items
+		// Drop items
 		Location loc = player.getEyeLocation().add(player.getLocation().getDirection());
 		boolean updateInv = false;
 		for (ItemStack item : items) {
@@ -248,22 +244,22 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 		playSpellEffects(EffectPosition.CASTER, player);
 	}
 	
-	private void individual(List<ItemStack> items, Random rand, float power) {
+	private void individual(List<ItemStack> items, float power) {
 		for (int i = 0; i < itemTypes.length; i++) {
 			double r = rand.nextDouble() * 100;
 			if (powerAffectsChance) r = r / power;
 			if (itemTypes[i] != null && r < itemChances[i]) {
-				addItem(i, items, rand, power);
+				addItem(i, items, power);
 			}
 		}
 	}
 	
-	private void together(List<ItemStack> items, Random rand, float power) {
+	private void together(List<ItemStack> items, float power) {
 		double r = rand.nextDouble() * 100;
 		double m = 0;
 		for (int i = 0; i < itemTypes.length; i++) {
 			if (itemTypes[i] != null && r < itemChances[i] + m) {
-				addItem(i, items, rand, power);
+				addItem(i, items, power);
 				return;
 			} else {
 				m += itemChances[i];
@@ -271,7 +267,7 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 		}
 	}
 	
-	private void addItem(int i, List<ItemStack> items, Random rand, float power) {
+	private void addItem(int i, List<ItemStack> items, float power) {
 		int quant = itemMinQuantities[i];
 		if (itemMaxQuantities[i] > itemMinQuantities[i]) {
 			quant = rand.nextInt(itemMaxQuantities[i] - itemMinQuantities[i]) + itemMinQuantities[i];
@@ -294,9 +290,9 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 	public boolean castAtLocation(Location target, float power) {
 		List<ItemStack> items = new ArrayList<>();
 		if (calculateDropsIndividually) {
-			individual(items, rand, power);
+			individual(items, power);
 		} else {
-			together(items, rand, power);
+			together(items, power);
 		}
 		Location loc = target.clone();
 		if (loc.getBlock().getType() != Material.AIR) loc.add(0, 1, 0);
@@ -323,11 +319,9 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 
 	@Override
 	public boolean castAtEntity(LivingEntity target, float power) {
-		if (target instanceof Player) {
-			conjureItems((Player)target, power);
-			return true;
-		}
-		return false;
+		if (!(target instanceof Player)) return false;
+		conjureItems((Player)target, power);
+		return true;
 	}
 	
 	@Override
@@ -351,7 +345,7 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 			} else {
 				lore = new ArrayList<>();
 			}
-			long expiresAt = System.currentTimeMillis() + (long)(expireHours * 60L * 60L * 1000L);
+			long expiresAt = System.currentTimeMillis() + (long)(expireHours * TimeUtil.MILLISECONDS_PER_HOUR);
 			lore.add(getExpiresText(expiresAt));
 			lore.add(expPrefix + expiresAt);
 			meta.setLore(lore);
@@ -374,23 +368,19 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 		
 		@EventHandler(priority = EventPriority.LOWEST)
 		void onRightClick(PlayerInteractEvent event) {
-			if (event.hasItem()) {
-				ItemStack item = HandHandler.getItemInMainHand(event.getPlayer());
-				ExpirationResult result = updateExpiresLineIfNeeded(item);
-				if (result == ExpirationResult.EXPIRED) {
-					
-					HandHandler.setItemInMainHand(event.getPlayer(), null);
-					event.setCancelled(true);
-				}
+			if (!event.hasItem()) return;
+			ItemStack item = HandHandler.getItemInMainHand(event.getPlayer());
+			ExpirationResult result = updateExpiresLineIfNeeded(item);
+			if (result == ExpirationResult.EXPIRED) {
+				HandHandler.setItemInMainHand(event.getPlayer(), null);
+				event.setCancelled(true);
 			}
 		}
 		
 		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 		void onPickup(PlayerPickupItemEvent event) {
 			processItemDrop(event.getItem());
-			if (event.getItem().isDead()) {
-				event.setCancelled(true);
-			}
+			if (event.getItem().isDead()) event.setCancelled(true);
 		}
 		
 		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -433,45 +423,35 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 			if (!item.hasItemMeta()) return ExpirationResult.NO_UPDATE;
 			ItemMeta meta = item.getItemMeta();
 			if (!meta.hasLore()) return ExpirationResult.NO_UPDATE;
-			ArrayList<String> lore = new ArrayList<String>(meta.getLore());
+			ArrayList<String> lore = new ArrayList<>(meta.getLore());
 			if (lore.size() < 2) return ExpirationResult.NO_UPDATE;
 			String lastLine = lore.get(lore.size() - 1);
 			if (!lastLine.startsWith(expPrefix)) return ExpirationResult.NO_UPDATE;
 			long expiresAt = Long.parseLong(lastLine.replace(expPrefix, ""));
-			if (expiresAt < System.currentTimeMillis()) {
-				return ExpirationResult.EXPIRED;
-			} else {
-				lore.set(lore.size() - 2, getExpiresText(expiresAt));
-				meta.setLore(lore);
-				item.setItemMeta(meta);
-				return ExpirationResult.UPDATE;
-			}
+			if (expiresAt < System.currentTimeMillis()) return ExpirationResult.EXPIRED;
+			lore.set(lore.size() - 2, getExpiresText(expiresAt));
+			meta.setLore(lore);
+			item.setItemMeta(meta);
+			return ExpirationResult.UPDATE;
 		}
 	
 		private String getExpiresText(long expiresAt) {
-			if (expiresAt < System.currentTimeMillis()) {
-				return ChatColor.GRAY + "Expired";
-			} else {
-				double hours = (expiresAt - System.currentTimeMillis()) / 3600000D;
-				if (hours / 24 >= 15) {
-					return ChatColor.GRAY + "Expires in " + ChatColor.WHITE + ((long)hours / 168L) + ChatColor.GRAY + " weeks";
-				} else if (hours / 24 >= 3) {
-					return ChatColor.GRAY + "Expires in " + ChatColor.WHITE + ((long)hours / 24L) + ChatColor.GRAY + " days";
-				} else if (hours >= 2) {
-					return ChatColor.GRAY + "Expires in " + ChatColor.WHITE + (long)hours + ChatColor.GRAY + " hours";
-				} else {
-					return ChatColor.GRAY + "Expires in " + ChatColor.WHITE + '1' + ChatColor.GRAY + " hour";
-				}
-			}
+			if (expiresAt < System.currentTimeMillis()) return ChatColor.GRAY + "Expired";
+			double hours = (expiresAt - System.currentTimeMillis()) / ((double)TimeUtil.MILLISECONDS_PER_HOUR);
+			if (hours / 24 >= 15) return ChatColor.GRAY + "Expires in " + ChatColor.WHITE + ((long)hours / TimeUtil.HOURS_PER_WEEK) + ChatColor.GRAY + " weeks";
+			if (hours / 24 >= 3) return ChatColor.GRAY + "Expires in " + ChatColor.WHITE + ((long)hours / TimeUtil.HOURS_PER_DAY) + ChatColor.GRAY + " days";
+			if (hours >= 2) return ChatColor.GRAY + "Expires in " + ChatColor.WHITE + (long)hours + ChatColor.GRAY + " hours";
+			return ChatColor.GRAY + "Expires in " + ChatColor.WHITE + '1' + ChatColor.GRAY + " hour";
 		}		
 		
 	}
 	
 	private enum ExpirationResult {
 		
-		NO_UPDATE, UPDATE, EXPIRED
+		NO_UPDATE,
+		UPDATE,
+		EXPIRED
 		
 	}
 	
 }
-

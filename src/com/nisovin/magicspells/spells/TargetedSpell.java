@@ -3,6 +3,7 @@ package com.nisovin.magicspells.spells;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.nisovin.magicspells.util.TxtUtil;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
@@ -13,7 +14,6 @@ import com.nisovin.magicspells.Subspell;
 import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
-import com.nisovin.magicspells.util.Util;
 
 public abstract class TargetedSpell extends InstantSpell {
 
@@ -40,23 +40,23 @@ public abstract class TargetedSpell extends InstantSpell {
 	public TargetedSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		alwaysActivate = getConfigBoolean("always-activate", false);
-		playFizzleSound = getConfigBoolean("play-fizzle-sound", false);
-		targetSelf = getConfigBoolean("target-self", false);
-		spellNameOnFail = getConfigString("spell-on-fail", null);
-		strCastTarget = getConfigString("str-cast-target", "");
-		strNoTarget = getConfigString("str-no-target", "");
+		this.alwaysActivate = getConfigBoolean("always-activate", false);
+		this.playFizzleSound = getConfigBoolean("play-fizzle-sound", false);
+		this.targetSelf = getConfigBoolean("target-self", false);
+		this.spellNameOnFail = getConfigString("spell-on-fail", null);
+		this.strCastTarget = getConfigString("str-cast-target", "");
+		this.strNoTarget = getConfigString("str-no-target", "");
 	}
 	
 	@Override
 	public void initialize() {
 		super.initialize();
 		
-		if (spellNameOnFail != null && !spellNameOnFail.isEmpty()) {
-			spellOnFail = new Subspell(spellNameOnFail);
-			if (!spellOnFail.process()) {
-				spellOnFail = null;
-				MagicSpells.error("Invalid spell-on-fail for spell " + internalName);
+		if (this.spellNameOnFail != null && !this.spellNameOnFail.isEmpty()) {
+			this.spellOnFail = new Subspell(this.spellNameOnFail);
+			if (!this.spellOnFail.process()) {
+				this.spellOnFail = null;
+				MagicSpells.error("Invalid spell-on-fail for spell " + this.internalName);
 			}
 		}
 	}
@@ -65,9 +65,9 @@ public abstract class TargetedSpell extends InstantSpell {
 		String targetName = getTargetName(target);
 		Player playerTarget = null;
 		if (target instanceof Player) playerTarget = (Player)target;
-		sendMessage(prepareMessage(strCastSelf, caster, targetName, playerTarget), caster, MagicSpells.NULL_ARGS);
-		if (playerTarget != null) sendMessage(prepareMessage(strCastTarget, caster, targetName, playerTarget), playerTarget, MagicSpells.NULL_ARGS);
-		sendMessageNear(caster, playerTarget, prepareMessage(strCastOthers, caster, targetName, playerTarget), broadcastRange, MagicSpells.NULL_ARGS);
+		sendMessage(prepareMessage(this.strCastSelf, caster, targetName, playerTarget), caster, MagicSpells.NULL_ARGS);
+		if (playerTarget != null) sendMessage(prepareMessage(this.strCastTarget, caster, targetName, playerTarget), playerTarget, MagicSpells.NULL_ARGS);
+		sendMessageNear(caster, playerTarget, prepareMessage(this.strCastOthers, caster, targetName, playerTarget), this.broadcastRange, MagicSpells.NULL_ARGS);
 	}
 	
 	private String prepareMessage(String message, Player caster, String targetName, Player playerTarget) {
@@ -80,7 +80,7 @@ public abstract class TargetedSpell extends InstantSpell {
 					String varText = matcher.group();
 					String[] varData = varText.substring(5, varText.length() - 1).split(":");
 					String val = MagicSpells.getVariableManager().getStringValue(varData[0], playerTarget);
-					String sval = varData.length == 1 ? Util.getStringNumber(val, -1) : Util.getStringNumber(val, Integer.parseInt(varData[1]));
+					String sval = varData.length == 1 ? TxtUtil.getStringNumber(val, -1) : TxtUtil.getStringNumber(val, Integer.parseInt(varData[1]));
 					message = message.replace(varText, sval);
 				}
 			}
@@ -90,7 +90,7 @@ public abstract class TargetedSpell extends InstantSpell {
 					String varText = matcher.group();
 					String[] varData = varText.substring(5, varText.length() - 1).split(":");
 					String val = MagicSpells.getVariableManager().getStringValue(varData[0], caster);
-					String sval = varData.length == 1 ? Util.getStringNumber(val, -1) : Util.getStringNumber(val, Integer.parseInt(varData[1]));
+					String sval = varData.length == 1 ? TxtUtil.getStringNumber(val, -1) : TxtUtil.getStringNumber(val, Integer.parseInt(varData[1]));
 					message = message.replace(varText, sval);
 				}
 			}
@@ -122,12 +122,12 @@ public abstract class TargetedSpell extends InstantSpell {
 	 * Plays the fizzle sound if it is enabled for this spell.
 	 */
 	protected void fizzle(Player player) {
-		if (playFizzleSound) player.playEffect(player.getLocation(), Effect.EXTINGUISH, null);
+		if (this.playFizzleSound) player.playEffect(player.getLocation(), Effect.EXTINGUISH, null);
 	}
 	
 	@Override
 	protected TargetInfo<LivingEntity> getTargetedEntity(Player player, float power, boolean forceTargetPlayers, ValidTargetChecker checker) {
-		if (targetSelf) return new TargetInfo<LivingEntity>(player, power);
+		if (this.targetSelf) return new TargetInfo<>(player, power);
 		return super.getTargetedEntity(player, power, forceTargetPlayers, checker);
 	}
 	
@@ -138,7 +138,7 @@ public abstract class TargetedSpell extends InstantSpell {
 	 * @return the appropriate PostcastAction value
 	 */
 	protected PostCastAction noTarget(Player player) {
-		return noTarget(player, strNoTarget);
+		return noTarget(player, this.strNoTarget);
 	}
 	
 	/**
@@ -151,8 +151,8 @@ public abstract class TargetedSpell extends InstantSpell {
 	protected PostCastAction noTarget(Player player, String message) {
 		fizzle(player);
 		sendMessage(message, player, MagicSpells.NULL_ARGS);
-		if (spellOnFail != null) spellOnFail.cast(player, 1.0F);
-		return alwaysActivate ? PostCastAction.NO_MESSAGES : PostCastAction.ALREADY_HANDLED;		
+		if (this.spellOnFail != null) this.spellOnFail.cast(player, 1.0F);
+		return this.alwaysActivate ? PostCastAction.NO_MESSAGES : PostCastAction.ALREADY_HANDLED;
 	}
 	
 }

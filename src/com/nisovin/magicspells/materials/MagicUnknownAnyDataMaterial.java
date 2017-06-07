@@ -11,17 +11,18 @@ public class MagicUnknownAnyDataMaterial extends MagicUnknownMaterial {
 	
 	@Override
 	public boolean equals(MaterialData matData) {
-		return matData.getItemTypeId() == type;
+		return matData.getItemTypeId() == this.type;
 	}
 	
 	@Override
 	public boolean equals(ItemStack itemStack) {
-		return itemStack.getTypeId() == type;
+		return itemStack.getTypeId() == this.type;
 	}
 	
 	@Override
 	public int hashCode() {
-		return (type + ":*").hashCode();
+		// TODO fix the hash code
+		return (this.type + ":*").hashCode();
 	}
 
 }

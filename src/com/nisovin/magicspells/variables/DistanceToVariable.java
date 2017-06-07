@@ -28,23 +28,23 @@ public class DistanceToVariable extends Variable {
 	@Override
 	protected void init() {
 		super.init();
-		permanent = false;
+		this.permanent = false;
 	}
 	
 	@Override
 	public double getValue(String player) {
 		Player p = PlayerNameUtils.getPlayer(player);
-		if (p == null) return defaultValue;
+		if (p == null) return this.defaultValue;
 		
 		Location originLocation = p.getLocation();
-		if (originLocation == null) return defaultValue;
+		if (originLocation == null) return this.defaultValue;
 		
 		Location targetLoc = this.targetLocation.getLocation();
-		if (targetLoc == null) return defaultValue;
+		if (targetLoc == null) return this.defaultValue;
 		
-		if (!crossWorld && !LocationUtil.isSameWorld(originLocation, targetLoc)) return defaultValue;
+		if (!this.crossWorld && !LocationUtil.isSameWorld(originLocation, targetLoc)) return this.defaultValue;
 		
-		double multiplier = !LocationUtil.isSameWorld(originLocation, targetLoc) ? crossWorldDistanceMultiplier : 1.0;
+		double multiplier = !LocationUtil.isSameWorld(originLocation, targetLoc) ? this.crossWorldDistanceMultiplier : 1.0;
 		targetLoc.setWorld(originLocation.getWorld());
 		return calculateReportedDistance(multiplier, originLocation, targetLoc);
 	}
@@ -68,9 +68,9 @@ public class DistanceToVariable extends Variable {
 	@Override
 	public void loadExtraData(ConfigurationSection section) {
 		super.loadExtraData(section);
-		crossWorld = section.getBoolean("cross-world", false);
-		targetLocation = ConfigReaderUtil.readLocation(section, "target-location", "world,0,0,0");
-		crossWorldDistanceMultiplier = section.getDouble("cross-world-distance-multiplier", 1.0);
+		this.crossWorld = section.getBoolean("cross-world", false);
+		this.targetLocation = ConfigReaderUtil.readLocation(section, "target-location", "world,0,0,0");
+		this.crossWorldDistanceMultiplier = section.getDouble("cross-world-distance-multiplier", 1.0);
 	}
 	
 	protected double calculateReportedDistance(double multiplier, Location origin, Location target) {

@@ -46,13 +46,13 @@ public class ManaRegenSpell extends BuffSpell {
 
 	public ManaRegenSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
-		regenModAmt = getConfigInt("regen-mod-amt", 3);
-		regenning = new HashSet<>();
+		this.regenModAmt = getConfigInt("regen-mod-amt", 3);
+		this.regenning = new HashSet<>();
 	}
 
 	@Override
 	public boolean castBuff(Player player, float power, String[] args) {
-		regenning.add(player.getName());
+		this.regenning.add(player.getName());
 		return true;
 	}
 
@@ -63,7 +63,7 @@ public class ManaRegenSpell extends BuffSpell {
 		if (!isActive(p)) return;
 		if (!event.getReason().equals(ManaChangeReason.REGEN)) return;
 		
-		int newAmt = event.getNewAmount() + regenModAmt;
+		int newAmt = event.getNewAmount() + this.regenModAmt;
 		if (newAmt > event.getMaxMana()) {
 			newAmt = event.getMaxMana();
 		} else if (newAmt < 0) {
@@ -75,17 +75,17 @@ public class ManaRegenSpell extends BuffSpell {
 
 	@Override
 	public void turnOffBuff(Player player) {
-		regenning.remove(player.getName());
+		this.regenning.remove(player.getName());
 	}
 
 	@Override
 	protected void turnOff() {
-		regenning.clear();
+		this.regenning.clear();
 	}
 
 	@Override
 	public boolean isActive(Player player) {
-		return regenning.contains(player.getName());
+		return this.regenning.contains(player.getName());
 	}
 
 }

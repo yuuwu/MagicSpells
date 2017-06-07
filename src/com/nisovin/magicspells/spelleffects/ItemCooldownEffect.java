@@ -1,5 +1,6 @@
 package com.nisovin.magicspells.spelleffects;
 
+import com.nisovin.magicspells.util.TimeUtil;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -61,7 +62,7 @@ public class ItemCooldownEffect extends SpellEffect {
 	@Override
 	protected void loadFromConfig(ConfigurationSection config) {
 		item = Util.getItemStackFromString(config.getString("item", "stone"));
-		duration = config.getInt("duration", 20);
+		duration = config.getInt("duration", TimeUtil.TICKS_PER_SECOND);
 	}
 	
 	@Override

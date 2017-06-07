@@ -3,6 +3,7 @@ package com.nisovin.magicspells.spells.buff;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import com.nisovin.magicspells.util.TimeUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -32,50 +33,46 @@ public class WindwalkSpell extends BuffSpell {
 	
 	public WindwalkSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
-
-		launchSpeed = getConfigInt("launch-speed", 1);
-		flySpeed = getConfigFloat("fly-speed", 0.1F);
-		maxY = getConfigInt("max-y", 260);
-		maxAltitude = getConfigInt("max-altitude", 100);
-        cancelOnLand = getConfigBoolean("cancel-on-land", true);
 		
-		flyers = new HashSet<>();
-		if (useCostInterval > 0) tasks = new HashMap<>();
+		this.launchSpeed = getConfigInt("launch-speed", 1);
+		this.flySpeed = getConfigFloat("fly-speed", 0.1F);
+		this.maxY = getConfigInt("max-y", 260);
+		this.maxAltitude = getConfigInt("max-altitude", 100);
+        this.cancelOnLand = getConfigBoolean("cancel-on-land", true);
+		
+		this.flyers = new HashSet<>();
+		if (this.useCostInterval > 0) this.tasks = new HashMap<>();
 	}
 	
 	@Override
 	public void initialize() {
 		super.initialize();
 		
-		if (cancelOnLand) registerEvents(new SneakListener());
+		if (this.cancelOnLand) registerEvents(new SneakListener());
 	}
 
 	@Override
 	public boolean castBuff(final Player player, float power, String[] args) {
-		// set flying
-		if (launchSpeed > 0) {
-			player.teleport(player.getLocation().add(0, .25, 0));
-			player.setVelocity(new Vector(0, launchSpeed, 0));
+		// Set flying
+		if (this.launchSpeed > 0) {
+			player.teleport(player.getLocation().add(0, 0.25, 0));
+			player.setVelocity(new Vector(0, this.launchSpeed, 0));
 		}
 		String playerName = player.getName();
 		
-		flyers.add(playerName);
+		this.flyers.add(playerName);
 		player.setAllowFlight(true);
 		player.setFlying(true);
-		player.setFlySpeed(flySpeed);
-		// set cost interval
-		if (useCostInterval > 0 || numUses > 0) {
-			int taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(MagicSpells.plugin, new Runnable() {
-				@Override
-				public void run() {
-					addUseAndChargeCost(player);
-				}
-			}, useCostInterval, useCostInterval);
-			tasks.put(playerName, taskId);
+		player.setFlySpeed(this.flySpeed);
+		// Set cost interval
+		if (this.useCostInterval > 0 || this.numUses > 0) {
+			int taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(MagicSpells.plugin, () -> addUseAndChargeCost(player), this.useCostInterval, this.useCostInterval);
+			
+			this.tasks.put(playerName, taskId);
 		}
-		// start height monitor
-		if (heightMonitor == null && (maxY > 0 || maxAltitude > 0)) {
-			heightMonitor = new HeightMonitor();
+		// Start height monitor
+		if (this.heightMonitor == null && (this.maxY > 0 || this.maxAltitude > 0)) {
+			this.heightMonitor = new HeightMonitor();
 		}
 		return true;
 	}
@@ -98,7 +95,7 @@ public class WindwalkSpell extends BuffSpell {
 		int taskId;
 		
 		public HeightMonitor() {
-			taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(MagicSpells.plugin, this, 20, 20);
+			this.taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(MagicSpells.plugin, this, TimeUtil.TICKS_PER_SECOND, TimeUtil.TICKS_PER_SECOND);
 		}
 		
 		@Override
@@ -122,26 +119,26 @@ public class WindwalkSpell extends BuffSpell {
 		}
 		
 		public void stop() {
-			Bukkit.getScheduler().cancelTask(taskId);
+			Bukkit.getScheduler().cancelTask(this.taskId);
 		}
 		
 	}
 
 	@Override
 	public void turnOffBuff(final Player player) {
-		if (flyers.remove(player.getName())) {
+		if (this.flyers.remove(player.getName())) {
 			player.setFlying(false);
 			if (player.getGameMode() != GameMode.CREATIVE) player.setAllowFlight(false);
 			player.setFlySpeed(0.1F);
 			player.setFallDistance(0);
 		}
-		if (tasks != null && tasks.containsKey(player.getName())) {
-			int taskId = tasks.remove(player.getName());
+		if (this.tasks != null && this.tasks.containsKey(player.getName())) {
+			int taskId = this.tasks.remove(player.getName());
 			Bukkit.getScheduler().cancelTask(taskId);
 		}
-		if (heightMonitor != null && flyers.isEmpty()) {
-			heightMonitor.stop();
-			heightMonitor = null;
+		if (this.heightMonitor != null && this.flyers.isEmpty()) {
+			this.heightMonitor.stop();
+			this.heightMonitor = null;
 		}
 	}
 	
@@ -157,7 +154,7 @@ public class WindwalkSpell extends BuffSpell {
 
 	@Override
 	public boolean isActive(Player player) {
-		return flyers.contains(player.getName());
+		return this.flyers.contains(player.getName());
 	}
 
 }

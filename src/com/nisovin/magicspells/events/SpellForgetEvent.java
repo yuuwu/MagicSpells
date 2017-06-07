@@ -21,16 +21,16 @@ public class SpellForgetEvent extends Event implements Cancellable {
 	}
 	
 	public Player getForgetter() {
-		return forgetter;
+		return this.forgetter;
 	}
 	
 	public Spell getSpell() {
-		return spell;
+		return this.spell;
 	}
 	
 	@Override
 	public boolean isCancelled() {
-		return cancelled;
+		return this.cancelled;
 	}
 
 	@Override

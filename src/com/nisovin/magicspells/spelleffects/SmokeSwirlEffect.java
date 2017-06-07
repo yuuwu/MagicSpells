@@ -1,5 +1,6 @@
 package com.nisovin.magicspells.spelleffects;
 
+import com.nisovin.magicspells.util.TimeUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -38,7 +39,7 @@ import com.nisovin.magicspells.MagicSpells;
  */
 public class SmokeSwirlEffect extends SpellEffect {
 
-	int duration = 20;
+	int duration = TimeUtil.TICKS_PER_SECOND;
 	
 	@Override
 	public void loadFromString(String string) {

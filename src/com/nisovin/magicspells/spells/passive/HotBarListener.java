@@ -20,7 +20,7 @@ import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spells.PassiveSpell;
 import com.nisovin.magicspells.util.OverridePriority;
 
-// trigger variable is the item to trigger on
+// Trigger variable is the item to trigger on
 public class HotBarListener extends PassiveListener {
 
 	Set<Material> materials = new HashSet<>();
@@ -29,7 +29,7 @@ public class HotBarListener extends PassiveListener {
 	
 	@Override
 	public void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var) {
-		MagicMaterial mat = null;
+		MagicMaterial mat;
 		if (var.contains("|")) {
 			String[] stuff = var.split("\\|");
 			mat = MagicSpells.getItemNameResolver().resolveItem(stuff[0]);

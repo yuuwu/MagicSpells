@@ -33,24 +33,24 @@ public class SpellFilter {
 		}
 		
 		// Determine the default outcome if nothing catches
-		defaultReturn = determineDefaultValue();
+		this.defaultReturn = determineDefaultValue();
 	}
 	
 	private boolean determineDefaultValue() {
 		// This means there is a tag whitelist check
-		if (allowedTags != null) return false;
+		if (this.allowedTags != null) return false;
 		
 		// If there is a spell whitelist check
-		if (allowedSpells != null) return false;
+		if (this.allowedSpells != null) return false;
 		
 		// This means there is a tag blacklist
-		if (disallowedTags != null) return true;
+		if (this.disallowedTags != null) return true;
 		
 		// If there is a spell blacklist
-		if (blacklistedSpells != null) return true;
+		if (this.blacklistedSpells != null) return true;
 		
 		// If all of the collections are null, then there is no filter
-		emptyFilter = true;
+		this.emptyFilter = true;
 		return true;
 	}
 	
@@ -59,29 +59,29 @@ public class SpellFilter {
 		if (spell == null) return false;
 		
 		// Quick check to exit early if possible
-		if (emptyFilter) return true;
+		if (this.emptyFilter) return true;
 		
 		// Is it whitelisted explicitly?
-		if (allowedSpells != null && allowedSpells.contains(spell.getInternalName())) return true;
+		if (this.allowedSpells != null && this.allowedSpells.contains(spell.getInternalName())) return true;
 		
 		// Is it blacklisted?
-		if (blacklistedSpells != null && blacklistedSpells.contains(spell.getInternalName())) return false;
+		if (this.blacklistedSpells != null && this.blacklistedSpells.contains(spell.getInternalName())) return false;
 		
 		// Does it have a blacklisted tag?
-		if (disallowedTags != null) {
-			for (String tag: disallowedTags) {
+		if (this.disallowedTags != null) {
+			for (String tag: this.disallowedTags) {
 				if (spell.hasTag(tag)) return false;
 			}
 		}
 		
 		// Does it have a whitelisted tag?
-		if (allowedTags != null) {
-			for (String tag: allowedTags) {
+		if (this.allowedTags != null) {
+			for (String tag: this.allowedTags) {
 				if (spell.hasTag(tag)) return true;
 			}
 		}
 		
-		return defaultReturn;
+		return this.defaultReturn;
 	}
 	
 }

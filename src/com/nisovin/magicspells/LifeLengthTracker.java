@@ -3,6 +3,8 @@ package com.nisovin.magicspells;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.nisovin.magicspells.util.TimeUtil;
+import com.nisovin.magicspells.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,16 +20,14 @@ public class LifeLengthTracker implements Listener {
 	Map<String, Integer> lastLifeLength = new HashMap<>();
 	
 	public LifeLengthTracker() {
-		for (Player player : Bukkit.getOnlinePlayers()) {
-			lastSpawn.put(player.getName(), System.currentTimeMillis());
-		}
+		Util.forEachPlayerOnline(player -> lastSpawn.put(player.getName(), System.currentTimeMillis()));
 		MagicSpells.registerEvents(this);
 	}
 	
 	public int getCurrentLifeLength(Player player) {
 		if (lastSpawn.containsKey(player.getName())) {
 			long spawn = lastSpawn.get(player.getName());
-			return (int)((System.currentTimeMillis() - spawn) / 1000);
+			return (int)((System.currentTimeMillis() - spawn) / TimeUtil.MILLISECONDS_PER_SECOND);
 		}
 		return 0;
 	}
@@ -45,13 +45,13 @@ public class LifeLengthTracker implements Listener {
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
 		Long spawn = lastSpawn.remove(event.getPlayer().getName());
-		if (spawn != null) lastLifeLength.put(event.getPlayer().getName(), (int)((System.currentTimeMillis() - spawn) / 1000));
+		if (spawn != null) lastLifeLength.put(event.getPlayer().getName(), (int)((System.currentTimeMillis() - spawn) / TimeUtil.MILLISECONDS_PER_SECOND));
 	}
 	
 	@EventHandler
 	public void onDeath(PlayerDeathEvent event) {
 		Long spawn = lastSpawn.remove(event.getEntity().getName());
-		if (spawn != null) lastLifeLength.put(event.getEntity().getName(), (int)((System.currentTimeMillis() - spawn) / 1000));
+		if (spawn != null) lastLifeLength.put(event.getEntity().getName(), (int)((System.currentTimeMillis() - spawn) / TimeUtil.MILLISECONDS_PER_SECOND));
 	}
 	
 	@EventHandler

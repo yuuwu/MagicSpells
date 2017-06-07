@@ -9,6 +9,8 @@ import org.bukkit.inventory.ItemStack;
 import com.nisovin.magicspells.castmodifiers.Condition;
 import com.nisovin.magicspells.util.HandHandler;
 
+import java.util.Objects;
+
 public class OffhandCondition extends Condition {
 
 	int[] ids;
@@ -67,11 +69,7 @@ public class OffhandCondition extends Condition {
 	
 	@Override
 	public boolean check(Player player, LivingEntity target) {
-		if (target instanceof Player) {
-			return check((Player)target);
-		} else {
-			return false;
-		}
+		return target instanceof Player && check((Player)target);
 	}
 	
 	@Override
@@ -81,8 +79,8 @@ public class OffhandCondition extends Condition {
 	
 	private boolean check(ItemStack item) {
 		if (item == null) return false;
-		int thisid = item == null ? 0 : item.getTypeId();
-		short thisdata = item == null ? 0 : item.getDurability();
+		int thisid = item.getTypeId();
+		short thisdata = item.getDurability();
 		String thisname = null;
 		try {
 			if (item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
@@ -100,9 +98,7 @@ public class OffhandCondition extends Condition {
 	}
 	
 	private boolean strEquals(String s1, String s2) {
-		if (s1 == s2) return true;
-		if (s1 == null || s2 == null) return false;
-		return s1.equals(s2);
+		return Objects.equals(s1, s2);
 	}
 
 }

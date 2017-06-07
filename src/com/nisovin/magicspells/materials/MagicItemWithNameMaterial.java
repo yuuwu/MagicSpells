@@ -18,36 +18,36 @@ public class MagicItemWithNameMaterial extends MagicMaterial {
 	
 	@Override
 	public Material getMaterial() {
-		return material.getMaterial();
+		return this.material.getMaterial();
 	}
 	
 	@Override
 	public MaterialData getMaterialData() {
-		return material.getMaterialData();
+		return this.material.getMaterialData();
 	}
 
 	@Override
 	public ItemStack toItemStack(int quantity) {
-		ItemStack item = material.toItemStack(quantity);
+		ItemStack item = this.material.toItemStack(quantity);
 		ItemMeta meta = item.getItemMeta();
-		meta.setDisplayName(name);
+		meta.setDisplayName(this.name);
 		item.setItemMeta(meta);
 		return item;
 	}
 	
 	@Override
 	public boolean equals(ItemStack item) {
-		if (!material.equals(item)) return false;
+		if (!this.material.equals(item)) return false;
 		String iname = item.getItemMeta().getDisplayName();
 		if (iname == null || iname.isEmpty()) return false;
-		return iname.equals(name);
+		return iname.equals(this.name);
 	}
 	
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof MagicItemWithNameMaterial) {
 			MagicItemWithNameMaterial m = (MagicItemWithNameMaterial)o;
-			return m.getMaterialData().equals(getMaterialData()) && m.name.equals(name);
+			return m.getMaterialData().equals(getMaterialData()) && m.name.equals(this.name);
 		}
 		return false;
 	}

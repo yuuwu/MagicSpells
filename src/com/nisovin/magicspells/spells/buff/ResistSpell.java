@@ -104,20 +104,20 @@ public class ResistSpell extends BuffSpell {
 		if (spellDamageTypes == null) return;
 		if (!(event.getSpell() instanceof SpellDamageSpell)) return;
 		if (!(event.getTarget() instanceof Player)) return;
-		if (isActive((Player)event.getTarget())) {
-			SpellDamageSpell spell = (SpellDamageSpell)event.getSpell();
-			if (spell.getSpellDamageType() != null && spellDamageTypes.contains(spell.getSpellDamageType())) {
-				Player player = (Player)event.getTarget();
-				float power = multiplier;
-				if (multiplier < 1) {
-					power *= (1 / buffed.get(player.getName()));
-				} else if (multiplier > 1) {
-					power *= buffed.get(player.getName());
-				}
-				event.applyDamageModifier(power);
-				addUseAndChargeCost(player);
-			}
+		if (!isActive((Player)event.getTarget())) return;
+		SpellDamageSpell spell = (SpellDamageSpell)event.getSpell();
+		String spellDamageType = spell.getSpellDamageType();
+		if (spellDamageType == null) return;
+		if (!spellDamageTypes.contains(spellDamageType)) return;
+		Player player = (Player)event.getTarget();
+		float power = multiplier;
+		if (multiplier < 1) {
+			power *= 1 / buffed.get(player.getName());
+		} else if (multiplier > 1) {
+			power *= buffed.get(player.getName());
 		}
+		event.applyDamageModifier(power);
+		addUseAndChargeCost(player);
 	}
 	
 	@EventHandler(ignoreCancelled = true)
@@ -130,7 +130,7 @@ public class ResistSpell extends BuffSpell {
 			String playerName = player.getName();
 			float mult = multiplier;
 			if (multiplier < 1) {
-				mult *= (1 / buffed.get(playerName));
+				mult *= 1 / buffed.get(playerName);
 			} else if (multiplier > 1) {
 				mult *= buffed.get(playerName);
 			}

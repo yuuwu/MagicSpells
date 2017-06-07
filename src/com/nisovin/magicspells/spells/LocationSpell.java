@@ -31,23 +31,20 @@ public class LocationSpell extends InstantSpell {
 			float pitch = 0;
 			if (split.length > 4) yaw = Float.parseFloat(split[4]);
 			if (split.length > 5) pitch = Float.parseFloat(split[5]);
-			location = new MagicLocation(world, x, y, z, yaw, pitch);
+			this.location = new MagicLocation(world, x, y, z, yaw, pitch);
 		} catch (Exception e) {
 			MagicSpells.error("Invalid location on LocationSpell '" + spellName + '\'');
 		}
-		spell = new Subspell(getConfigString("spell", ""));
-		if (spell == null) {
-			MagicSpells.error("Invalid spell on LocationSpell '" + spellName + '\'');
-		}
+		this.spell = new Subspell(getConfigString("spell", ""));
 	}
 	
 	@Override
 	public void initialize() {
 		super.initialize();
-		if (spell != null) {
-			boolean ok = spell.process();
-			if (!ok || !spell.isTargetedLocationSpell()) {
-				MagicSpells.error("Invalid spell on LocationSpell '" + name + '\'');
+		if (this.spell != null) {
+			boolean ok = this.spell.process();
+			if (!ok || !this.spell.isTargetedLocationSpell()) {
+				MagicSpells.error("Invalid spell on LocationSpell '" + this.name + '\'');
 			}
 		}
 	}
@@ -55,9 +52,9 @@ public class LocationSpell extends InstantSpell {
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
-			Location loc = location.getLocation();
+			Location loc = this.location.getLocation();
 			if (loc != null) {
-				spell.castAtLocation(player, loc, power);
+				this.spell.castAtLocation(player, loc, power);
 				playSpellEffects(player, loc);
 			} else {
 				return PostCastAction.ALREADY_HANDLED;

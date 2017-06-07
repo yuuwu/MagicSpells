@@ -90,9 +90,7 @@ public class HasItemCondition extends Condition {
 	@Override
 	public boolean check(Player player, LivingEntity target) {
 		if (target == null) return false;
-		
-		if (target instanceof InventoryHolder) return check(((InventoryHolder)target).getInventory());
-		return false;
+		return target instanceof InventoryHolder && check(((InventoryHolder)target).getInventory());
 	}
 	
 	@Override
@@ -102,10 +100,7 @@ public class HasItemCondition extends Condition {
 		
 		BlockState targetState = target.getState();
 		if (targetState == null) return false;
-		
-		if (targetState instanceof InventoryHolder) return check(((InventoryHolder)targetState).getInventory());
-		
-		return false;
+		return targetState instanceof InventoryHolder && check(((InventoryHolder)targetState).getInventory());
 	}
 
 }

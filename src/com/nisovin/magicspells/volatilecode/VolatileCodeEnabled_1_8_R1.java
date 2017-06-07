@@ -11,9 +11,51 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.nisovin.magicspells.util.compat.CompatBasics;
+import com.nisovin.magicspells.util.compat.EventUtil;
+import net.minecraft.server.v1_8_R1.AttributeInstance;
+import net.minecraft.server.v1_8_R1.AttributeModifier;
+import net.minecraft.server.v1_8_R1.ChatComponentText;
+import net.minecraft.server.v1_8_R1.DataWatcher;
+import net.minecraft.server.v1_8_R1.EntityEnderDragon;
+import net.minecraft.server.v1_8_R1.EntityFallingBlock;
+import net.minecraft.server.v1_8_R1.EntityFireworks;
+import net.minecraft.server.v1_8_R1.EntityHuman;
+import net.minecraft.server.v1_8_R1.EntityInsentient;
+import net.minecraft.server.v1_8_R1.EntityLiving;
+import net.minecraft.server.v1_8_R1.EntityOcelot;
+import net.minecraft.server.v1_8_R1.EntitySmallFireball;
+import net.minecraft.server.v1_8_R1.EntityTNTPrimed;
+import net.minecraft.server.v1_8_R1.EntityVillager;
+import net.minecraft.server.v1_8_R1.EntityWitch;
+import net.minecraft.server.v1_8_R1.EntityWither;
+import net.minecraft.server.v1_8_R1.EnumParticle;
+import net.minecraft.server.v1_8_R1.EnumTitleAction;
+import net.minecraft.server.v1_8_R1.GenericAttributes;
+import net.minecraft.server.v1_8_R1.IAttribute;
+import net.minecraft.server.v1_8_R1.Item;
+import net.minecraft.server.v1_8_R1.MobEffect;
 import net.minecraft.server.v1_8_R1.NBTTagCompound;
-import net.minecraft.server.v1_8_R1.*;
 
+import net.minecraft.server.v1_8_R1.NBTTagList;
+import net.minecraft.server.v1_8_R1.PacketPlayOutChat;
+import net.minecraft.server.v1_8_R1.PacketPlayOutEntityDestroy;
+import net.minecraft.server.v1_8_R1.PacketPlayOutEntityMetadata;
+import net.minecraft.server.v1_8_R1.PacketPlayOutEntityStatus;
+import net.minecraft.server.v1_8_R1.PacketPlayOutEntityTeleport;
+import net.minecraft.server.v1_8_R1.PacketPlayOutEntityVelocity;
+import net.minecraft.server.v1_8_R1.PacketPlayOutExperience;
+import net.minecraft.server.v1_8_R1.PacketPlayOutExplosion;
+import net.minecraft.server.v1_8_R1.PacketPlayOutNamedSoundEffect;
+import net.minecraft.server.v1_8_R1.PacketPlayOutPlayerListHeaderFooter;
+import net.minecraft.server.v1_8_R1.PacketPlayOutSetSlot;
+import net.minecraft.server.v1_8_R1.PacketPlayOutSpawnEntityLiving;
+import net.minecraft.server.v1_8_R1.PacketPlayOutTitle;
+import net.minecraft.server.v1_8_R1.PacketPlayOutWorldParticles;
+import net.minecraft.server.v1_8_R1.PathfinderGoalFloat;
+import net.minecraft.server.v1_8_R1.PathfinderGoalLookAtPlayer;
+import net.minecraft.server.v1_8_R1.PathfinderGoalSelector;
+import net.minecraft.server.v1_8_R1.PlayerConnection;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -78,7 +120,7 @@ public class VolatileCodeEnabled_1_8_R1 implements VolatileCodeHandle {
 		try {
 			Field field = CraftItemStack.class.getDeclaredField("handle");
 			field.setAccessible(true);
-			nmsItem = ((net.minecraft.server.v1_8_R1.ItemStack)field.get(item));
+			nmsItem = (net.minecraft.server.v1_8_R1.ItemStack)field.get(item);
 		} catch (Exception e) {
 			// No op
 		}
@@ -100,38 +142,38 @@ public class VolatileCodeEnabled_1_8_R1 implements VolatileCodeHandle {
 	
 	public VolatileCodeEnabled_1_8_R1() {
 		try {
-			packet63Fields[0] = PacketPlayOutWorldParticles.class.getDeclaredField("a");
-			packet63Fields[1] = PacketPlayOutWorldParticles.class.getDeclaredField("b");
-			packet63Fields[2] = PacketPlayOutWorldParticles.class.getDeclaredField("c");
-			packet63Fields[3] = PacketPlayOutWorldParticles.class.getDeclaredField("d");
-			packet63Fields[4] = PacketPlayOutWorldParticles.class.getDeclaredField("e");
-			packet63Fields[5] = PacketPlayOutWorldParticles.class.getDeclaredField("f");
-			packet63Fields[6] = PacketPlayOutWorldParticles.class.getDeclaredField("g");
-			packet63Fields[7] = PacketPlayOutWorldParticles.class.getDeclaredField("h");
-			packet63Fields[8] = PacketPlayOutWorldParticles.class.getDeclaredField("i");
-			packet63Fields[9] = PacketPlayOutWorldParticles.class.getDeclaredField("j");
-			packet63Fields[10] = PacketPlayOutWorldParticles.class.getDeclaredField("k");
+			this.packet63Fields[0] = PacketPlayOutWorldParticles.class.getDeclaredField("a");
+			this.packet63Fields[1] = PacketPlayOutWorldParticles.class.getDeclaredField("b");
+			this.packet63Fields[2] = PacketPlayOutWorldParticles.class.getDeclaredField("c");
+			this.packet63Fields[3] = PacketPlayOutWorldParticles.class.getDeclaredField("d");
+			this.packet63Fields[4] = PacketPlayOutWorldParticles.class.getDeclaredField("e");
+			this.packet63Fields[5] = PacketPlayOutWorldParticles.class.getDeclaredField("f");
+			this.packet63Fields[6] = PacketPlayOutWorldParticles.class.getDeclaredField("g");
+			this.packet63Fields[7] = PacketPlayOutWorldParticles.class.getDeclaredField("h");
+			this.packet63Fields[8] = PacketPlayOutWorldParticles.class.getDeclaredField("i");
+			this.packet63Fields[9] = PacketPlayOutWorldParticles.class.getDeclaredField("j");
+			this.packet63Fields[10] = PacketPlayOutWorldParticles.class.getDeclaredField("k");
 			for (int i = 0; i <= 10; i++) {
-				packet63Fields[i].setAccessible(true);
+				this.packet63Fields[i].setAccessible(true);
 			}
 			
-			craftMetaSkullClass = Class.forName("org.bukkit.craftbukkit.v1_8_R1.inventory.CraftMetaSkull");
-			craftMetaSkullProfileField = craftMetaSkullClass.getDeclaredField("profile");
-			craftMetaSkullProfileField.setAccessible(true);
+			this.craftMetaSkullClass = Class.forName("org.bukkit.craftbukkit.v1_8_R1.inventory.CraftMetaSkull");
+			this.craftMetaSkullProfileField = this.craftMetaSkullClass.getDeclaredField("profile");
+			this.craftMetaSkullProfileField.setAccessible(true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 		for (EnumParticle particle : EnumParticle.values()) {
 			if (particle != null) {
-				particleMap.put(particle.b(), particle);
+				this.particleMap.put(particle.b(), particle);
 			}
 		}
 		
-		bossBarEntity = new EntityWither(((CraftWorld)Bukkit.getWorlds().get(0)).getHandle());
-		bossBarEntity.setCustomNameVisible(false);
-		bossBarEntity.getDataWatcher().watch(0, (byte)0x20);
-		bossBarEntity.getDataWatcher().watch(20, (Integer)0);
+		this.bossBarEntity = new EntityWither(((CraftWorld)Bukkit.getWorlds().get(0)).getHandle());
+		this.bossBarEntity.setCustomNameVisible(false);
+		this.bossBarEntity.getDataWatcher().watch(0, (byte)0x20);
+		this.bossBarEntity.getDataWatcher().watch(20, (Integer)0);
 	}
 	
 	@Override
@@ -141,6 +183,7 @@ public class VolatileCodeEnabled_1_8_R1 implements VolatileCodeHandle {
 		dw.watch(7, Integer.valueOf(color));
 		
 		if (duration > 0) {
+			// TODO convert this to lambda
 			MagicSpells.scheduleDelayedTask(new Runnable() {
 				@Override
 				public void run() {
@@ -175,13 +218,13 @@ public class VolatileCodeEnabled_1_8_R1 implements VolatileCodeHandle {
 	@Override
 	public void toggleLeverOrButton(Block block) {
 		// TODO: fix this
-		fallback.toggleLeverOrButton(block);
+		this.fallback.toggleLeverOrButton(block);
 		//net.minecraft.server.v1_8_R1.Block.getById(block.getType().getId()).interact(((CraftWorld)block.getWorld()).getHandle(), new BlockPosition(block.getX(), block.getY(), block.getZ()), null, 0, 0, 0, 0);
 	}
 
 	@Override
 	public void pressPressurePlate(Block block) {
-		fallback.pressPressurePlate(block);
+		this.fallback.pressPressurePlate(block);
 		// TODO: fix this
 		//block.setData((byte) (block.getData() ^ 0x1));
 		//net.minecraft.server.v1_8_R1.World w = ((CraftWorld)block.getWorld()).getHandle();
@@ -194,7 +237,7 @@ public class VolatileCodeEnabled_1_8_R1 implements VolatileCodeHandle {
         EntityTNTPrimed e = new EntityTNTPrimed(((CraftWorld)target.getWorld()).getHandle(), target.getX(), target.getY(), target.getZ(), ((CraftLivingEntity)source).getHandle());
         CraftTNTPrimed c = new CraftTNTPrimed((CraftServer)Bukkit.getServer(), e);
         ExplosionPrimeEvent event = new ExplosionPrimeEvent(c, explosionSize, fire);
-        Bukkit.getServer().getPluginManager().callEvent(event);
+		EventUtil.call(event);
         return event.isCancelled();
 	}
 
@@ -368,12 +411,12 @@ public class VolatileCodeEnabled_1_8_R1 implements VolatileCodeHandle {
 	@Override
 	public void playParticleEffect(Location location, String name, float spreadX, float spreadY, float spreadZ, float speed, int count, int radius, float yOffset) {
 		PacketPlayOutWorldParticles packet = new PacketPlayOutWorldParticles();
-		EnumParticle particle = particleMap.get(name);
+		EnumParticle particle = this.particleMap.get(name);
 		int[] data = null;
 		if (name.contains("_")) {
 			String[] split = name.split("_");
 			name = split[0] + '_';
-			particle = particleMap.get(name);
+			particle = this.particleMap.get(name);
 			if (split.length > 1) {
 				String[] split2 = split[1].split(":");
 				data = new int[split2.length];
@@ -387,18 +430,18 @@ public class VolatileCodeEnabled_1_8_R1 implements VolatileCodeHandle {
 			return;
 		}
 		try {
-			packet63Fields[0].set(packet, particle);
-			packet63Fields[1].setFloat(packet, (float)location.getX());
-			packet63Fields[2].setFloat(packet, (float)location.getY() + yOffset);
-			packet63Fields[3].setFloat(packet, (float)location.getZ());
-			packet63Fields[4].setFloat(packet, spreadX);
-			packet63Fields[5].setFloat(packet, spreadY);
-			packet63Fields[6].setFloat(packet, spreadZ);
-			packet63Fields[7].setFloat(packet, speed);
-			packet63Fields[8].setInt(packet, count);
-			packet63Fields[9].setBoolean(packet, radius >= 30);
+			this.packet63Fields[0].set(packet, particle);
+			this.packet63Fields[1].setFloat(packet, (float)location.getX());
+			this.packet63Fields[2].setFloat(packet, (float)location.getY() + yOffset);
+			this.packet63Fields[3].setFloat(packet, (float)location.getZ());
+			this.packet63Fields[4].setFloat(packet, spreadX);
+			this.packet63Fields[5].setFloat(packet, spreadY);
+			this.packet63Fields[6].setFloat(packet, spreadZ);
+			this.packet63Fields[7].setFloat(packet, speed);
+			this.packet63Fields[8].setInt(packet, count);
+			this.packet63Fields[9].setBoolean(packet, radius >= 30);
 			if (data != null) {
-				packet63Fields[10].set(packet,data);
+				this.packet63Fields[10].set(packet,data);
 			}
 			int rSq = radius * radius;
 			
@@ -452,7 +495,7 @@ public class VolatileCodeEnabled_1_8_R1 implements VolatileCodeHandle {
 	
 	@Override
 	public DisguiseManager getDisguiseManager(MagicConfig config) {
-		if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) return new DisguiseManager_1_8_R1(config);
+		if (CompatBasics.pluginEnabled("ProtocolLib")) return new DisguiseManager_1_8_R1(config);
 		return new DisguiseManagerEmpty(config);
 	}
 
@@ -504,17 +547,24 @@ public class VolatileCodeEnabled_1_8_R1 implements VolatileCodeHandle {
 	public void addEntityAttribute(LivingEntity entity, String attribute, double amount, int operation) {
 		EntityLiving nmsEnt = ((CraftLivingEntity)entity).getHandle();
 		IAttribute attr = null;
-		if (attribute.equals("generic.maxHealth")) {
-			attr = GenericAttributes.maxHealth;
-		} else if (attribute.equals("generic.followRange")) {
-			attr = GenericAttributes.b;
-		} else if (attribute.equals("generic.knockbackResistance")) {
-			attr = GenericAttributes.c;
-		} else if (attribute.equals("generic.movementSpeed")) {
-			attr = GenericAttributes.d;
-		} else if (attribute.equals("generic.attackDamage")) {
-			attr = GenericAttributes.e;
+		switch (attribute) {
+			case "generic.maxHealth":
+				attr = GenericAttributes.maxHealth;
+				break;
+			case "generic.followRange":
+				attr = GenericAttributes.b;
+				break;
+			case "generic.knockbackResistance":
+				attr = GenericAttributes.c;
+				break;
+			case "generic.movementSpeed":
+				attr = GenericAttributes.d;
+				break;
+			case "generic.attackDamage":
+				attr = GenericAttributes.e;
+				break;
 		}
+		
 		if (attr != null) {
 			AttributeInstance attributes = nmsEnt.getAttributeInstance(attr);
 			attributes.b(new AttributeModifier("MagicSpells " + attribute, amount, operation));
@@ -599,13 +649,13 @@ public class VolatileCodeEnabled_1_8_R1 implements VolatileCodeHandle {
 	public void setBossBar(Player player, String title, double percent) {
 		updateBossBarEntity(player, title, percent);
 		
-		PacketPlayOutEntityDestroy packetDestroy = new PacketPlayOutEntityDestroy(bossBarEntity.getId());
+		PacketPlayOutEntityDestroy packetDestroy = new PacketPlayOutEntityDestroy(this.bossBarEntity.getId());
 		((CraftPlayer)player).getHandle().playerConnection.sendPacket(packetDestroy);
 		
-		PacketPlayOutSpawnEntityLiving packetSpawn = new PacketPlayOutSpawnEntityLiving(bossBarEntity);
+		PacketPlayOutSpawnEntityLiving packetSpawn = new PacketPlayOutSpawnEntityLiving(this.bossBarEntity);
 		((CraftPlayer)player).getHandle().playerConnection.sendPacket(packetSpawn);
 		
-		PacketPlayOutEntityTeleport packetTeleport = new PacketPlayOutEntityTeleport(bossBarEntity);
+		PacketPlayOutEntityTeleport packetTeleport = new PacketPlayOutEntityTeleport(this.bossBarEntity);
 		((CraftPlayer)player).getHandle().playerConnection.sendPacket(packetTeleport);
 		
 		//PacketPlayOutEntityVelocity packetVelocity = new PacketPlayOutEntityVelocity(bossBarEntity.getId(), 1, 0, 1);		
@@ -617,11 +667,11 @@ public class VolatileCodeEnabled_1_8_R1 implements VolatileCodeHandle {
 		updateBossBarEntity(player, title, percent);
 		
 		if (title != null) {
-			PacketPlayOutEntityMetadata packetData = new PacketPlayOutEntityMetadata(bossBarEntity.getId(), bossBarEntity.getDataWatcher(), true);
+			PacketPlayOutEntityMetadata packetData = new PacketPlayOutEntityMetadata(this.bossBarEntity.getId(), this.bossBarEntity.getDataWatcher(), true);
 			((CraftPlayer)player).getHandle().playerConnection.sendPacket(packetData);
 		}
 		
-		PacketPlayOutEntityTeleport packetTeleport = new PacketPlayOutEntityTeleport(bossBarEntity);
+		PacketPlayOutEntityTeleport packetTeleport = new PacketPlayOutEntityTeleport(this.bossBarEntity);
 		((CraftPlayer)player).getHandle().playerConnection.sendPacket(packetTeleport);
 		
 		//PacketPlayOutEntityVelocity packetVelocity = new PacketPlayOutEntityVelocity(bossBarEntity.getId(), 1, 0, 1);
@@ -631,8 +681,8 @@ public class VolatileCodeEnabled_1_8_R1 implements VolatileCodeHandle {
 	private void updateBossBarEntity(Player player, String title, double percent) {
 		if (title != null) {
 			if (percent <= 0.01) percent = 0.01D;
-			bossBarEntity.setCustomName(ChatColor.translateAlternateColorCodes('&', title));
-			bossBarEntity.getDataWatcher().watch(6, (float)(percent * 300f));
+			this.bossBarEntity.setCustomName(ChatColor.translateAlternateColorCodes('&', title));
+			this.bossBarEntity.getDataWatcher().watch(6, (float)(percent * 300f));
 		}
 		
 		Location l = player.getLocation();
@@ -640,12 +690,12 @@ public class VolatileCodeEnabled_1_8_R1 implements VolatileCodeHandle {
 		Vector v = l.getDirection().multiply(20);
 		Util.rotateVector(v, 15);
 		l.add(v);
-		bossBarEntity.setLocation(l.getX(), l.getY(), l.getZ(), 0, 0);
+		this.bossBarEntity.setLocation(l.getX(), l.getY(), l.getZ(), 0, 0);
 	}
 	
 	@Override
 	public void removeBossBar(Player player) {
-		PacketPlayOutEntityDestroy packetDestroy = new PacketPlayOutEntityDestroy(bossBarEntity.getId());
+		PacketPlayOutEntityDestroy packetDestroy = new PacketPlayOutEntityDestroy(this.bossBarEntity.getId());
 		((CraftPlayer)player).getHandle().playerConnection.sendPacket(packetDestroy);
 	}
 	
@@ -762,9 +812,9 @@ public class VolatileCodeEnabled_1_8_R1 implements VolatileCodeHandle {
 	@Override
 	public void setTexture(SkullMeta meta, String texture, String signature) {
 		try {
-			GameProfile profile = (GameProfile) craftMetaSkullProfileField.get(meta);
+			GameProfile profile = (GameProfile) this.craftMetaSkullProfileField.get(meta);
 			setTexture(profile, texture, signature);
-			craftMetaSkullProfileField.set(meta, profile);
+			this.craftMetaSkullProfileField.set(meta, profile);
 		} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
 			MagicSpells.handleException(e);
 		}
@@ -790,7 +840,7 @@ public class VolatileCodeEnabled_1_8_R1 implements VolatileCodeHandle {
 		try {
 			GameProfile profile = new GameProfile(uuid != null ? UUID.fromString(uuid) : null, name);
 			setTexture(profile, texture, signature);
-			craftMetaSkullProfileField.set(meta, profile);
+			this.craftMetaSkullProfileField.set(meta, profile);
 		} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
 			MagicSpells.handleException(e);
 		}

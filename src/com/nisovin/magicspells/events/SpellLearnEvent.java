@@ -36,7 +36,7 @@ public class SpellLearnEvent extends Event implements Cancellable {
 	 * @return the learned spell
 	 */
 	public Spell getSpell() {
-		return spell;
+		return this.spell;
 	}
 	
 	/**
@@ -44,7 +44,7 @@ public class SpellLearnEvent extends Event implements Cancellable {
 	 * @return the learning player
 	 */
 	public Player getLearner() {
-		return learner;
+		return this.learner;
 	}
 	
 	/**
@@ -52,7 +52,7 @@ public class SpellLearnEvent extends Event implements Cancellable {
 	 * @return the source
 	 */
 	public LearnSource getSource() {
-		return source;
+		return this.source;
 	}
 	
 	/**
@@ -60,12 +60,12 @@ public class SpellLearnEvent extends Event implements Cancellable {
 	 * @return the player/console for teach, the block for spellbook, or the book item for tome, or null
 	 */
 	public Object getTeacher() {
-		return teacher;
+		return this.teacher;
 	}
 	
 	@Override
 	public boolean isCancelled() {
-		return cancelled;
+		return this.cancelled;
 	}
 
 	@Override

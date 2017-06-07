@@ -59,14 +59,14 @@ public abstract class SpellAnimation implements Runnable {
 	 * Start the spell animation.
 	 */
 	public void play() {
-		taskId = MagicSpells.scheduleRepeatingTask(this, delay, interval);
+		this.taskId = MagicSpells.scheduleRepeatingTask(this, delay, interval);
 	}
 	
 	/**
 	 * Stop the spell animation.
 	 */
 	protected void stop() {
-		MagicSpells.cancelTask(taskId);
+		MagicSpells.cancelTask(this.taskId);
 	}
 	
 	/**
@@ -77,7 +77,7 @@ public abstract class SpellAnimation implements Runnable {
 	
 	@Override
 	public final void run() {
-		onTick(++tick);
+		onTick(++this.tick);
 	}
 	
 }

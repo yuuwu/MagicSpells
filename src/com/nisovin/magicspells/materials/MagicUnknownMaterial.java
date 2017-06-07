@@ -8,6 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
 public class MagicUnknownMaterial extends MagicMaterial {
+	
 	int type;
 	short data;
 	
@@ -18,23 +19,18 @@ public class MagicUnknownMaterial extends MagicMaterial {
 	
 	@Override
 	public Material getMaterial() {
-		return Material.getMaterial(type);
+		return Material.getMaterial(this.type);
 	}
 	
 	@Override
 	public MaterialData getMaterialData() {
-		if (data == (byte)data) {
-			return new MaterialData(type, (byte)data);
-		} else {
-			return new MaterialData(type);
-		}
+		if (this.data == (byte)this.data) return new MaterialData(this.type, (byte)this.data);
+		return new MaterialData(this.type);
 	}
 	
 	@Override
 	public void setBlock(Block block, boolean applyPhysics) {
-		if (data < 16) {
-			block.setTypeIdAndData(type, (byte)data, applyPhysics);
-		}
+		if (this.data < 16) block.setTypeIdAndData(this.type, (byte)this.data, applyPhysics);
 	}
 	
 	@Override
@@ -44,22 +40,23 @@ public class MagicUnknownMaterial extends MagicMaterial {
 	
 	@Override
 	public ItemStack toItemStack(int quantity) {
-		return new ItemStack(type, quantity, data);
+		return new ItemStack(this.type, quantity, this.data);
 	}
 	
 	@Override
 	public boolean equals(MaterialData matData) {
-		return matData.getItemTypeId() == type && matData.getData() == data;
+		return matData.getItemTypeId() == this.type && matData.getData() == this.data;
 	}
 	
 	@Override
 	public boolean equals(ItemStack itemStack) {
-		return itemStack.getTypeId() == type && itemStack.getDurability() == data;
+		return itemStack.getTypeId() == this.type && itemStack.getDurability() == this.data;
 	}
 	
 	@Override
 	public int hashCode() {
-		return (type + ":" + data).hashCode();
+		// TODO fix the hash code
+		return (this.type + ":" + this.data).hashCode();
 	}
 	
 }

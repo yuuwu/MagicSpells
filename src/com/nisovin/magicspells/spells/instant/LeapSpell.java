@@ -28,25 +28,25 @@ public class LeapSpell extends InstantSpell {
 	public LeapSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		forwardVelocity = getConfigInt("forward-velocity", 40) / 10D;
-		upwardVelocity = getConfigInt("upward-velocity", 15) / 10D;
-		cancelDamage = getConfigBoolean("cancel-damage", true);
-		clientOnly = getConfigBoolean("client-only", false);
+		this.forwardVelocity = getConfigInt("forward-velocity", 40) / 10D;
+		this.upwardVelocity = getConfigInt("upward-velocity", 15) / 10D;
+		this.cancelDamage = getConfigBoolean("cancel-damage", true);
+		this.clientOnly = getConfigBoolean("client-only", false);
 		
-		if (cancelDamage) jumping = new HashSet<>();
+		if (this.cancelDamage) this.jumping = new HashSet<>();
 	}
 
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			Vector v = player.getLocation().getDirection();
-			v.setY(0).normalize().multiply(forwardVelocity * power).setY(upwardVelocity * power);
-			if (clientOnly) {
+			v.setY(0).normalize().multiply(this.forwardVelocity * power).setY(this.upwardVelocity * power);
+			if (this.clientOnly) {
 				MagicSpells.getVolatileCodeHandler().setClientVelocity(player, v);
 			} else {
 				player.setVelocity(v);
 			}
-			if (cancelDamage) jumping.add(player);
+			if (this.cancelDamage) this.jumping.add(player);
 			playSpellEffects(EffectPosition.CASTER, player);
 		}
 		
@@ -56,14 +56,14 @@ public class LeapSpell extends InstantSpell {
 	@EventHandler
 	public void onEntityDamage(EntityDamageEvent event) {
 		if (event.isCancelled()) return;
-		if (!cancelDamage) return;
+		if (!this.cancelDamage) return;
 		if (event.getCause() != DamageCause.FALL) return;
 		
 		Entity entity = event.getEntity();
 		if (!(entity instanceof Player)) return;
-		if (!jumping.contains(entity)) return;
+		if (!this.jumping.contains(entity)) return;
 		event.setCancelled(true);
-		jumping.remove(entity);
+		this.jumping.remove(entity);
 		playSpellEffects(EffectPosition.TARGET, entity.getLocation());
 	}
 

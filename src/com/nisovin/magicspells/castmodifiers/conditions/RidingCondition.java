@@ -15,9 +15,7 @@ public class RidingCondition extends Condition {
 	
 	@Override
 	public boolean setVar(String var) {
-		if (var == null || var.isEmpty()) {
-			return true;
-		}
+		if (var == null || var.isEmpty()) return true;
 		entityType = Util.getEntityType(var);
 		return entityType != null;
 	}

@@ -270,7 +270,6 @@ public class DisguiseSpell extends TargetedSpell implements TargetedEntitySpell 
 			}
 		}
 	}
-
 	
 	public class Disguise {
 
@@ -348,14 +347,9 @@ public class DisguiseSpell extends TargetedSpell implements TargetedEntitySpell 
 		public int getVar3() {
 			return var3;
 		}
-			
+		
 		private void startDuration(int duration) {
-			taskId = Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
-				@Override
-				public void run() {
-					DisguiseSpell.manager.removeDisguise(player);
-				}
-			}, duration);
+			taskId = Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, () -> DisguiseSpell.manager.removeDisguise(player), duration);
 		}
 		
 		public void cancelDuration() {

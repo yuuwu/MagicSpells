@@ -27,7 +27,7 @@ import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 
 public class PulserSpell extends TargetedSpell implements TargetedLocationSpell {
@@ -78,14 +78,14 @@ public class PulserSpell extends TargetedSpell implements TargetedLocationSpell 
 		if (spellNames != null && !spellNames.isEmpty()) {
 			for (String spellName : spellNames) {
 				Spell spell = MagicSpells.getSpellByInternalName(spellName);
-				if (spell != null && spell instanceof TargetedLocationSpell) {
+				if (spell instanceof TargetedLocationSpell) {
 					spells.add((TargetedLocationSpell) spell);
 				}
 			}
 		}
 		if (spellNameOnBreak != null) {
 			Spell spell = MagicSpells.getSpellByInternalName(spellNameOnBreak);
-			if (spell != null && spell instanceof TargetedLocationSpell) {
+			if (spell instanceof TargetedLocationSpell) {
 				spellOnBreak = (TargetedLocationSpell)spell;
 			} else {
 				MagicSpells.error("Pulser spell '" + internalName + "' has an invalid spell-on-break spell defined");
@@ -234,7 +234,7 @@ public class PulserSpell extends TargetedSpell implements TargetedLocationSpell 
 		pulsers.clear();
 		ticker.stop();
 	}
-
+	
 	public class Pulser {
 
 		Player caster;
@@ -242,7 +242,7 @@ public class PulserSpell extends TargetedSpell implements TargetedLocationSpell 
 		Location location;
 		float power;
 		int pulseCount;
-
+		
 		public Pulser(Player caster, Block block, float power) {
 			this.caster = caster;
 			this.block = block;
@@ -301,7 +301,7 @@ public class PulserSpell extends TargetedSpell implements TargetedLocationSpell 
 		}
 
 	}
-
+	
 	public class PulserTicker implements Runnable {
 
 		private int taskId = -1;

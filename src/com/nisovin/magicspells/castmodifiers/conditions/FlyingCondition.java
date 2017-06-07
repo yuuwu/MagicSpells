@@ -20,8 +20,7 @@ public class FlyingCondition extends Condition {
 
 	@Override
 	public boolean check(Player player, LivingEntity target) {
-		if (target instanceof Player) return ((Player)target).isFlying();
-		return false;
+		return target instanceof Player && ((Player)target).isFlying();
 	}
 
 	@Override

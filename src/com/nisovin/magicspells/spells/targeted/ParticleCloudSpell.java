@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.nisovin.magicspells.util.TimeUtil;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -27,15 +28,15 @@ import com.nisovin.magicspells.util.Util_1_9;
 public class ParticleCloudSpell extends TargetedSpell implements TargetedLocationSpell, TargetedEntitySpell {
 
 	private int color = 0xFF0000;
-	private int ticksDuration = 60;
+	private int ticksDuration = 3 * TimeUtil.TICKS_PER_SECOND;
 	private int durationOnUse = 0;
 	private float radius = 5F;
 	private float radiusOnUse = 0F;
 	private float radiusPerTick = 0F;
-	private int reapplicationDelay = 60;
+	private int reapplicationDelay = 3 * TimeUtil.TICKS_PER_SECOND;
 	private int waitTime = 10;
 	private Particle particle;
-	private Set<PotionEffect> effects;
+	private Set<PotionEffect> potionEffects;
 	private boolean useGravity = false;
 	private boolean canTargetEntities = true;
 	private boolean canTargetLocation = true;
@@ -60,13 +61,11 @@ public class ParticleCloudSpell extends TargetedSpell implements TargetedLocatio
 		List<String> potionEffectStrings = getConfigStringList("potion-effects", null);
 		if (potionEffectStrings == null) potionEffectStrings = new ArrayList<>();
 		
-		effects = new HashSet<>();
+		this.potionEffects = new HashSet<>();
 		
 		for (String effect: potionEffectStrings) {
-			effects.add(getPotionEffectFromString(effect));
+			this.potionEffects.add(getPotionEffectFromString(effect));
 		}
-		
-		
 	}
 	
 	private static PotionEffect getPotionEffectFromString(String s) {
@@ -82,8 +81,7 @@ public class ParticleCloudSpell extends TargetedSpell implements TargetedLocatio
 	}
 
 	@Override
-	public PostCastAction castSpell(Player player, SpellCastState state,
-			float power, String[] args) {
+	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			Location locToSpawn = null;
 			if (canTargetEntities) {
@@ -127,7 +125,7 @@ public class ParticleCloudSpell extends TargetedSpell implements TargetedLocatio
 		cloud.setRadiusPerTick(radiusPerTick);
 		cloud.setReapplicationDelay(reapplicationDelay); //ticks
 		cloud.setWaitTime(waitTime); //ticks
-		for (PotionEffect eff: effects) {
+		for (PotionEffect eff: this.potionEffects) {
 			cloud.addCustomEffect(eff, true);
 		}
 		MagicSpells.getVolatileCodeHandler().setGravity(cloud, useGravity);

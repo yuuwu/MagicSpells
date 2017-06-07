@@ -73,9 +73,7 @@ public class DanceCastListener implements Listener {
 			String[] split = startSound.split(",");
 			startSound = split[0];
 			startSoundVolume = Float.parseFloat(split[1]);
-			if (split.length > 2) {
-				startSoundPitch = Float.parseFloat(split[2]);
-			}
+			if (split.length > 2) startSoundPitch = Float.parseFloat(split[2]);
 		}
 		
 		strDanceStart = config.getString("general.str-dance-start", "You begin to cast a spell.");
@@ -92,9 +90,7 @@ public class DanceCastListener implements Listener {
 			MagicSpells.debug("Dance cast registered: " + spell.getInternalName() + " - " + seq);
 		}
 		
-		if (!spells.isEmpty()) {
-			MagicSpells.registerEvents(this);
-		}
+		if (!spells.isEmpty()) MagicSpells.registerEvents(this);
 	}
 	
 	private boolean processDanceCast(Player player, String castSequence, boolean forceEnd) {
@@ -115,9 +111,7 @@ public class DanceCastListener implements Listener {
 			}
 			playerLocations.remove(playerName);
 			Integer taskId = playerTasks.remove(playerName);
-			if (taskId != null) {
-				MagicSpells.cancelTask(taskId.intValue());
-			}
+			if (taskId != null) MagicSpells.cancelTask(taskId.intValue());
 			playerCasts.remove(playerName);
 		}
 		return casted;
@@ -156,11 +150,10 @@ public class DanceCastListener implements Listener {
 			}
 		} else if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
 			String castSequence = playerCasts.get(playerName);
-			if (castSequence != null) {
-				castSequence = processMovement(player, castSequence) + 'C';
-				playerCasts.put(playerName, castSequence);
-				if (dynamicCasting) processDanceCast(player, castSequence, false);
-			}
+			if (castSequence == null) return;
+			castSequence = processMovement(player, castSequence) + 'C';
+			playerCasts.put(playerName, castSequence);
+			if (dynamicCasting) processDanceCast(player, castSequence, false);
 		}
 	}
 	
@@ -169,11 +162,10 @@ public class DanceCastListener implements Listener {
 		Player player = event.getPlayer();
 		String playerName = player.getName();
 		String castSequence = playerCasts.get(playerName);
-		if (castSequence != null) {
-			castSequence = processMovement(player, castSequence) + (event.isSneaking() ? "S" : "U");
-			playerCasts.put(playerName, castSequence);
-			if (dynamicCasting) processDanceCast(player, castSequence, false);
-		}
+		if (castSequence == null) return;
+		castSequence = processMovement(player, castSequence) + (event.isSneaking() ? "S" : "U");
+		playerCasts.put(playerName, castSequence);
+		if (dynamicCasting) processDanceCast(player, castSequence, false);
 	}
 	
 	@EventHandler
@@ -223,6 +215,7 @@ public class DanceCastListener implements Listener {
 		
 		String playerName;
 		
+		// TODO rename to avoid hiding
 		public DanceCastDuration(String playerName) {
 			this.playerName = playerName;
 		}
@@ -232,10 +225,9 @@ public class DanceCastListener implements Listener {
 			String cast = playerCasts.remove(playerName);
 			playerLocations.remove(playerName);
 			playerTasks.remove(playerName);
-			if (cast != null) {
-				Player player = PlayerNameUtils.getPlayerExact(playerName);
-				if (player != null) MagicSpells.sendMessage(strDanceFail, player, MagicSpells.NULL_ARGS);
-			}
+			if (cast == null) return;
+			Player player = PlayerNameUtils.getPlayerExact(playerName);
+			if (player != null) MagicSpells.sendMessage(strDanceFail, player, MagicSpells.NULL_ARGS);
 		}
 	}
 	

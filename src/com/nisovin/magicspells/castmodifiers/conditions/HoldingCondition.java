@@ -11,6 +11,8 @@ import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.castmodifiers.Condition;
 import com.nisovin.magicspells.util.HandHandler;
 
+import java.util.Objects;
+
 public class HoldingCondition extends Condition {
 
 	int[] ids;
@@ -71,11 +73,7 @@ public class HoldingCondition extends Condition {
 	@Override
 	public boolean check(Player player, LivingEntity target) {
 		EntityEquipment equip = target.getEquipment();
-		if (equip != null) {
-			return check(HandHandler.getItemInMainHand(equip));
-		} else {
-			return false;
-		}
+		return equip != null && check(HandHandler.getItemInMainHand(equip));
 	}
 	
 	@Override
@@ -104,9 +102,7 @@ public class HoldingCondition extends Condition {
 	}
 	
 	private boolean strEquals(String s1, String s2) {
-		if (s1 == s2) return true;
-		if (s1 == null || s2 == null) return false;
-		return s1.equals(s2);
+		return Objects.equals(s1, s2);
 	}
 
 }

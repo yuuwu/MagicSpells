@@ -7,6 +7,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.nisovin.magicspells.util.compat.EventUtil;
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
@@ -44,7 +45,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
-import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spells.targeted.DisguiseSpell;
 import com.nisovin.magicspells.spells.targeted.DisguiseSpell.Disguise;
 import com.nisovin.magicspells.util.IDisguiseManager;
@@ -66,35 +66,35 @@ public class DisguiseManagerLibsDisguises implements Listener, IDisguiseManager 
 	
 	public DisguiseManagerLibsDisguises(MagicConfig config) {
 		this.hideArmor = config.getBoolean("general.disguise-spell-hide-armor", false);
-		Bukkit.getPluginManager().registerEvents(this, MagicSpells.plugin);
+		EventUtil.register(this);
 	}
 	
 	@Override
 	public void registerSpell(DisguiseSpell spell) {
-		disguiseSpells.add(spell);
+		this.disguiseSpells.add(spell);
 	}
 
 	@Override
 	public void unregisterSpell(DisguiseSpell spell) {
-		disguiseSpells.remove(spell);
+		this.disguiseSpells.remove(spell);
 	}
 
 	@Override
 	public int registeredSpellsCount() {
-		return disguiseSpells.size();
+		return this.disguiseSpells.size();
 	}
 
 	@Override
 	public void addDisguise(Player player, Disguise disguise) {
 		if (isDisguised(player)) removeDisguise(player);
 		me.libraryaddict.disguise.disguisetypes.Disguise libs = getDisguiseLibDisguise(disguise);
-		disguises.put(player.getName().toLowerCase(), disguise);
-		libsDisguises.put(player.getName().toLowerCase(), libs);
+		this.disguises.put(player.getName().toLowerCase(), disguise);
+		this.libsDisguises.put(player.getName().toLowerCase(), libs);
 		
-		disguisedEntityIds.put(player.getEntityId(), disguise);
-		libsDisguisedEntityIds.put(player.getEntityId(), libs);
+		this.disguisedEntityIds.put(player.getEntityId(), disguise);
+		this.libsDisguisedEntityIds.put(player.getEntityId(), libs);
 		
-		if (disguise.getEntityType() == EntityType.ENDER_DRAGON) dragons.add(player.getEntityId());
+		if (disguise.getEntityType() == EntityType.ENDER_DRAGON) this.dragons.add(player.getEntityId());
 		applyDisguise(player, libs);
 	}
 
@@ -115,34 +115,34 @@ public class DisguiseManagerLibsDisguises implements Listener, IDisguiseManager 
 
 	@Override
 	public void removeDisguise(Player player, boolean sendPlayerPackets, boolean delaySpawnPacket) {
-		DisguiseSpell.Disguise disguise = disguises.get(player.getName().toLowerCase());
-		me.libraryaddict.disguise.disguisetypes.Disguise libsDisguise = libsDisguises.get(player.getName().toLowerCase());
+		DisguiseSpell.Disguise disguise = this.disguises.get(player.getName().toLowerCase());
+		me.libraryaddict.disguise.disguisetypes.Disguise libsDisguise = this.libsDisguises.get(player.getName().toLowerCase());
 		
-		disguisedEntityIds.remove(player.getEntityId());
-		libsDisguisedEntityIds.remove(player.getEntityId());
+		this.disguisedEntityIds.remove(player.getEntityId());
+		this.libsDisguisedEntityIds.remove(player.getEntityId());
 		
-		dragons.remove(player.getEntityId());
+		this.dragons.remove(player.getEntityId());
 		if (libsDisguise != null) {
 			libsDisguise.stopDisguise();
 			disguise.getSpell().undisguise(player);
-			disguises.remove(player.getName().toLowerCase());
-			libsDisguises.remove(player.getName().toLowerCase());
+			this.disguises.remove(player.getName().toLowerCase());
+			this.libsDisguises.remove(player.getName().toLowerCase());
 		}
-		mounts.remove(player.getEntityId());
+		this.mounts.remove(player.getEntityId());
 	}
 
 	@Override
 	public boolean isDisguised(Player player) {
-		return disguises.containsKey(player.getName().toLowerCase());
+		return this.disguises.containsKey(player.getName().toLowerCase());
 	}
 
 	@Override
 	public Disguise getDisguise(Player player) {
-		return disguises.get(player.getName().toLowerCase());
+		return this.disguises.get(player.getName().toLowerCase());
 	}
 	
 	private me.libraryaddict.disguise.disguisetypes.Disguise getLibsDisguise(Player player) {
-		return libsDisguises.get(player.getName().toLowerCase());
+		return this.libsDisguises.get(player.getName().toLowerCase());
 	}
 
 	@Override
@@ -150,13 +150,13 @@ public class DisguiseManagerLibsDisguises implements Listener, IDisguiseManager 
 		HandlerList.unregisterAll(this);
 		removeAllDisguises();
 		
-		disguises.clear();
-		libsDisguises.clear();
-		disguisedEntityIds.clear();
-		libsDisguisedEntityIds.clear();
-		dragons.clear();
-		mounts.clear();
-		disguiseSpells.clear();
+		this.disguises.clear();
+		this.libsDisguises.clear();
+		this.disguisedEntityIds.clear();
+		this.libsDisguisedEntityIds.clear();
+		this.dragons.clear();
+		this.mounts.clear();
+		this.disguiseSpells.clear();
 	}
 	
 	private me.libraryaddict.disguise.disguisetypes.Disguise getDisguiseLibDisguise(DisguiseSpell.Disguise dis) {
@@ -199,13 +199,13 @@ public class DisguiseManagerLibsDisguises implements Listener, IDisguiseManager 
 				((RabbitWatcher)w).setType(RabbitType.getType(dis.getVar1()));
 			} else if (w instanceof SheepWatcher) {
 				if (dis.getVar1() == -1) {
-					((SheepWatcher)w).setColor(AnimalColor.getColor(random.nextInt(16)));
+					((SheepWatcher)w).setColor(AnimalColor.getColor(this.random.nextInt(16)));
 				} else if (dis.getVar1() >= 0 && dis.getVar1() < 16) {
 					((SheepWatcher)w).setColor(AnimalColor.getColor(dis.getVar1()));
 				}
 			} else if (w instanceof OcelotWatcher) {
 				if (dis.getVar1() == -1) {
-					((OcelotWatcher)w).setType(Ocelot.Type.getType(random.nextInt(4)));
+					((OcelotWatcher)w).setType(Ocelot.Type.getType(this.random.nextInt(4)));
 				} else if (dis.getVar1() >= 0 && dis.getVar1() < 4) {
 					((OcelotWatcher)w).setType(Ocelot.Type.getType(dis.getVar1()));
 				}
@@ -319,12 +319,12 @@ public class DisguiseManagerLibsDisguises implements Listener, IDisguiseManager 
 	
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
-		disguisedEntityIds.remove(event.getPlayer().getEntityId());
-		me.libraryaddict.disguise.disguisetypes.Disguise dis = libsDisguisedEntityIds.remove(event.getPlayer().getEntityId());
+		this.disguisedEntityIds.remove(event.getPlayer().getEntityId());
+		me.libraryaddict.disguise.disguisetypes.Disguise dis = this.libsDisguisedEntityIds.remove(event.getPlayer().getEntityId());
 		if (dis != null && dis.isDisguiseInUse()) dis.stopDisguise();
 		
-		dragons.remove(event.getPlayer().getEntityId());
-		if (mounts.containsKey(event.getPlayer().getEntityId())) {
+		this.dragons.remove(event.getPlayer().getEntityId());
+		if (this.mounts.containsKey(event.getPlayer().getEntityId())) {
 			//sendDestroyEntityPackets(event.getPlayer(), mounts.remove(event.getPlayer().getEntityId()));
 		}
 	}
@@ -334,9 +334,9 @@ public class DisguiseManagerLibsDisguises implements Listener, IDisguiseManager 
 		Player p = event.getPlayer();
 		if (isDisguised(p)) {
 			me.libraryaddict.disguise.disguisetypes.Disguise libsDisguise = getLibsDisguise(p);
-			disguisedEntityIds.put(p.getEntityId(), getDisguise(p));
-			libsDisguisedEntityIds.put(p.getEntityId(), libsDisguise);
-			if (getDisguise(p).getEntityType() == EntityType.ENDER_DRAGON) dragons.add(p.getEntityId());
+			this.disguisedEntityIds.put(p.getEntityId(), getDisguise(p));
+			this.libsDisguisedEntityIds.put(p.getEntityId(), libsDisguise);
+			if (getDisguise(p).getEntityType() == EntityType.ENDER_DRAGON) this.dragons.add(p.getEntityId());
 			applyDisguise(p, libsDisguise);
 		}
 	}

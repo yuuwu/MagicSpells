@@ -23,6 +23,10 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.nisovin.magicspells.util.Metrics;
+import com.nisovin.magicspells.util.TxtUtil;
+import com.nisovin.magicspells.util.compat.CompatBasics;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
@@ -183,6 +187,8 @@ public class MagicSpells extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		load();
+		
+		Metrics metrics = new Metrics(this);
 	}
 	
 	void load() {
@@ -204,12 +210,12 @@ public class MagicSpells extends JavaPlugin {
 		new File(this.getDataFolder(), "spellbooks").mkdir();
 		
 		// Load config
-		if (!(new File(getDataFolder(), "config.yml")).exists() && !(new File(getDataFolder(), "general.yml")).exists()) {
+		if (!new File(getDataFolder(), "config.yml").exists() && !new File(getDataFolder(), "general.yml").exists()) {
 			saveResource("general.yml", false);
-			if (!(new File(getDataFolder(), "mana.yml")).exists()) saveResource("mana.yml", false);
-			if (!(new File(getDataFolder(), "spells-command.yml")).exists()) saveResource("spells-command.yml", false);
-			if (!(new File(getDataFolder(), "spells-regular.yml")).exists()) saveResource("spells-regular.yml", false);
-			if (!(new File(getDataFolder(), "zones.yml")).exists()) saveResource("zones.yml", false);
+			if (!new File(getDataFolder(), "mana.yml").exists()) saveResource("mana.yml", false);
+			if (!new File(getDataFolder(), "spells-command.yml").exists()) saveResource("spells-command.yml", false);
+			if (!new File(getDataFolder(), "spells-regular.yml").exists()) saveResource("spells-regular.yml", false);
+			if (!new File(getDataFolder(), "zones.yml").exists()) saveResource("zones.yml", false);
 		}
 		config = new MagicConfig(this);
 		if (!config.isLoaded()) {
@@ -217,6 +223,7 @@ public class MagicSpells extends JavaPlugin {
 			return;
 		}
 		
+		// FIXME clean this up. a lot
 		boolean v1_9 = false;
 		if (config.getBoolean("general.enable-volatile-features", true)) {
 			try {
@@ -250,7 +257,7 @@ public class MagicSpells extends JavaPlugin {
 									error("This MagicSpells version is not fully compatible with this server version.");
 									error("Some features have been disabled.");
 									error("See http://nisovin.com/magicspells/volatilefeatures for more information.");
-									if (getServer().getPluginManager().isPluginEnabled("ProtocolLib")) {
+									if (CompatBasics.pluginEnabled("ProtocolLib")) {
 										error("ProtocolLib found: some compatibility re-enabled");
 										volatileCodeHandle = new VolatileCodeProtocolLib();
 									} else {
@@ -299,9 +306,9 @@ public class MagicSpells extends JavaPlugin {
 		checkWorldPvpFlag = config.getBoolean("general.check-world-pvp-flag", true);
 		checkScoreboardTeams = config.getBoolean("general.check-scoreboard-teams", false);
 		showStrCostOnMissingReagents = config.getBoolean("general.show-str-cost-on-missing-reagents", true);
-		losTransparentBlocks = new HashSet<>(config.getByteList("general.los-transparent-blocks", new ArrayList<Byte>()));
+		losTransparentBlocks = new HashSet<>(config.getByteList("general.los-transparent-blocks", new ArrayList<>()));
 		if (losTransparentBlocks.isEmpty()) losTransparentBlocks.add((byte)0);
-		ignoreCastItemDurability = config.getIntList("general.ignore-cast-item-durability", new ArrayList<Integer>());
+		ignoreCastItemDurability = config.getIntList("general.ignore-cast-item-durability", new ArrayList<>());
 		globalCooldown = config.getInt("general.global-cooldown", 500);
 		castOnAnimate = config.getBoolean("general.cast-on-animate", false);
 		useExpBarAsCastTimeBar = config.getBoolean("general.use-exp-bar-as-cast-time-bar", true);
@@ -348,7 +355,7 @@ public class MagicSpells extends JavaPlugin {
 			bossBarManager = new BossBarManager_V1_8();
 		}
 		itemNameResolver = new MagicItemNameResolver();
-		if (getServer().getPluginManager().isPluginEnabled("Vault")) moneyHandler = new MoneyHandler();
+		if (CompatBasics.pluginEnabled("Vault")) moneyHandler = new MoneyHandler();
 		lifeLengthTracker = new LifeLengthTracker();
 		
 		// Call loading event
@@ -438,9 +445,9 @@ public class MagicSpells extends JavaPlugin {
 		addPermission(pm, "advanced.forget", PermissionDefault.FALSE);
 		addPermission(pm, "advanced.scroll", PermissionDefault.FALSE);
 		HashMap<String, Boolean> advancedPermChildren = new HashMap<>();
-		advancedPermChildren.put("magicspells.advanced.list", true);
-		advancedPermChildren.put("magicspells.advanced.forget", true);
-		advancedPermChildren.put("magicspells.advanced.scroll", true);
+		advancedPermChildren.put(Perm.ADVANCED_LIST.getNode(), true);
+		advancedPermChildren.put(Perm.ADVANCED_FORGET.getNode(), true);
+		advancedPermChildren.put(Perm.ADVANCED_SCROLL.getNode(), true);
 		addPermission(pm, "advanced.*", defaultAllPermsFalse? PermissionDefault.FALSE : PermissionDefault.OP, advancedPermChildren);
 		log("...done");
 		
@@ -476,9 +483,7 @@ public class MagicSpells extends JavaPlugin {
 		
 		// Load online player spellbooks
 		log("Loading online player spellbooks...");
-		for (Player p : getServer().getOnlinePlayers()) {
-			spellbooks.put(p.getName(), new Spellbook(p, this));
-		}
+		Util.forEachPlayerOnline(p -> spellbooks.put(p.getName(), new Spellbook(p, this)));
 		log("...done");
 		
 		// Initialize passive manager
@@ -526,9 +531,7 @@ public class MagicSpells extends JavaPlugin {
 			mana.initialize();
 			
 			// Setup online player mana bars
-			for (Player p : getServer().getOnlinePlayers()) {
-				mana.createManaBar(p);
-			}
+			Util.forEachPlayerOnline(p -> mana.createManaBar(p));
 			
 			// Load mana potions
 			List<String> manaPots = config.getStringList("mana.mana-potions", null);
@@ -603,6 +606,7 @@ public class MagicSpells extends JavaPlugin {
 		log("MagicSpells loading complete!");
 	}
 	
+	private static final int LONG_LOAD_THRESHOLD = 50;
 	private void loadSpells(MagicConfig config, PluginManager pm, HashMap<String, Boolean> permGrantChildren, HashMap<String, Boolean> permLearnChildren, HashMap<String, Boolean> permCastChildren, HashMap<String, Boolean> permTeachChildren) {
 		// Load spells from plugin folder
 		final List<File> jarList = new ArrayList<>();
@@ -655,7 +659,7 @@ public class MagicSpells extends JavaPlugin {
 						String permName = spell.getPermissionName();
 						if (!spell.isAlwaysGranted()) {
 							addPermission(pm, "grant." + permName, PermissionDefault.FALSE);
-							permGrantChildren.put("magicspells.grant." + permName, true);
+							permGrantChildren.put(Perm.GRANT.getNode() + permName, true);
 						}
 						addPermission(pm, "learn." + permName, defaultAllPermsFalse ? PermissionDefault.FALSE : PermissionDefault.TRUE);
 						addPermission(pm, "cast." + permName, defaultAllPermsFalse ? PermissionDefault.FALSE : PermissionDefault.TRUE);
@@ -663,9 +667,9 @@ public class MagicSpells extends JavaPlugin {
 						if (this.enableTempGrantPerms) {
 							addPermission(pm, "tempgrant." + permName, PermissionDefault.FALSE);
 						}
-						permLearnChildren.put("magicspells.learn." + permName, true);
-						permCastChildren.put("magicspells.cast." + permName, true);
-						permTeachChildren.put("magicspells.teach." + permName, true);
+						permLearnChildren.put(Perm.LEARN.getNode() + permName, true);
+						permCastChildren.put(Perm.CAST.getNode() + permName, true);
+						permTeachChildren.put(Perm.TEACH.getNode() + permName, true);
 					}
 					
 					// Done
@@ -680,7 +684,7 @@ public class MagicSpells extends JavaPlugin {
 					e.printStackTrace();
 				}
 				long elapsed = System.currentTimeMillis() - starttime;
-				if (elapsed > 50) getLogger().warning("LONG SPELL LOAD TIME: " + spellName + ": " + elapsed + "ms");
+				if (elapsed > LONG_LOAD_THRESHOLD) getLogger().warning("LONG SPELL LOAD TIME: " + spellName + ": " + elapsed + "ms");
 			}
 		}
 	}
@@ -906,7 +910,6 @@ public class MagicSpells extends JavaPlugin {
 		sendMessage(message, player, null);
 	}
 	
-	// TODO can this safely be made varargs?
 	/**
 	 * Sends a message to a player. This method also does color replacement and has multi-line functionality.
 	 * @param player the player to send the message to
@@ -934,7 +937,7 @@ public class MagicSpells extends JavaPlugin {
 				String varText = matcher.group();
 				String[] varData = varText.substring(5, varText.length() - 1).split(":");
 				String val = plugin.variableManager.getStringValue(varData[0], player);
-				String sval = varData.length == 1 ? Util.getStringNumber(val, -1) : Util.getStringNumber(val, Integer.parseInt(varData[1]));
+				String sval = varData.length == 1 ? TxtUtil.getStringNumber(val, -1) : TxtUtil.getStringNumber(val, Integer.parseInt(varData[1]));
 				string = string.replace(varText, sval);
 			}
 		}
@@ -951,14 +954,13 @@ public class MagicSpells extends JavaPlugin {
 				String[] varData = varText.substring(11, varText.length() - 1).split(":");
 				String variableOwnerName = varData[0];
 				String val = plugin.variableManager.getStringValue(varData[1], variableOwnerName);
-				String sval = varData.length == 2 ? Util.getStringNumber(val, -1) : Util.getStringNumber(val, Integer.parseInt(varData[2]));
+				String sval = varData.length == 2 ? TxtUtil.getStringNumber(val, -1) : TxtUtil.getStringNumber(val, Integer.parseInt(varData[2]));
 				string = string.replace(varText, sval);
 			}
 		}
 		return string;
 	}
 	
-	// TODO can this safely be made varargs?
 	//%arg:(index):defaultValue%
 	private static Pattern argumentSubstitutionPattern = Pattern.compile("%arg:[0-9]+:[0-9a-zA-Z_]+%");
 	public static String doArgumentSubstitution(String string, String[] args) {
@@ -980,7 +982,6 @@ public class MagicSpells extends JavaPlugin {
 		return string;
 	}
 	
-	// TODO can this safely be made varargs?
 	public static String doArgumentAndVariableSubstitution(String string, Player player, String[] args) {
 		return doVariableReplacements(player, doArgumentSubstitution(string, args));
 	}
@@ -1027,7 +1028,7 @@ public class MagicSpells extends JavaPlugin {
                         if (plugin.enableProfiling) {
                         	Long total = plugin.profilingTotalTime.get(eventKey);
                         	if (total == null) total = (long)0;
-                        	total += (System.nanoTime() - start);
+                        	total += System.nanoTime() - start;
                         	plugin.profilingTotalTime.put(eventKey, total);
                         	Integer runs = plugin.profilingRuns.get(eventKey);
                         	if (runs == null) runs = 0;
@@ -1206,7 +1207,7 @@ public class MagicSpells extends JavaPlugin {
 		
 		// Call event
 		SpellLearnEvent event = new SpellLearnEvent(spell, player, LearnSource.OTHER, null);
-		plugin.getServer().getPluginManager().callEvent(event);
+		EventUtil.call(event);
 		if (event.isCancelled()) return false;
 		
 		spellbook.addSpell(spell);

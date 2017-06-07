@@ -8,7 +8,7 @@ import org.bukkit.util.Vector;
 import com.nisovin.magicspells.events.MagicSpellsEntityDamageByEntityEvent;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
 
@@ -35,13 +35,13 @@ public class ForcetossSpell extends TargetedSpell implements TargetedEntitySpell
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
-			// get target
+			// Get target
 			TargetInfo<LivingEntity> targetInfo = getTargetedEntity(player, power);
 			if (targetInfo == null) return noTarget(player);
 			LivingEntity target = targetInfo.getTarget();
 			power = targetInfo.getPower();
 			
-			// do damage
+			// Do damage
 			if (damage > 0) {
 				double damage = this.damage * power;
 				if (target instanceof Player && checkPlugins) {
@@ -53,7 +53,7 @@ public class ForcetossSpell extends TargetedSpell implements TargetedEntitySpell
 				target.damage(damage);
 			}
 			
-			// throw target
+			// Throw target
 			toss(player, target, power);
 			
 			sendMessages(player, target);
@@ -65,10 +65,10 @@ public class ForcetossSpell extends TargetedSpell implements TargetedEntitySpell
 	private void toss(Player player, LivingEntity target, float power) {
 		if (!powerAffectsForce) power = 1f;
 		Vector v = target.getLocation().toVector().subtract(player.getLocation().toVector())
-				.setY(0)
-				.normalize()
-				.multiply(hForce * power)
-				.setY(vForce * power);
+			.setY(0)
+			.normalize()
+			.multiply(hForce * power)
+			.setY(vForce * power);
 		target.setVelocity(v);
 		playSpellEffects(player, target);
 	}

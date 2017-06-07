@@ -13,11 +13,11 @@ public class TargetInfo<E extends Entity> {
 	}
 	
 	public E getTarget() {
-		return target;
+		return this.target;
 	}
 	
 	public float getPower() {
-		return power;
+		return this.power;
 	}
 	
 }

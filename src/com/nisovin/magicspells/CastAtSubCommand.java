@@ -42,7 +42,7 @@ public class CastAtSubCommand {
 			return true;
 		}
 		
-		// end /c castat handling
+		// End /c castat handling
 		return true;
 	}
 	

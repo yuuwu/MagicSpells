@@ -17,8 +17,8 @@ public class TimeSpell extends InstantSpell implements TargetedLocationSpell {
 	public TimeSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		timeToSet = getConfigInt("time-to-set", 0);
-		strAnnounce = getConfigString("str-announce", "The sun suddenly appears in the sky.");
+		this.timeToSet = getConfigInt("time-to-set", 0);
+		this.strAnnounce = getConfigString("str-announce", "The sun suddenly appears in the sky.");
 	}
 
 	@Override
@@ -31,9 +31,9 @@ public class TimeSpell extends InstantSpell implements TargetedLocationSpell {
 	}
 	
 	void setTime(World world) {
-		world.setTime(timeToSet);
+		world.setTime(this.timeToSet);
 		for (Player p : world.getPlayers()) {
-			sendMessage(strAnnounce, p, MagicSpells.NULL_ARGS);
+			sendMessage(this.strAnnounce, p, MagicSpells.NULL_ARGS);
 		}
 	}
 

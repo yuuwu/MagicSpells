@@ -13,7 +13,7 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.BlockUtils;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 
 public class BlinkSpell extends TargetedSpell implements TargetedLocationSpell {
@@ -65,18 +65,18 @@ public class BlinkSpell extends TargetedSpell implements TargetedLocationSpell {
 			if (found != null) {
 				Location loc = null;
 				if (range > 0 && !inRange(found.getLocation(), player.getLocation(), range)) {
-					//no op
+					// No op
 				} else if (!passThroughCeiling && found.getRelative(0, -1, 0).equals(prev)) {
-					// trying to move upward
+					// Trying to move upward
 					if (BlockUtils.isPathable(prev) && BlockUtils.isPathable(prev.getRelative(0, -1, 0))) { //TODO check null access here
 						loc = prev.getRelative(0, -1, 0).getLocation();
 					}
 				} else if (BlockUtils.isPathable(found.getRelative(0, 1, 0)) && BlockUtils.isPathable(found.getRelative(0, 2, 0))) {
-					// try to stand on top
+					// Try to stand on top
 					loc = found.getLocation();
 					loc.setY(loc.getY() + 1);
 				} else if (prev != null && BlockUtils.isPathable(prev) && BlockUtils.isPathable(prev.getRelative(0, 1, 0))) {
-					// no space on top, put adjacent instead
+					// No space on top, put adjacent instead
 					loc = prev.getLocation();
 				}
 				if (loc != null) {
@@ -89,8 +89,8 @@ public class BlinkSpell extends TargetedSpell implements TargetedLocationSpell {
 					}
 				}
 				if (loc != null) {
-					loc.setX(loc.getX()+.5);
-					loc.setZ(loc.getZ()+.5);
+					loc.setX(loc.getX() + .5);
+					loc.setZ(loc.getZ() + .5);
 					loc.setPitch(player.getLocation().getPitch());
 					loc.setYaw(player.getLocation().getYaw());
 					Location origLoc = player.getLocation();

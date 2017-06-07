@@ -21,7 +21,7 @@ import com.nisovin.magicspells.events.SpellTargetLocationEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
 
@@ -48,7 +48,7 @@ public class LightningSpell extends TargetedSpell implements TargetedLocationSpe
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
-			Block target = null;
+			Block target;
 			LivingEntity entityTarget = null;
 			if (requireEntityTarget) {
 				TargetInfo<LivingEntity> targetInfo = getTargetedEntity(player, power);
@@ -56,7 +56,7 @@ public class LightningSpell extends TargetedSpell implements TargetedLocationSpe
 					entityTarget = targetInfo.getTarget();
 					power = targetInfo.getPower();
 				}
-				if (entityTarget != null && entityTarget instanceof Player && checkPlugins) {
+				if (entityTarget instanceof Player && checkPlugins) {
 					MagicSpellsEntityDamageByEntityEvent event = new MagicSpellsEntityDamageByEntityEvent(player, entityTarget, DamageCause.ENTITY_ATTACK, 1 + additionalDamage);
 					EventUtil.call(event);
 					if (event.isCancelled()) entityTarget = null;

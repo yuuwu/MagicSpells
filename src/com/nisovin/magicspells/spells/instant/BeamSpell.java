@@ -10,7 +10,7 @@ import com.nisovin.magicspells.events.SpellTargetEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.util.BoundingBox;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 
 public class BeamSpell extends InstantSpell {
@@ -28,10 +28,10 @@ public class BeamSpell extends InstantSpell {
 		beamWidth = getConfigFloat("beam-width", 2);
 		yOffset = getConfigFloat("y-offset", 0);
 		maxDistance = getConfigFloat("max-distance", 50);
-		interval = getConfigFloat("interval", 0.25f);
+		interval = getConfigFloat("interval", 0.25F);
 		spellNameToCast = getConfigString("spell", "");
 		
-		if (interval < 0.01) interval = 0.01f;
+		if (interval < 0.01) interval = 0.01F;
 	}
 	
 	@Override

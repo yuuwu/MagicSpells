@@ -42,7 +42,7 @@ public class CastAtMarkSpell extends InstantSpell {
 			return;
 		}
 		Spell s = MagicSpells.getSpellByInternalName(markSpellName);
-		if (s == null || !(s instanceof MarkSpell)) {
+		if (!(s instanceof MarkSpell)) {
 			MagicSpells.error(getLoggingSpellPrefix() + " Mark spell specified is not a mark spell");
 			return;
 		}
@@ -65,9 +65,7 @@ public class CastAtMarkSpell extends InstantSpell {
 	}
 
 	@Override
-	public PostCastAction castSpell(Player player, SpellCastState state,
-			float power, String[] args) {
-		
+	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (!initialized) return PostCastAction.HANDLE_NORMALLY;
 
 		if (state == SpellCastState.NORMAL) {

@@ -1,5 +1,6 @@
 package com.nisovin.magicspells.castmodifiers.conditions;
 
+import com.nisovin.magicspells.util.compat.CompatBasics;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -23,7 +24,7 @@ public class InRegionCondition extends Condition {
 	public boolean setVar(String var) {
 		if (var == null) return false;
 		
-		worldGuard = (WorldGuardPlugin)Bukkit.getPluginManager().getPlugin("WorldGuard");
+		worldGuard = (WorldGuardPlugin)CompatBasics.getPlugin("WorldGuard");
 		if (worldGuard == null || !worldGuard.isEnabled()) return false;
 		
 		String[] split = var.split(":");

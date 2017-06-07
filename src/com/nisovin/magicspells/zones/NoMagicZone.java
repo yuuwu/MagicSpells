@@ -33,16 +33,16 @@ public abstract class NoMagicZone implements Comparable<NoMagicZone> {
 	
 	public final void create(String id, ConfigurationSection config) {
 		this.id = id;
-		priority = config.getInt("priority", 0);
-		message = config.getString("message", "You are in a no-magic zone.");
-		allowedSpells = config.getStringList("allowed-spells");
-		disallowedSpells = config.getStringList("disallowed-spells");
-		allowAll = config.getBoolean("allow-all", false);
-		disallowAll = config.getBoolean("disallow-all", true);
-		if (allowedSpells != null && allowedSpells.isEmpty()) allowedSpells = null;
-		if (disallowedSpells != null && disallowedSpells.isEmpty()) disallowedSpells = null;
-		if (disallowedSpells != null) disallowAll = false;
-		if (allowedSpells != null) allowAll = false;
+		this.priority = config.getInt("priority", 0);
+		this.message = config.getString("message", "You are in a no-magic zone.");
+		this.allowedSpells = config.getStringList("allowed-spells");
+		this.disallowedSpells = config.getStringList("disallowed-spells");
+		this.allowAll = config.getBoolean("allow-all", false);
+		this.disallowAll = config.getBoolean("disallow-all", true);
+		if (this.allowedSpells != null && this.allowedSpells.isEmpty()) this.allowedSpells = null;
+		if (this.disallowedSpells != null && this.disallowedSpells.isEmpty()) this.disallowedSpells = null;
+		if (this.disallowedSpells != null) this.disallowAll = false;
+		if (this.allowedSpells != null) this.allowAll = false;
 		initialize(config);
 	}
 	
@@ -54,21 +54,21 @@ public abstract class NoMagicZone implements Comparable<NoMagicZone> {
 	
 	public final ZoneCheckResult check(Location location, Spell spell) {
 		if (!inZone(location)) return ZoneCheckResult.IGNORED;
-		if (disallowedSpells != null && disallowedSpells.contains(spell.getInternalName())) return ZoneCheckResult.DENY;
-		if (allowedSpells != null && allowedSpells.contains(spell.getInternalName())) return ZoneCheckResult.ALLOW;
-		if (disallowAll) return ZoneCheckResult.DENY;
-		if (allowAll) return ZoneCheckResult.ALLOW;
+		if (this.disallowedSpells != null && this.disallowedSpells.contains(spell.getInternalName())) return ZoneCheckResult.DENY;
+		if (this.allowedSpells != null && this.allowedSpells.contains(spell.getInternalName())) return ZoneCheckResult.ALLOW;
+		if (this.disallowAll) return ZoneCheckResult.DENY;
+		if (this.allowAll) return ZoneCheckResult.ALLOW;
 		return ZoneCheckResult.IGNORED;
 	}
 	
 	public abstract boolean inZone(Location location);
 	
 	public String getId() {
-		return id;
+		return this.id;
 	}
 	
 	public String getMessage() {
-		return message;
+		return this.message;
 	}
 	
 	@Override

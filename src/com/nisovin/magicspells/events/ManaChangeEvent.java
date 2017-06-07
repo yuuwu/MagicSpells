@@ -33,7 +33,7 @@ public class ManaChangeEvent extends Event {
 	 * @return the player
 	 */
 	public Player getPlayer() {
-		return player;
+		return this.player;
 	}
 	
 	/**
@@ -41,7 +41,7 @@ public class ManaChangeEvent extends Event {
 	 * @return mana amount
 	 */
 	public int getOldAmount() {
-		return oldAmt;
+		return this.oldAmt;
 	}
 	
 	/**
@@ -49,7 +49,7 @@ public class ManaChangeEvent extends Event {
 	 * @return mana amount
 	 */
 	public int getNewAmount() {
-		return newAmt;
+		return this.newAmt;
 	}
 	
 	/**
@@ -57,7 +57,7 @@ public class ManaChangeEvent extends Event {
 	 * @param mana amount
 	 */
 	public void setNewAmount(int mana) {
-		newAmt = mana;
+		this.newAmt = mana;
 	}
 	
 	/**
@@ -65,7 +65,7 @@ public class ManaChangeEvent extends Event {
 	 * @return max mana
 	 */
 	public int getMaxMana() {
-		return maxMana;
+		return this.maxMana;
 	}
 	
 	/**
@@ -73,7 +73,7 @@ public class ManaChangeEvent extends Event {
 	 * @return the reason
 	 */
 	public ManaChangeReason getReason() {
-		return reason;
+		return this.reason;
 	}
 
     @Override

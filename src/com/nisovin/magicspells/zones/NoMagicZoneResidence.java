@@ -1,6 +1,6 @@
 package com.nisovin.magicspells.zones;
 
-import org.bukkit.Bukkit;
+import com.nisovin.magicspells.util.compat.CompatBasics;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -19,11 +19,11 @@ public class NoMagicZoneResidence extends NoMagicZone {
 
 	@Override
 	public boolean inZone(Location location) {
-		if (Bukkit.getServer().getPluginManager().isPluginEnabled("Residence")) {
+		if (CompatBasics.pluginEnabled("Residence")) {
 			ClaimedResidence res = Residence.getResidenceManager().getByLoc(location);
-			return res != null && res.getName().equalsIgnoreCase(regionName);
+			return res != null && res.getName().equalsIgnoreCase(this.regionName);
 		}
-		MagicSpells.error("Failed to access Residence region '" + regionName + '\'');
+		MagicSpells.error("Failed to access Residence region '" + this.regionName + '\'');
 		return false;
 	}
 

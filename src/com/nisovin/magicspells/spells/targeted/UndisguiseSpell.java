@@ -50,14 +50,12 @@ public class UndisguiseSpell extends TargetedSpell implements TargetedEntitySpel
 
 	@Override
 	public boolean castAtEntity(Player caster, LivingEntity target, float power) {
-		if (target instanceof Player) return undisguise(caster, (Player)target);
-		return false;
+		return target instanceof Player && undisguise(caster, (Player)target);
 	}
 
 	@Override
 	public boolean castAtEntity(LivingEntity target, float power) {
-		if (target instanceof Player) return undisguise(null, (Player)target);
-		return false;
+		return target instanceof Player && undisguise(null, (Player)target);
 	}
 
 }

@@ -63,7 +63,6 @@ public class BombSpell extends TargetedSpell implements TargetedLocationSpell {
 			} else {
 				playSpellEffects(EffectPosition.TARGET, loc);
 			}
-			// TODO this should be moved to a named inner class
 			new SpellAnimation(interval, interval, true) {
 				
 				int time = 0;

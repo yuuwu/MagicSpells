@@ -1,5 +1,7 @@
 package com.nisovin.magicspells;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import org.bukkit.Location;
@@ -14,7 +16,7 @@ import com.nisovin.magicspells.events.SpellCastedEvent;
 import com.nisovin.magicspells.spells.TargetedEntityFromLocationSpell;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.RegexUtil;
 import com.nisovin.magicspells.util.Util;
 
@@ -37,7 +39,7 @@ public class Subspell {
 	public Subspell(String data) {
 		String[] split = data.split("\\(", 2);
 		
-		spellName = split[0].trim();
+		this.spellName = split[0].trim();
 		
 		if (split.length > 1) {
 			split[1] = split[1].trim();
@@ -47,211 +49,188 @@ public class Subspell {
 				if (arg.contains("=")) {
 					String[] keyval = arg.split("=");
 					if (keyval[0].equalsIgnoreCase("mode")) {
+						// TODO replace this with the name mapping
 						if (keyval[1].equalsIgnoreCase("hard")) {
-							mode = CastMode.HARD;
+							this.mode = CastMode.HARD;
 						} else if (keyval[1].equalsIgnoreCase("full")) {
-							mode = CastMode.FULL;
+							this.mode = CastMode.FULL;
 						} else if (keyval[1].equalsIgnoreCase("partial")) {
-							mode = CastMode.PARTIAL;
+							this.mode = CastMode.PARTIAL;
 						} else if (keyval[1].equalsIgnoreCase("direct")) {
-							mode = CastMode.DIRECT;
+							this.mode = CastMode.DIRECT;
 						}
 					} else if (keyval[0].equalsIgnoreCase("power")) {
 						try {
-							subPower = Float.parseFloat(keyval[1]);
+							this.subPower = Float.parseFloat(keyval[1]);
 						} catch (NumberFormatException e) {
 							DebugHandler.debugNumberFormat(e);
 						}
 					} else if (keyval[0].equalsIgnoreCase("delay")) {
 						try {
-							delay = Integer.parseInt(keyval[1]);
+							this.delay = Integer.parseInt(keyval[1]);
 						} catch (NumberFormatException e) {
 							DebugHandler.debugNumberFormat(e);
 						}
 					} else if (keyval[0].equalsIgnoreCase("chance")) {
 						try {
-							chance = Double.parseDouble(keyval[1]) / 100D;
+							this.chance = Double.parseDouble(keyval[1]) / 100D;
 						} catch (NumberFormatException e) {
 							DebugHandler.debugNumberFormat(e);
 						}
 					}
+					// TODO replace this with the name mapping
 				} else if (arg.equalsIgnoreCase("hard")) {
-					mode = CastMode.HARD;
+					this.mode = CastMode.HARD;
 				} else if (arg.equalsIgnoreCase("full")) {
-					mode = CastMode.FULL;
+					this.mode = CastMode.FULL;
 				} else if (arg.equalsIgnoreCase("partial")) {
-					mode = CastMode.PARTIAL;
+					this.mode = CastMode.PARTIAL;
 				} else if (arg.equalsIgnoreCase("direct")) {
-					mode = CastMode.DIRECT;
+					this.mode = CastMode.DIRECT;
 				} else if (RegexUtil.matches(RegexUtil.SIMPLE_INT_PATTERN, arg)) {  //TODO include this part in the comments
-					delay = Integer.parseInt(arg);
+					this.delay = Integer.parseInt(arg);
 				} else if (arg.matches("^[0-9]+\\.[0-9]+$")) { //TODO include this part in the comments
-					subPower = Float.parseFloat(arg);
+					this.subPower = Float.parseFloat(arg);
 				}
 			}			
 		}
 	}
 	
 	public boolean process() {
-		spell = MagicSpells.getSpellByInternalName(spellName);
-		if (spell != null) {
-			isTargetedEntity = spell instanceof TargetedEntitySpell;
-			isTargetedLocation = spell instanceof TargetedLocationSpell;
-			isTargetedEntityFromLocation = spell instanceof TargetedEntityFromLocationSpell;
+		this.spell = MagicSpells.getSpellByInternalName(spellName);
+		if (this.spell != null) {
+			this.isTargetedEntity = this.spell instanceof TargetedEntitySpell;
+			this.isTargetedLocation = this.spell instanceof TargetedLocationSpell;
+			this.isTargetedEntityFromLocation = this.spell instanceof TargetedEntityFromLocationSpell;
 		}
-		return spell != null;
+		return this.spell != null;
 	}
 	
 	public Spell getSpell() {
-		return spell;
+		return this.spell;
 	}
 	
 	public boolean isTargetedEntitySpell() {
-		return isTargetedEntity;
+		return this.isTargetedEntity;
 	}
 	
 	public boolean isTargetedLocationSpell() {
-		return isTargetedLocation;
+		return this.isTargetedLocation;
 	}
 	
 	public boolean isTargetedEntityFromLocationSpell() {
-		return isTargetedEntityFromLocation;
+		return this.isTargetedEntityFromLocation;
 	}
 	
 	public PostCastAction cast(final Player player, final float power) {
-		if (chance > 0 && chance < 1) {
-			if (random.nextDouble() > chance) return PostCastAction.ALREADY_HANDLED;
+		if (this.chance > 0 && this.chance < 1) {
+			if (random.nextDouble() > this.chance) return PostCastAction.ALREADY_HANDLED;
 		}
-		if (delay <= 0) return castReal(player, power);
-		MagicSpells.scheduleDelayedTask(new Runnable() {
-			
-			@Override
-			public void run() {
-				castReal(player, power);
-			}
-		}, delay);
+		if (this.delay <= 0) return castReal(player, power);
+		MagicSpells.scheduleDelayedTask(() -> castReal(player, power), delay);
 		
 		return PostCastAction.HANDLE_NORMALLY;
 	}
 	
 	PostCastAction castReal(Player player, float power) {
-		if ((mode == CastMode.HARD || mode == CastMode.FULL) && player != null) {
-			return spell.cast(player, power * subPower, null).action;
+		if ((this.mode == CastMode.HARD || this.mode == CastMode.FULL) && player != null) {
+			return this.spell.cast(player, power * this.subPower, null).action;
 		}
 		
-		if (mode == CastMode.PARTIAL) {
-			SpellCastEvent event = new SpellCastEvent(spell, player, SpellCastState.NORMAL, power * subPower, null, 0, null, 0);
+		if (this.mode == CastMode.PARTIAL) {
+			SpellCastEvent event = new SpellCastEvent(this.spell, player, SpellCastState.NORMAL, power * this.subPower, null, 0, null, 0);
 			EventUtil.call(event);
 			if (!event.isCancelled() && event.getSpellCastState() == SpellCastState.NORMAL) {
-				PostCastAction act = spell.castSpell(player, SpellCastState.NORMAL, event.getPower(), null);
-				EventUtil.call(new SpellCastedEvent(spell, player, SpellCastState.NORMAL, event.getPower(), null, 0, null, act));
+				PostCastAction act = this.spell.castSpell(player, SpellCastState.NORMAL, event.getPower(), null);
+				EventUtil.call(new SpellCastedEvent(this.spell, player, SpellCastState.NORMAL, event.getPower(), null, 0, null, act));
 				return act;
 			}
 			return PostCastAction.ALREADY_HANDLED;
 		}
 		
-		return spell.castSpell(player, SpellCastState.NORMAL, power * subPower, null);
+		return this.spell.castSpell(player, SpellCastState.NORMAL, power * this.subPower, null);
 	}
 	
 	public boolean castAtEntity(final Player player, final LivingEntity target, final float power) {
-		if (delay <= 0) return castAtEntityReal(player, target, power);
-		
-		MagicSpells.scheduleDelayedTask(new Runnable() {
-			
-			@Override
-			public void run() {
-				castAtEntityReal(player, target, power);
-			}
-			
-		}, delay);
+		if (this.delay <= 0) return castAtEntityReal(player, target, power);
+		MagicSpells.scheduleDelayedTask(() -> castAtEntityReal(player, target, power), delay);
 		return true;
 	}
 	
 	boolean castAtEntityReal(Player player, LivingEntity target, float power) {
 		boolean ret = false;
 		if (isTargetedEntity) {
-			if (mode == CastMode.HARD && player != null) {
-				SpellCastResult result = spell.cast(player, power, null); // the null is just no args
+			if (this.mode == CastMode.HARD && player != null) {
+				SpellCastResult result = this.spell.cast(player, power, null); // the null is just no args
 				return result.state == SpellCastState.NORMAL && result.action == PostCastAction.HANDLE_NORMALLY;
-			} else if (mode == CastMode.FULL && player != null) {
+			} else if (this.mode == CastMode.FULL && player != null) {
 				boolean success = false;
-				SpellCastEvent spellCast = spell.preCast(player, power * subPower, null); // the null is just no args
+				SpellCastEvent spellCast = this.spell.preCast(player, power * this.subPower, null); // the null is just no args
 				if (spellCast != null && spellCast.getSpellCastState() == SpellCastState.NORMAL) {
-					success = ((TargetedEntitySpell)spell).castAtEntity(player, target, spellCast.getPower());
-					spell.postCast(spellCast, success ? PostCastAction.HANDLE_NORMALLY : PostCastAction.ALREADY_HANDLED);
+					success = ((TargetedEntitySpell)this.spell).castAtEntity(player, target, spellCast.getPower());
+					this.spell.postCast(spellCast, success ? PostCastAction.HANDLE_NORMALLY : PostCastAction.ALREADY_HANDLED);
 				}
 				return success;
-			} else if (mode == CastMode.PARTIAL) {
-				SpellCastEvent event = new SpellCastEvent(spell, player, SpellCastState.NORMAL, power * subPower /*power*/, null /*args*/, 0, null /*reagents*/, 0);
+			} else if (this.mode == CastMode.PARTIAL) {
+				SpellCastEvent event = new SpellCastEvent(this.spell, player, SpellCastState.NORMAL, power * this.subPower /*power*/, null /*args*/, 0, null /*reagents*/, 0);
 				EventUtil.call(event);
 				if (!event.isCancelled() && event.getSpellCastState() == SpellCastState.NORMAL) {
 					if (player != null) {
-						ret = ((TargetedEntitySpell)spell).castAtEntity(player, target, event.getPower());
+						ret = ((TargetedEntitySpell)this.spell).castAtEntity(player, target, event.getPower());
 					} else {
-						ret = ((TargetedEntitySpell)spell).castAtEntity(target, event.getPower());
+						ret = ((TargetedEntitySpell)this.spell).castAtEntity(target, event.getPower());
 					}
-					if (ret) {
-						EventUtil.call(new SpellCastedEvent(spell, player, SpellCastState.NORMAL, event.getPower(), null /*args*/, 0, null /*reagents*/, PostCastAction.HANDLE_NORMALLY));
-					}
+					if (ret) EventUtil.call(new SpellCastedEvent(this.spell, player, SpellCastState.NORMAL, event.getPower(), null /*args*/, 0, null /*reagents*/, PostCastAction.HANDLE_NORMALLY));
 				}
 			} else {
 				if (player != null) {
-					ret = ((TargetedEntitySpell)spell).castAtEntity(player, target, power * subPower);
+					ret = ((TargetedEntitySpell)this.spell).castAtEntity(player, target, power * this.subPower);
 				} else {
-					ret = ((TargetedEntitySpell)spell).castAtEntity(target, power * subPower);
+					ret = ((TargetedEntitySpell)this.spell).castAtEntity(target, power * this.subPower);
 				}
 			}
-		} else if (isTargetedLocation) {
+		} else if (this.isTargetedLocation) {
 			castAtLocationReal(player, target.getLocation(), power);
 		}
 		return ret;
 	}
 	
 	public boolean castAtLocation(final Player player, final Location target, final float power) {
-		if (delay <= 0) return castAtLocationReal(player, target, power);
-		MagicSpells.scheduleDelayedTask(new Runnable() {
-			
-			@Override
-			public void run() {
-				castAtLocationReal(player, target, power);
-			}
-			
-		}, delay);
+		if (this.delay <= 0) return castAtLocationReal(player, target, power);
+		MagicSpells.scheduleDelayedTask(() -> castAtLocationReal(player, target, power), delay);
 		return true;
 	}
 	
 	boolean castAtLocationReal(Player player, Location target, float power) {
 		boolean ret = false;
-		if (isTargetedLocation) {
-			if (mode == CastMode.HARD && player != null) {
-				SpellCastResult result = spell.cast(player, power, null);
+		if (this.isTargetedLocation) {
+			if (this.mode == CastMode.HARD && player != null) {
+				SpellCastResult result = this.spell.cast(player, power, null);
 				return result.state == SpellCastState.NORMAL && result.action == PostCastAction.HANDLE_NORMALLY;
-			} else if (mode == CastMode.FULL && player != null) {
+			} else if (this.mode == CastMode.FULL && player != null) {
 				boolean success = false;
-				SpellCastEvent spellCast = spell.preCast(player, power * subPower, null);
+				SpellCastEvent spellCast = this.spell.preCast(player, power * this.subPower, null);
 				if (spellCast != null && spellCast.getSpellCastState() == SpellCastState.NORMAL) {
-					success = ((TargetedLocationSpell)spell).castAtLocation(player, target, spellCast.getPower());
-					spell.postCast(spellCast, success ? PostCastAction.HANDLE_NORMALLY : PostCastAction.ALREADY_HANDLED);
+					success = ((TargetedLocationSpell)this.spell).castAtLocation(player, target, spellCast.getPower());
+					this.spell.postCast(spellCast, success ? PostCastAction.HANDLE_NORMALLY : PostCastAction.ALREADY_HANDLED);
 				}
 				return success;
-			} else if (mode == CastMode.PARTIAL) {
-				SpellCastEvent event = new SpellCastEvent(spell, player, SpellCastState.NORMAL, power * subPower, null, 0, null, 0);
+			} else if (this.mode == CastMode.PARTIAL) {
+				SpellCastEvent event = new SpellCastEvent(this.spell, player, SpellCastState.NORMAL, power * this.subPower, null, 0, null, 0);
 				EventUtil.call(event);
 				if (!event.isCancelled() && event.getSpellCastState() == SpellCastState.NORMAL) {
 					if (player != null) {
-						ret = ((TargetedLocationSpell)spell).castAtLocation(player, target, event.getPower());
+						ret = ((TargetedLocationSpell)this.spell).castAtLocation(player, target, event.getPower());
 					} else {
-						ret = ((TargetedLocationSpell)spell).castAtLocation(target, event.getPower());
+						ret = ((TargetedLocationSpell)this.spell).castAtLocation(target, event.getPower());
 					}
-					if (ret) {
-						EventUtil.call(new SpellCastedEvent(spell, player, SpellCastState.NORMAL, event.getPower(), null, 0, null, PostCastAction.HANDLE_NORMALLY));
-					}
+					if (ret) EventUtil.call(new SpellCastedEvent(this.spell, player, SpellCastState.NORMAL, event.getPower(), null, 0, null, PostCastAction.HANDLE_NORMALLY));
 				}
 			} else {
 				if (player != null) {
-					ret = ((TargetedLocationSpell)spell).castAtLocation(player, target, power * subPower);
+					ret = ((TargetedLocationSpell)this.spell).castAtLocation(player, target, power * this.subPower);
 				} else {
-					ret = ((TargetedLocationSpell)spell).castAtLocation(target, power * subPower);
+					ret = ((TargetedLocationSpell)this.spell).castAtLocation(target, power * this.subPower);
 				}
 			}
 		}
@@ -259,48 +238,41 @@ public class Subspell {
 	}
 	
 	public boolean castAtEntityFromLocation(final Player player, final Location from, final LivingEntity target, final float power) {
-		if (delay <= 0) return castAtEntityFromLocationReal(player, from, target, power);
-		MagicSpells.scheduleDelayedTask(new Runnable() {
-			
-			@Override
-			public void run() {
-				castAtEntityFromLocationReal(player, from, target, power);
-			}
-			
-		}, delay);
+		if (this.delay <= 0) return castAtEntityFromLocationReal(player, from, target, power);
+		MagicSpells.scheduleDelayedTask(() -> castAtEntityFromLocationReal(player, from, target, power), delay);
 		return true;
 	}
 	
 	boolean castAtEntityFromLocationReal(Player player, Location from, LivingEntity target, float power) {
 		boolean ret = false;
-		if (isTargetedEntityFromLocation) {
-			if (mode == CastMode.HARD && player != null) {
-				SpellCastResult result = spell.cast(player, power, MagicSpells.NULL_ARGS);
+		if (this.isTargetedEntityFromLocation) {
+			if (this.mode == CastMode.HARD && player != null) {
+				SpellCastResult result = this.spell.cast(player, power, MagicSpells.NULL_ARGS);
 				return result.state == SpellCastState.NORMAL && result.action == PostCastAction.HANDLE_NORMALLY;
-			} else if (mode == CastMode.FULL && player != null) {
+			} else if (this.mode == CastMode.FULL && player != null) {
 				boolean success = false;
-				SpellCastEvent spellCast = spell.preCast(player, power * subPower, MagicSpells.NULL_ARGS);
+				SpellCastEvent spellCast = this.spell.preCast(player, power * this.subPower, MagicSpells.NULL_ARGS);
 				if (spellCast != null && spellCast.getSpellCastState() == SpellCastState.NORMAL) {
-					success = ((TargetedEntityFromLocationSpell)spell).castAtEntityFromLocation(player, from, target, spellCast.getPower());
-					spell.postCast(spellCast, success ? PostCastAction.HANDLE_NORMALLY : PostCastAction.ALREADY_HANDLED);
+					success = ((TargetedEntityFromLocationSpell)this.spell).castAtEntityFromLocation(player, from, target, spellCast.getPower());
+					this.spell.postCast(spellCast, success ? PostCastAction.HANDLE_NORMALLY : PostCastAction.ALREADY_HANDLED);
 				}
 				return success;
-			} else if (mode == CastMode.PARTIAL) {
-				SpellCastEvent event = new SpellCastEvent(spell, player, SpellCastState.NORMAL, power * subPower, null, 0, null, 0);
+			} else if (this.mode == CastMode.PARTIAL) {
+				SpellCastEvent event = new SpellCastEvent(this.spell, player, SpellCastState.NORMAL, power * this.subPower, null, 0, null, 0);
 				EventUtil.call(event);
 				if (!event.isCancelled() && event.getSpellCastState() == SpellCastState.NORMAL) {
 					if (player != null) {
-						ret = ((TargetedEntityFromLocationSpell)spell).castAtEntityFromLocation(player, from, target, event.getPower());
+						ret = ((TargetedEntityFromLocationSpell)this.spell).castAtEntityFromLocation(player, from, target, event.getPower());
 					} else {
-						ret = ((TargetedEntityFromLocationSpell)spell).castAtEntityFromLocation(from, target, event.getPower());
+						ret = ((TargetedEntityFromLocationSpell)this.spell).castAtEntityFromLocation(from, target, event.getPower());
 					}
-					if (ret) EventUtil.call(new SpellCastedEvent(spell, player, SpellCastState.NORMAL, event.getPower(), null, 0, null, PostCastAction.HANDLE_NORMALLY));
+					if (ret) EventUtil.call(new SpellCastedEvent(this.spell, player, SpellCastState.NORMAL, event.getPower(), null, 0, null, PostCastAction.HANDLE_NORMALLY));
 				}
 			} else {
 				if (player != null) {
-					ret = ((TargetedEntityFromLocationSpell)spell).castAtEntityFromLocation(player, from, target, power * subPower);
+					ret = ((TargetedEntityFromLocationSpell)this.spell).castAtEntityFromLocation(player, from, target, power * this.subPower);
 				} else {
-					ret = ((TargetedEntityFromLocationSpell)spell).castAtEntityFromLocation(from, target, power * subPower);
+					ret = ((TargetedEntityFromLocationSpell)this.spell).castAtEntityFromLocation(from, target, power * this.subPower);
 				}
 			}
 		}
@@ -308,12 +280,26 @@ public class Subspell {
 	}
 	
 	// TODO this should be in charge of determining the mode from a string
+	// TODO move this to its own class
 	public enum CastMode {
 		
 		HARD,
 		FULL,
 		PARTIAL,
 		DIRECT
+		;
+		
+		private static Map<String, CastMode> nameMap = new HashMap<>();
+		
+		public static CastMode getFromString(String label) {
+			return nameMap.get(label.toLowerCase());
+		}
+		
+		static {
+			for (CastMode mode : CastMode.values()) {
+				nameMap.put(mode.name().toLowerCase(), mode);
+			}
+		}
 		
 	}
 	

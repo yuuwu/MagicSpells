@@ -20,7 +20,7 @@ public class WorldGuardRegionMembershipCondition extends AbstractWorldGuardCondi
 	public boolean setVar(String var) {
 		if (!worldGuardEnabled()) return false;
 		var = var.toLowerCase();
-		ownerRequired = (var.contains("owner"));
+		ownerRequired = var.contains("owner");
 		return true;
 	}
 

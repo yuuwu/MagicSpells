@@ -15,7 +15,7 @@ import com.nisovin.magicspells.events.SpellTargetLocationEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 
 public class ForcebombSpell extends TargetedSpell implements TargetedLocationSpell {
@@ -78,7 +78,8 @@ public class ForcebombSpell extends TargetedSpell implements TargetedLocationSpe
 		location = location.clone().add(0D, yOffset, 0D);
 	    Vector t = location.toVector();
 		Collection<Entity> entities = location.getWorld().getEntitiesByClasses(LivingEntity.class);
-		Vector e, v;
+		Vector e;
+		Vector v;
 		for (Entity entity : entities) {
 			if (entity instanceof LivingEntity && (player == null || validTargetList.canTarget(player, entity)) && entity.getLocation().distanceSquared(location) <= radiusSquared) {
 				float power = basePower;
@@ -95,7 +96,7 @@ public class ForcebombSpell extends TargetedSpell implements TargetedLocationSpe
 				} else {
 					v.setY(yForce/10.0 * power);
 				}
-				if (v.getY() > (maxYForce/10.0)) v.setY(maxYForce/10.0);
+				if (v.getY() > maxYForce/10.0) v.setY(maxYForce/10.0);
 				entity.setVelocity(v);
 				playSpellEffects(EffectPosition.TARGET, entity);
 			}

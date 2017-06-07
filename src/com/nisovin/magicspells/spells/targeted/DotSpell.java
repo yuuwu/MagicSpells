@@ -16,7 +16,7 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.SpellDamageSpell;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
 
@@ -118,7 +118,7 @@ public class DotSpell extends TargetedSpell implements TargetedEntitySpell, Spel
 			EventUtil.call(event);
 			dam = event.getFinalDamage();
 			if (preventKnockback) {
-				// bukkit doesn't call a damage event here, so we'll do it ourselves
+				// Bukkit doesn't call a damage event here, so we'll do it ourselves
 				MagicSpellsEntityDamageByEntityEvent devent = new MagicSpellsEntityDamageByEntityEvent(caster, target, DamageCause.ENTITY_ATTACK, damage);
 				EventUtil.call(devent);
 				if (!devent.isCancelled()) target.damage(devent.getDamage());

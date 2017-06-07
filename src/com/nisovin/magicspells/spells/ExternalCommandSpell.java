@@ -50,31 +50,31 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 	public ExternalCommandSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		castWithItem = getConfigBoolean("can-cast-with-item", true);
-		castByCommand = getConfigBoolean("can-cast-by-command", true);
-		commandToExecute = getConfigStringList("command-to-execute", null);
-		commandToExecuteLater = getConfigStringList("command-to-execute-later", null);
-		commandDelay = getConfigInt("command-delay", 0);
-		commandToBlock = getConfigStringList("command-to-block", null);
-		temporaryPermissions = getConfigStringList("temporary-permissions", null);
-		temporaryOp = getConfigBoolean("temporary-op", false);
-		requirePlayerTarget = getConfigBoolean("require-player-target", false);
-		blockChatOutput = getConfigBoolean("block-chat-output", false);
-		executeAsTargetInstead = getConfigBoolean("execute-as-target-instead", false);
-		executeOnConsoleInstead = getConfigBoolean("execute-on-console-instead", false);
-		strCantUseCommand = getConfigString("str-cant-use-command", "&4You don't have permission to do that.");
-		strNoTarget = getConfigString("str-no-target", "No target found.");
-		strBlockedOutput = getConfigString("str-blocked-output", "");
-		doVariableReplacement = getConfigBoolean("do-variable-replacement", false);
-		useTargetVariablesInstead = getConfigBoolean("use-target-variables-instead", false);
+		this.castWithItem = getConfigBoolean("can-cast-with-item", true);
+		this.castByCommand = getConfigBoolean("can-cast-by-command", true);
+		this.commandToExecute = getConfigStringList("command-to-execute", null);
+		this.commandToExecuteLater = getConfigStringList("command-to-execute-later", null);
+		this.commandDelay = getConfigInt("command-delay", 0);
+		this.commandToBlock = getConfigStringList("command-to-block", null);
+		this.temporaryPermissions = getConfigStringList("temporary-permissions", null);
+		this.temporaryOp = getConfigBoolean("temporary-op", false);
+		this.requirePlayerTarget = getConfigBoolean("require-player-target", false);
+		this.blockChatOutput = getConfigBoolean("block-chat-output", false);
+		this.executeAsTargetInstead = getConfigBoolean("execute-as-target-instead", false);
+		this.executeOnConsoleInstead = getConfigBoolean("execute-on-console-instead", false);
+		this.strCantUseCommand = getConfigString("str-cant-use-command", "&4You don't have permission to do that.");
+		this.strNoTarget = getConfigString("str-no-target", "No target found.");
+		this.strBlockedOutput = getConfigString("str-blocked-output", "");
+		this.doVariableReplacement = getConfigBoolean("do-variable-replacement", false);
+		this.useTargetVariablesInstead = getConfigBoolean("use-target-variables-instead", false);
 		
-		if (requirePlayerTarget) validTargetList = new ValidTargetList(true, false);
+		if (this.requirePlayerTarget) this.validTargetList = new ValidTargetList(true, false);
 		
-		if (blockChatOutput) {
+		if (this.blockChatOutput) {
 			if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) {
 				if (messageBlocker == null) messageBlocker = new MessageBlocker();
 			} else {
-				convoPrompt = new StringPrompt() {
+				this.convoPrompt = new StringPrompt() {
 					
 					@Override
 					public String getPromptText(ConversationContext context) {
@@ -87,9 +87,9 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 					}
 					
 				};
-				convoFac = new ConversationFactory(MagicSpells.plugin)
+				this.convoFac = new ConversationFactory(MagicSpells.plugin)
 					.withModality(true)
-					.withFirstPrompt(convoPrompt)
+					.withFirstPrompt(this.convoPrompt)
 					.withTimeout(1);
 			}
 		}
@@ -98,12 +98,12 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
-			// get target if necessary
+			// Get target if necessary
 			Player target = null;
-			if (requirePlayerTarget) {
+			if (this.requirePlayerTarget) {
 				TargetInfo<Player> targetInfo = getTargetedPlayer(player, power);
 				if (targetInfo == null) {
-					sendMessage(strNoTarget, player, args);
+					sendMessage(this.strNoTarget, player, args);
 					return PostCastAction.ALREADY_HANDLED;
 				}
 				target = targetInfo.getTarget();
@@ -114,57 +114,56 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 	}
 	
 	private void process(CommandSender sender, Player target, String[] args) {
-		// get actual sender
+		// Get actual sender
 		CommandSender actualSender;
-		if (executeAsTargetInstead) {
+		if (this.executeAsTargetInstead) {
 			actualSender = target;
-		} else if (executeOnConsoleInstead) {
+		} else if (this.executeOnConsoleInstead) {
 			actualSender = Bukkit.getConsoleSender();
 		} else {
 			actualSender = sender;
 		}
 		if (actualSender == null) return;
 		
-		// grant permissions and op
+		// Grant permissions and op
 		boolean opped = false;
 		if (actualSender instanceof Player) {
-			if (temporaryPermissions != null) {
-				for (String perm : temporaryPermissions) {
-					if (!actualSender.hasPermission(perm)) {
-						actualSender.addAttachment(MagicSpells.plugin, perm.trim(), true, 5);
-					}
+			if (this.temporaryPermissions != null) {
+				for (String perm : this.temporaryPermissions) {
+					if (actualSender.hasPermission(perm)) continue;
+					actualSender.addAttachment(MagicSpells.plugin, perm.trim(), true, 5);
 				}
 			}
-			if (temporaryOp && !actualSender.isOp()) {
+			if (this.temporaryOp && !actualSender.isOp()) {
 				opped = true;
 				actualSender.setOp(true);
 			}
 		}
 		
-		// perform commands
+		// Perform commands
 		try {
-			if (commandToExecute != null && !commandToExecute.isEmpty()) {
+			if (this.commandToExecute != null && !this.commandToExecute.isEmpty()) {
 
 				Conversation convo = null;
-				if (sender != null && sender instanceof Player) {
-					if (blockChatOutput && messageBlocker != null) {
+				if (sender instanceof Player) {
+					if (this.blockChatOutput && messageBlocker != null) {
 						messageBlocker.addPlayer((Player)sender);
-					} else if (convoFac != null) {
-						convo = convoFac.buildConversation((Player)sender);
+					} else if (this.convoFac != null) {
+						convo = this.convoFac.buildConversation((Player)sender);
 						convo.begin();
 					}
 				}
 				
 				int delay = 0;
 				Player varOwner;
-				if (!useTargetVariablesInstead) {
-					varOwner = sender != null && sender instanceof Player ? (Player)sender : null;
+				if (!this.useTargetVariablesInstead) {
+					varOwner = sender instanceof Player ? (Player)sender : null;
 				} else{
 					varOwner = target;
 				}
-				for (String comm : commandToExecute) {
+				for (String comm : this.commandToExecute) {
 					if (comm != null && !comm.isEmpty()) {
-						if (doVariableReplacement) {
+						if (this.doVariableReplacement) {
 							comm = MagicSpells.doArgumentAndVariableSubstitution(comm,varOwner, args);
 						}
 						if (args != null && args.length > 0) {
@@ -180,50 +179,45 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 						} else if (delay > 0) {
 							final CommandSender s = actualSender;
 							final String c = comm;
-							MagicSpells.scheduleDelayedTask(new Runnable() {
-								@Override
-								public void run() {
-									Bukkit.dispatchCommand(s, c);
-								}
-							}, delay);
+							MagicSpells.scheduleDelayedTask(() -> Bukkit.dispatchCommand(s, c), delay);
 						} else {
 							Bukkit.dispatchCommand(actualSender, comm);
 						}
 					}
 				}
-				if (blockChatOutput && messageBlocker != null && sender != null && sender instanceof Player) {
+				if (this.blockChatOutput && messageBlocker != null && sender instanceof Player) {
 					messageBlocker.removePlayer((Player)sender);
 				} else if (convo != null) {
 					convo.abandon();
 				}
 			}
 		} catch (Exception e) {
-			// catch all exceptions to make sure we don't leave someone opped
+			// Catch all exceptions to make sure we don't leave someone opped
 			e.printStackTrace();
 		}
 		
-		// deop
+		// Deop
 		if (opped) actualSender.setOp(false);
 		
-		// effects
-		if (sender != null && sender instanceof Player) {
+		// Effects
+		if (sender instanceof Player) {
 			if (target != null) {
 				playSpellEffects((Player)sender, target);
 			} else {
 				playSpellEffects(EffectPosition.CASTER, (Player)sender);
 			}
-		} else if (sender != null && sender instanceof BlockCommandSender) {
+		} else if (sender instanceof BlockCommandSender) {
 			playSpellEffects(EffectPosition.CASTER, ((BlockCommandSender)sender).getBlock().getLocation());
 		}
-		// add delayed command
-		if (commandToExecuteLater != null && !commandToExecuteLater.isEmpty() && !commandToExecuteLater.get(0).isEmpty()) {
-			Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new DelayedCommand(sender, target), commandDelay);
+		// Add delayed command
+		if (this.commandToExecuteLater != null && !this.commandToExecuteLater.isEmpty() && !this.commandToExecuteLater.get(0).isEmpty()) {
+			Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new DelayedCommand(sender, target), this.commandDelay);
 		}
 	}
 
 	@Override
 	public boolean castAtEntity(Player caster, LivingEntity target, float power) {
-		if (requirePlayerTarget && target instanceof Player) {
+		if (this.requirePlayerTarget && target instanceof Player) {
 			process(caster, (Player)target, MagicSpells.NULL_ARGS);
 			return true;
 		}
@@ -232,7 +226,7 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 
 	@Override
 	public boolean castAtEntity(LivingEntity target, float power) {
-		if (requirePlayerTarget && target instanceof Player) {
+		if (this.requirePlayerTarget && target instanceof Player) {
 			process(null, (Player)target, MagicSpells.NULL_ARGS);
 			return true;
 		}
@@ -241,7 +235,7 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 	
 	@Override
 	public boolean castFromConsole(CommandSender sender, String[] args) {
-		if (!requirePlayerTarget) {
+		if (!this.requirePlayerTarget) {
 			process(sender, null, args);
 			return true;
 		}
@@ -250,33 +244,34 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 	
 	@EventHandler
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
-		if (!event.getPlayer().isOp() && commandToBlock != null && !commandToBlock.isEmpty()) {
-			String msg = event.getMessage();
-			for (String comm : commandToBlock) {
-				comm = comm.trim();
-				if (comm.isEmpty()) continue;
-				
-				if (msg.startsWith("/" + commandToBlock)) {
-					event.setCancelled(true);
-					sendMessage(strCantUseCommand, event.getPlayer(), MagicSpells.NULL_ARGS);
-					return;
-				}
+		if (event.getPlayer().isOp()) return;
+		if (this.commandToBlock == null) return;
+		if (this.commandToBlock.isEmpty()) return;
+		String msg = event.getMessage();
+		for (String comm : this.commandToBlock) {
+			comm = comm.trim();
+			if (comm.isEmpty()) continue;
+			
+			if (msg.startsWith("/" + this.commandToBlock)) {
+				event.setCancelled(true);
+				sendMessage(this.strCantUseCommand, event.getPlayer(), MagicSpells.NULL_ARGS);
+				return;
 			}
 		}
 	}
 	
 	public boolean requiresPlayerTarget() {
-		return requirePlayerTarget;
+		return this.requirePlayerTarget;
 	}
 
 	@Override
 	public boolean canCastByCommand() {
-		return castByCommand;
+		return this.castByCommand;
 	}
 
 	@Override
 	public boolean canCastWithItem() {
-		return castWithItem;
+		return this.castWithItem;
 	}
 	
 	@Override
@@ -298,18 +293,18 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 		
 		@Override
 		public void run() {
-			// get actual sender
+			// Get actual sender
 			CommandSender actualSender;
 			if (executeAsTargetInstead) {
-				actualSender = target;
+				actualSender = this.target;
 			} else if (executeOnConsoleInstead) {
 				actualSender = Bukkit.getConsoleSender();
 			} else {
-				actualSender = sender;
+				actualSender = this.sender;
 			}
 			if (actualSender == null) return;
 			
-			// grant permissions
+			// Grant permissions
 			boolean opped = false;
 			if (actualSender instanceof Player) {
 				if (temporaryPermissions != null) {
@@ -324,43 +319,43 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 				}
 			}
 			
-			// run commands
+			// Run commands
 			try {
 				Conversation convo = null;
-				if (sender != null && sender instanceof Player) {
+				if (this.sender instanceof Player) {
 					if (blockChatOutput && messageBlocker != null) {
-						messageBlocker.addPlayer((Player)sender);
+						messageBlocker.addPlayer((Player)this.sender);
 					} else if (convoFac != null) {
-						convo = convoFac.buildConversation((Player)sender);
+						convo = convoFac.buildConversation((Player)this.sender);
 						convo.begin();
 					}
 				}
 				for (String comm : commandToExecuteLater) {
 					if (comm == null) continue;
 					if (comm.isEmpty()) continue;
-					if (sender != null) comm = comm.replace("%a", sender.getName());
-					if (target != null) comm = comm.replace("%t", target.getName());
+					if (this.sender != null) comm = comm.replace("%a", this.sender.getName());
+					if (this.target != null) comm = comm.replace("%t", this.target.getName());
 					Bukkit.dispatchCommand(actualSender, comm);
 				}
-				if (blockChatOutput && messageBlocker != null && sender != null && sender instanceof Player) {
-					messageBlocker.removePlayer((Player)sender);
+				if (blockChatOutput && messageBlocker != null && this.sender instanceof Player) {
+					messageBlocker.removePlayer((Player)this.sender);
 				} else if (convo != null) {
 					convo.abandon();
 				}
 			} catch (Exception e) {
-				// catch exceptions to make sure we don't leave someone opped
+				// Catch exceptions to make sure we don't leave someone opped
 				e.printStackTrace();
 			}
 			
-			// deop
+			// Deop
 			if (opped) actualSender.setOp(false);
 			
-			// graphical effect
-			if (sender != null) {
-				if (sender instanceof Player) {
-					playSpellEffects(EffectPosition.DISABLED, (Player)sender);
-				} else if (sender instanceof BlockCommandSender) {
-					playSpellEffects(EffectPosition.DISABLED, ((BlockCommandSender)sender).getBlock().getLocation());
+			// Graphical effect
+			if (this.sender != null) {
+				if (this.sender instanceof Player) {
+					playSpellEffects(EffectPosition.DISABLED, (Player)this.sender);
+				} else if (this.sender instanceof BlockCommandSender) {
+					playSpellEffects(EffectPosition.DISABLED, ((BlockCommandSender)this.sender).getBlock().getLocation());
 				}
 			}
 		}

@@ -69,57 +69,52 @@ public class ArmorSpell extends BuffSpell {
 	@Override
 	public void initialize() {
 		super.initialize();
-		if (!permanent) {
-			registerEvents(new ArmorListener());
-		}
+		if (!permanent) registerEvents(new ArmorListener());
 	}
 	
 	private ItemStack getItem(String s) {
-		if (!s.isEmpty()) {
-			String[] info = s.split(" ");
-			try {
-				
-				// get type and data
-				ItemStack item = Util.getItemStackFromString(info[0]);
-				if (item == null) {
-					if (DebugHandler.isNullCheckEnabled()) {
-						NullPointerException e = new NullPointerException("ItemStack is null");
-						e.fillInStackTrace();
-						DebugHandler.nullCheck(e);
-					}
-					return null;
+		if (s.isEmpty()) return null;
+		String[] info = s.split(" ");
+		try {
+			
+			// Get type and data
+			ItemStack item = Util.getItemStackFromString(info[0]);
+			if (item == null) {
+				if (DebugHandler.isNullCheckEnabled()) {
+					NullPointerException e = new NullPointerException("ItemStack is null");
+					e.fillInStackTrace();
+					DebugHandler.nullCheck(e);
 				}
-				item.setAmount(1);
-				if (!permanent) {
-					ItemMeta meta = item.getItemMeta();
-					List<String> lore;
-					if (meta.hasLore()) {
-						lore = meta.getLore();
-					} else {
-						lore = new ArrayList<>();
-					}
-					lore.add(strLoreText);
-					meta.setLore(lore);
-					item.setItemMeta(meta);
-				}
-				
-				// get enchantments (left for backwards compatibility)
-				if (info.length > 1) {
-					for (int i = 1; i < info.length; i++) {
-						String[] enchinfo = info[i].split(":");
-						Enchantment ench = Util.getEnchantmentType(enchinfo[0]);
-						int lvl = 1;
-						if (enchinfo.length > 1) lvl = Integer.parseInt(enchinfo[1].toUpperCase().replace(" ", "_"));
-						if (ench != null) item.addUnsafeEnchantment(ench, lvl);
-					}
-				}
-				
-				return item;
-			} catch (NumberFormatException e) {
-				DebugHandler.debugNumberFormat(e);
 				return null;
 			}
-		} else {
+			item.setAmount(1);
+			if (!permanent) {
+				ItemMeta meta = item.getItemMeta();
+				List<String> lore;
+				if (meta.hasLore()) {
+					lore = meta.getLore();
+				} else {
+					lore = new ArrayList<>();
+				}
+				lore.add(strLoreText);
+				meta.setLore(lore);
+				item.setItemMeta(meta);
+			}
+			
+			// Get enchantments (left for backwards compatibility)
+			if (info.length > 1) {
+				for (int i = 1; i < info.length; i++) {
+					String[] enchinfo = info[i].split(":");
+					Enchantment ench = Util.getEnchantmentType(enchinfo[0]);
+					int lvl = 1;
+					if (enchinfo.length > 1) lvl = Integer.parseInt(enchinfo[1].toUpperCase().replace(" ", "_"));
+					if (ench != null) item.addUnsafeEnchantment(ench, lvl);
+				}
+			}
+			
+			return item;
+		} catch (NumberFormatException e) {
+			DebugHandler.debugNumberFormat(e);
 			return null;
 		}
 	}
@@ -240,19 +235,13 @@ public class ArmorSpell extends BuffSpell {
 			if (isExpired(player)) return;
 			
 			final PlayerInventory inv = player.getInventory();
-			Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
-				@Override
-				public void run() {
-					setArmor(inv);
-				}
-			});
+			Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, () -> setArmor(inv));
 		}
 		
 		@EventHandler
 		public void onPlayerQuit(PlayerQuitEvent event) {
 			Player player = event.getPlayer();
 			if (!isActive(player)) return;
-			
 			if (cancelOnLogout) {
 				turnOff(player);
 			} else {
@@ -264,7 +253,6 @@ public class ArmorSpell extends BuffSpell {
 		public void onPlayerJoin(PlayerJoinEvent event) {
 			Player player = event.getPlayer();
 			if (!isActive(player)) return;
-			
 			if (!isExpired(player)) {
 				setArmor(player.getInventory());
 			} else {
@@ -278,7 +266,6 @@ public class ArmorSpell extends BuffSpell {
 	public void turnOffBuff(Player player) {
 		if (!armored.remove(player.getName())) return;
 		if (!player.isOnline()) return;
-		
 		PlayerInventory inv = player.getInventory();
 		removeArmor(inv);
 	}
@@ -289,7 +276,6 @@ public class ArmorSpell extends BuffSpell {
 			Player p = PlayerNameUtils.getPlayerExact(name);
 			if (p == null) continue;
 			if (!p.isOnline()) continue;
-			
 			turnOff(p);
 		}
 	}

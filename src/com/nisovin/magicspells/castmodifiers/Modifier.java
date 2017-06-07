@@ -136,7 +136,7 @@ public class Modifier implements IModifier {
 	public boolean apply(MagicSpellsGenericPlayerEvent event) {
 		boolean check;
 		if (alertCondition) {
-			check = ((IModifier)condition).check(event.getPlayer());
+			check = condition.check(event.getPlayer());
 		} else {
 			check = condition.check(event.getPlayer());
 		}

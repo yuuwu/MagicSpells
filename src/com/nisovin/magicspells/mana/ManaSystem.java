@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import com.nisovin.magicspells.util.TimeUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -45,16 +46,16 @@ public class ManaSystem extends ManaHandler {
 	private int taskId = -1;
 
 	public ManaSystem(MagicConfig config) {
-		manaBarPrefix = config.getString("mana.mana-bar-prefix", "Mana:");
-		manaBarSize = config.getInt("mana.mana-bar-size", 35);
-		manaBarColorFull = ChatColor.getByChar(config.getString("mana.color-full", ChatColor.GREEN.getChar() + ""));
-		manaBarColorEmpty = ChatColor.getByChar(config.getString("mana.color-empty", ChatColor.BLACK.getChar() + ""));
-		manaBarToolSlot = config.getInt("mana.tool-slot", 8);
+		this.manaBarPrefix = config.getString("mana.mana-bar-prefix", "Mana:");
+		this.manaBarSize = config.getInt("mana.mana-bar-size", 35);
+		this.manaBarColorFull = ChatColor.getByChar(config.getString("mana.color-full", ChatColor.GREEN.getChar() + ""));
+		this.manaBarColorEmpty = ChatColor.getByChar(config.getString("mana.color-empty", ChatColor.BLACK.getChar() + ""));
+		this.manaBarToolSlot = config.getInt("mana.tool-slot", 8);
 		
-		regenInterval = config.getInt("mana.regen-interval", 20);
-		defaultMaxMana = config.getInt("mana.default-max-mana", 100);
-		defaultStartingMana = config.getInt("mana.default-starting-mana", defaultMaxMana);
-		defaultRegenAmount = config.getInt("mana.default-regen-amount", 5);
+		this.regenInterval = config.getInt("mana.regen-interval", TimeUtil.TICKS_PER_SECOND);
+		this.defaultMaxMana = config.getInt("mana.default-max-mana", 100);
+		this.defaultStartingMana = config.getInt("mana.default-starting-mana", this.defaultMaxMana);
+		this.defaultRegenAmount = config.getInt("mana.default-regen-amount", 5);
 		
 		showManaOnUse = config.getBoolean("mana.show-mana-on-use", false);
 		showManaOnRegen = config.getBoolean("mana.show-mana-on-regen", false);
@@ -64,59 +65,59 @@ public class ManaSystem extends ManaHandler {
 
 		modifierList = config.getStringList("mana.modifiers", null);
 		
-		defaultRank = new ManaRank();
-		defaultRank.name = "default";
-		defaultRank.startingMana = defaultStartingMana;
-		defaultRank.maxMana = defaultMaxMana;
-		defaultRank.regenAmount = defaultRegenAmount;
-		defaultRank.prefix = manaBarPrefix;
-		defaultRank.colorFull = manaBarColorFull;
-		defaultRank.colorEmpty = manaBarColorEmpty;
+		this.defaultRank = new ManaRank();
+		this.defaultRank.name = "default";
+		this.defaultRank.startingMana = this.defaultStartingMana;
+		this.defaultRank.maxMana = this.defaultMaxMana;
+		this.defaultRank.regenAmount = this.defaultRegenAmount;
+		this.defaultRank.prefix = this.manaBarPrefix;
+		this.defaultRank.colorFull = this.manaBarColorFull;
+		this.defaultRank.colorEmpty = this.manaBarColorEmpty;
 		
-		ranks = new ArrayList<>();
+		this.ranks = new ArrayList<>();
 		Set<String> rankKeys = config.getKeys("mana.ranks");
 		if (rankKeys != null) {
 			for (String key : rankKeys) {
 				ManaRank r = new ManaRank();
 				r.name = key;
-				r.maxMana = config.getInt("mana.ranks." + key + ".max-mana", defaultMaxMana);
-				r.startingMana = config.getInt("mana.ranks." + key + ".starting-mana", defaultStartingMana);
-				r.regenAmount = config.getInt("mana.ranks." + key + ".regen-amount", defaultRegenAmount);
-				r.prefix = config.getString("mana.ranks." + key + ".prefix", manaBarPrefix);
-				r.colorFull = ChatColor.getByChar(config.getString("mana.ranks." + key + ".color-full", manaBarColorFull.getChar() + ""));
-				r.colorEmpty = ChatColor.getByChar(config.getString("mana.ranks." + key + ".color-empty", manaBarColorEmpty.getChar() + ""));
-				ranks.add(r);
+				r.maxMana = config.getInt("mana.ranks." + key + ".max-mana", this.defaultMaxMana);
+				r.startingMana = config.getInt("mana.ranks." + key + ".starting-mana", this.defaultStartingMana);
+				r.regenAmount = config.getInt("mana.ranks." + key + ".regen-amount", this.defaultRegenAmount);
+				r.prefix = config.getString("mana.ranks." + key + ".prefix", this.manaBarPrefix);
+				r.colorFull = ChatColor.getByChar(config.getString("mana.ranks." + key + ".color-full", this.manaBarColorFull.getChar() + ""));
+				r.colorEmpty = ChatColor.getByChar(config.getString("mana.ranks." + key + ".color-empty", this.manaBarColorEmpty.getChar() + ""));
+				this.ranks.add(r);
 			}
 		}
 		
-		manaBars = new HashMap<>();
-		taskId = MagicSpells.scheduleRepeatingTask(new Regenerator(), regenInterval, regenInterval);
+		this.manaBars = new HashMap<>();
+		this.taskId = MagicSpells.scheduleRepeatingTask(new Regenerator(), this.regenInterval, this.regenInterval);
 	}
 	
 	@Override
 	public void initialize() {
-		if (modifierList != null && !modifierList.isEmpty()) {
+		if (this.modifierList != null && !this.modifierList.isEmpty()) {
 			MagicSpells.debug(2, "Adding mana modifiers");
-			modifiers = new ModifierSet(modifierList);
-			modifierList = null;
+			this.modifiers = new ModifierSet(this.modifierList);
+			this.modifierList = null;
 		}
 	}
 	
 	private ManaBar getManaBar(Player player) {
-		ManaBar bar = manaBars.get(player.getName().toLowerCase());
+		ManaBar bar = this.manaBars.get(player.getName().toLowerCase());
 		if (bar == null) {
-			// create the mana bar
+			// Create the mana bar
 			ManaRank rank = getRank(player);
 			bar = new ManaBar(player, rank);
 			MagicSpells.debug(1, "Creating mana bar for player " + player.getName() + " with rank " + rank.name);
-			manaBars.put(player.getName().toLowerCase(), bar);
+			this.manaBars.put(player.getName().toLowerCase(), bar);
 		}
 		return bar;
 	}
 	
 	@Override
 	public void createManaBar(final Player player) {
-		boolean update = manaBars.containsKey(player.getName().toLowerCase());
+		boolean update = this.manaBars.containsKey(player.getName().toLowerCase());
 		ManaBar bar = getManaBar(player);
 		if (bar != null) {
 			if (update) {
@@ -126,20 +127,13 @@ public class ManaSystem extends ManaHandler {
 					bar.setRank(rank);
 				}
 			}
-			MagicSpells.scheduleDelayedTask(new Runnable() {
-				
-				@Override
-				public void run() {
-					showMana(player);
-				}
-				
-			}, 11);
+			MagicSpells.scheduleDelayedTask(() -> showMana(player), 11);
 		}
 	}
 	
 	@Override
 	public boolean updateManaRankIfNecessary(Player player) {
-		if (manaBars.containsKey(player.getName().toLowerCase())) {
+		if (this.manaBars.containsKey(player.getName().toLowerCase())) {
 			ManaBar bar = getManaBar(player);
 			ManaRank rank = getRank(player);
 			if (bar.getManaRank() != rank) {
@@ -154,7 +148,7 @@ public class ManaSystem extends ManaHandler {
 	
 	private ManaRank getRank(Player player) {
 		MagicSpells.debug(3, "Fetching mana rank for player " + player.getName() + "...");
-		for (ManaRank rank : ranks) {
+		for (ManaRank rank : this.ranks) {
 			MagicSpells.debug(3, "    checking rank " + rank.name);
 			if (player.hasPermission("magicspells.rank." + rank.name)) {
 				MagicSpells.debug(3, "    rank found");
@@ -162,7 +156,7 @@ public class ManaSystem extends ManaHandler {
 			}
 		}
 		MagicSpells.debug(3, "    no rank found");
-		return defaultRank;
+		return this.defaultRank;
 	}
 
 	@Override
@@ -211,7 +205,7 @@ public class ManaSystem extends ManaHandler {
 		ManaBar bar = getManaBar(player);
 		if (bar == null) return false;
 		boolean r = bar.changeMana(amount, reason);
-		if (r) showMana(player, showManaOnUse);
+		if (r) showMana(player, this.showManaOnUse);
 		return r;
 	}
 
@@ -225,7 +219,7 @@ public class ManaSystem extends ManaHandler {
 		ManaBar bar = getManaBar(player);
 		if (bar == null) return false;
 		boolean r = bar.setMana(amount, reason);
-		if (r) showMana(player, showManaOnUse);
+		if (r) showMana(player, this.showManaOnUse);
 		return r;
 	}
 
@@ -234,9 +228,9 @@ public class ManaSystem extends ManaHandler {
 		ManaBar bar = getManaBar(player);
 		if (bar == null) return;
 		if (showInChat) showManaInChat(player, bar);
-		if (showManaOnWoodTool) showManaOnWoodTool(player, bar);
-		if (showManaOnHungerBar) showManaOnHungerBar(player, bar);
-		if (showManaOnExperienceBar) showManaOnExperienceBar(player, bar);
+		if (this.showManaOnWoodTool) showManaOnWoodTool(player, bar);
+		if (this.showManaOnHungerBar) showManaOnHungerBar(player, bar);
+		if (this.showManaOnExperienceBar) showManaOnExperienceBar(player, bar);
 	}
 	
 	@Override
@@ -245,14 +239,14 @@ public class ManaSystem extends ManaHandler {
 	}
 	
 	private void showManaInChat(Player player, ManaBar bar) {
-		int segments = (int)(((double)bar.getMana()/(double)bar.getMaxMana()) * manaBarSize);
+		int segments = (int)(((double)bar.getMana()/(double)bar.getMaxMana()) * this.manaBarSize);
 		String text = MagicSpells.getTextColor() + bar.getPrefix() + " {" + bar.getColorFull();
 		int i = 0;
 		for (; i < segments; i++) {
 			text += "=";
 		}
 		text += bar.getColorEmpty();
-		for (; i < manaBarSize; i++) {
+		for (; i < this.manaBarSize; i++) {
 			text += "=";
 		}
 		text += MagicSpells.getTextColor() + "} [" + bar.getMana() + '/' + bar.getMaxMana() + ']';
@@ -272,7 +266,7 @@ public class ManaSystem extends ManaHandler {
 				dur = 1;
 			}
 			item.setDurability((short)dur);
-			player.getInventory().setItem(manaBarToolSlot, item);
+			player.getInventory().setItem(this.manaBarToolSlot, item);
 		}
 	}
 	
@@ -286,14 +280,14 @@ public class ManaSystem extends ManaHandler {
 	}
 	
 	public boolean usingExpBar() {
-		return showManaOnExperienceBar;
+		return this.showManaOnExperienceBar;
 	}
 
 	@Override
 	public void turnOff() {
-		ranks.clear();
-		manaBars.clear();
-		if (taskId > 0) Bukkit.getScheduler().cancelTask(taskId);
+		this.ranks.clear();
+		this.manaBars.clear();
+		if (this.taskId > 0) Bukkit.getScheduler().cancelTask(this.taskId);
 	}
 	
 	public class Regenerator implements Runnable {
@@ -302,12 +296,10 @@ public class ManaSystem extends ManaHandler {
 		public void run() {
 			for (ManaBar bar : manaBars.values()) {
 				boolean r = bar.regenerate();
-				if (r) {
-					Player p = bar.getPlayer();
-					if (p != null) {
-						showMana(p, showManaOnRegen);
-					}
-				}
+				if (!r) continue;
+				Player p = bar.getPlayer();
+				if (p == null) continue;
+				showMana(p, showManaOnRegen);
 			}
 		}
 		

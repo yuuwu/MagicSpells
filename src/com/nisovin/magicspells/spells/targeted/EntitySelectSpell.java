@@ -15,7 +15,7 @@ import com.nisovin.magicspells.util.TargetInfo;
 
 public class EntitySelectSpell extends TargetedSpell {
 	
-	// weak reference so we don't hold on to things we shouldn't be
+	// Weak reference so we don't hold on to things we shouldn't be
 	private Map<String, WeakReference<LivingEntity>> targets;
 	
 	public EntitySelectSpell(MagicConfig config, String spellName) {
@@ -64,7 +64,7 @@ public class EntitySelectSpell extends TargetedSpell {
 	
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
-		// this is needed so we don't have memory leaks
+		// This is needed so we don't have memory leaks
 		remove(event.getPlayer());
 	}
 	

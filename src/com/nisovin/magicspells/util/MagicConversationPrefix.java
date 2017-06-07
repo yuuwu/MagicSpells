@@ -13,7 +13,7 @@ public class MagicConversationPrefix implements ConversationPrefix {
 	
 	@Override
 	public String getPrefix(ConversationContext paramConversationContext) {
-		return prefix;
+		return this.prefix;
 	}
 
 }

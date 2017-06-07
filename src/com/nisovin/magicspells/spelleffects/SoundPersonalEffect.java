@@ -1,5 +1,6 @@
 package com.nisovin.magicspells.spelleffects;
 
+import com.nisovin.magicspells.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
@@ -91,14 +92,16 @@ public class SoundPersonalEffect extends SpellEffect {
 	@Override
 	public Runnable playEffectEntity(Entity entity) {
 		if (broadcast) {
-			for (Player player : Bukkit.getOnlinePlayers()) {
-				MagicSpells.getVolatileCodeHandler().playSound(player, sound, volume, pitch);
-			}
-		} else if (entity != null && entity instanceof Player) {
-			MagicSpells.getVolatileCodeHandler().playSound((Player)entity, sound, volume, pitch);
+			Util.forEachPlayerOnline(this::send);
+		} else if (entity instanceof Player) {
+			send((Player) entity);
 			//SoundUtils.playSound((Player) entity, sound, volume, pitch);
 		}
 		return null;
+	}
+	
+	private void send(Player player) {
+		MagicSpells.getVolatileCodeHandler().playSound(player, sound, volume, pitch);
 	}
 	
 }

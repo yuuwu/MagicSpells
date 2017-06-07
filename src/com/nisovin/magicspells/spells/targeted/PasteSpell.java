@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.nisovin.magicspells.util.TimeUtil;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -36,7 +37,8 @@ public class PasteSpell extends TargetedSpell implements TargetedLocationSpell {
 	int tickInterval;
 	int blocksPerTick;
 	
-	boolean undo; //this will only work with instant paste for now
+	// This will only work with instant paste for now
+	boolean undo;
 	int undoDelayTicks;
 	
 	public PasteSpell(MagicConfig config, String spellName) {
@@ -55,7 +57,7 @@ public class PasteSpell extends TargetedSpell implements TargetedLocationSpell {
 		pasteAtCaster = getConfigBoolean("paste-at-caster", false);
 		
 		undo = getConfigBoolean("undo", false);
-		undoDelayTicks = getConfigInt("undo-delay-ticks", 200);
+		undoDelayTicks = getConfigInt("undo-delay-ticks", TimeUtil.TICKS_PER_SECOND * 10);
 		if (undoDelayTicks < 0) undoDelayTicks = 0;
 		
 		playBlockBreakEffect = getConfigBoolean("play-block-break-effect", true);
@@ -115,14 +117,7 @@ public class PasteSpell extends TargetedSpell implements TargetedLocationSpell {
 			final EditSession session = new EditSession(new BukkitWorld(target.getWorld()), maxBlocks);
 			cuboid.paste(session, new Vector(target.getX(), target.getY(), target.getZ()), !pasteAir, pasteEntities);
 			if (undo) {
-				MagicSpells.plugin.getServer().getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
-	
-					@Override
-					public void run() {
-						session.undo(session);
-					}
-					
-				}, undoDelayTicks);
+				MagicSpells.plugin.getServer().getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, () -> session.undo(session), undoDelayTicks);
 			}
 			return true;
 		} catch (Exception e) {
@@ -141,7 +136,7 @@ public class PasteSpell extends TargetedSpell implements TargetedLocationSpell {
 			return false;
 		}
 	}
-		
+	
 	class Builder {
 
 		Block center;
@@ -187,7 +182,6 @@ public class PasteSpell extends TargetedSpell implements TargetedLocationSpell {
 			blocks.addAll(air);
 			blocks.addAll(solids);
 			blocks.addAll(nonsolids);
-			
 		}
 		
 		public void build() {

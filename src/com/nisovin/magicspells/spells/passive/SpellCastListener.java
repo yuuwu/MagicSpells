@@ -15,7 +15,7 @@ import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.spells.PassiveSpell;
 import com.nisovin.magicspells.util.OverridePriority;
 
-// optional trigger variable of comma separated list of internal spell names to accept
+// Optional trigger variable of comma separated list of internal spell names to accept
 public class SpellCastListener extends PassiveListener {
 
 	Map<Spell, List<PassiveSpell>> spells = new HashMap<>();

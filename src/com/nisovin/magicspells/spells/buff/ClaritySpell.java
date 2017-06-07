@@ -49,7 +49,7 @@ public class ClaritySpell extends BuffSpell {
 		float mod = multiplier;
 		
 		if (multiplier < 1) {
-			mod *= (1/power);
+			mod *= 1/power;
 		} else if (multiplier > 1) {
 			mod *= power;
 		}

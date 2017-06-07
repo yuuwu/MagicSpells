@@ -96,7 +96,7 @@ public class SoundEffect extends SpellEffect {
 	}
 	
 	public static void main(String[] args) {
-		Collection<String> sounds = new TreeSet<String>();
+		Collection<String> sounds = new TreeSet<>();
 		File file = new File("C:\\Users\\Justin.Baker\\AppData\\Roaming\\.minecraft\\assets\\sound");
 		parseFolder(file, "", sounds);
 		for (String sound : sounds) {

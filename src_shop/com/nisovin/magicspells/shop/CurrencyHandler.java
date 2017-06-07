@@ -3,9 +3,9 @@ package com.nisovin.magicspells.shop;
 import java.util.HashMap;
 import java.util.Set;
 
+import com.nisovin.magicspells.util.compat.CompatBasics;
 import net.milkbowl.vault.economy.Economy;
 
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -39,8 +39,8 @@ public class CurrencyHandler {
 		}
 
 		// Set up vault hook
-		if (currencies.containsValue("vault") && Bukkit.getPluginManager().isPluginEnabled("Vault")) {
-			RegisteredServiceProvider<Economy> provider = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
+		if (currencies.containsValue("vault") && CompatBasics.pluginEnabled("Vault")) {
+			RegisteredServiceProvider<Economy> provider = CompatBasics.getServiceProvider(Economy.class);
 			if (provider != null) economy = provider.getProvider();
 		}
 	}

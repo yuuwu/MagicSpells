@@ -15,18 +15,18 @@ public abstract class InstantSpell extends Spell {
 	public InstantSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		castWithItem = getConfigBoolean("can-cast-with-item", true);
-		castByCommand = getConfigBoolean("can-cast-by-command", true);
+		this.castWithItem = getConfigBoolean("can-cast-with-item", true);
+		this.castByCommand = getConfigBoolean("can-cast-by-command", true);
 	}
 	
 	@Override
 	public boolean canCastWithItem() {
-		return castWithItem;
+		return this.castWithItem;
 	}
 	
 	@Override
 	public boolean canCastByCommand() {
-		return castByCommand;
+		return this.castByCommand;
 	}
 	
 }

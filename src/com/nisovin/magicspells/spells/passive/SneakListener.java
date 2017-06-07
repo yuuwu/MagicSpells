@@ -11,7 +11,7 @@ import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.spells.PassiveSpell;
 import com.nisovin.magicspells.util.OverridePriority;
 
-// no trigger variable is currently used
+// No trigger variable is currently used
 public class SneakListener extends PassiveListener {
 
 	List<PassiveSpell> sneak = null;

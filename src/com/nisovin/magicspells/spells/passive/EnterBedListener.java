@@ -11,7 +11,7 @@ import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.spells.PassiveSpell;
 import com.nisovin.magicspells.util.OverridePriority;
 
-// no trigger variable is currently used
+// No trigger variable is currently used
 public class EnterBedListener extends PassiveListener {
 
 	List<PassiveSpell> spells = new ArrayList<>();
@@ -32,6 +32,5 @@ public class EnterBedListener extends PassiveListener {
 			}
 		}
 	}
-
-
+	
 }

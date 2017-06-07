@@ -29,7 +29,6 @@ public class HandHandler {
 		initialized = true;
 	}
 	
-	
 	public static boolean isMainHand(PlayerInteractEvent event) {
 		if (!offhandExists) return true;
 		return event.getHand() == EquipmentSlot.HAND;
@@ -132,4 +131,5 @@ public class HandHandler {
 		if (offhandExists) return equip.getItemInOffHandDropChance();
 		return 0F;
 	}
+	
 }

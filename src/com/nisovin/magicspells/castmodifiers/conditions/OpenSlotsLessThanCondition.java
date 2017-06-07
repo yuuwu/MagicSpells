@@ -37,11 +37,7 @@ public class OpenSlotsLessThanCondition extends Condition {
 
 	@Override
 	public boolean check(Player player, LivingEntity target) {
-		if (target instanceof Player) {
-			return check((Player)target);
-		} else {
-			return false;
-		}
+		return target instanceof Player && check((Player)target);
 	}
 
 	@Override

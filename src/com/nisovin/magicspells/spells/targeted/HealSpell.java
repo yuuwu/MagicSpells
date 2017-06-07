@@ -8,7 +8,7 @@ import com.nisovin.magicspells.events.MagicSpellsEntityRegainHealthEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
 
@@ -27,14 +27,7 @@ public class HealSpell extends TargetedSpell implements TargetedEntitySpell {
 		cancelIfFull = getConfigBoolean("cancel-if-full", true);
 		strMaxHealth = getConfigString("str-max-health", "%t is already at max health.");
 		checkPlugins = getConfigBoolean("check-plugins", true);
-		checker = new ValidTargetChecker() {
-			
-			@Override
-			public boolean isValidTarget(LivingEntity entity) {
-				return entity.getHealth() < entity.getMaxHealth();
-			}
-			
-		};
+		checker = (LivingEntity entity) -> entity.getHealth() < entity.getMaxHealth();
 	}
 
 	@Override

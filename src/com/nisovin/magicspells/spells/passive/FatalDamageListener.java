@@ -12,7 +12,7 @@ import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.spells.PassiveSpell;
 import com.nisovin.magicspells.util.OverridePriority;
 
-// no trigger variable is used here
+// No trigger variable is used here
 public class FatalDamageListener extends PassiveListener {
 
 	List<PassiveSpell> spells = new ArrayList<>();

@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.nisovin.magicspells.util.TimeUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -31,7 +32,7 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedEntityFromLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.BlockUtils;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
 import com.nisovin.magicspells.util.Util;
@@ -78,8 +79,8 @@ public class FireballSpell extends TargetedSpell implements TargetedEntityFromLo
 		doOffsetTargetingCorrections = getConfigBoolean("do-offset-targeting-corrections", true);
 		fireballGravity = getConfigBoolean("gravity", false);
 		
-		
 		fireballs = new HashMap<>();
+		
 		taskId = MagicSpells.scheduleRepeatingTask(new Runnable() {
 			
 			@Override
@@ -92,13 +93,13 @@ public class FireballSpell extends TargetedSpell implements TargetedEntityFromLo
 				}
 			}
 			
-		}, 60 * 20, 60 * 20);
+		}, TimeUtil.TICKS_PER_MINUTE, TimeUtil.TICKS_PER_MINUTE);
 	}
 
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
-			// get a target if required
+			// Get a target if required
 			Location targetLoc = null;
 			boolean selfTarget = false;
 			if (requireEntityTarget) {
@@ -109,7 +110,7 @@ public class FireballSpell extends TargetedSpell implements TargetedEntityFromLo
 				power = targetInfo.getPower();
 				if (entity == null) return noTarget(player);
 				if (entity instanceof Player && checkPlugins) {
-					// run a pvp damage check
+					// Run a pvp damage check
 					MagicSpellsEntityDamageByEntityEvent event = new MagicSpellsEntityDamageByEntityEvent(player, entity, DamageCause.ENTITY_ATTACK, 1D);
 					EventUtil.call(event);
 					if (event.isCancelled()) return noTarget(player);
@@ -118,14 +119,14 @@ public class FireballSpell extends TargetedSpell implements TargetedEntityFromLo
 				if (entity.equals(player)) selfTarget = true;
 			}
 			
-			// create fireball
+			// Create fireball
 			Location loc;
 			if (!selfTarget) {
 				loc = player.getEyeLocation().toVector().add(player.getLocation().getDirection().multiply(2)).toLocation(player.getWorld(), player.getLocation().getYaw(), player.getLocation().getPitch());
 				loc = offsetLocation(loc);
 				loc = applyOffsetTargetingCorrection(loc, targetLoc);
 			} else {
-				loc = player.getLocation().toVector().add(player.getLocation().getDirection().setY(0).multiply(2)).toLocation(player.getWorld(), player.getLocation().getYaw()+180, 0);
+				loc = player.getLocation().toVector().add(player.getLocation().getDirection().setY(0).multiply(2)).toLocation(player.getWorld(), player.getLocation().getYaw() + 180, 0);
 			}
 			Fireball fireball;
 			if (smallFireball) {
@@ -220,18 +221,7 @@ public class FireballSpell extends TargetedSpell implements TargetedEntityFromLo
 				}
 				fireball.remove();
 				if (!fires.isEmpty()) {
-					Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
-						
-						@Override
-						public void run() {
-							for (Block b : fires) {
-								if (b.getType() == Material.FIRE) {
-									b.setType(Material.AIR);
-								}
-							}
-						}
-						
-					}, 20);
+					Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, () -> fires.stream().filter(b -> b.getType() == Material.FIRE).forEachOrdered(b -> b.setType(Material.AIR)), TimeUtil.TICKS_PER_SECOND);
 				}
 			}
 		} else {
@@ -243,18 +233,11 @@ public class FireballSpell extends TargetedSpell implements TargetedEntityFromLo
 			if (explosionSize > 0) event.setRadius(explosionSize);
 		}
 		if (noExplosion) {
-			// remove immediately
+			// Remove immediately
 			fireballs.remove(fireball);
 		} else {
-			// schedule removal (gotta wait for damage events)
-			Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
-				
-				@Override
-				public void run() {
-					fireballs.remove(fireball);
-				}
-				
-			}, 1);
+			// Schedule removal (gotta wait for damage events)
+			Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, () -> fireballs.remove(fireball), 1);
 		}
 	}
 
@@ -265,20 +248,19 @@ public class FireballSpell extends TargetedSpell implements TargetedEntityFromLo
 		if (!(event instanceof EntityDamageByEntityEvent)) return;
 		
 		EntityDamageByEntityEvent evt = (EntityDamageByEntityEvent)event;
-		if (event.getCause() == DamageCause.ENTITY_EXPLOSION || event.getCause() == DamageCause.PROJECTILE) {
-			if (evt.getDamager() instanceof Fireball || evt.getDamager() instanceof SmallFireball) {
-				Fireball fireball = (Fireball)evt.getDamager();
-				ProjectileSource shooter = fireball.getShooter();
-				if (!(shooter instanceof Player)) return;
-				if (!fireballs.containsKey(fireball)) return;
-				
-				float power = fireballs.get(fireball);
-				if (!validTargetList.canTarget((Player)shooter, event.getEntity())) {
-					event.setCancelled(true);
-				} else if (damageMultiplier > 0) {
-					event.setDamage(Math.round(event.getDamage() * damageMultiplier * power));
-				}
-			}
+		if (event.getCause() != DamageCause.ENTITY_EXPLOSION && event.getCause() != DamageCause.PROJECTILE) return;
+		Entity damager = evt.getDamager();
+		if (!(damager instanceof Fireball || damager instanceof SmallFireball)) return;
+		Fireball fireball = (Fireball)damager;
+		ProjectileSource shooter = fireball.getShooter();
+		if (!(shooter instanceof Player)) return;
+		if (!fireballs.containsKey(fireball)) return;
+		
+		float power = fireballs.get(fireball);
+		if (!validTargetList.canTarget((Player)shooter, event.getEntity())) {
+			event.setCancelled(true);
+		} else if (damageMultiplier > 0) {
+			event.setDamage(Math.round(event.getDamage() * damageMultiplier * power));
 		}
 	}
 	

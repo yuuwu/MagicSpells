@@ -50,8 +50,8 @@ public class HomingArrowSpell extends TargetedSpell implements TargetedEntitySpe
 	}
 
 	private void fireHomingArrow(Player player, Location from, LivingEntity target, float power) {
-		Projectile projectile = null;
-		Vector v = null;
+		Projectile projectile;
+		Vector v;
 		if (from != null) {
 			v = target.getLocation().toVector().subtract(from.toVector()).normalize();
 			from = from.clone().setDirection(v);

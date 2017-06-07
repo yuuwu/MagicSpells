@@ -28,7 +28,7 @@ public class ShadowstepSpell extends TargetedSpell implements TargetedEntitySpel
 		if (state == SpellCastState.NORMAL) {
 			TargetInfo<LivingEntity> target = getTargetedEntity(player, power);
 			if (target == null) {
-				// fail
+				// Fail
 				return noTarget(player);
 			}
 			
@@ -41,21 +41,21 @@ public class ShadowstepSpell extends TargetedSpell implements TargetedEntitySpel
 	}
 	
 	private boolean shadowstep(Player player, LivingEntity target) {
-		// get landing location
+		// Get landing location
 		Location targetLoc = target.getLocation();
 		Vector facing = targetLoc.getDirection().setY(0).multiply(-1);
 		Location loc = targetLoc.toVector().add(facing).toLocation(targetLoc.getWorld());
 		loc.setPitch(0);
 		loc.setYaw(targetLoc.getYaw());
 		
-		// check if clear
+		// Check if clear
 		Block b = loc.getBlock();
 		if (!BlockUtils.isPathable(b.getType()) || !BlockUtils.isPathable(b.getRelative(BlockFace.UP))) {
-			// fail - no landing spot
+			// Fail - no landing spot
 			return false;
 		}
 		
-		// ok
+		// Ok
 		playSpellEffects(player.getLocation(), loc);
 		player.teleport(loc);
 		

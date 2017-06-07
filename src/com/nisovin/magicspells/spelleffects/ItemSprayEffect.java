@@ -1,5 +1,6 @@
 package com.nisovin.magicspells.spelleffects;
 
+import java.util.Arrays;
 import java.util.Random;
 
 import org.bukkit.Location;
@@ -142,7 +143,7 @@ public class ItemSprayEffect extends SpellEffect {
 	public Runnable playEffectLocation(Location location) {
 		if (mat == null) return null;
 		
-		// spawn items
+		// Spawn items
 		Random rand = new Random();
 		Location loc = location.clone().add(0, 1, 0);
 		final Item[] items = new Item[num];
@@ -152,15 +153,8 @@ public class ItemSprayEffect extends SpellEffect {
 			items[i].setPickupDelay(duration << 1);
 		}
 		
-		// schedule item deletion
-		MagicSpells.scheduleDelayedTask(new Runnable() {
-			@Override
-			public void run() {
-				for (int i = 0; i < items.length; i++) {
-					items[i].remove();
-				}
-			}
-		}, duration);
+		// Schedule item deletion
+		MagicSpells.scheduleDelayedTask(() -> Arrays.stream(items).forEach(Item::remove), duration);
 		return null;
 	}
 	

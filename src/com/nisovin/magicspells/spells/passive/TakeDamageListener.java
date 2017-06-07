@@ -27,8 +27,8 @@ import com.nisovin.magicspells.spells.PassiveSpell;
 import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.OverridePriority;
 
-// optional trigger variable of a comma separated list that can contain
-// damage causes to accept or damaging weapons to accept
+// Optional trigger variable of a comma separated list that can contain
+// Damage causes to accept or damaging weapons to accept
 public class TakeDamageListener extends PassiveListener {
 
 	Map<DamageCause, List<PassiveSpell>> damageCauses = new HashMap<>();
@@ -57,7 +57,7 @@ public class TakeDamageListener extends PassiveListener {
 					break;
 				}
 				if (!isDamCause) {
-					MagicMaterial mat = null;
+					MagicMaterial mat;
 					if (s.contains("|")) {
 						String[] stuff = s.split("\\|");
 						mat = MagicSpells.getItemNameResolver().resolveItem(stuff[0]);
@@ -121,7 +121,7 @@ public class TakeDamageListener extends PassiveListener {
 		
 		if (!weapons.isEmpty()) {
 			if (attacker == null) attacker = getAttacker(event);
-			if (attacker != null && attacker instanceof Player) {
+			if (attacker instanceof Player) {
 				Player playerAttacker = (Player)attacker;
 				ItemStack item = HandHandler.getItemInMainHand(playerAttacker);
 				if (item != null && item.getType() != Material.AIR) {
@@ -154,10 +154,9 @@ public class TakeDamageListener extends PassiveListener {
 	}
 	
 	private List<PassiveSpell> getSpells(ItemStack item) {
-		if (types.contains(item.getType())) {
-			for (MagicMaterial m : weapons.keySet()) {
-				if (m.equals(item)) return weapons.get(m);
-			}
+		if (!types.contains(item.getType())) return null;
+		for (MagicMaterial m : weapons.keySet()) {
+			if (m.equals(item)) return weapons.get(m);
 		}
 		return null;
 	}

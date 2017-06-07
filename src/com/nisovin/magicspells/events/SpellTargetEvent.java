@@ -31,7 +31,7 @@ public class SpellTargetEvent extends SpellEvent implements Cancellable {
 	 * @return the targeted living entity
 	 */
 	public LivingEntity getTarget() {
-		return target;
+		return this.target;
 	}
 	
 	/**
@@ -47,7 +47,7 @@ public class SpellTargetEvent extends SpellEvent implements Cancellable {
 	 * @return the power level
 	 */
 	public float getPower() {
-		return power;
+		return this.power;
 	}
 	
 	/**
@@ -68,7 +68,7 @@ public class SpellTargetEvent extends SpellEvent implements Cancellable {
 
 	@Override
 	public boolean isCancelled() {
-		return cancelled;
+		return this.cancelled;
 	}
 
 	@Override

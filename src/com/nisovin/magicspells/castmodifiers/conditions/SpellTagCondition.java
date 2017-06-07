@@ -51,17 +51,14 @@ public class SpellTagCondition extends Condition implements IModifier {
 	}
 	
 	private boolean checkWithTags(Set<String> tags) {
-		if (tags == null) return false;
-		return tags.contains(tag);
+		return tag != null && tags.contains(tag);
 	}
 
 	@Override
 	public boolean setVar(String var) {
-		if (var != null) {
-			tag = var.trim();
-			return true;
-		}
-		return false;
+		if (var == null) return false;
+		tag = var.trim();
+		return true;
 	}
 
 	@Override

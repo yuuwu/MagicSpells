@@ -14,7 +14,7 @@ import com.comphenix.protocol.wrappers.EnumWrappers.ResourcePackStatus;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spells.PassiveSpell;
 
-// trigger variable should be set to one of the following
+// Trigger variable should be set to one of the following
 // loaded
 // declined
 // failed

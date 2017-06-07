@@ -1,6 +1,7 @@
 package com.nisovin.magicspells.spells.instant;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -18,12 +19,15 @@ import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.Util;
 
-// the special position plays on the dropped items
-// replaces {{name}} with the user's username
-// replaces {{disp}} with the user's display name
-// replaces {{<integer>}} with the argument at index <integer>
+// The special position plays on the dropped items
+// Replaces {{name}} with the user's username
+// Replaces {{disp}} with the user's display name
+// Replaces {{<integer>}} with the argument at index <integer>
 public class ConjureBookSpell extends InstantSpell implements TargetedLocationSpell {
 
+	private static final Pattern NAME_VARIABLE_PATTERN = Pattern.compile(Pattern.quote("{{name}}"));
+	private static final Pattern DISPLAY_NAME_VARIABLE_PATTERN = Pattern.compile(Pattern.quote("{{disp}}"));
+	
 	boolean addToInventory;
 	ItemStack book;
 	private boolean projectileHasGravity;
@@ -73,16 +77,16 @@ public class ConjureBookSpell extends InstantSpell implements TargetedLocationSp
 			String playerName = player.getName();
 			String playerDisplayName = player.getDisplayName();
 			
-			title = title.replace("{{name}}", playerName).replace("{{disp}}", playerDisplayName);
-			author = author.replace("{{name}}", playerName).replace("{{disp}}", playerDisplayName);
+			title = applyVariables(title, playerName, playerDisplayName);
+			author = applyVariables(author, playerName, playerDisplayName);
 			if (lore != null && !lore.isEmpty()) {
 				for (int l = 0; l < lore.size(); l++) {
-					lore.set(l, lore.get(l).replace("{{name}}", playerName).replace("{{disp}}", playerDisplayName));
+					lore.set(l, applyVariables(lore.get(l), playerName, playerDisplayName));
 				}
 			}
 			if (pages != null && !pages.isEmpty()) {
 				for (int p = 0; p < pages.size(); p++) {
-					pages.set(p, pages.get(p).replace("{{name}}", playerName).replace("{{disp}}", playerDisplayName));
+					pages.set(p, applyVariables(pages.get(p), playerName, playerDisplayName));
 				}
 			}
 		}
@@ -152,6 +156,12 @@ public class ConjureBookSpell extends InstantSpell implements TargetedLocationSp
 		playSpellEffects(EffectPosition.SPECIAL, dropped);
 		//target.getWorld().dropItem(target, item).setItemStack(item);
 		return true;
+	}
+	
+	private static String applyVariables(String raw, String playerName, String displayName) {
+		raw = NAME_VARIABLE_PATTERN.matcher(raw).replaceAll(playerName);
+		raw = DISPLAY_NAME_VARIABLE_PATTERN.matcher(raw).replaceAll(displayName);
+		return raw;
 	}
 	
 }

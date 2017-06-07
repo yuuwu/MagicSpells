@@ -20,11 +20,11 @@ public class SpellSelectionChangedEvent extends SpellEvent {
 	}
 	
 	public CastItem getCastItem() {
-		return castItem;
+		return this.castItem;
 	}
 	
 	public Spellbook getSpellbook() {
-		return spellbook;
+		return this.spellbook;
 	}
 	
     @Override

@@ -21,7 +21,7 @@ import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spells.PassiveSpell;
 import com.nisovin.magicspells.util.OverridePriority;
 
-// trigger variable accepts a comma separated list of blocks to accept
+// Trigger variable accepts a comma separated list of blocks to accept
 public class RightClickBlockTypeListener extends PassiveListener {
 
 	Set<Material> materials = new HashSet<>();

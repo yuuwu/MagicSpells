@@ -39,7 +39,7 @@ public class PowerLessThanCondition extends Condition implements IModifier {
 
 	@Override
 	public boolean apply(MagicSpellsGenericPlayerEvent event) {
-		//no power to check
+		// No power to check
 		return false;
 	}
 

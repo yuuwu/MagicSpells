@@ -30,7 +30,7 @@ public class AgeCondition extends Condition {
 
 	@Override
 	public boolean check(Player player) {
-		//always false for this since player aren't instance of Ageable
+		// Always false for this since player aren't instance of Ageable
 		return false;
 	}
 
@@ -38,14 +38,14 @@ public class AgeCondition extends Condition {
 	public boolean check(Player player, LivingEntity target) {
 		if (target != null && target instanceof Ageable) {
 			boolean adult = ((Ageable) target).isAdult();
-			return ((adult && passAdult) || (!adult && passBaby));
+			return adult ? passAdult : passBaby;
 		}
 		return false;
 	}
 
 	@Override
 	public boolean check(Player player, Location location) {
-		//locations aren't Ageable
+		// Locations aren't Ageable
 		return false;
 	}
 

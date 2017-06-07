@@ -304,7 +304,6 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 
 	@Override
 	public void setTexture(SkullMeta meta, String texture, String signature, String uuid, String name) {
-		// TODO Auto-generated method stub
 		
 	}
 	

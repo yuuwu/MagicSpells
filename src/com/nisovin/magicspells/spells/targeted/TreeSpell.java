@@ -17,7 +17,7 @@ import org.bukkit.entity.Player;
 import com.nisovin.magicspells.events.SpellTargetLocationEvent;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellAnimation;
 
@@ -37,7 +37,7 @@ public class TreeSpell extends TargetedSpell implements TargetedLocationSpell {
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
-			// get target block
+			// Get target block
 			Block target = getTargetedBlock(player, power);
 
 			if (target != null && target.getType() != Material.AIR) {
@@ -52,10 +52,10 @@ public class TreeSpell extends TargetedSpell implements TargetedLocationSpell {
 			
 			if (target == null || target.getType() == Material.AIR) return noTarget(player);
 			
-			// grow tree
+			// Grow tree
 			boolean grown = growTree(target);
 			
-			// check if failed
+			// Check if failed
 			if (!grown) return noTarget(player);
 			playSpellEffects(player, target.getLocation());
 		}
@@ -63,11 +63,11 @@ public class TreeSpell extends TargetedSpell implements TargetedLocationSpell {
 	}
 
 	private boolean growTree(Block target) {
-		// switch to block above
+		// Switch to block above
 		target = target.getRelative(BlockFace.UP);
 		if (target.getType() != Material.AIR) return false;
 		
-		// grow tree
+		// Grow tree
 		Location loc = target.getLocation();				
 		if (speed > 0) {
 			List<BlockState> blockStates = new ArrayList<>();

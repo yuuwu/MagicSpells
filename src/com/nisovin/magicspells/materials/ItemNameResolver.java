@@ -15,8 +15,10 @@ public interface ItemNameResolver {
 	MagicMaterial resolveBlock(String string);
 	
 	class ItemTypeAndData {
+		
 		public int id = 0;
 		public short data = 0;
+		
 	}
 	
 }

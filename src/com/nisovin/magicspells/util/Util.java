@@ -7,12 +7,15 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -20,22 +23,21 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.*;
-import org.bukkit.material.*;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.SpawnEggMeta;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
-import com.nisovin.magicspells.Spell;
-import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.materials.ItemNameResolver.ItemTypeAndData;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.util.itemreader.BannerHandler;
@@ -107,7 +109,7 @@ public class Util {
 						Enchantment ench;
 						ench = MagicValues.Enchantments.getEnchantmentType(enchantData[0]);
 						if (ench == null) continue;
-						if (enchantData[1].matches("[0-9]+")) {
+						if (RegexUtil.matches(RegexUtil.BASIC_DECIMAL_INT_PATTERN, enchantData[1])) {
 							enchants.put(ench, Integer.parseInt(enchantData[1]));
 						}
 					}
@@ -116,7 +118,7 @@ public class Util {
 			if (s.contains("#")) { 
 				String[] temp = s.split("#");
 				s = temp[0];
-				if (temp[1].matches("[0-9A-Fa-f]+")) {
+				if (RegexUtil.matches(RegexUtil.BASIC_HEX_PATTERN, temp[1])) {
 					color = Integer.parseInt(temp[1], 16);
 				}
 			}
@@ -151,133 +153,88 @@ public class Util {
 		}
 	}
 	
-	
+	// TODO add a blockstate handler
+	// TODO add a spawneggmeta handler
+	// TODO finish this
 	/**
-	 * <strong>Global Options</strong><br />
-	 * Currently Applies to:
-	 * <ul>
-	 * 	<li>All Items</li>
-	 * </ul>
-	 * <p />
-	 * 
-	 * <code>type</code>: &lt;String&gt;<br />
-	 * Description: The name of the material type.
-	 * <p />
-	 * 
-	 * <code>name</code>: &lt;String&gt;<br />
-	 * Description: The custom name for the item.
-	 * <p />
-	 * 
-	 * <code>lore</code>: &lt;String or String List&gt;<br />
-	 * //TODO explain
-	 * <p />
-	 * 
-	 * <code>enchants</code>: &lt;String List&gt;<br />
-	 * //TODO explain
-	 * <p />
-	 * 
-	 * <code>hide-tooltip</code>: &lt;Boolean&gt;<br />
-	 * //TODO explain
-	 * <p />
-	 * 
-	 * <code>unbreakable</code>: &lt;Boolean&gt;<br />
-	 * Description: If true, the item will not take durability damage by vanilla behavior.
-	 * <p />
-	 * 
-	 * <code>attributes</code>: &lt;Configuration Section&gt;<br />
-	 * //TODO explain
-	 * <p />
-	 * 
-	 * <hr>
-	 * 
-	 * <strong>LeatherArmorMeta</strong><br />
-	 * Currently Applies to:
-	 * <ul>
-	 * 	<li>Leather Armor</li>
-	 * </ul>
-	 * <p />
-	 * 
-	 * <code>color</code>: &lt;String&gt;<br />
-	 * //TODO explain
-	 * <p />
-	 * 
-	 * <hr>
-	 * 
-	 * <strong>PotionMeta</strong><br />
-	 * Currently Applies to:
-	 * <ul>
-	 * 	<li>Potions</li>
-	 * 	<li>Tipped Arrows</li>
-	 * </ul>
-	 * <p />
-	 * 
-	 * <code>potioneffects</code>: &lt;String List&gt;<br />
-	 * //TODO explain
-	 * <p />
-	 * 
-	 * <hr>
-	 * 
-	 * <strong>SkullMeta</strong><br />
-	 * Currently Applies to:
-	 * <ul>
-	 * 	<li>Skulls</li>
-	 * </ul>
-	 * <p />
-	 * 
-	 * <code>skullowner</code>: &lt;String&gt;<br />
-	 * //TODO explain
-	 * <p />
-	 * 
-	 * <hr>
-	 * 
-	 * <strong>Repairable</strong><br />
-	 * Currently Applies to:
-	 * <ul>
-	 * 	<li>TODO</li>
-	 * </ul>
-	 * <p />
-	 * 
-	 * <code>repaircost</code>: &lt;Integer&gt;<br />
-	 * //TODO explain
-	 * <p />
-	 * 
-	 * <hr>
-	 * 
-	 * <strong>BookMeta</strong><br />
-	 * Currently Applies to:
-	 * <ul>
-	 * 	<li>Written Books</li>
-	 * </ul>
-	 * <p />
-	 * 
-	 * <code>title</code>: &lt;String&gt;<br />
-	 * //TODO explain
-	 * <p />
-	 * 
-	 * <code>author</code>: &lt;String&gt;<br />
-	 * Description: the name to use as the author of the book.
-	 * <p />
-	 * 
-	 * <code>pages</code>: &lt;String List&gt;<br />
-	 * //TODO explain
-	 * <p />
-	 * 
-	 * <hr>
-	 * 
-	 * <strong>BannerMeta</strong><br />
-	 * Currently Applies to:
-	 * <ul>
-	 * 	<li>Banners</li>
-	 * </ul>
-	 * <p />
-	 * 
-	 * <code>color</code>: &lt;String&gt;<br />
-	 * //TODO explain
-	 * <p />
-	 * 
-	 * <code>patterns</code>: &lt;String List&gt;<br />
-	 * //TODO explain
-	 * 
+	 * Item config format:
+	 *
+	 * # Required for all items
+	 * # WRITE EXPLANATION OF 'type'
+	 * type:
+	 *
+	 * # Applicable to all items
+	 * # WRITE EXPLANATION OF 'name'
+	 * name: string
+	 * # WRITE EXPLANATION OF 'lore'
+	 * lore:
+	 *     - lore line 1
+	 *     - lore line 2
+	 *     - etc
+	 * # WRITE EXPLANATION OF 'enchants'
+	 * enchants:
+	 *     - enchant 1
+	 *     - enchant 2
+	 *     - etc
+	 *
+	 * # Used for leather armor
+	 * # WRITE EXPLANATION OF 'color'
+	 * color:
+	 *
+	 * # Applicable to potions
+	 * # WRITE EXPLANATION OF 'potioneffects'
+	 * potioneffects:
+	 *     - effect 1
+	 *     - effect 2
+	 * # Applicable in versions ___ and later
+	 * # WRITE EXPLANATION OF 'potioncolor'
+	 * potioncolor:
+	 *
+	 * # Applicable to skulls
+	 * # NOTE: SKULLS ARE CURRENTLY BUGGED
+	 * # WRITE EXPLANATION OF 'skullowner'
+	 * skullowner:
+	 * # WRITE EXPLANATION OF 'uuid'
+	 * uuid:
+	 * # WRITE EXPLANATION OF 'texture'
+	 * texture:
+	 * # WRITE EXPLANATION OF 'signature'
+	 * signature:
+	 *
+	 * # Used for repairable items
+	 * # WRITE EXPLANATION OF 'repaircost'
+	 * repaircost: integer
+	 *
+	 * # Used for written books
+	 * # WRITE EXPLANATION OF 'title'
+	 * title: String
+	 * # WRITE EXPLANATION OF 'author'
+	 * author: String
+	 * # WRITE EXPLANATION OF 'pages'
+	 * pages:
+	 *     - page 1 contents
+	 *     - page 2 contents
+	 *     - etc
+	 *
+	 * # Applicable to banners
+	 * # WRITE EXPLANATION OF 'color'
+	 * color:
+	 * # WRITE EXPLANATION OF 'patterns'
+	 * patterns:
+	 *     - pattern 1
+	 *     - pattern 2
+	 *
+	 * # Applicable to all items
+	 * # WRITE EXPLANATION OF 'hide-tooltip'
+	 * hide-tooltip: true|false
+	 *
+	 * # Applicable to all items with durability
+	 * # WRITE EXPLANATION OF 'unbreakable'
+	 * unbreakable: true|false
+	 *
+	 * # Applicable to all items
+	 * # WRITE EXPLANATION OF 'attributes'
+	 * attributes:
 	 */
 	public static ItemStack getItemStackFromConfig(ConfigurationSection config) {
 		try {
@@ -504,8 +461,8 @@ public class Util {
 		entityTypeMap.put("snowgolem", EntityType.SNOWMAN);
 		entityTypeMap.put("dragon", EntityType.ENDER_DRAGON);
 		Map<String, EntityType> toAdd = new HashMap<>();
-		for (String s : entityTypeMap.keySet()) {
-			toAdd.put(s + 's', entityTypeMap.get(s));
+		for (Map.Entry<String, EntityType> entry : entityTypeMap.entrySet()) {
+			toAdd.put(entry.getKey() + 's', entry.getValue());
 		}
 		entityTypeMap.putAll(toAdd);
 		entityTypeMap.put("endermen", EntityType.ENDERMAN);
@@ -566,7 +523,7 @@ public class Util {
 	
 	public static boolean arrayContains(Object[] array, Object value) {
 		for (Object i : array) {
-			if (i != null && i.equals(value)) return true;
+			if (Objects.equals(i, value)) return true;
 		}
 		return false;
 	}
@@ -645,46 +602,6 @@ public class Util {
 	
 	public static String[] splitParams(String[] split) {
 		return splitParams(arrayJoin(split, ' '), 0);
-	}
-	
-	public static List<String> tabCompleteSpellName(CommandSender sender, String partial) {
-		List<String> matches = new ArrayList<>();
-		if (sender instanceof Player) {
-			Spellbook spellbook = MagicSpells.getSpellbook((Player)sender);
-			for (Spell spell : spellbook.getSpells()) {
-				if (spellbook.canTeach(spell)) {
-					if (spell.getName().toLowerCase().startsWith(partial)) {
-						matches.add(spell.getName());
-					} else {
-						String[] aliases = spell.getAliases();
-						if (aliases != null && aliases.length > 0) {
-							for (String alias : aliases) {
-								if (alias.toLowerCase().startsWith(partial)) {
-									matches.add(alias);
-								}
-							}
-						}
-					}
-				}
-			}
-		} else if (sender.isOp()) {
-			for (Spell spell : MagicSpells.spells()) {
-				if (spell.getName().toLowerCase().startsWith(partial)) {
-					matches.add(spell.getName());
-				} else {
-					String[] aliases = spell.getAliases();
-					if (aliases != null && aliases.length > 0) {
-						for (String alias : aliases) {
-							if (alias.toLowerCase().startsWith(partial)) {
-								matches.add(alias);
-							}
-						}
-					}
-				}
-			}
-		}
-		if (!matches.isEmpty()) return matches;
-		return null;
 	}
 	
 	public static boolean removeFromInventory(Inventory inventory, ItemStack item) {
@@ -813,23 +730,6 @@ public class Util {
 		return ret;
 	}
 	
-	public static String getStringNumber(double number, int places) {
-		if (places < 0) return number + "";
-		if (places == 0) return (int)Math.round(number) + "";
-		int x = (int)Math.pow(10, places);
-		return ((double)Math.round(number * x) / x) + "";
-	}
-	
-	public static String getStringNumber(String textNumber, int places) {
-		String ret;
-		try {
-			ret = getStringNumber(Double.parseDouble(textNumber), places);
-		} catch (NumberFormatException nfe) {
-			ret = textNumber;
-		}
-		return ret;
-	}
-	
 	private static Map<String, String> uniqueIds = new HashMap<>();
 	
 	public static String getUniqueId(Player player) {
@@ -847,6 +747,26 @@ public class Util {
 	
 	public static String flattenLineBreaks(String raw) {
 		return raw.replaceAll("\n", "\\n");
+	}
+	
+	public static <T> boolean containsParallel(Collection<T> elements, Predicate<? super T> predicate) {
+		return elements.parallelStream().anyMatch(predicate);
+	}
+	
+	public static <T> boolean containsValueParallel(Map<?, T> map, Predicate<? super T> predicate) {
+		return containsParallel(map.values(), predicate);
+	}
+	
+	public static <T> void forEachOrdered(Collection<T> collection, Consumer<? super T> consumer) {
+		collection.stream().forEachOrdered(consumer);
+	}
+	
+	public static <T> void forEachValueOrdered(Map<?, T> map, Consumer<? super T> consumer) {
+		forEachOrdered(map.values(), consumer);
+	}
+	
+	public static void forEachPlayerOnline(Consumer<? super Player> consumer) {
+		forEachOrdered(Bukkit.getOnlinePlayers(), consumer);
 	}
 	
 }

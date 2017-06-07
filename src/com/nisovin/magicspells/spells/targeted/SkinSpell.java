@@ -19,8 +19,7 @@ public class SkinSpell extends TargetedSpell {
 	}
 
 	@Override
-	public PostCastAction castSpell(Player player, SpellCastState state,
-			float power, String[] args) {
+	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			TargetInfo<Player> targetInfo = getTargetedPlayer(player, power);
 			if (targetInfo != null && targetInfo.getTarget() != null) {

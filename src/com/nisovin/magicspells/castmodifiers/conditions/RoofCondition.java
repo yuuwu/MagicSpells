@@ -35,11 +35,8 @@ public class RoofCondition extends Condition {
 	public boolean check(Player player, Location location) {
 		Block b = location.clone().add(0, 2, 0).getBlock();
 		for (int i = 0; i < height; i++) {
-			if (b.getType() != Material.AIR) {
-				return true;
-			} else {
-				b = b.getRelative(BlockFace.UP);
-			}
+			if (b.getType() != Material.AIR) return true;
+			b = b.getRelative(BlockFace.UP);
 		}
 		return false;
 	}

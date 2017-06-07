@@ -1,5 +1,6 @@
 package com.nisovin.magicspells.spelleffects;
 
+import com.nisovin.magicspells.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
@@ -122,7 +123,7 @@ public class TitleEffect extends SpellEffect {
 	
 	@Override
 	public void loadFromString(String string) {
-		//No string format
+		// No string format
 	}
 
 	@Override
@@ -140,13 +141,15 @@ public class TitleEffect extends SpellEffect {
 	@Override
 	protected Runnable playEffectEntity(Entity entity) {
 		if (broadcast) {
-			for (Player player : Bukkit.getOnlinePlayers()) {
-				MagicSpells.getVolatileCodeHandler().sendTitleToPlayer(player, title, subtitle, fadeIn, stay, fadeOut);
-			}
-		} else if (entity != null && entity instanceof Player) {
-			MagicSpells.getVolatileCodeHandler().sendTitleToPlayer((Player)entity, title, subtitle, fadeIn, stay, fadeOut);
+			Util.forEachPlayerOnline(this::send);
+		} else if (entity instanceof Player) {
+			send((Player) entity);
 		}
 		return null;
+	}
+	
+	private void send(Player player) {
+		MagicSpells.getVolatileCodeHandler().sendTitleToPlayer(player, title, subtitle, fadeIn, stay, fadeOut);
 	}
 
 }

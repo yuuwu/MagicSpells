@@ -4,11 +4,84 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import net.minecraft.server.v1_8_R1.*;
-
+import net.minecraft.server.v1_8_R1.AttributeInstance;
+import net.minecraft.server.v1_8_R1.Block;
+import net.minecraft.server.v1_8_R1.BlockPosition;
+import net.minecraft.server.v1_8_R1.ChatComponentText;
+import net.minecraft.server.v1_8_R1.DataWatcher;
+import net.minecraft.server.v1_8_R1.Entity;
+import net.minecraft.server.v1_8_R1.EntityAgeable;
+import net.minecraft.server.v1_8_R1.EntityBat;
+import net.minecraft.server.v1_8_R1.EntityBlaze;
+import net.minecraft.server.v1_8_R1.EntityBoat;
+import net.minecraft.server.v1_8_R1.EntityCaveSpider;
+import net.minecraft.server.v1_8_R1.EntityChicken;
+import net.minecraft.server.v1_8_R1.EntityCow;
+import net.minecraft.server.v1_8_R1.EntityCreeper;
+import net.minecraft.server.v1_8_R1.EntityEnderDragon;
+import net.minecraft.server.v1_8_R1.EntityEnderman;
+import net.minecraft.server.v1_8_R1.EntityEndermite;
+import net.minecraft.server.v1_8_R1.EntityFallingBlock;
+import net.minecraft.server.v1_8_R1.EntityGhast;
+import net.minecraft.server.v1_8_R1.EntityGiantZombie;
+import net.minecraft.server.v1_8_R1.EntityGuardian;
+import net.minecraft.server.v1_8_R1.EntityHorse;
+import net.minecraft.server.v1_8_R1.EntityHuman;
+import net.minecraft.server.v1_8_R1.EntityInsentient;
+import net.minecraft.server.v1_8_R1.EntityIronGolem;
+import net.minecraft.server.v1_8_R1.EntityItem;
+import net.minecraft.server.v1_8_R1.EntityLiving;
+import net.minecraft.server.v1_8_R1.EntityMagmaCube;
+import net.minecraft.server.v1_8_R1.EntityMushroomCow;
+import net.minecraft.server.v1_8_R1.EntityOcelot;
+import net.minecraft.server.v1_8_R1.EntityPig;
+import net.minecraft.server.v1_8_R1.EntityPigZombie;
+import net.minecraft.server.v1_8_R1.EntityPlayer;
+import net.minecraft.server.v1_8_R1.EntityRabbit;
+import net.minecraft.server.v1_8_R1.EntitySheep;
+import net.minecraft.server.v1_8_R1.EntitySilverfish;
+import net.minecraft.server.v1_8_R1.EntitySkeleton;
+import net.minecraft.server.v1_8_R1.EntitySlime;
+import net.minecraft.server.v1_8_R1.EntitySnowman;
+import net.minecraft.server.v1_8_R1.EntitySpider;
+import net.minecraft.server.v1_8_R1.EntitySquid;
+import net.minecraft.server.v1_8_R1.EntityTracker;
+import net.minecraft.server.v1_8_R1.EntityVillager;
+import net.minecraft.server.v1_8_R1.EntityWitch;
+import net.minecraft.server.v1_8_R1.EntityWither;
+import net.minecraft.server.v1_8_R1.EntityWolf;
+import net.minecraft.server.v1_8_R1.EntityZombie;
+import net.minecraft.server.v1_8_R1.EnumColor;
+import net.minecraft.server.v1_8_R1.EnumDifficulty;
+import net.minecraft.server.v1_8_R1.EnumGamemode;
+import net.minecraft.server.v1_8_R1.EnumPlayerInfoAction;
+import net.minecraft.server.v1_8_R1.GenericAttributes;
+import net.minecraft.server.v1_8_R1.IChatBaseComponent;
+import net.minecraft.server.v1_8_R1.Item;
+import net.minecraft.server.v1_8_R1.Packet;
+import net.minecraft.server.v1_8_R1.PacketPlayOutAttachEntity;
+import net.minecraft.server.v1_8_R1.PacketPlayOutEntity;
+import net.minecraft.server.v1_8_R1.PacketPlayOutEntityDestroy;
+import net.minecraft.server.v1_8_R1.PacketPlayOutEntityEquipment;
+import net.minecraft.server.v1_8_R1.PacketPlayOutEntityHeadRotation;
+import net.minecraft.server.v1_8_R1.PacketPlayOutEntityLook;
+import net.minecraft.server.v1_8_R1.PacketPlayOutEntityMetadata;
+import net.minecraft.server.v1_8_R1.PacketPlayOutEntityTeleport;
+import net.minecraft.server.v1_8_R1.PacketPlayOutEntityVelocity;
+import net.minecraft.server.v1_8_R1.PacketPlayOutNamedEntitySpawn;
+import net.minecraft.server.v1_8_R1.PacketPlayOutPlayerInfo;
+import net.minecraft.server.v1_8_R1.PacketPlayOutRelEntityMove;
+import net.minecraft.server.v1_8_R1.PacketPlayOutRelEntityMoveLook;
+import net.minecraft.server.v1_8_R1.PacketPlayOutRespawn;
+import net.minecraft.server.v1_8_R1.PacketPlayOutSpawnEntity;
+import net.minecraft.server.v1_8_R1.PacketPlayOutSpawnEntityLiving;
+import net.minecraft.server.v1_8_R1.PacketPlayOutUpdateAttributes;
+import net.minecraft.server.v1_8_R1.PacketPlayOutUpdateHealth;
+import net.minecraft.server.v1_8_R1.PlayerInfoData;
+import net.minecraft.server.v1_8_R1.World;
+import net.minecraft.server.v1_8_R1.WorldType;
 import org.bukkit.Bukkit;
 import org.bukkit.EntityEffect;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R1.CraftWorld;
@@ -42,18 +115,18 @@ import com.nisovin.magicspells.util.ReflectionHelper;
 
 public class DisguiseManager_1_8_R1 extends DisguiseManager {
 
-	ReflectionHelper<Packet> refPacketNamedEntity = new ReflectionHelper<Packet>(PacketPlayOutNamedEntitySpawn.class, "a", "b");
-	ReflectionHelper<Packet> refPacketPlayerInfo = new ReflectionHelper<Packet>(PacketPlayOutPlayerInfo.class, "a", "b");
-	ReflectionHelper<Packet> refPacketSpawnEntityLiving = new ReflectionHelper<Packet>(PacketPlayOutSpawnEntityLiving.class, "a", "i", "j", "k");
-	ReflectionHelper<Packet> refPacketSpawnEntity = new ReflectionHelper<Packet>(PacketPlayOutSpawnEntity.class, "a");
-	ReflectionHelper<Packet> refPacketEntityEquipment = new ReflectionHelper<Packet>(PacketPlayOutEntityEquipment.class, "a", "b");
-	ReflectionHelper<Packet> refPacketRelEntityMove = new ReflectionHelper<Packet>(PacketPlayOutEntity.class, "a", "b", "c", "d");
-	ReflectionHelper<Packet> refPacketRelEntityMoveLook = new ReflectionHelper<Packet>(PacketPlayOutEntity.class, "a", "b", "c", "d", "e", "f");
-	ReflectionHelper<Packet> refPacketRelEntityTeleport = new ReflectionHelper<Packet>(PacketPlayOutEntityTeleport.class, "a", "b", "c", "d", "e", "f");
-	ReflectionHelper<Packet> refPacketEntityLook = new ReflectionHelper<Packet>(PacketPlayOutEntity.class, "a", "e", "f");
-	ReflectionHelper<Packet> refPacketEntityHeadRot = new ReflectionHelper<Packet>(PacketPlayOutEntityHeadRotation.class, "a", "b");
-	ReflectionHelper<Packet> refPacketEntityMetadata = new ReflectionHelper<Packet>(PacketPlayOutEntityMetadata.class, "a");
-	ReflectionHelper<Packet> refPacketAttachEntity = new ReflectionHelper<Packet>(PacketPlayOutAttachEntity.class, "b", "c");
+	ReflectionHelper<Packet> refPacketNamedEntity = new ReflectionHelper<>(PacketPlayOutNamedEntitySpawn.class, "a", "b");
+	ReflectionHelper<Packet> refPacketPlayerInfo = new ReflectionHelper<>(PacketPlayOutPlayerInfo.class, "a", "b");
+	ReflectionHelper<Packet> refPacketSpawnEntityLiving = new ReflectionHelper<>(PacketPlayOutSpawnEntityLiving.class, "a", "i", "j", "k");
+	ReflectionHelper<Packet> refPacketSpawnEntity = new ReflectionHelper<>(PacketPlayOutSpawnEntity.class, "a");
+	ReflectionHelper<Packet> refPacketEntityEquipment = new ReflectionHelper<>(PacketPlayOutEntityEquipment.class, "a", "b");
+	ReflectionHelper<Packet> refPacketRelEntityMove = new ReflectionHelper<>(PacketPlayOutEntity.class, "a", "b", "c", "d");
+	ReflectionHelper<Packet> refPacketRelEntityMoveLook = new ReflectionHelper<>(PacketPlayOutEntity.class, "a", "b", "c", "d", "e", "f");
+	ReflectionHelper<Packet> refPacketRelEntityTeleport = new ReflectionHelper<>(PacketPlayOutEntityTeleport.class, "a", "b", "c", "d", "e", "f");
+	ReflectionHelper<Packet> refPacketEntityLook = new ReflectionHelper<>(PacketPlayOutEntity.class, "a", "e", "f");
+	ReflectionHelper<Packet> refPacketEntityHeadRot = new ReflectionHelper<>(PacketPlayOutEntityHeadRotation.class, "a", "b");
+	ReflectionHelper<Packet> refPacketEntityMetadata = new ReflectionHelper<>(PacketPlayOutEntityMetadata.class, "a");
+	ReflectionHelper<Packet> refPacketAttachEntity = new ReflectionHelper<>(PacketPlayOutAttachEntity.class, "b", "c");
 	ReflectionHelper<Entity> refEntity = new ReflectionHelper<>(Entity.class, "id");
 	
 	protected ProtocolManager protocolManager;
@@ -61,14 +134,14 @@ public class DisguiseManager_1_8_R1 extends DisguiseManager {
 	
 	public DisguiseManager_1_8_R1(MagicConfig config) {
 		super(config);
-		protocolManager = ProtocolLibrary.getProtocolManager();
-		packetListener = new PacketListener();
-		protocolManager.addPacketListener(packetListener);
+		this.protocolManager = ProtocolLibrary.getProtocolManager();
+		this.packetListener = new PacketListener();
+		this.protocolManager.addPacketListener(this.packetListener);
 	}
 	
 	@Override
 	protected void cleanup() {
-		protocolManager.removePacketListener(packetListener);
+		this.protocolManager.removePacketListener(this.packetListener);
 	}
 
 	private GameProfile getGameProfile(String name, PlayerDisguiseData data) {
@@ -171,7 +244,7 @@ public class DisguiseManager_1_8_R1 extends DisguiseManager {
 			entity = new EntityOcelot(world);
 			((EntityAgeable)entity).setAge(flag ? -24000 : 0);
 			if (var == -1) {
-				((EntityOcelot)entity).setCatType(random.nextInt(4));
+				((EntityOcelot)entity).setCatType(this.random.nextInt(4));
 			} else if (var >= 0 && var < 4) {
 				((EntityOcelot)entity).setCatType(var);
 			}
@@ -239,7 +312,7 @@ public class DisguiseManager_1_8_R1 extends DisguiseManager {
 			entity = new EntitySheep(world);
 			((EntityAgeable)entity).setAge(flag ? -24000 : 0);
 			if (var == -1) {
-				((EntitySheep)entity).setColor(EnumColor.fromColorIndex(random.nextInt(16)));
+				((EntitySheep)entity).setColor(EnumColor.fromColorIndex(this.random.nextInt(16)));
 			} else if (var >= 0 && var < 16) {
 				((EntitySheep)entity).setColor(EnumColor.fromColorIndex(var));
 			}
@@ -569,10 +642,10 @@ public class DisguiseManager_1_8_R1 extends DisguiseManager {
 			Entity entity = getEntity(disguised, disguise);
 			if (Bukkit.getPlayer(entity.getUniqueID()) == null) {
 				PacketPlayOutPlayerInfo packetinfo = new PacketPlayOutPlayerInfo();
-				refPacketPlayerInfo.set(packetinfo, "a", EnumPlayerInfoAction.REMOVE_PLAYER);
+				this.refPacketPlayerInfo.set(packetinfo, "a", EnumPlayerInfoAction.REMOVE_PLAYER);
 				List<PlayerInfoData> list = new ArrayList<>();
 				list.add(new PlayerInfoData(packetinfo, ((EntityHuman)entity).getProfile(), 0, EnumGamemode.SURVIVAL, new ChatComponentText(entity.getName())));
-				refPacketPlayerInfo.set(packetinfo, "b", list);
+				this.refPacketPlayerInfo.set(packetinfo, "b", list);
 				broadcastPacketGlobal(PacketType.Play.Server.PLAYER_INFO, packetinfo);
 			}
 		}
@@ -583,10 +656,10 @@ public class DisguiseManager_1_8_R1 extends DisguiseManager {
 	
 	private void broadcastPacketDisguised(Player disguised, PacketType packetId, Packet packet) {
 		PacketContainer con = new PacketContainer(packetId, packet);
-		for (Player player : protocolManager.getEntityTrackers(disguised)) {
+		for (Player player : this.protocolManager.getEntityTrackers(disguised)) {
 			if (player.isValid()) {
 				try {
-					protocolManager.sendServerPacket(player, con, false);
+					this.protocolManager.sendServerPacket(player, con, false);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -598,7 +671,7 @@ public class DisguiseManager_1_8_R1 extends DisguiseManager {
 		PacketContainer con = new PacketContainer(packetId, packet);
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			try {
-				protocolManager.sendServerPacket(player, con, false);
+				this.protocolManager.sendServerPacket(player, con, false);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -614,11 +687,11 @@ public class DisguiseManager_1_8_R1 extends DisguiseManager {
 				try {
 					for (Packet packet : packets) {
 						if (packet instanceof PacketPlayOutEntityMetadata) {
-							protocolManager.sendServerPacket(viewer, new PacketContainer(PacketType.Play.Server.ENTITY_METADATA, packet), false);
+							this.protocolManager.sendServerPacket(viewer, new PacketContainer(PacketType.Play.Server.ENTITY_METADATA, packet), false);
 						} else if (packet instanceof PacketPlayOutNamedEntitySpawn) {
-							protocolManager.sendServerPacket(viewer, new PacketContainer(PacketType.Play.Server.NAMED_ENTITY_SPAWN, packet), false);
+							this.protocolManager.sendServerPacket(viewer, new PacketContainer(PacketType.Play.Server.NAMED_ENTITY_SPAWN, packet), false);
 						} else if (packet instanceof PacketPlayOutPlayerInfo) {
-							protocolManager.sendServerPacket(viewer, new PacketContainer(PacketType.Play.Server.PLAYER_INFO, packet), false);
+							this.protocolManager.sendServerPacket(viewer, new PacketContainer(PacketType.Play.Server.PLAYER_INFO, packet), false);
 						} else {
 							ep.playerConnection.sendPacket(packet);
 						}
@@ -668,10 +741,10 @@ public class DisguiseManager_1_8_R1 extends DisguiseManager {
 				PacketPlayOutUpdateAttributes packetattr = new PacketPlayOutUpdateAttributes(disguised.getEntityId(), l);
 				PacketPlayOutUpdateHealth packethealth = new PacketPlayOutUpdateHealth((float)disguised.getHealth(), disguised.getFoodLevel(), disguised.getSaturation());
 				try {
-					protocolManager.sendServerPacket(disguised, new PacketContainer(PacketType.Play.Server.PLAYER_INFO, packetinfo), false);
-					protocolManager.sendServerPacket(disguised, new PacketContainer(PacketType.Play.Server.RESPAWN, packetrespawn), false);
-					if (!l.isEmpty()) protocolManager.sendServerPacket(disguised, new PacketContainer(PacketType.Play.Server.UPDATE_ATTRIBUTES, packetattr), false);
-					protocolManager.sendServerPacket(disguised, new PacketContainer(PacketType.Play.Server.UPDATE_HEALTH, packethealth), false);
+					this.protocolManager.sendServerPacket(disguised, new PacketContainer(PacketType.Play.Server.PLAYER_INFO, packetinfo), false);
+					this.protocolManager.sendServerPacket(disguised, new PacketContainer(PacketType.Play.Server.RESPAWN, packetrespawn), false);
+					if (!l.isEmpty()) this.protocolManager.sendServerPacket(disguised, new PacketContainer(PacketType.Play.Server.UPDATE_ATTRIBUTES, packetattr), false);
+					this.protocolManager.sendServerPacket(disguised, new PacketContainer(PacketType.Play.Server.UPDATE_HEALTH, packethealth), false);
 					disguised.updateInventory();
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -690,12 +763,12 @@ public class DisguiseManager_1_8_R1 extends DisguiseManager {
 		List<Packet> packets = new ArrayList<>();
 		if (entity instanceof EntityHuman) {
 			PacketPlayOutNamedEntitySpawn packet20 = new PacketPlayOutNamedEntitySpawn((EntityHuman)entity);
-			refPacketNamedEntity.setInt(packet20, "a", disguised.getEntityId());
+			this.refPacketNamedEntity.setInt(packet20, "a", disguised.getEntityId());
 			PacketPlayOutPlayerInfo packetinfo = new PacketPlayOutPlayerInfo();
-			refPacketPlayerInfo.set(packetinfo, "a", EnumPlayerInfoAction.ADD_PLAYER);
+			this.refPacketPlayerInfo.set(packetinfo, "a", EnumPlayerInfoAction.ADD_PLAYER);
 			List<PlayerInfoData> list = new ArrayList<>();
 			list.add(new PlayerInfoData(packetinfo, ((EntityHuman)entity).getProfile(), 0, EnumGamemode.SURVIVAL, new ChatComponentText(entity.getName())));
-			refPacketPlayerInfo.set(packetinfo, "b", list);
+			this.refPacketPlayerInfo.set(packetinfo, "b", list);
 			packets.add(packetinfo);
 			packets.add(packet20);
 			PacketPlayOutEntityMetadata packet40 = new PacketPlayOutEntityMetadata(disguised.getEntityId(), entity.getDataWatcher(), false);
@@ -703,18 +776,18 @@ public class DisguiseManager_1_8_R1 extends DisguiseManager {
 			addEquipmentPackets(disguised, packets);
 		} else if (entity instanceof EntityLiving) {
 			PacketPlayOutSpawnEntityLiving packet24 = new PacketPlayOutSpawnEntityLiving((EntityLiving)entity);
-			refPacketSpawnEntityLiving.setInt(packet24, "a", disguised.getEntityId());
-			if (dragons.contains(disguised.getEntityId())) {
-				int dir = refPacketSpawnEntityLiving.getByte(packet24, "i") + 128;
+			this.refPacketSpawnEntityLiving.setInt(packet24, "a", disguised.getEntityId());
+			if (this.dragons.contains(disguised.getEntityId())) {
+				int dir = this.refPacketSpawnEntityLiving.getByte(packet24, "i") + 128;
 				if (dir > 127) dir -= 256;
-				refPacketSpawnEntityLiving.setByte(packet24, "i", (byte)dir);
-				refPacketSpawnEntityLiving.setByte(packet24, "j", (byte)0);
-				refPacketSpawnEntityLiving.setByte(packet24, "k", (byte)1);
+				this.refPacketSpawnEntityLiving.setByte(packet24, "i", (byte)dir);
+				this.refPacketSpawnEntityLiving.setByte(packet24, "j", (byte)0);
+				this.refPacketSpawnEntityLiving.setByte(packet24, "k", (byte)1);
 			}
 			packets.add(packet24);
 			PacketPlayOutEntityMetadata packet40 = new PacketPlayOutEntityMetadata(disguised.getEntityId(), entity.getDataWatcher(), false);
 			packets.add(packet40);
-			if (dragons.contains(disguised.getEntityId())) {
+			if (this.dragons.contains(disguised.getEntityId())) {
 				PacketPlayOutEntityVelocity packet28 = new PacketPlayOutEntityVelocity(disguised.getEntityId(), 0.15, 0, 0.15);
 				packets.add(packet28);
 			}
@@ -724,11 +797,11 @@ public class DisguiseManager_1_8_R1 extends DisguiseManager {
 			}
 		} else if (entity instanceof EntityFallingBlock) {
 			PacketPlayOutSpawnEntity packet23 = new PacketPlayOutSpawnEntity(entity, 70, disguise.getVar1() | ((byte)disguise.getVar2()) << 16);
-			refPacketSpawnEntity.setInt(packet23, "a", disguised.getEntityId());
+			this.refPacketSpawnEntity.setInt(packet23, "a", disguised.getEntityId());
 			packets.add(packet23);
 		} else if (entity instanceof EntityItem) {
 			PacketPlayOutSpawnEntity packet23 = new PacketPlayOutSpawnEntity(entity, 2, 1);
-			refPacketSpawnEntity.setInt(packet23, "a", disguised.getEntityId());
+			this.refPacketSpawnEntity.setInt(packet23, "a", disguised.getEntityId());
 			packets.add(packet23);
 			PacketPlayOutEntityMetadata packet40 = new PacketPlayOutEntityMetadata(disguised.getEntityId(), entity.getDataWatcher(), true);
 			packets.add(packet40);
@@ -737,33 +810,33 @@ public class DisguiseManager_1_8_R1 extends DisguiseManager {
 		if (disguise.isRidingBoat()) {
 			EntityBoat boat = new EntityBoat(entity.world);
 			int boatEntId;
-			if (mounts.containsKey(disguised.getEntityId())) {
-				boatEntId = mounts.get(disguised.getEntityId());
-				refEntity.setInt(boat, "id", boatEntId);
+			if (this.mounts.containsKey(disguised.getEntityId())) {
+				boatEntId = this.mounts.get(disguised.getEntityId());
+				this.refEntity.setInt(boat, "id", boatEntId);
 			} else {
-				boatEntId = refEntity.getInt(boat, "id");
-				mounts.put(disguised.getEntityId(), boatEntId);
+				boatEntId = this.refEntity.getInt(boat, "id");
+				this.mounts.put(disguised.getEntityId(), boatEntId);
 			}
 			boat.setPositionRotation(disguised.getLocation().getX(), disguised.getLocation().getY(), disguised.getLocation().getZ(), disguised.getLocation().getYaw(), 0);
 			PacketPlayOutSpawnEntity packet23 = new PacketPlayOutSpawnEntity(boat, 1);
 			packets.add(packet23);
 			PacketPlayOutAttachEntity packet39 = new PacketPlayOutAttachEntity();
-			refPacketAttachEntity.setInt(packet39, "b", disguised.getEntityId());
-			refPacketAttachEntity.setInt(packet39, "c", boatEntId);
+			this.refPacketAttachEntity.setInt(packet39, "b", disguised.getEntityId());
+			this.refPacketAttachEntity.setInt(packet39, "c", boatEntId);
 			packets.add(packet39);
 		}
 		
 		// Handle passengers and vehicles
 		if (disguised.getPassenger() != null) {
 			PacketPlayOutAttachEntity packet39 = new PacketPlayOutAttachEntity();
-			refPacketAttachEntity.setInt(packet39, "b", disguised.getPassenger().getEntityId());
-			refPacketAttachEntity.setInt(packet39, "c", disguised.getEntityId());
+			this.refPacketAttachEntity.setInt(packet39, "b", disguised.getPassenger().getEntityId());
+			this.refPacketAttachEntity.setInt(packet39, "c", disguised.getEntityId());
 			packets.add(packet39);
 		}
 		if (disguised.getVehicle() != null) {
 			PacketPlayOutAttachEntity packet39 = new PacketPlayOutAttachEntity();
-			refPacketAttachEntity.setInt(packet39, "b", disguised.getEntityId());
-			refPacketAttachEntity.setInt(packet39, "c", disguised.getVehicle().getEntityId());
+			this.refPacketAttachEntity.setInt(packet39, "b", disguised.getEntityId());
+			this.refPacketAttachEntity.setInt(packet39, "c", disguised.getVehicle().getEntityId());
 			packets.add(packet39);
 		}
 		

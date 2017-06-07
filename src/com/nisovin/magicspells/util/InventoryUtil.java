@@ -31,7 +31,7 @@ public class InventoryUtil {
 		int size = inv.getSize();
 		String title = inv.getTitle();
 		
-		// a map of slot to itemstack
+		// A map of slot to itemstack
 		Map<Object, Object> serializedContents = createContentsMap(contents);
 		
 		ret.put(SERIALIZATION_KEY_SIZE, size);
@@ -42,7 +42,6 @@ public class InventoryUtil {
 		return ret;
 	}
 	
-	// TODO can this safely be made varargs?
 	private static Map<Object, Object> createContentsMap(ItemStack[] items) {
 		Map<Object, Object> serialized = new HashMap<>();
 		int maxSlot = items.length - 1;
@@ -58,7 +57,7 @@ public class InventoryUtil {
 		String strInventoryType = (String) serialized.get(SERIALIZATION_KEY_TYPE);
 		int inventorySize = (Integer) serialized.get(SERIALIZATION_KEY_SIZE);
 		String title = (String) serialized.get(SERIALIZATION_KEY_TITLE);
-		Inventory ret = null;
+		Inventory ret;
 		if (strInventoryType.equals(InventoryType.CHEST.name())) {
 			ret = Bukkit.createInventory(null, inventorySize, title);
 		} else {

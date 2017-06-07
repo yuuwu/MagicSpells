@@ -21,7 +21,7 @@ import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spells.PassiveSpell;
 import com.nisovin.magicspells.util.OverridePriority;
 
-// optional trigger variable of a comma separated list of items to accept as the result
+// Optional trigger variable of a comma separated list of items to accept as the result
 public class CraftListener extends PassiveListener {
 
 	Set<Material> materials = new HashSet<>();
@@ -36,7 +36,7 @@ public class CraftListener extends PassiveListener {
 			String[] split = var.split(",");
 			for (String s : split) {
 				s = s.trim();
-				MagicMaterial mat = null;
+				MagicMaterial mat;
 				if (s.contains("|")) {
 					String[] stuff = s.split("\\|");
 					mat = MagicSpells.getItemNameResolver().resolveItem(stuff[0]);

@@ -31,33 +31,33 @@ public class ItemBombSpell extends InstantSpell implements TargetedLocationSpell
 	public ItemBombSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		velocity = getConfigFloat("velocity", 1);
-		verticalAdjustment = getConfigFloat("vertical-adjustment", 0.5F);
-		rotationOffset = getConfigInt("rotation-offset", 0);
-		yOffset = getConfigFloat("y-offset", 1F);
-		item = Util.getItemStackFromString(getConfigString("item", "stone"));
-		itemName = getConfigString("item-name", null);
-		itemNameDelay = getConfigInt("item-name-delay", 1);
-		delay = getConfigInt("delay", 100);
-		itemHasGravity = getConfigBoolean("gravity", true);
-		spell = new Subspell(getConfigString("spell", ""));
+		this.velocity = getConfigFloat("velocity", 1);
+		this.verticalAdjustment = getConfigFloat("vertical-adjustment", 0.5F);
+		this.rotationOffset = getConfigInt("rotation-offset", 0);
+		this.yOffset = getConfigFloat("y-offset", 1F);
+		this.item = Util.getItemStackFromString(getConfigString("item", "stone"));
+		this.itemName = getConfigString("item-name", null);
+		this.itemNameDelay = getConfigInt("item-name-delay", 1);
+		this.delay = getConfigInt("delay", 100);
+		this.itemHasGravity = getConfigBoolean("gravity", true);
+		this.spell = new Subspell(getConfigString("spell", ""));
 		
-		if (item == null) MagicSpells.error("Invalid item on ItemBombSpell " + internalName);
-		if (itemName != null) itemName = ChatColor.translateAlternateColorCodes('&', itemName);
+		if (this.item == null) MagicSpells.error("Invalid item on ItemBombSpell " + this.internalName);
+		if (this.itemName != null) this.itemName = ChatColor.translateAlternateColorCodes('&', this.itemName);
 	}
 	
 	@Override
 	public void initialize() {
 		super.initialize();
-		if (!spell.process()) {
-			MagicSpells.error("Invalid spell on ItemBombSpell " + internalName);
+		if (!this.spell.process()) {
+			MagicSpells.error("Invalid spell on ItemBombSpell " + this.internalName);
 		}
 	}
 
 	@Override
 	public PostCastAction castSpell(final Player player, SpellCastState state, final float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
-			Location l = player.getLocation().add(0, yOffset, 0);
+			Location l = player.getLocation().add(0, this.yOffset, 0);
 			spawnItem(player, l, power);
 		}
 		return PostCastAction.HANDLE_NORMALLY;
@@ -65,19 +65,13 @@ public class ItemBombSpell extends InstantSpell implements TargetedLocationSpell
 	
 	private void spawnItem(final Player player, Location l, final float power) {
 		Vector v = getVector(l, power);
-		final Item i = l.getWorld().dropItem(l, item);
+		final Item i = l.getWorld().dropItem(l, this.item);
 		i.teleport(l);
 		i.setVelocity(v);
-		MagicSpells.getVolatileCodeHandler().setGravity(i, itemHasGravity);
-		i.setPickupDelay(delay << 1);
-		if (itemName != null) {
-			MagicSpells.scheduleDelayedTask(new Runnable() {
-				@Override
-				public void run() {
-					i.setCustomName(itemName);
-					i.setCustomNameVisible(true);
-				}
-			}, itemNameDelay);
+		MagicSpells.getVolatileCodeHandler().setGravity(i, this.itemHasGravity);
+		i.setPickupDelay(this.delay << 1);
+		if (this.itemName != null) {
+			MagicSpells.scheduleDelayedTask(() -> { i.setCustomName(itemName); i.setCustomNameVisible(true); }, this.itemNameDelay);
 		}
 		MagicSpells.scheduleDelayedTask(new Runnable() {
 			@Override
@@ -87,7 +81,7 @@ public class ItemBombSpell extends InstantSpell implements TargetedLocationSpell
 				playSpellEffects(EffectPosition.TARGET, l);
 				spell.castAtLocation(player, l, power);
 			}
-		}, delay);
+		}, this.delay);
 		
 		if (player != null) {
 			playSpellEffects(EffectPosition.CASTER, player);
@@ -98,9 +92,9 @@ public class ItemBombSpell extends InstantSpell implements TargetedLocationSpell
 	
 	private Vector getVector(Location loc, float power) {
 		Vector v = loc.getDirection();
-		if (verticalAdjustment != 0) v.setY(v.getY() + verticalAdjustment);
-		if (rotationOffset != 0) Util.rotateVector(v, rotationOffset);
-		v.normalize().multiply(velocity);
+		if (this.verticalAdjustment != 0) v.setY(v.getY() + this.verticalAdjustment);
+		if (this.rotationOffset != 0) Util.rotateVector(v, this.rotationOffset);
+		v.normalize().multiply(this.velocity);
 		return v;
 	}
 

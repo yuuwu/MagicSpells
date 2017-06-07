@@ -21,8 +21,7 @@ import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.MagicLocation;
 
-public class MarkSpell extends InstantSpell implements TargetedLocationSpell
-{
+public class MarkSpell extends InstantSpell implements TargetedLocationSpell {
 	
 	private boolean permanentMarks;
 	private boolean useAsRespawnLocation;
@@ -36,14 +35,14 @@ public class MarkSpell extends InstantSpell implements TargetedLocationSpell
 	public MarkSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		permanentMarks = getConfigBoolean("permanent-marks", true);
-		useAsRespawnLocation = getConfigBoolean("use-as-respawn-location", false);
+		this.permanentMarks = getConfigBoolean("permanent-marks", true);
+		this.useAsRespawnLocation = getConfigBoolean("use-as-respawn-location", false);
 		
-		marks = new HashMap<>();
+		this.marks = new HashMap<>();
 		
-		enableDefaultMarks = getConfigBoolean("enable-default-marks", false);
+		this.enableDefaultMarks = getConfigBoolean("enable-default-marks", false);
 		
-		if (enableDefaultMarks) {
+		if (this.enableDefaultMarks) {
 			String s = getConfigString("default-mark", "world,0,0,0");
 			try {
 				String[] split = s.split(",");
@@ -55,20 +54,20 @@ public class MarkSpell extends InstantSpell implements TargetedLocationSpell
 				float pitch = 0;
 				if (split.length > 4) yaw = Float.parseFloat(split[4]);
 				if (split.length > 5) pitch = Float.parseFloat(split[5]);
-				defaultMark = new MagicLocation(world, x, y, z, yaw, pitch);
+				this.defaultMark = new MagicLocation(world, x, y, z, yaw, pitch);
 			} catch (Exception e) {
 				MagicSpells.error("Invalid default mark on MarkSpell '" + spellName + '\'');
 			}
 		}
 		
-		if (permanentMarks) loadMarks();
+		if (this.permanentMarks) loadMarks();
 	}
 
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
-			marks.put(getPlayerKey(player), new MagicLocation(player.getLocation()));
-			if (permanentMarks) saveMarks();
+			this.marks.put(getPlayerKey(player), new MagicLocation(player.getLocation()));
+			if (this.permanentMarks) saveMarks();
 			playSpellEffects(EffectPosition.CASTER, player);
 		}
 		return PostCastAction.HANDLE_NORMALLY;		
@@ -76,39 +75,39 @@ public class MarkSpell extends InstantSpell implements TargetedLocationSpell
 	
 	@EventHandler(priority=EventPriority.MONITOR)
 	public void onPlayerQuit(PlayerQuitEvent event) {
-		if (!permanentMarks) marks.remove(getPlayerKey(event.getPlayer()));
+		if (!this.permanentMarks) this.marks.remove(getPlayerKey(event.getPlayer()));
 	}
 	
 	@EventHandler
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
-		if (!useAsRespawnLocation) return;
-		MagicLocation loc = marks.get(getPlayerKey(event.getPlayer()));
+		if (!this.useAsRespawnLocation) return;
+		MagicLocation loc = this.marks.get(getPlayerKey(event.getPlayer()));
 		if (loc != null) {
 			event.setRespawnLocation(loc.getLocation());
-		} else if (enableDefaultMarks && defaultMark != null) {
-			event.setRespawnLocation(defaultMark.getLocation());
+		} else if (this.enableDefaultMarks && this.defaultMark != null) {
+			event.setRespawnLocation(this.defaultMark.getLocation());
 		}
 	}
 	
 	public HashMap<String,MagicLocation> getMarks() {
-		return marks;
+		return this.marks;
 	}
 	
-	public void setMarks(HashMap<String,MagicLocation> marks) {
-		this.marks = marks;
-		if (permanentMarks) saveMarks();
+	public void setMarks(HashMap<String,MagicLocation> newMarks) {
+		this.marks = newMarks;
+		if (this.permanentMarks) saveMarks();
 	}
 	
 	private void loadMarks() {
 		try {
-			Scanner scanner = new Scanner(new File(MagicSpells.plugin.getDataFolder(), "marks-" + internalName + ".txt"));
+			Scanner scanner = new Scanner(new File(MagicSpells.plugin.getDataFolder(), "marks-" + this.internalName + ".txt"));
 			while (scanner.hasNext()) {
 				String line = scanner.nextLine();
 				if (!line.isEmpty()) {
 					try {
 						String[] data = line.split(":");
 						MagicLocation loc = new MagicLocation(data[1], Double.parseDouble(data[2]), Double.parseDouble(data[3]), Double.parseDouble(data[4]), Float.parseFloat(data[5]), Float.parseFloat(data[6]));
-						marks.put(data[0].toLowerCase(), loc);
+						this.marks.put(data[0].toLowerCase(), loc);
 					} catch (Exception e) {
 						MagicSpells.plugin.getServer().getLogger().severe("MagicSpells: Failed to load mark: " + line);
 					}
@@ -122,9 +121,9 @@ public class MarkSpell extends InstantSpell implements TargetedLocationSpell
 	
 	private void saveMarks() {
 		try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter(new File(MagicSpells.plugin.getDataFolder(), "marks-" + internalName + ".txt"), false));
-			for (String name : marks.keySet()) {
-				MagicLocation loc = marks.get(name);
+			BufferedWriter writer = new BufferedWriter(new FileWriter(new File(MagicSpells.plugin.getDataFolder(), "marks-" + this.internalName + ".txt"), false));
+			for (String name : this.marks.keySet()) {
+				MagicLocation loc = this.marks.get(name);
 				writer.append(name + ':' + loc.getWorld() + ':' + loc.getX() + ':' + loc.getY() + ':' + loc.getZ() + ':' + loc.getYaw() + ':' + loc.getPitch());
 				writer.newLine();
 			}
@@ -140,38 +139,36 @@ public class MarkSpell extends InstantSpell implements TargetedLocationSpell
 	}
 	
 	public boolean usesDefaultMark() {
-		return enableDefaultMarks;
+		return this.enableDefaultMarks;
 	}
 	
 	public Location getEffectiveMark(Player player) {
-		MagicLocation m = marks.get(getPlayerKey(player));
+		MagicLocation m = this.marks.get(getPlayerKey(player));
 		if (m == null) {
-			if (enableDefaultMarks) return defaultMark.getLocation();
+			if (this.enableDefaultMarks) return this.defaultMark.getLocation();
 			return null;
 		}
 		return m.getLocation();
 	}
 	
 	public Location getEffectiveMark(String player) {
-		MagicLocation m = marks.get(player.toLowerCase());
+		MagicLocation m = this.marks.get(player.toLowerCase());
 		if (m == null) {
-			if (enableDefaultMarks) return defaultMark.getLocation();
+			if (this.enableDefaultMarks) return this.defaultMark.getLocation();
 			return null;
 		}
 		return m.getLocation();
 	}
 	
 	@Override
-	public boolean castAtLocation(Player caster, Location target, float power)
-	{
-		marks.put(getPlayerKey(caster), new MagicLocation(target));
+	public boolean castAtLocation(Player caster, Location target, float power) {
+		this.marks.put(getPlayerKey(caster), new MagicLocation(target));
 		if (caster != null) playSpellEffects(caster, target);
 		return true;
 	}
 	
 	@Override
-	public boolean castAtLocation(Location target, float power)
-	{
+	public boolean castAtLocation(Location target, float power) {
 		return false;
 	}
 	

@@ -10,7 +10,7 @@ import org.bukkit.util.Vector;
 import com.nisovin.magicspells.events.SpellTargetEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 
 public class ForcepushSpell extends InstantSpell {
@@ -23,27 +23,28 @@ public class ForcepushSpell extends InstantSpell {
 	public ForcepushSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		radius = getConfigInt("range", 3);
-		force = getConfigInt("pushback-force", 30);
-		yForce = getConfigInt("additional-vertical-force", 15);
-		maxYForce = getConfigInt("max-vertical-force", 20);
+		this.radius = getConfigInt("range", 3);
+		this.force = getConfigInt("pushback-force", 30);
+		this.yForce = getConfigInt("additional-vertical-force", 15);
+		this.maxYForce = getConfigInt("max-vertical-force", 20);
 	}
 
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
-			knockback(player, radius, power);
+			knockback(player, this.radius, power);
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}
 	
-	public void knockback(Player player, int range, float basePower) {
+	public void knockback(Player player, int castingRange, float basePower) {
 	    Vector p = player.getLocation().toVector();
-		List<Entity> entities = player.getNearbyEntities(range, range, range);
-		Vector e, v;
+		List<Entity> entities = player.getNearbyEntities(castingRange, castingRange, castingRange);
+		Vector e;
+		Vector v;
 		for (Entity entity : entities) {
 			if (!(entity instanceof LivingEntity)) continue;
-			if (!validTargetList.canTarget(player, entity)) continue;
+			if (!this.validTargetList.canTarget(player, entity)) continue;
 			LivingEntity target = (LivingEntity)entity;
 			float power = basePower;
 			SpellTargetEvent event = new SpellTargetEvent(this, player, target, power);
@@ -56,13 +57,13 @@ public class ForcepushSpell extends InstantSpell {
 			power = event.getPower();
 			
 			e = target.getLocation().toVector();
-			v = e.subtract(p).normalize().multiply(force/10.0 * power);
-			if (force != 0) {
-				v.setY(v.getY() + (yForce/10.0 * power));
+			v = e.subtract(p).normalize().multiply(this.force/10.0 * power);
+			if (this.force != 0) {
+				v.setY(v.getY() + (this.yForce/10.0 * power));
 			} else {
-				v.setY(yForce/10.0 * power);
+				v.setY(this.yForce/10.0 * power);
 			}
-			if (v.getY() > (maxYForce/10.0)) v.setY(maxYForce/10.0);
+			if (v.getY() > (this.maxYForce/10.0)) v.setY(this.maxYForce/10.0);
 			target.setVelocity(v);
 			playSpellEffects(EffectPosition.TARGET, target);
 	    }

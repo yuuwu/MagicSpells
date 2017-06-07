@@ -3,6 +3,7 @@ package com.nisovin.magicspells.spelleffects;
 import java.util.HashMap;
 import java.util.List;
 
+import com.nisovin.magicspells.util.TimeUtil;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
@@ -39,7 +40,7 @@ public abstract class SpellEffect {
 	
 	// for buff
 	@ConfigData(field="effect-interval", dataType="int", defaultValue="20")
-	int effectInterval = 20;
+	int effectInterval = TimeUtil.TICKS_PER_SECOND;
 
 	// for orbit
 	@ConfigData(field="orbit-radius", dataType="double", defaultValue="1")
@@ -112,14 +113,7 @@ public abstract class SpellEffect {
 	 */
 	public Runnable playEffect(final Entity entity) {
 		if (delay <= 0) return playEffectEntity(entity);
-		MagicSpells.scheduleDelayedTask(new Runnable() {
-			
-			@Override
-			public void run() {
-				playEffectEntity(entity);
-			}
-			
-		}, delay);
+		MagicSpells.scheduleDelayedTask(() -> playEffectEntity(entity), delay);
 		return null;
 	}
 	
@@ -134,14 +128,7 @@ public abstract class SpellEffect {
 	 */
 	public final Runnable playEffect(final Location location) {
 		if (delay <= 0) return playEffectLocationReal(location);
-		MagicSpells.scheduleDelayedTask(new Runnable() {
-			
-			@Override
-			public void run() {
-				playEffectLocationReal(location);
-			}
-			
-		}, delay);
+		MagicSpells.scheduleDelayedTask(() -> playEffectLocationReal(location), delay);
 		return null;
 	}
 	
@@ -190,9 +177,7 @@ public abstract class SpellEffect {
 			
 			@Override
 			public void run() {
-				if (checker.isActive(entity)) {
-					playEffect(entity);
-				}
+				if (checker.isActive(entity)) playEffect(entity);
 			}
 			
 		}, 0, effectInterval);
@@ -202,6 +187,7 @@ public abstract class SpellEffect {
 		return new OrbitTracker(entity, checker);
 	}
 	
+	@FunctionalInterface
 	public interface SpellEffectActiveChecker {
 		
 		boolean isActive(Entity entity);

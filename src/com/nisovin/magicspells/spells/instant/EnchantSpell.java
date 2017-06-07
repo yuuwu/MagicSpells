@@ -26,8 +26,6 @@ public class EnchantSpell extends InstantSpell {
 		}
 	}
 	
-	
-
 	@Override
 	public PostCastAction castSpell(final Player player, SpellCastState state, final float power, String[] args) {
 		ItemStack targetItem = HandHandler.getItemInMainHand(player);
@@ -44,7 +42,7 @@ public class EnchantSpell extends InstantSpell {
 	
 	void enchant(ItemStack item, Enchantment enchant, int level) {
 		if (level <= 0) {
-			//remove the enchant
+			// Remove the enchant
 			item.removeEnchantment(enchant);
 		} else {
 			item.addEnchantment(enchant, level);

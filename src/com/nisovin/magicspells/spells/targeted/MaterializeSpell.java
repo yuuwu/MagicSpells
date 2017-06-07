@@ -19,7 +19,7 @@ import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 
@@ -68,7 +68,7 @@ public class MaterializeSpell extends TargetedSpell implements TargetedLocationS
 				boolean done = materialize(player, block, against);
 				if (!done) return noTarget(player, strFailed);
 			} else {
-				// fail no target
+				// Fail no target
 				return noTarget(player);
 			}
 		}
@@ -108,9 +108,7 @@ public class MaterializeSpell extends TargetedSpell implements TargetedLocationS
 						block.setType(Material.AIR);
 						playSpellEffects(EffectPosition.DELAYED, block.getLocation());
 						playSpellEffects(EffectPosition.BLOCK_DESTRUCTION, block.getLocation());
-						if (playBreakEffect) {
-							block.getWorld().playEffect(block.getLocation(), Effect.STEP_SOUND, block.getType());
-						}
+						if (playBreakEffect) block.getWorld().playEffect(block.getLocation(), Effect.STEP_SOUND, block.getType());
 					}
 				}
 				

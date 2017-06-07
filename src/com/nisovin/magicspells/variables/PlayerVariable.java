@@ -15,14 +15,14 @@ public class PlayerVariable extends Variable {
 	public boolean modify(String player, double amount) {
 		double value = getValue(player);
 		double newvalue = value + amount;
-		if (newvalue > maxValue) {
-			newvalue = maxValue;
-		} else if (newvalue < minValue) {
-			newvalue = minValue;
+		if (newvalue > this.maxValue) {
+			newvalue = this.maxValue;
+		} else if (newvalue < this.minValue) {
+			newvalue = this.minValue;
 		}
 		if (value != newvalue) {
-			map.put(player, newvalue);
-			if (objective != null) objective.getScore(PlayerNameUtils.getOfflinePlayer(player)).setScore((int)newvalue);
+			this.map.put(player, newvalue);
+			if (this.objective != null) this.objective.getScore(PlayerNameUtils.getOfflinePlayer(player)).setScore((int)newvalue);
 			return true;
 		}
 		return false;
@@ -30,20 +30,20 @@ public class PlayerVariable extends Variable {
 
 	@Override
 	public void set(String player, double amount) {
-		map.put(player, amount);
-		if (objective != null) objective.getScore(PlayerNameUtils.getOfflinePlayer(player)).setScore((int)amount);
+		this.map.put(player, amount);
+		if (this.objective != null) this.objective.getScore(PlayerNameUtils.getOfflinePlayer(player)).setScore((int)amount);
 	}
 
 	@Override
 	public double getValue(String player) {
-		if (map.containsKey(player)) return map.get(player);
-		return defaultValue;
+		if (this.map.containsKey(player)) return this.map.get(player);
+		return this.defaultValue;
 	}
 
 	@Override
 	public void reset(String player) {
-		map.remove(player);
-		if (objective != null) objective.getScore(Bukkit.getOfflinePlayer(player)).setScore((int)defaultValue);
+		this.map.remove(player);
+		if (this.objective != null) this.objective.getScore(Bukkit.getOfflinePlayer(player)).setScore((int)this.defaultValue);
 	}
 	
 }

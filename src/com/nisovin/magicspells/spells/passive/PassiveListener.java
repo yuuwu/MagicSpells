@@ -28,16 +28,16 @@ public abstract class PassiveListener implements Listener {
 	public abstract void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var);
 	
 	public void initialize() {
-		//no op
+		// No op
 	}
 	
 	public void turnOff() {
-		//no op
+		// No op
 	}
 	
 	@Override
 	public boolean equals(Object other) {
-		return this == other; // don't want to make things equal unless they are the same object
+		return this == other; // Don't want to make things equal unless they are the same object
 	}
 	
 }

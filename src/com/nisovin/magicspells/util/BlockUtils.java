@@ -93,8 +93,7 @@ public class BlockUtils {
 		return isPathable(block.getType());
 	}
 	
-	// TODO during the java language level changes, make this use a string based check
-	// probably using a switch
+	// TODO try using a switch for this
 	public static boolean isPathable(Material material) {
 		return
 				material == Material.AIR ||

@@ -37,7 +37,7 @@ public class SpellCastedEvent extends SpellEvent {
 	 * @return the spell cast state
 	 */
 	public Spell.SpellCastState getSpellCastState() {
-		return state;
+		return this.state;
 	}
 	
 	/**
@@ -45,7 +45,7 @@ public class SpellCastedEvent extends SpellEvent {
 	 * @return the cooldown
 	 */
 	public float getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 	
 	/**
@@ -53,7 +53,7 @@ public class SpellCastedEvent extends SpellEvent {
 	 * @return the reagents
 	 */
 	public SpellReagents getReagents() {
-		return reagents;
+		return this.reagents;
 	}
 	
 	/**
@@ -61,7 +61,7 @@ public class SpellCastedEvent extends SpellEvent {
 	 * @return the power level
 	 */
 	public float getPower() {
-		return power;
+		return this.power;
 	}
 	
 	/**
@@ -69,7 +69,7 @@ public class SpellCastedEvent extends SpellEvent {
 	 * @return the args, or null if there were none
 	 */
 	public String[] getSpellArgs() {
-		return args;
+		return this.args;
 	}
 	
 	/**
@@ -77,7 +77,7 @@ public class SpellCastedEvent extends SpellEvent {
 	 * @return
 	 */
 	public Spell.PostCastAction getPostCastAction() {
-		return action;
+		return this.action;
 	}
 
     @Override

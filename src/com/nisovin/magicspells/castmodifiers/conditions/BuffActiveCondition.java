@@ -19,9 +19,8 @@ public class BuffActiveCondition extends Condition {
 		if (spell != null && spell instanceof BuffSpell) {
 			buff = (BuffSpell)spell;
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 	@Override
@@ -31,8 +30,7 @@ public class BuffActiveCondition extends Condition {
 	
 	@Override
 	public boolean check(Player player, LivingEntity target) {
-		if (target instanceof Player) return check((Player)target);
-		return false;
+		return target instanceof Player && check((Player)target);
 	}
 	
 	@Override

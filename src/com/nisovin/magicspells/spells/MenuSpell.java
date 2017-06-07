@@ -73,13 +73,13 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 	public MenuSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		title = ChatColor.translateAlternateColorCodes('&', getConfigString("title", "Window Title " + spellName));
-		delay = getConfigInt("delay", 0);
-		requireEntityTarget = getConfigBoolean("require-entity-target", false);
-		requireLocationTarget = getConfigBoolean("require-location-target", false);
-		targetOpensMenuInstead = getConfigBoolean("target-opens-menu-instead", false);
-		bypassNormalCast = getConfigBoolean("bypass-normal-cast", true);
-		uniqueNames = getConfigBoolean("unique-names", false);
+		this.title = ChatColor.translateAlternateColorCodes('&', getConfigString("title", "Window Title " + spellName));
+		this.delay = getConfigInt("delay", 0);
+		this.requireEntityTarget = getConfigBoolean("require-entity-target", false);
+		this.requireLocationTarget = getConfigBoolean("require-location-target", false);
+		this.targetOpensMenuInstead = getConfigBoolean("target-opens-menu-instead", false);
+		this.bypassNormalCast = getConfigBoolean("bypass-normal-cast", true);
+		this.uniqueNames = getConfigBoolean("unique-names", false);
 		
 		int maxSlot = 8;
 		for (String optionName : getConfigKeys("options")) {
@@ -106,27 +106,27 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 				option.item = optionItem;
 				option.modifierList = modifierList;
 				option.stayOpen = optionStayOpen;
-				String optionKey = uniqueNames ? getOptionKey(option.item) : optionName;
-				options.put(optionKey, option);
+				String optionKey = this.uniqueNames ? getOptionKey(option.item) : optionName;
+				this.options.put(optionKey, option);
 				if (optionSlot > maxSlot) maxSlot = optionSlot;
 			}
 		}
-		size = ((maxSlot / 9) * 9) + 9;
+		this.size = ((maxSlot / 9) * 9) + 9;
 		
-		if (options.isEmpty()) MagicSpells.error("The MenuSpell '" + spellName + "' has no menu options!");
+		if (this.options.isEmpty()) MagicSpells.error("The MenuSpell '" + spellName + "' has no menu options!");
 	}
 	
 	@Override
 	public void initialize() {
 		super.initialize();
 		
-		for (MenuOption option : options.values()) {
+		for (MenuOption option : this.options.values()) {
 			Subspell spell = new Subspell(option.spellName);
 			if (spell.process()) {
 				option.spell = spell;
 				if (option.modifierList != null) option.menuOptionModifiers = new ModifierSet(option.modifierList);
 			} else {
-				MagicSpells.error("The MenuSpell '" + internalName + "' has an invalid spell listed on '" + option.menuOptionName + '\'');
+				MagicSpells.error("The MenuSpell '" + this.internalName + "' has an invalid spell listed on '" + option.menuOptionName + '\'');
 			}
 		}
 	}
@@ -139,16 +139,16 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 			
 			Player opener = player;
 			
-			if (requireEntityTarget) {
+			if (this.requireEntityTarget) {
 				TargetInfo<LivingEntity> targetInfo = getTargetedEntity(player, power);
 				if (targetInfo != null) entityTarget = targetInfo.getTarget();
 				if (entityTarget == null) return noTarget(player);
-				if (targetOpensMenuInstead) {
+				if (this.targetOpensMenuInstead) {
 					if (!(entityTarget instanceof Player)) return noTarget(player);
 					opener = (Player)entityTarget;
 					entityTarget = null;
 				}
-			} else if (requireLocationTarget) {
+			} else if (this.requireLocationTarget) {
 				Block block = getTargetedBlock(player, power);
 				if (block == null || block.getType() == Material.AIR) return noTarget(player);
 				locTarget = block.getLocation();
@@ -164,27 +164,22 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 	}
 	
 	void open(final Player caster, Player opener, LivingEntity entityTarget, Location locTarget, final float power, final String[] args) {
-		if (delay < 0) {
+		if (this.delay < 0) {
 			openMenu(caster, opener, entityTarget, locTarget, power, args);
 		} else {
 			final Player p = opener;
 			final LivingEntity e = entityTarget;
 			final Location l = locTarget;
-			MagicSpells.scheduleDelayedTask(new Runnable() {
-				@Override
-				public void run() {
-					openMenu(caster, p, e, l, power, args);
-				}
-			}, delay);
+			MagicSpells.scheduleDelayedTask(() -> openMenu(caster, p, e, l, power, args), this.delay);
 		}
 	}
 	
 	void openMenu(Player caster, Player opener, LivingEntity entityTarget, Location locTarget, float power, String[] args) {
-		castPower.put(opener.getName(), power);
-		if (requireEntityTarget && entityTarget != null) castEntityTarget.put(opener.getName(), entityTarget);
-		if (requireLocationTarget && locTarget != null) castLocTarget.put(opener.getName(), locTarget);
+		this.castPower.put(opener.getName(), power);
+		if (this.requireEntityTarget && entityTarget != null) this.castEntityTarget.put(opener.getName(), entityTarget);
+		if (this.requireLocationTarget && locTarget != null) this.castLocTarget.put(opener.getName(), locTarget);
 		
-		Inventory inv = Bukkit.createInventory(opener, size, title);
+		Inventory inv = Bukkit.createInventory(opener, this.size, this.title);
 		applyOptionsToInventory(opener, inv, args);
 		opener.openInventory(inv);
 		
@@ -199,7 +194,7 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 	
 	void applyOptionsToInventory(Player opener, Inventory inv, String[] args) {
 		inv.clear();
-		for (MenuOption option : options.values()) {
+		for (MenuOption option : this.options.values()) {
 			if (option.spell != null && inv.getItem(option.slot) == null) {
 				if (option.menuOptionModifiers != null) {
 					MagicSpellsGenericPlayerEvent event = new MagicSpellsGenericPlayerEvent(opener);
@@ -224,7 +219,7 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 	
 	@EventHandler
 	public void onInvClick(InventoryClickEvent event) {
-		if (event.getInventory().getTitle().equals(title)) {
+		if (event.getInventory().getTitle().equals(this.title)) {
 			event.setCancelled(true);		
 			if (event.getClick() == ClickType.LEFT) {
 				final Player player = (Player)event.getWhoClicked();
@@ -233,20 +228,20 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 				
 				ItemStack item = event.getCurrentItem();
 				if (item != null) {
-					String key = uniqueNames ? getOptionKey(item) : Util.getLoreData(item);
-					if (key != null && !key.isEmpty() && options.containsKey(key)) {
-						MenuOption option = options.get(key);
+					String key = this.uniqueNames ? getOptionKey(item) : Util.getLoreData(item);
+					if (key != null && !key.isEmpty() && this.options.containsKey(key)) {
+						MenuOption option = this.options.get(key);
 						Subspell spell = option.spell;
 						if (spell != null) {
 							float power = option.power;
-							if (castPower.containsKey(playerName)) {
-								power *= castPower.get(playerName);
+							if (this.castPower.containsKey(playerName)) {
+								power *= this.castPower.get(playerName);
 							}
-							if (spell.isTargetedEntitySpell() && castEntityTarget.containsKey(playerName)) {
-								spell.castAtEntity(player, castEntityTarget.get(playerName), power);
-							} else if (spell.isTargetedLocationSpell() && castLocTarget.containsKey(playerName)) {
-								spell.castAtLocation(player, castLocTarget.get(playerName), power);
-							} else if (bypassNormalCast) {
+							if (spell.isTargetedEntitySpell() && this.castEntityTarget.containsKey(playerName)) {
+								spell.castAtEntity(player, this.castEntityTarget.get(playerName), power);
+							} else if (spell.isTargetedLocationSpell() && this.castLocTarget.containsKey(playerName)) {
+								spell.castAtLocation(player, this.castLocTarget.get(playerName), power);
+							} else if (this.bypassNormalCast) {
 								spell.cast(player, power);
 							} else {
 								spell.getSpell().cast(player, power, null);
@@ -256,17 +251,12 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 					}
 				}
 				
-				castPower.remove(playerName);
-				castEntityTarget.remove(playerName);
-				castLocTarget.remove(playerName);
+				this.castPower.remove(playerName);
+				this.castEntityTarget.remove(playerName);
+				this.castLocTarget.remove(playerName);
 				
 				if (close) {
-					MagicSpells.scheduleDelayedTask(new Runnable() {
-						@Override
-						public void run() {
-							player.closeInventory();
-						}
-					}, 0);
+					MagicSpells.scheduleDelayedTask(player::closeInventory, 0);
 				} else {
 					applyOptionsToInventory(player, event.getView().getTopInventory(), MagicSpells.NULL_ARGS);
 				}
@@ -277,16 +267,16 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
 		String playerName = event.getPlayer().getName();
-		castPower.remove(playerName);
-		castEntityTarget.remove(playerName);
-		castLocTarget.remove(playerName);
+		this.castPower.remove(playerName);
+		this.castEntityTarget.remove(playerName);
+		this.castLocTarget.remove(playerName);
 	}
 
 	@Override
 	public boolean castAtEntity(Player caster, LivingEntity target, float power) {
-		if (requireEntityTarget && !validTargetList.canTarget(caster, target)) return false;
+		if (this.requireEntityTarget && !this.validTargetList.canTarget(caster, target)) return false;
 		Player opener = caster;
-		if (targetOpensMenuInstead) {
+		if (this.targetOpensMenuInstead) {
 			if (!(target instanceof Player)) return false;
 			opener = (Player)target;
 			target = null;
@@ -297,8 +287,8 @@ public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 
 	@Override
 	public boolean castAtEntity(LivingEntity target, float power) {
-		if (!targetOpensMenuInstead) return false;
-		if (requireEntityTarget && !validTargetList.canTarget(target)) return false;
+		if (!this.targetOpensMenuInstead) return false;
+		if (this.requireEntityTarget && !this.validTargetList.canTarget(target)) return false;
 		if (!(target instanceof Player)) return false;
 		open(null, (Player)target, null, null, power, MagicSpells.NULL_ARGS);
 		return true;

@@ -23,7 +23,7 @@ import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 
 // TODO make this a targeted spell
@@ -87,7 +87,7 @@ public class FirenovaSpell extends InstantSpell implements TargetedLocationSpell
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
-			if (fireImmunity != null) fireImmunity.add(player);
+			if (this.fireImmunity != null) fireImmunity.add(player);
 			new FirenovaAnimation(player);
 			playSpellEffects(EffectPosition.CASTER, player);
 		}
@@ -107,22 +107,22 @@ public class FirenovaSpell extends InstantSpell implements TargetedLocationSpell
 
 	@EventHandler
 	public void doFireImmunity(EntityDamageEvent event) {
-		if (event.isCancelled() || fireImmunity == null) return;
+		if (event.isCancelled() || this.fireImmunity == null) return;
 		if (!(event.getEntity() instanceof Player)) return;
-		if (fireImmunity.isEmpty()) return;
-		if (activeDamageCauses == null) return;
-		if (!activeDamageCauses.contains(event.getCause().name())) return;
+		if (this.fireImmunity.isEmpty()) return;
+		if (this.activeDamageCauses == null) return;
+		if (!this.activeDamageCauses.contains(event.getCause().name())) return;
 		Player player = (Player)event.getEntity();
 		
-		if (fireImmunity.contains(player)) {
+		if (this.fireImmunity.contains(player)) {
 			// Caster is taking damage, cancel it
 			event.setCancelled(true);
 			player.setFireTicks(0);
-		} else if (checkPlugins) {
+		} else if (this.checkPlugins) {
 			// Check if nearby players are taking damage
 			Location loc = player.getLocation();
-			for (Player p : fireImmunity) {
-				if (Math.abs(p.getLocation().getX() - loc.getX()) < range + 2 && Math.abs(p.getLocation().getZ() - loc.getZ()) < range + 2 && Math.abs(p.getLocation().getY() - loc.getY()) < range) {
+			for (Player p : this.fireImmunity) {
+				if (Math.abs(p.getLocation().getX() - loc.getX()) < this.range + 2 && Math.abs(p.getLocation().getZ() - loc.getZ()) < this.range + 2 && Math.abs(p.getLocation().getY() - loc.getY()) < this.range) {
 					// Nearby, check plugins for pvp
 					MagicSpellsEntityDamageByEntityEvent evt = new MagicSpellsEntityDamageByEntityEvent(p, player, DamageCause.ENTITY_ATTACK, event.getDamage());
 					EventUtil.call(evt);
@@ -144,36 +144,36 @@ public class FirenovaSpell extends InstantSpell implements TargetedLocationSpell
 		HashSet<Block> fireBlocks = new HashSet<>();
 		int taskId;
 		
-		public FirenovaAnimation(Player player) {
-			this.player = player;
-			center = player.getLocation().getBlock();
-			taskId = MagicSpells.scheduleRepeatingTask(this, 0, tickSpeed);
+		public FirenovaAnimation(Player caster) {
+			this.player = caster;
+			this.center = caster.getLocation().getBlock();
+			this.taskId = MagicSpells.scheduleRepeatingTask(this, 0, tickSpeed);
 		}
 		
 		public FirenovaAnimation(Location location) {
-			center = location.getBlock();
-			taskId = MagicSpells.scheduleRepeatingTask(this, 0, tickSpeed);
+			this.center = location.getBlock();
+			this.taskId = MagicSpells.scheduleRepeatingTask(this, 0, tickSpeed);
 		}
 		
 		@Override
 		public void run() {
 			// Remove old fire blocks
-			for (Block block : fireBlocks) {
+			for (Block block : this.fireBlocks) {
 				if (block.getType() != mat.getMaterial()) continue;
 				block.setType(Material.AIR);
 			}
-			fireBlocks.clear();
-						
-			i += expandRate;
+			this.fireBlocks.clear();
+			
+			this.i += expandRate;
 			if (i <= range) {
 				// Set next ring on fire
-				int bx = center.getX();
-				int y = center.getY();
-				int bz = center.getZ();
-				for (int x = bx - i; x <= bx + i; x++) {
-					for (int z = bz - i; z <= bz + i; z++) {
-						if (!(Math.abs(x - bx) == i || Math.abs(z - bz) == i)) continue;
-						Block b = center.getWorld().getBlockAt(x, y, z);
+				int bx = this.center.getX();
+				int y = this.center.getY();
+				int bz = this.center.getZ();
+				for (int x = bx - this.i; x <= bx + this.i; x++) {
+					for (int z = bz - this.i; z <= bz + this.i; z++) {
+						if (!(Math.abs(x - bx) == this.i || Math.abs(z - bz) == this.i)) continue;
+						Block b = this.center.getWorld().getBlockAt(x, y, z);
 						if (b.getType() == Material.AIR || (burnTallGrass && b.getType() == Material.LONG_GRASS)) {
 							Block under = b.getRelative(BlockFace.DOWN);
 							if (under.getType() == Material.AIR || (burnTallGrass && under.getType() == Material.LONG_GRASS)) {
@@ -181,22 +181,22 @@ public class FirenovaSpell extends InstantSpell implements TargetedLocationSpell
 							}
 							mat.setBlock(b, false);
 							playSpellEffects(EffectPosition.SPECIAL, b.getLocation());
-							if (subSpell != null) subSpell.castAtLocation(player, b.getLocation(), 1);
-							fireBlocks.add(b);
+							if (subSpell != null) subSpell.castAtLocation(this.player, b.getLocation(), 1);
+							this.fireBlocks.add(b);
 						} else if (b.getRelative(BlockFace.UP).getType() == Material.AIR || (burnTallGrass && b.getRelative(BlockFace.UP).getType() == Material.LONG_GRASS)) {
 							b = b.getRelative(BlockFace.UP);
 							mat.setBlock(b, false);
 							playSpellEffects(EffectPosition.SPECIAL, b.getLocation());
-							if (subSpell != null) subSpell.castAtLocation(player, b.getLocation(), 1);
-							fireBlocks.add(b);
+							if (subSpell != null) subSpell.castAtLocation(this.player, b.getLocation(), 1);
+							this.fireBlocks.add(b);
 						}
 					}
 				}
-			} else if (i > range + 1) {
+			} else if (this.i > range + 1) {
 				// Stop if done
-				Bukkit.getServer().getScheduler().cancelTask(taskId);
-				if (fireImmunity != null && player != null) {
-					fireImmunity.remove(player);
+				Bukkit.getServer().getScheduler().cancelTask(this.taskId);
+				if (fireImmunity != null && this.player != null) {
+					fireImmunity.remove(this.player);
 				}
 			}
 		}

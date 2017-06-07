@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import com.nisovin.magicspells.Perm;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
@@ -26,7 +27,7 @@ import com.nisovin.magicspells.events.SpellLearnEvent.LearnSource;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.CommandSpell;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.MagicLocation;
 
@@ -49,8 +50,8 @@ import com.nisovin.magicspells.util.MagicLocation;
  * <li>str-learned: "You have learned the %s spell!"</li>
  * </ul>
  */
-// advanced perm is for being able to destroy spellbooks
-// op is currently required for using the reload
+// Advanced perm is for being able to destroy spellbooks
+// Op is currently required for using the reload
 public class SpellbookSpell extends CommandSpell {
 	
 	private int defaultUses;
@@ -74,23 +75,23 @@ public class SpellbookSpell extends CommandSpell {
 	public SpellbookSpell(MagicConfig config, String spellName) {
 		super(config,spellName);
 		
-		defaultUses = getConfigInt("default-uses", -1);
-		destroyBookcase = getConfigBoolean("destroy-when-used-up", false);
-		spellbookBlock = MagicSpells.getItemNameResolver().resolveBlock(getConfigString("spellbook-block", "bookshelf"));
-		strUsage = getConfigString("str-usage", "Usage: /cast spellbook <spell> [uses]");
-		strNoSpell = getConfigString("str-no-spell", "You do not know a spell by that name.");
-		strCantTeach = getConfigString("str-cant-teach", "You can't create a spellbook with that spell.");
-		strNoTarget = getConfigString("str-no-target", "You must target a bookcase to create a spellbook.");
-		strHasSpellbook = getConfigString("str-has-spellbook", "That bookcase already has a spellbook.");
-		strCantDestroy = getConfigString("str-cant-destroy", "You cannot destroy a bookcase with a spellbook.");
-		strLearnError = getConfigString("str-learn-error", "");
-		strCantLearn = getConfigString("str-cant-learn", "You cannot learn the spell in this spellbook.");
-		strAlreadyKnown = getConfigString("str-already-known", "You already know the %s spell.");
-		strLearned = getConfigString("str-learned", "You have learned the %s spell!");
+		this.defaultUses = getConfigInt("default-uses", -1);
+		this.destroyBookcase = getConfigBoolean("destroy-when-used-up", false);
+		this.spellbookBlock = MagicSpells.getItemNameResolver().resolveBlock(getConfigString("spellbook-block", "bookshelf"));
+		this.strUsage = getConfigString("str-usage", "Usage: /cast spellbook <spell> [uses]");
+		this.strNoSpell = getConfigString("str-no-spell", "You do not know a spell by that name.");
+		this.strCantTeach = getConfigString("str-cant-teach", "You can't create a spellbook with that spell.");
+		this.strNoTarget = getConfigString("str-no-target", "You must target a bookcase to create a spellbook.");
+		this.strHasSpellbook = getConfigString("str-has-spellbook", "That bookcase already has a spellbook.");
+		this.strCantDestroy = getConfigString("str-cant-destroy", "You cannot destroy a bookcase with a spellbook.");
+		this.strLearnError = getConfigString("str-learn-error", "");
+		this.strCantLearn = getConfigString("str-cant-learn", "You cannot learn the spell in this spellbook.");
+		this.strAlreadyKnown = getConfigString("str-already-known", "You already know the %s spell.");
+		this.strLearned = getConfigString("str-learned", "You have learned the %s spell!");
 		
-		bookLocations = new ArrayList<>();
-		bookSpells = new ArrayList<>();
-		bookUses = new ArrayList<>();
+		this.bookLocations = new ArrayList<>();
+		this.bookSpells = new ArrayList<>();
+		this.bookUses = new ArrayList<>();
 		
 		loadSpellbooks();
 	}
@@ -99,14 +100,14 @@ public class SpellbookSpell extends CommandSpell {
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			if (args == null || args.length < 1 || args.length > 2 || (args.length == 2 && !args[1].matches("^[0-9]+$"))) {
-				// fail: show usage string
-				sendMessage(strUsage, player, args);
+				// Fail: show usage string
+				sendMessage(this.strUsage, player, args);
 			} else {
-				// check for reload
+				// Check for reload
 				if (player.isOp() && args[0].equalsIgnoreCase("reload")) {
-					bookLocations = new ArrayList<>();
-					bookSpells = new ArrayList<>();
-					bookUses = new ArrayList<>();
+					this.bookLocations = new ArrayList<>();
+					this.bookSpells = new ArrayList<>();
+					this.bookUses = new ArrayList<>();
 					loadSpellbooks();
 					player.sendMessage("Spellbook file reloaded.");
 					return PostCastAction.ALREADY_HANDLED;
@@ -114,30 +115,31 @@ public class SpellbookSpell extends CommandSpell {
 				Spellbook spellbook = MagicSpells.getSpellbook(player);
 				Spell spell = MagicSpells.getSpellByInGameName(args[0]);
 				if (spellbook == null || spell == null || !spellbook.hasSpell(spell)) {
-					// fail: no such spell
-					sendMessage(strNoSpell, player, args);
+					// Fail: no such spell
+					sendMessage(this.strNoSpell, player, args);
 				} else if (!MagicSpells.getSpellbook(player).canTeach(spell)) {
-					// fail: can't teach
-					sendMessage(strCantTeach, player, args);
+					// Fail: can't teach
+					sendMessage(this.strCantTeach, player, args);
 				} else {
 					Block target = getTargetedBlock(player, 10);
-					if (target == null || !spellbookBlock.equals(target)) {
-						// fail: must target a bookcase
-						sendMessage(strNoTarget, player, args);
-					} else if (bookLocations.contains(target.getLocation())) {
-						// fail: already a spellbook there
-						sendMessage(strHasSpellbook, player, args);
+					if (target == null || !this.spellbookBlock.equals(target)) {
+						// Fail: must target a bookcase
+						sendMessage(this.strNoTarget, player, args);
+						// FIXME there might be a type mismatch here
+					} else if (this.bookLocations.contains(target.getLocation())) {
+						// Fail: already a spellbook there
+						sendMessage(this.strHasSpellbook, player, args);
 					} else {
-						// create spellbook
-						bookLocations.add(new MagicLocation(target.getLocation()));
-						bookSpells.add(spell.getInternalName());
+						// Create spellbook
+						this.bookLocations.add(new MagicLocation(target.getLocation()));
+						this.bookSpells.add(spell.getInternalName());
 						if (args.length == 1) {
-							bookUses.add(defaultUses);
+							this.bookUses.add(this.defaultUses);
 						} else {
-							bookUses.add(Integer.parseInt(args[1]));
+							this.bookUses.add(Integer.parseInt(args[1]));
 						}
 						saveSpellbooks();
-						sendMessage(formatMessage(strCastSelf, "%s", spell.getName()), player, args);
+						sendMessage(formatMessage(this.strCastSelf, "%s", spell.getName()), player, args);
 						playSpellEffects(player, target.getLocation());
 						return PostCastAction.NO_MESSAGES;
 					}
@@ -149,56 +151,56 @@ public class SpellbookSpell extends CommandSpell {
 	}
 	
 	private void removeSpellbook(int index) {
-		bookLocations.remove(index);
-		bookSpells.remove(index);
-		bookUses.remove(index);
+		this.bookLocations.remove(index);
+		this.bookSpells.remove(index);
+		this.bookUses.remove(index);
 		saveSpellbooks();
 	}
 	
 	@EventHandler(priority=EventPriority.HIGH)
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		if (event.isCancelled()) return;
-		if (event.hasBlock() && spellbookBlock.equals(event.getClickedBlock()) && event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+		if (event.hasBlock() && this.spellbookBlock.equals(event.getClickedBlock()) && event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			MagicLocation loc = new MagicLocation(event.getClickedBlock().getLocation());
-			if (bookLocations.contains(loc)) {
+			if (this.bookLocations.contains(loc)) {
 				event.setCancelled(true);
 				Player player = event.getPlayer();
-				int i = bookLocations.indexOf(loc);
+				int i = this.bookLocations.indexOf(loc);
 				Spellbook spellbook = MagicSpells.getSpellbook(player);
-				Spell spell = MagicSpells.getSpellByInternalName(bookSpells.get(i));
+				Spell spell = MagicSpells.getSpellByInternalName(this.bookSpells.get(i));
 				if (spellbook == null || spell == null) {
-					// fail: something's wrong
-					sendMessage(strLearnError, player, MagicSpells.NULL_ARGS);
+					// Fail: something's wrong
+					sendMessage(this.strLearnError, player, MagicSpells.NULL_ARGS);
 				} else if (!spellbook.canLearn(spell)) {
-					// fail: can't learn
-					sendMessage(formatMessage(strCantLearn, "%s", spell.getName()), player, MagicSpells.NULL_ARGS);
+					// Fail: can't learn
+					sendMessage(formatMessage(this.strCantLearn, "%s", spell.getName()), player, MagicSpells.NULL_ARGS);
 				} else if (spellbook.hasSpell(spell)) {
-					// fail: already known
-					sendMessage(formatMessage(strAlreadyKnown, "%s", spell.getName()), player, MagicSpells.NULL_ARGS);
+					// Fail: already known
+					sendMessage(formatMessage(this.strAlreadyKnown, "%s", spell.getName()), player, MagicSpells.NULL_ARGS);
 				} else {
-					// call learn event
+					// Call learn event
 					SpellLearnEvent learnEvent = new SpellLearnEvent(spell, player, LearnSource.SPELLBOOK, event.getClickedBlock());
 					EventUtil.call(learnEvent);
 					if (learnEvent.isCancelled()) {
-						// fail: plugin cancelled it
-						sendMessage(formatMessage(strCantLearn, "%s", spell.getName()), player, MagicSpells.NULL_ARGS);
+						// Fail: plugin cancelled it
+						sendMessage(formatMessage(this.strCantLearn, "%s", spell.getName()), player, MagicSpells.NULL_ARGS);
 					} else {
-						// teach the spell
+						// Teach the spell
 						spellbook.addSpell(spell);
 						spellbook.save();
-						sendMessage(formatMessage(strLearned, "%s", spell.getName()), player, MagicSpells.NULL_ARGS);
+						sendMessage(formatMessage(this.strLearned, "%s", spell.getName()), player, MagicSpells.NULL_ARGS);
 						playSpellEffects(EffectPosition.DELAYED, player);
-						int uses = bookUses.get(i);
+						int uses = this.bookUses.get(i);
 						if (uses > 0) {
 							uses--;
 							if (uses == 0) {
-								// remove the spellbook
-								if (destroyBookcase) {
-									bookLocations.get(i).getLocation().getBlock().setType(Material.AIR);
+								// Remove the spellbook
+								if (this.destroyBookcase) {
+									this.bookLocations.get(i).getLocation().getBlock().setType(Material.AIR);
 								}
 								removeSpellbook(i);
 							} else {
-								bookUses.set(i, uses);
+								this.bookUses.set(i, uses);
 							}
 						}						
 					}
@@ -210,17 +212,17 @@ public class SpellbookSpell extends CommandSpell {
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
 		if (event.isCancelled()) return;
-		if (spellbookBlock.equals(event.getBlock())) {
+		if (this.spellbookBlock.equals(event.getBlock())) {
 			MagicLocation loc = new MagicLocation(event.getBlock().getLocation());
-			if (bookLocations.contains(loc)) {
-				if (event.getPlayer().isOp() || event.getPlayer().hasPermission("magicspells.advanced.spellbook")) {
-					// remove the bookcase
-					int i = bookLocations.indexOf(loc);
+			if (this.bookLocations.contains(loc)) {
+				if (event.getPlayer().isOp() || Perm.ADVANCEDSPELLBOOK.has(event.getPlayer())) {
+					// Remove the bookcase
+					int i = this.bookLocations.indexOf(loc);
 					removeSpellbook(i);
 				} else {
-					// cancel it
+					// Cancel it
 					event.setCancelled(true);
-					sendMessage(strCantDestroy, event.getPlayer(), MagicSpells.NULL_ARGS);
+					sendMessage(this.strCantDestroy, event.getPlayer(), MagicSpells.NULL_ARGS);
 				}
 			}			
 		}
@@ -229,15 +231,14 @@ public class SpellbookSpell extends CommandSpell {
 	@Override
 	public boolean castFromConsole(CommandSender sender, String[] args) {
 		if (sender.isOp() && args != null && args.length > 0 && args[0].equalsIgnoreCase("reload")) {
-			bookLocations = new ArrayList<>();
-			bookSpells = new ArrayList<>();
-			bookUses = new ArrayList<>();
+			this.bookLocations = new ArrayList<>();
+			this.bookSpells = new ArrayList<>();
+			this.bookUses = new ArrayList<>();
 			loadSpellbooks();
 			sender.sendMessage("Spellbook file reloaded.");
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 	
 	@Override
@@ -258,9 +259,9 @@ public class SpellbookSpell extends CommandSpell {
 						String[] data = line.split(":");
 						MagicLocation loc = new MagicLocation(data[0], Integer.parseInt(data[1]), Integer.parseInt(data[2]), Integer.parseInt(data[3]));
 						int uses = Integer.parseInt(data[5]);
-						bookLocations.add(loc);
-						bookSpells.add(data[4]);
-						bookUses.add(uses);
+						this.bookLocations.add(loc);
+						this.bookSpells.add(data[4]);
+						this.bookUses.add(uses);
 					} catch (Exception e) {
 						MagicSpells.plugin.getServer().getLogger().severe("MagicSpells: Failed to load spellbook: " + line);
 					}
@@ -275,10 +276,10 @@ public class SpellbookSpell extends CommandSpell {
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(new File(MagicSpells.plugin.getDataFolder(), "books.txt"), false));
 			MagicLocation loc;
-			for (int i = 0; i < bookLocations.size(); i++) {
-				loc = bookLocations.get(i);
+			for (int i = 0; i < this.bookLocations.size(); i++) {
+				loc = this.bookLocations.get(i);
 				writer.write(loc.getWorld() + ':' + (int)loc.getX() + ':' + (int)loc.getY() + ':' + (int)loc.getZ() + ':');
-				writer.write(bookSpells.get(i) + ':' + bookUses.get(i));
+				writer.write(this.bookSpells.get(i) + ':' + this.bookUses.get(i));
 				writer.newLine();
 			}
 			writer.close();

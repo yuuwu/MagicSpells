@@ -1,5 +1,6 @@
 package com.nisovin.magicspells.spells.targeted;
 
+import com.nisovin.magicspells.util.TimeUtil;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
@@ -64,7 +65,7 @@ public class OrbitSpell extends TargetedSpell implements TargetedEntitySpell {
 		ticksPerSecond = 20F / (float)tickInterval;
 		distancePerTick = 6.28F / (ticksPerSecond * secondsPerRevolution);
 		
-		maxDuration = getConfigInt("max-duration", 20) * 1000;
+		maxDuration = getConfigInt("max-duration", 20) * (int)TimeUtil.MILLISECONDS_PER_SECOND;
 		yOffset = getConfigFloat("y-offset", 0.6F);
 		renderDistance = getConfigInt("render-distance", 32);
 		

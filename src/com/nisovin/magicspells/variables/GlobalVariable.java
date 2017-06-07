@@ -6,19 +6,19 @@ public class GlobalVariable extends Variable {
 	
 	@Override
 	protected void init() {
-		value = defaultValue;
+		this.value = this.defaultValue;
 	}
 	
 	@Override
 	public boolean modify(String player, double amount) {
-		double newvalue = value + amount;
-		if (newvalue > maxValue) {
-			newvalue = maxValue;
-		} else if (newvalue < minValue) {
-			newvalue = minValue;
+		double newvalue = this.value + amount;
+		if (newvalue > this.maxValue) {
+			newvalue = this.maxValue;
+		} else if (newvalue < this.minValue) {
+			newvalue = this.minValue;
 		}
-		if (value != newvalue) {
-			value = newvalue;
+		if (this.value != newvalue) {
+			this.value = newvalue;
 			return true;
 		}
 		return false;
@@ -26,17 +26,17 @@ public class GlobalVariable extends Variable {
 
 	@Override
 	public void set(String player, double amount) {
-		value = amount;
+		this.value = amount;
 	}
 
 	@Override
 	public double getValue(String player) {
-		return value;
+		return this.value;
 	}
 
 	@Override
 	public void reset(String player) {
-		value = defaultValue;
+		this.value = this.defaultValue;
 	}
 	
 }

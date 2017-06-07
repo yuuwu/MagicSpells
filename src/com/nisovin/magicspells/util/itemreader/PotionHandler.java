@@ -30,7 +30,8 @@ public class PotionHandler {
 			List<String> potionEffects = config.getStringList(POTION_EFFECT_CONFIG_NAME);
 			for (String potionEffect : potionEffects) {
 				PotionEffect eff = buildPotionEffect(potionEffect);
-				if (eff != null) pmeta.addCustomEffect(eff, true);
+				if (eff == null) continue;
+				pmeta.addCustomEffect(eff, true);
 			}
 		}
 		
@@ -44,31 +45,31 @@ public class PotionHandler {
 	}
 	
 	private static PotionEffect buildPotionEffect(String effectString) {
-			String[] data = effectString.split(" ");
-			PotionEffectType t = MagicValues.PotionEffect.getPotionEffectType(data[0]);
-			
-			if (t == null) MagicSpells.error('\'' + data[0] + "' could not be connected to a potion effect type");
-			if (t != null) {
-				int level = 0;
-				if (data.length > 1) {
-					try {
-						level = Integer.parseInt(data[1]);
-					} catch (NumberFormatException ex) {
-						DebugHandler.debugNumberFormat(ex);
-					}
+		String[] data = effectString.split(" ");
+		PotionEffectType t = MagicValues.PotionEffect.getPotionEffectType(data[0]);
+		
+		if (t == null) MagicSpells.error('\'' + data[0] + "' could not be connected to a potion effect type");
+		if (t != null) {
+			int level = 0;
+			if (data.length > 1) {
+				try {
+					level = Integer.parseInt(data[1]);
+				} catch (NumberFormatException ex) {
+					DebugHandler.debugNumberFormat(ex);
 				}
-				int duration = 600;
-				if (data.length > 2) {
-					try {
-						duration = Integer.parseInt(data[2]);
-					} catch (NumberFormatException ex) {
-						DebugHandler.debugNumberFormat(ex);
-					}
-				}
-				boolean ambient = false;
-				if (data.length > 3 && (BooleanUtils.isYes(data[3]) || data[3].equalsIgnoreCase("ambient"))) ambient = true;
-				return new PotionEffect(t, duration, level, ambient);
 			}
+			int duration = 600;
+			if (data.length > 2) {
+				try {
+					duration = Integer.parseInt(data[2]);
+				} catch (NumberFormatException ex) {
+					DebugHandler.debugNumberFormat(ex);
+				}
+			}
+			boolean ambient = false;
+			if (data.length > 3 && (BooleanUtils.isYes(data[3]) || data[3].equalsIgnoreCase("ambient"))) ambient = true;
+			return new PotionEffect(t, duration, level, ambient);
+		}
 		return null;
 	}
 	

@@ -36,12 +36,12 @@ public class FlightPathSpell extends InstantSpell {
 	public FlightPathSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		targetX = getConfigFloat("x", 0);
-		targetY = getConfigFloat("y", 70);
-		targetZ = getConfigFloat("z", 0);
-		cruisingAltitude = getConfigInt("cruising-altitude", 150);
-		speed = getConfigFloat("speed", 1.5f);
-		mount = Util.getEntityType(getConfigString("mount", ""));
+		this.targetX = getConfigFloat("x", 0);
+		this.targetY = getConfigFloat("y", 70);
+		this.targetZ = getConfigFloat("z", 0);
+		this.cruisingAltitude = getConfigInt("cruising-altitude", 150);
+		this.speed = getConfigFloat("speed", 1.5F);
+		this.mount = Util.getEntityType(getConfigString("mount", ""));
 		
 		if (flightHandler == null) flightHandler = new FlightHandler();
 		
@@ -55,7 +55,7 @@ public class FlightPathSpell extends InstantSpell {
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
-			ActiveFlight flight = new ActiveFlight(player, mount, this);
+			ActiveFlight flight = new ActiveFlight(player, this.mount, this);
 			flightHandler.addFlight(flight);
 		}
 		return PostCastAction.HANDLE_NORMALLY;
@@ -77,28 +77,28 @@ public class FlightPathSpell extends InstantSpell {
 		int task = -1;
 		
 		public void addFlight(ActiveFlight flight) {
-			flights.put(flight.player.getName(), flight);
+			this.flights.put(flight.player.getName(), flight);
 			flight.start();
-			if (task < 0) task = MagicSpells.scheduleRepeatingTask(this, 0, 5);
+			if (this.task < 0) this.task = MagicSpells.scheduleRepeatingTask(this, 0, 5);
 		}
 		
 		void init() {
-			if (inited) return;
-			inited = true;
+			if (this.inited) return;
+			this.inited = true;
 			MagicSpells.registerEvents(this);
 		}
 
 		void cancel(Player player) {
-			ActiveFlight flight = flights.remove(player.getName());
+			ActiveFlight flight = this.flights.remove(player.getName());
 			if (flight != null) flight.cancel();
 		}
 		
 		void turnOff() {
-			for (ActiveFlight flight : flights.values()) {
+			for (ActiveFlight flight : this.flights.values()) {
 				flight.cancel();
 			}
-			MagicSpells.cancelTask(task);
-			flights.clear();
+			MagicSpells.cancelTask(this.task);
+			this.flights.clear();
 		}
 		
 		@EventHandler
@@ -118,7 +118,7 @@ public class FlightPathSpell extends InstantSpell {
 		
 		@Override
 		public void run() {
-			Iterator<ActiveFlight> iter = flights.values().iterator();
+			Iterator<ActiveFlight> iter = this.flights.values().iterator();
 			while (iter.hasNext()) {
 				ActiveFlight flight = iter.next();
 				if (flight.isDone()) {
@@ -127,9 +127,9 @@ public class FlightPathSpell extends InstantSpell {
 					flight.fly();
 				}
 			}
-			if (flights.isEmpty()) {
-				MagicSpells.cancelTask(task);
-				task = -1;
+			if (this.flights.isEmpty()) {
+				MagicSpells.cancelTask(this.task);
+				this.task = -1;
 			}
 		}
 		
@@ -149,102 +149,102 @@ public class FlightPathSpell extends InstantSpell {
 		Location lastLocation;
 		int sameLocCount = 0;
 		
-		public ActiveFlight(Player player, EntityType mountType, FlightPathSpell spell) {
-			this.player = player;
-			this.mountType = mountType;
-			this.spell = spell;
+		public ActiveFlight(Player caster, EntityType entityMountType, FlightPathSpell flightPathSpell) {
+			this.player = caster;
+			this.mountType = entityMountType;
+			this.spell = flightPathSpell;
 			this.state = FlightState.TAKE_OFF;
-			this.wasFlyingAllowed = player.getAllowFlight();
-			this.wasFlying = player.isFlying();
-			this.lastLocation = player.getLocation();
+			this.wasFlyingAllowed = caster.getAllowFlight();
+			this.wasFlying = caster.isFlying();
+			this.lastLocation = caster.getLocation();
 		}
 		
 		void start() {
-			player.setAllowFlight(true);
-			spell.playSpellEffects(EffectPosition.CASTER, player);
-			if (mountType == null) {
-				entityToPush = player;
+			this.player.setAllowFlight(true);
+			this.spell.playSpellEffects(EffectPosition.CASTER, this.player);
+			if (this.mountType == null) {
+				this.entityToPush = this.player;
 			} else {
-				mountActive = player.getWorld().spawnEntity(player.getLocation(), mountType);
-				entityToPush = mountActive;
-				if (player.getVehicle() != null) player.getVehicle().eject();
-				mountActive.setPassenger(player);
+				this.mountActive = this.player.getWorld().spawnEntity(this.player.getLocation(), this.mountType);
+				this.entityToPush = this.mountActive;
+				if (this.player.getVehicle() != null) this.player.getVehicle().eject();
+				this.mountActive.setPassenger(this.player);
 			}
 		}
 		
 		void fly() {
-			if (state == FlightState.DONE) return;
+			if (this.state == FlightState.DONE) return;
 			
-			// check for stuck
-			if (player.getLocation().distanceSquared(lastLocation) < 0.4) {
-				sameLocCount++;
+			// Check for stuck
+			if (this.player.getLocation().distanceSquared(this.lastLocation) < 0.4) {
+				this.sameLocCount++;
 			}
-			if (sameLocCount > 12) {
-				MagicSpells.error("Flight stuck '" + spell.getInternalName() + "' at " + player.getLocation());
+			if (this.sameLocCount > 12) {
+				MagicSpells.error("Flight stuck '" + this.spell.getInternalName() + "' at " + this.player.getLocation());
 				cancel();
 				return;
 			}
-			lastLocation = player.getLocation();
+			this.lastLocation = this.player.getLocation();
 			
-			// do flight
-			if (state == FlightState.TAKE_OFF) {
-				player.setFlying(false);
-				double y = entityToPush.getLocation().getY();
-				if (y >= cruisingAltitude) {
-					entityToPush.setVelocity(new Vector(0, 0, 0));
-					state = FlightState.CRUISING;
+			// Do flight
+			if (this.state == FlightState.TAKE_OFF) {
+				this.player.setFlying(false);
+				double y = this.entityToPush.getLocation().getY();
+				if (y >= this.spell.cruisingAltitude) {
+					this.entityToPush.setVelocity(new Vector(0, 0, 0));
+					this.state = FlightState.CRUISING;
 				} else {
-					entityToPush.setVelocity(new Vector(0, 2, 0));
+					this.entityToPush.setVelocity(new Vector(0, 2, 0));
 				}
-			} else if (state == FlightState.CRUISING) {
-				player.setFlying(true);
-				double x = entityToPush.getLocation().getX();
-				double z = entityToPush.getLocation().getZ();
-				if (targetX - 1 <= x && x <= targetX + 1 && targetZ - 1 <= z && z <= targetZ + 1) {
-					entityToPush.setVelocity(new Vector(0, 0, 0));
-					state = FlightState.LANDING;
+			} else if (this.state == FlightState.CRUISING) {
+				this.player.setFlying(true);
+				double x = this.entityToPush.getLocation().getX();
+				double z = this.entityToPush.getLocation().getZ();
+				if (this.spell.targetX - 1 <= x && x <= this.spell.targetX + 1 && this.spell.targetZ - 1 <= z && z <= this.spell.targetZ + 1) {
+					this.entityToPush.setVelocity(new Vector(0, 0, 0));
+					this.state = FlightState.LANDING;
 				} else {
-					Vector t = new Vector(targetX, cruisingAltitude, targetZ);
-					Vector v = t.subtract(entityToPush.getLocation().toVector());
+					Vector t = new Vector(this.spell.targetX, this.spell.cruisingAltitude, this.spell.targetZ);
+					Vector v = t.subtract(this.entityToPush.getLocation().toVector());
 					double len = v.lengthSquared();
-					v.normalize().multiply(len > 25 ? speed : 0.3);
-					entityToPush.setVelocity(v);
+					v.normalize().multiply(len > 25 ? this.spell.speed : 0.3);
+					this.entityToPush.setVelocity(v);
 				}
-			} else if (state == FlightState.LANDING) {
-				player.setFlying(false);
-				Location l = entityToPush.getLocation();
+			} else if (this.state == FlightState.LANDING) {
+				this.player.setFlying(false);
+				Location l = this.entityToPush.getLocation();
 				if (l.getBlock().getType() != Material.AIR || l.subtract(0, 1, 0).getBlock().getType() != Material.AIR || l.subtract(0, 2, 0).getBlock().getType() != Material.AIR) {
-					player.setFallDistance(0f);
+					this.player.setFallDistance(0f);
 					cancel();
 				} else {
-					entityToPush.setVelocity(new Vector(0, -1, 0));
-					player.setFallDistance(0f);
+					this.entityToPush.setVelocity(new Vector(0, -1, 0));
+					this.player.setFallDistance(0f);
 				}
 			}
 			
-			spell.playSpellEffects(EffectPosition.SPECIAL, player);
+			this.spell.playSpellEffects(EffectPosition.SPECIAL, this.player);
 		}
 		
 		void cancel() {
-			if (state != FlightState.DONE) {
-				state = FlightState.DONE;
-				player.setFlying(wasFlying);
-				player.setAllowFlight(wasFlyingAllowed);
-				if (mountActive != null) {
-					mountActive.eject();
-					mountActive.remove();
+			if (this.state != FlightState.DONE) {
+				this.state = FlightState.DONE;
+				this.player.setFlying(this.wasFlying);
+				this.player.setAllowFlight(this.wasFlyingAllowed);
+				if (this.mountActive != null) {
+					this.mountActive.eject();
+					this.mountActive.remove();
 				}
-				spell.playSpellEffects(EffectPosition.DELAYED, player);
+				this.spell.playSpellEffects(EffectPosition.DELAYED, this.player);
 				
-				player = null;
-				mountActive = null;
-				entityToPush = null;
-				spell = null;
+				this.player = null;
+				this.mountActive = null;
+				this.entityToPush = null;
+				this.spell = null;
 			}
 		}
 		
 		boolean isDone() {
-			return state == FlightState.DONE;
+			return this.state == FlightState.DONE;
 		}
 		
 	}

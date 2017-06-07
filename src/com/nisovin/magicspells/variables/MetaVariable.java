@@ -3,16 +3,16 @@ package com.nisovin.magicspells.variables;
 public abstract class MetaVariable extends Variable {
 
 	public MetaVariable() {
-		permanent = false;
-		bossBar = null;
-		expBar = false;
-		objective = null;
-		minValue = Double.MIN_VALUE;
+		this.permanent = false;
+		this.bossBar = null;
+		this.expBar = false;
+		this.objective = null;
+		this.minValue = Double.MIN_VALUE;
 	}
 	
 	@Override
 	protected void init() {
-		permanent = false;
+		this.permanent = false;
 	}
 	
 	@Override

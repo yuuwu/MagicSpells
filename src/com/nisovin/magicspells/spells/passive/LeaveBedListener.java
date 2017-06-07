@@ -11,7 +11,7 @@ import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.spells.PassiveSpell;
 import com.nisovin.magicspells.util.OverridePriority;
 
-// no trigger variable is used here
+// No trigger variable is used here
 public class LeaveBedListener extends PassiveListener {
 
 	List<PassiveSpell> spells = new ArrayList<>();
@@ -25,10 +25,7 @@ public class LeaveBedListener extends PassiveListener {
 	@EventHandler
 	public void onDeath(PlayerBedLeaveEvent event) {
 		Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());
-		for (PassiveSpell spell : spells) {
-			if (!spellbook.hasSpell(spell)) continue;
-			spell.activate(event.getPlayer());
-		}
+		spells.stream().filter(spellbook::hasSpell).forEachOrdered(spell -> spell.activate(event.getPlayer()));
 	}
 
 }

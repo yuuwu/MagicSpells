@@ -22,12 +22,12 @@ public class GreenSparkleEffect extends SpellEffect {
 	
 	@Override
 	public void loadFromString(String string) {
-		//TODO make a string loading schema
+		// TODO make a string loading schema
 	}
 
 	@Override
 	public void loadFromConfig(ConfigurationSection config) {
-		//TODO make a config loading schema
+		// TODO make a config loading schema
 	}
 
 	@Override

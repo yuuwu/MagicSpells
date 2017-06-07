@@ -25,7 +25,7 @@ public class MagicSpellsLoadingEvent extends Event {
      * @return plugin instance
      */
     public MagicSpells getPlugin() {
-    	return plugin;
+    	return this.plugin;
     }
     
     @Override

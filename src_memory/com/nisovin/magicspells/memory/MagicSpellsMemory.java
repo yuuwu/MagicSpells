@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import com.nisovin.magicspells.util.compat.EventUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.Configuration;
@@ -18,6 +19,8 @@ import com.nisovin.magicspells.Spell;
 import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.util.MagicConfig;
 
+// TODO should it be meaningful to define negative memory?
+// TODO For example, learn a spell to free up space (such as a negative passive)
 public class MagicSpellsMemory extends JavaPlugin {
 
 	private int maxMemoryDefault = 0;
@@ -79,7 +82,7 @@ public class MagicSpellsMemory extends JavaPlugin {
 			}
 		}
 		
-		getServer().getPluginManager().registerEvents(new MemorySpellListener(this), this);
+		EventUtil.register(new MemorySpellListener(this), this);
 	}
 	
 	@Override

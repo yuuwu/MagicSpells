@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.nisovin.magicspells.util.compat.CompatBasics;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -52,10 +54,10 @@ public class MagicSpellsTowny extends JavaPlugin implements Listener {
 			}
 		}
 		
-		Plugin townyPlugin = getServer().getPluginManager().getPlugin("Towny");
+		Plugin townyPlugin = CompatBasics.getPlugin("Towny");
 		if (townyPlugin != null) {
 			towny = (Towny)townyPlugin;
-			getServer().getPluginManager().registerEvents(this, this);
+			EventUtil.register(this, this);
 		} else {
 			getLogger().severe("Failed to find Towny");
 			this.setEnabled(false);

@@ -18,12 +18,12 @@ public class MagicBlockMaterial extends MagicMaterial {
 	
 	@Override
 	public Material getMaterial() {
-		return data.getItemType();
+		return this.data.getItemType();
 	}
 	
 	@Override
 	public MaterialData getMaterialData() {
-		return data;
+		return this.data;
 	}
 	
 	@Override

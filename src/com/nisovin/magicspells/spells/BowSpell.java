@@ -19,7 +19,7 @@ import com.nisovin.magicspells.Subspell;
 import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.events.SpellCastedEvent;
 import com.nisovin.magicspells.util.ConfigData;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 
@@ -43,21 +43,21 @@ public class BowSpell extends Spell {
 	public BowSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		thisSpell = this;
-		bowName = ChatColor.translateAlternateColorCodes('&', getConfigString("bow-name", null));
-		spellNameOnShoot = getConfigString("spell", null);
-		useBowForce = getConfigBoolean("use-bow-force", true);
+		this.thisSpell = this;
+		this.bowName = ChatColor.translateAlternateColorCodes('&', getConfigString("bow-name", null));
+		this.spellNameOnShoot = getConfigString("spell", null);
+		this.useBowForce = getConfigBoolean("use-bow-force", true);
 	}
 	
 	@Override
 	public void initialize() {
 		super.initialize();
 		
-		if (spellNameOnShoot != null && !spellNameOnShoot.isEmpty()) {
-			spellOnShoot = new Subspell(spellNameOnShoot);
-			if (!spellOnShoot.process()) {
-				spellOnShoot = null;
-				MagicSpells.error("Bow spell '" + internalName + "' has invalid spell defined: '" + spellNameOnShoot + '\'');
+		if (this.spellNameOnShoot != null && !this.spellNameOnShoot.isEmpty()) {
+			this.spellOnShoot = new Subspell(this.spellNameOnShoot);
+			if (!this.spellOnShoot.process()) {
+				this.spellOnShoot = null;
+				MagicSpells.error("Bow spell '" + this.internalName + "' has invalid spell defined: '" + this.spellNameOnShoot + '\'');
 			}
 		}
 		
@@ -68,10 +68,9 @@ public class BowSpell extends Spell {
 	@Override
 	public void turnOff() {
 		super.turnOff();
-		if (handler != null) {
-			handler.turnOff();
-			handler = null;
-		}
+		if (handler == null) return;
+		handler.turnOff();
+		handler = null;
 	}
 
 	@Override
@@ -98,7 +97,7 @@ public class BowSpell extends Spell {
 		}
 		
 		public void registerSpell(BowSpell spell) {
-			spells.put(spell.bowName, spell);
+			this.spells.put(spell.bowName, spell);
 		}
 		
 		@EventHandler
@@ -108,21 +107,24 @@ public class BowSpell extends Spell {
 			ItemStack inHand = HandHandler.getItemInMainHand(shooter);
 			if (inHand == null || inHand.getType() != Material.BOW) return;
 			String bowName = inHand.getItemMeta().getDisplayName();
-			if (bowName != null && !bowName.isEmpty()) {
-				Spellbook spellbook = MagicSpells.getSpellbook(shooter);
-				BowSpell spell = spells.get(bowName);
-				if (spell != null && spellbook.hasSpell(spell) && spellbook.canCast(spell)) {
-					SpellCastEvent evt1 = new SpellCastEvent(thisSpell, shooter, SpellCastState.NORMAL, useBowForce ? event.getForce() : 1.0F, null, thisSpell.cooldown, thisSpell.reagents, 0);
-					EventUtil.call(evt1);
-					if (!evt1.isCancelled()) {
-						event.setCancelled(true);
-						event.getProjectile().remove();
-						spell.spellOnShoot.cast(shooter, evt1.getPower());
-						SpellCastedEvent evt2 = new SpellCastedEvent(thisSpell, shooter, SpellCastState.NORMAL, evt1.getPower(), null, thisSpell.cooldown, thisSpell.reagents, PostCastAction.HANDLE_NORMALLY);
-						EventUtil.call(evt2);
-					}
-				}
-			}
+			if (bowName == null) return;
+			if (bowName.isEmpty()) return;
+			Spellbook spellbook = MagicSpells.getSpellbook(shooter);
+			BowSpell spell = this.spells.get(bowName);
+			
+			if (spell == null) return;
+			if (!spellbook.hasSpell(spell)) return;
+			if (!spellbook.canCast(spell)) return;
+			
+			SpellCastEvent evt1 = new SpellCastEvent(thisSpell, shooter, SpellCastState.NORMAL, useBowForce ? event.getForce() : 1.0F, null, thisSpell.cooldown, thisSpell.reagents, 0);
+			EventUtil.call(evt1);
+			if (evt1.isCancelled()) return;
+			
+			event.setCancelled(true);
+			event.getProjectile().remove();
+			spell.spellOnShoot.cast(shooter, evt1.getPower());
+			SpellCastedEvent evt2 = new SpellCastedEvent(thisSpell, shooter, SpellCastState.NORMAL, evt1.getPower(), null, thisSpell.cooldown, thisSpell.reagents, PostCastAction.HANDLE_NORMALLY);
+			EventUtil.call(evt2);
 		}
 		
 		public void turnOff() {

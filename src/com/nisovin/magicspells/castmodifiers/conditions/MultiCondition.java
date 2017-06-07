@@ -89,7 +89,8 @@ public class MultiCondition extends Condition implements IModifier {
 
 	@Override
 	public boolean check(Player player) {
-		int pass = 0, fail = 0;
+		int pass = 0;
+		int fail = 0;
 		for (Modifier m: modifiers) {
 			boolean check = m.check(player);
 			if (check) {
@@ -114,7 +115,8 @@ public class MultiCondition extends Condition implements IModifier {
 
 	@Override
 	public boolean apply(SpellCastEvent event) {
-		int pass = 0, fail = 0;
+		int pass = 0;
+		int fail = 0;
 		for (Modifier m: modifiers) {
 			boolean check = m.apply(event);
 			if (check) {
@@ -129,7 +131,8 @@ public class MultiCondition extends Condition implements IModifier {
 
 	@Override
 	public boolean apply(ManaChangeEvent event) {
-		int pass = 0, fail = 0;
+		int pass = 0;
+		int fail = 0;
 		for (Modifier m: modifiers) {
 			boolean check = m.apply(event);
 			if (check) {
@@ -144,7 +147,8 @@ public class MultiCondition extends Condition implements IModifier {
 
 	@Override
 	public boolean apply(SpellTargetEvent event) {
-		int pass = 0, fail = 0;
+		int pass = 0;
+		int fail = 0;
 		for (Modifier m: modifiers) {
 			boolean check = m.apply(event);
 			if (check) {
@@ -159,7 +163,8 @@ public class MultiCondition extends Condition implements IModifier {
 
 	@Override
 	public boolean apply(SpellTargetLocationEvent event) {
-		int pass = 0, fail = 0;
+		int pass = 0;
+		int fail = 0;
 		for (Modifier m: modifiers) {
 			boolean check = m.apply(event);
 			if (check) {
@@ -174,7 +179,8 @@ public class MultiCondition extends Condition implements IModifier {
 
 	@Override
 	public boolean apply(MagicSpellsGenericPlayerEvent event) {
-		int pass = 0, fail = 0;
+		int pass = 0;
+		int fail = 0;
 		for (Modifier m: modifiers) {
 			boolean check = m.apply(event);
 			if (check) {

@@ -16,10 +16,11 @@ import com.nisovin.magicspells.events.SpellTargetEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.util.BoundingBox;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellReagents;
 
+// TODO clean this up and refactor to avoid the long 'this' access
 public class PortalSpell extends InstantSpell {
 
 	private String markSpellName;
@@ -43,66 +44,66 @@ public class PortalSpell extends InstantSpell {
 	public PortalSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		markSpellName = getConfigString("mark-spell", "mark");
-		duration = getConfigInt("duration", 400);
-		teleportCooldown = getConfigInt("teleport-cooldown", 5) * 1000;
-		minDistanceSq = getConfigInt("min-distance", 10);
-		minDistanceSq *= minDistanceSq;
-		maxDistanceSq = getConfigInt("max-distance", 0);
-		maxDistanceSq *= maxDistanceSq;
-		effectInterval = getConfigInt("effect-interval", 10);
-		teleportCost = getConfigReagents("teleport-cost");
-		allowReturn = getConfigBoolean("allow-return", true);
-		chargeCostToTeleporter = getConfigBoolean("charge-cost-to-teleporter", false);
+		this.markSpellName = getConfigString("mark-spell", "mark");
+		this.duration = getConfigInt("duration", 400);
+		this.teleportCooldown = getConfigInt("teleport-cooldown", 5) * 1000;
+		this.minDistanceSq = getConfigInt("min-distance", 10);
+		this.minDistanceSq *= this.minDistanceSq;
+		this.maxDistanceSq = getConfigInt("max-distance", 0);
+		this.maxDistanceSq *= this.maxDistanceSq;
+		this.effectInterval = getConfigInt("effect-interval", 10);
+		this.teleportCost = getConfigReagents("teleport-cost");
+		this.allowReturn = getConfigBoolean("allow-return", true);
+		this.chargeCostToTeleporter = getConfigBoolean("charge-cost-to-teleporter", false);
 		
-		strNoMark = getConfigString("str-no-mark", "You have not marked a location to make a portal to.");
-		strTooClose = getConfigString("str-too-close", "You are too close to your marked location.");
-		strTooFar = getConfigString("str-too-far", "You are too far away from your marked location.");
-		strTeleportCostFail = getConfigString("str-teleport-cost-fail", "");
-		strTeleportCooldownFail = getConfigString("str-teleport-cooldown-fail", "");
+		this.strNoMark = getConfigString("str-no-mark", "You have not marked a location to make a portal to.");
+		this.strTooClose = getConfigString("str-too-close", "You are too close to your marked location.");
+		this.strTooFar = getConfigString("str-too-far", "You are too far away from your marked location.");
+		this.strTeleportCostFail = getConfigString("str-teleport-cost-fail", "");
+		this.strTeleportCooldownFail = getConfigString("str-teleport-cooldown-fail", "");
 	}
 	
 	@Override
 	public void initialize() {
 		super.initialize();
-		Spell spell = MagicSpells.getSpellByInternalName(markSpellName);
-		if (spell != null && spell instanceof MarkSpell) {
-			mark = (MarkSpell)spell;
+		Spell spell = MagicSpells.getSpellByInternalName(this.markSpellName);
+		if (spell instanceof MarkSpell) {
+			this.mark = (MarkSpell)spell;
 		} else {
-			MagicSpells.error("Failed to get marks list for '" + internalName + "' spell");
+			MagicSpells.error("Failed to get marks list for '" + this.internalName + "' spell");
 		}
 	}
 
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
-			Location loc = mark.getEffectiveMark(player);
+			Location loc = this.mark.getEffectiveMark(player);
 			if (loc == null) {
-				// no mark
-				sendMessage(strNoMark, player, args);
+				// No mark
+				sendMessage(this.strNoMark, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			} else {
 				
 				Location playerLoc = player.getLocation();
 				
 				double distanceSq = 0;
-				if (maxDistanceSq > 0) {
+				if (this.maxDistanceSq > 0) {
 					if (!loc.getWorld().equals(playerLoc.getWorld())) {
-						sendMessage(strTooFar, player, args);
+						sendMessage(this.strTooFar, player, args);
 						return PostCastAction.ALREADY_HANDLED;
 					} else {
 						distanceSq = playerLoc.distanceSquared(loc);
-						if (distanceSq > maxDistanceSq) {
-							sendMessage(strTooFar, player, args);
+						if (distanceSq > this.maxDistanceSq) {
+							sendMessage(this.strTooFar, player, args);
 							return PostCastAction.ALREADY_HANDLED;
 						}
 					}
 				}
-				if (minDistanceSq > 0) {
+				if (this.minDistanceSq > 0) {
 					if (loc.getWorld().equals(playerLoc.getWorld())) {
 						if (distanceSq == 0) distanceSq = playerLoc.distanceSquared(loc);
-						if (distanceSq < minDistanceSq) {
-							sendMessage(strTooClose, player, args);
+						if (distanceSq < this.minDistanceSq) {
+							sendMessage(this.strTooClose, player, args);
 							return PostCastAction.ALREADY_HANDLED;
 						}
 					}
@@ -140,14 +141,14 @@ public class PortalSpell extends InstantSpell {
 			this.box1 = new BoundingBox(loc1, .6);
 			this.box2 = new BoundingBox(loc2, .6);
 			
-			cooldownUntil.put(caster.getName(), System.currentTimeMillis() + teleportCooldown);
+			this.cooldownUntil.put(caster.getName(), System.currentTimeMillis() + PortalSpell.this.teleportCooldown);
 			registerEvents(this);
 			startTasks();
 		}
 		
 		void startTasks() {
-			if (effectInterval > 0) {
-				taskId1 = MagicSpells.scheduleRepeatingTask(new Runnable() {
+			if (PortalSpell.this.effectInterval > 0) {
+				this.taskId1 = MagicSpells.scheduleRepeatingTask(new Runnable() {
 					@Override
 					public void run() {
 						if (caster.isValid()) {
@@ -157,31 +158,26 @@ public class PortalSpell extends InstantSpell {
 							disable();
 						}
 					}
-				}, effectInterval, effectInterval);
+				}, PortalSpell.this.effectInterval, PortalSpell.this.effectInterval);
 			}
-			taskId2 = MagicSpells.scheduleDelayedTask(new Runnable() {
-				@Override
-				public void run() {
-					disable();
-				}
-			}, duration);
+			this.taskId2 = MagicSpells.scheduleDelayedTask(this::disable, PortalSpell.this.duration);
 		}
 		
 		@EventHandler(priority=EventPriority.NORMAL, ignoreCancelled=true)
 		void onMove(PlayerMoveEvent event) {
-			if (caster.isValid()) {
+			if (this.caster.isValid()) {
 				Player player = event.getPlayer();
-				if (box1.contains(event.getTo())) {
+				if (this.box1.contains(event.getTo())) {
 					if (checkTeleport(player)) {
-						Location loc = loc2.clone();
+						Location loc = this.loc2.clone();
 						loc.setYaw(player.getLocation().getYaw());
 						loc.setPitch(player.getLocation().getPitch());
 						event.setTo(loc);
 						playSpellEffects(EffectPosition.TARGET, player);
 					}
-				} else if (allowReturn && box2.contains(event.getTo())) {
+				} else if (PortalSpell.this.allowReturn && this.box2.contains(event.getTo())) {
 					if (checkTeleport(player)) {
-						Location loc = loc1.clone();
+						Location loc = this.loc1.clone();
 						loc.setYaw(player.getLocation().getYaw());
 						loc.setPitch(player.getLocation().getPitch());
 						event.setTo(loc);
@@ -201,47 +197,47 @@ public class PortalSpell extends InstantSpell {
 			cooldownUntil.put(player.getName(), System.currentTimeMillis() + teleportCooldown);
 			
 			Player payer = null;
-			if (teleportCost != null) {
-				if (chargeCostToTeleporter) {
-					if (hasReagents(player, teleportCost)) {
+			if (PortalSpell.this.teleportCost != null) {
+				if (PortalSpell.this.chargeCostToTeleporter) {
+					if (hasReagents(player, PortalSpell.this.teleportCost)) {
 						payer = player;
 					} else {
-						sendMessage(strTeleportCostFail, player, MagicSpells.NULL_ARGS);
+						sendMessage(PortalSpell.this.strTeleportCostFail, player, MagicSpells.NULL_ARGS);
 						return false;
 					}
 				} else {
-					if (hasReagents(caster, teleportCost)) {
-						payer = caster;
+					if (hasReagents(this.caster, PortalSpell.this.teleportCost)) {
+						payer = this.caster;
 					} else {
-						sendMessage(strTeleportCostFail, player, MagicSpells.NULL_ARGS);
+						sendMessage(PortalSpell.this.strTeleportCostFail, player, MagicSpells.NULL_ARGS);
 						return false;
 					}
 				}
 				if (payer == null) return false;
 			}
 			
-			SpellTargetEvent event = new SpellTargetEvent(spell, caster, player, 1);
+			SpellTargetEvent event = new SpellTargetEvent(this.spell, this.caster, player, 1);
 			EventUtil.call(event);
 			if (event.isCancelled()) return false;
 			
-			if (payer != null) removeReagents(payer, teleportCost);
+			if (payer != null) removeReagents(payer, PortalSpell.this.teleportCost);
 			return true;
 		}
 		
 		void disable() {
-			playSpellEffects(EffectPosition.DELAYED, loc1);
-			playSpellEffects(EffectPosition.DELAYED, loc2);
+			playSpellEffects(EffectPosition.DELAYED, this.loc1);
+			playSpellEffects(EffectPosition.DELAYED, this.loc2);
 			unregisterEvents(this);
-			if (taskId1 > 0) MagicSpells.cancelTask(taskId1);
-			if (taskId2 > 0) MagicSpells.cancelTask(taskId2);
-			spell = null;
-			caster = null;
-			loc1 = null;
-			loc2 = null;
-			box1 = null;
-			box2 = null;
-			cooldownUntil.clear();
-			cooldownUntil = null;
+			if (this.taskId1 > 0) MagicSpells.cancelTask(this.taskId1);
+			if (this.taskId2 > 0) MagicSpells.cancelTask(this.taskId2);
+			this.spell = null;
+			this.caster = null;
+			this.loc1 = null;
+			this.loc2 = null;
+			this.box1 = null;
+			this.box2 = null;
+			this.cooldownUntil.clear();
+			this.cooldownUntil = null;
 		}
 		
 	}

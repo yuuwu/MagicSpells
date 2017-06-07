@@ -14,7 +14,7 @@ import com.nisovin.magicspells.spells.CommandSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
 
-// advanced perm is for listing other player's spells
+// Advanced perm is for listing other player's spells
 public class ListSpell extends CommandSpell {
 	
 	private int lineLength = 60;
@@ -27,11 +27,11 @@ public class ListSpell extends CommandSpell {
 	public ListSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		onlyShowCastableSpells = getConfigBoolean("only-show-castable-spells", false);
-		reloadGrantedSpells = getConfigBoolean("reload-granted-spells", true);
-		spellsToHide = getConfigStringList("spells-to-hide", null);
-		strNoSpells = getConfigString("str-no-spells", "You do not know any spells.");
-		strPrefix = getConfigString("str-prefix", "Known spells:");
+		this.onlyShowCastableSpells = getConfigBoolean("only-show-castable-spells", false);
+		this.reloadGrantedSpells = getConfigBoolean("reload-granted-spells", true);
+		this.spellsToHide = getConfigStringList("spells-to-hide", null);
+		this.strNoSpells = getConfigString("str-no-spells", "You do not know any spells.");
+		this.strPrefix = getConfigString("str-prefix", "Known spells:");
 	}
 
 	@Override
@@ -46,16 +46,16 @@ public class ListSpell extends CommandSpell {
 					extra = '(' + p.getDisplayName() + ") ";
 				}
 			}
-			if (spellbook != null && reloadGrantedSpells) {
+			if (spellbook != null && this.reloadGrantedSpells) {
 				spellbook.addGrantedSpells();
 			}
 			if (spellbook == null || spellbook.getSpells().isEmpty()) {
-				// no spells
-				sendMessage(strNoSpells, player, args);
+				// No spells
+				sendMessage(this.strNoSpells, player, args);
 			} else {
 				String s = "";
 				for (Spell spell : spellbook.getSpells()) {
-					if (!spell.isHelperSpell() && (!onlyShowCastableSpells || spellbook.canCast(spell)) && !(spellsToHide != null && spellsToHide.contains(spell.getInternalName()))) {
+					if (shouldListSpell(spell, spellbook)) {
 						if (s.isEmpty()) {
 							s = spell.getName();
 						} else {
@@ -63,9 +63,9 @@ public class ListSpell extends CommandSpell {
 						}
 					}
 				}
-				s = strPrefix + ' ' + extra + s;
-				while (s.length() > lineLength) {
-					int i = s.substring(0, lineLength).lastIndexOf(' ');
+				s = this.strPrefix + ' ' + extra + s;
+				while (s.length() > this.lineLength) {
+					int i = s.substring(0, this.lineLength).lastIndexOf(' ');
 					sendMessage(s.substring(0, i), player, args);
 					s = s.substring(i + 1);
 				}
@@ -91,7 +91,7 @@ public class ListSpell extends CommandSpell {
 	public boolean castFromConsole(CommandSender sender, String[] args) {
 		StringBuilder s = new StringBuilder();
 		
-		// get spell list
+		// Get spell list
 		Collection<Spell> spells = MagicSpells.spells();
 		if (args != null && args.length > 0) {
 			Player p = PlayerNameUtils.getPlayer(args[0]);
@@ -106,16 +106,22 @@ public class ListSpell extends CommandSpell {
 			s.append("All spells: ");
 		}
 		
-		// create string of spells
+		// Create string of spells
 		for (Spell spell : spells) {
 			s.append(spell.getName());
 			s.append(' ');
 		}
 		
-		// send message
+		// Send message
 		sender.sendMessage(s.toString());
 		
 		return true;
+	}
+	
+	private boolean shouldListSpell(Spell spell, Spellbook spellbook) {
+		if (spell.isHelperSpell()) return false;
+		if (this.onlyShowCastableSpells && !spellbook.canCast(spell)) return false;
+		return !(this.spellsToHide != null && this.spellsToHide.contains(spell.getInternalName()));
 	}
 
 }

@@ -109,12 +109,7 @@ public abstract class DisguiseManager implements Listener, IDisguiseManager {
 	
 	private void applyDisguise(final Player player, final DisguiseSpell.Disguise disguise) {
 		sendDestroyEntityPackets(player);
-		MagicSpells.scheduleDelayedTask(new Runnable() {
-			@Override
-			public void run() {
-				sendDisguisedSpawnPackets(player, disguise);
-			}
-		}, 5);
+		MagicSpells.scheduleDelayedTask(() -> sendDisguisedSpawnPackets(player, disguise), 5);
 	}
 	
 	private void clearDisguise(final Player player, boolean sendPlayerPackets, boolean delaySpawnPacket) {
@@ -122,12 +117,7 @@ public abstract class DisguiseManager implements Listener, IDisguiseManager {
 		if (mounts.containsKey(player.getEntityId())) sendDestroyEntityPackets(player, mounts.remove(player.getEntityId()));
 		if (sendPlayerPackets && player.isValid()) {
 			if (delaySpawnPacket) {
-				MagicSpells.scheduleDelayedTask(new Runnable() {
-					@Override
-					public void run() {
-						sendPlayerSpawnPackets(player);
-					}
-				}, 5);
+				MagicSpells.scheduleDelayedTask(() -> sendPlayerSpawnPackets(player), 5);
 			} else {
 				sendPlayerSpawnPackets(player);
 			}

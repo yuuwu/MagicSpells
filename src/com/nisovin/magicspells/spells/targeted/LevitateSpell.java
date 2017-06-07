@@ -3,6 +3,7 @@ package com.nisovin.magicspells.spells.targeted;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.nisovin.magicspells.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -131,9 +132,7 @@ public class LevitateSpell extends TargetedSpell implements TargetedEntitySpell 
 	
 	@Override
 	public void turnOff() {
-		for (Levitator l : new ArrayList<>(levitating.values())) {
-			l.stop();
-		}
+		Util.forEachValueOrdered(levitating, Levitator::stop);
 		levitating.clear();
 	}
 	

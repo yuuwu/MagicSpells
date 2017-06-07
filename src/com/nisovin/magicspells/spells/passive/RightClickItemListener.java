@@ -22,7 +22,7 @@ import com.nisovin.magicspells.spells.PassiveSpell;
 import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.OverridePriority;
 
-// trigger variable of a comma separated list of items to accept
+// Trigger variable of a comma separated list of items to accept
 public class RightClickItemListener extends PassiveListener {
 
 	Set<Material> materials = new HashSet<>();

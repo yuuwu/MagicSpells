@@ -12,13 +12,13 @@ import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.events.SpellForgetEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.CommandSpell;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
 import com.nisovin.magicspells.util.Util;
 
-// advanced perm allows you to make others forget a spell
-// put * for the spell to forget all of them
+// Advanced perm allows you to make others forget a spell
+// Put * for the spell to forget all of them
 public class ForgetSpell extends CommandSpell {
 
 	private boolean allowSelfForget;
@@ -34,47 +34,47 @@ public class ForgetSpell extends CommandSpell {
 	public ForgetSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		allowSelfForget = getConfigBoolean("allow-self-forget", true);
-		strUsage = getConfigString("str-usage", "Usage: /cast forget <target> <spell>");
-		strNoTarget = getConfigString("str-no-target", "No such player.");
-		strNoSpell = getConfigString("str-no-spell", "You do not know a spell by that name.");
-		strDoesntKnow = getConfigString("str-doesnt-know", "That person does not know that spell.");
-		strCastTarget = getConfigString("str-cast-target", "%a has made you forget the %s spell.");
-		strCastSelfTarget = getConfigString("str-cast-self-target", "You have forgotten the %s spell.");
-		strResetTarget = getConfigString("str-reset-target", "You have reset %t's spellbook.");
-		strResetSelf = getConfigString("str-reset-self", "You have forgotten all of your spells.");
+		this.allowSelfForget = getConfigBoolean("allow-self-forget", true);
+		this.strUsage = getConfigString("str-usage", "Usage: /cast forget <target> <spell>");
+		this.strNoTarget = getConfigString("str-no-target", "No such player.");
+		this.strNoSpell = getConfigString("str-no-spell", "You do not know a spell by that name.");
+		this.strDoesntKnow = getConfigString("str-doesnt-know", "That person does not know that spell.");
+		this.strCastTarget = getConfigString("str-cast-target", "%a has made you forget the %s spell.");
+		this.strCastSelfTarget = getConfigString("str-cast-self-target", "You have forgotten the %s spell.");
+		this.strResetTarget = getConfigString("str-reset-target", "You have reset %t's spellbook.");
+		this.strResetSelf = getConfigString("str-reset-self", "You have forgotten all of your spells.");
 	}
 	
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			if (args == null || args.length == 0 || args.length > 2) {
-				// fail: missing args
-				sendMessage(strUsage, player, args);
+				// Fail: missing args
+				sendMessage(this.strUsage, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
-				// get caster spellbook
+				// Get caster spellbook
 			Spellbook casterSpellbook = MagicSpells.getSpellbook(player);
 			
-			// get target
+			// Get target
 			Player target;
-			if (args.length == 1 && allowSelfForget) {
+			if (args.length == 1 && this.allowSelfForget) {
 				target = player;
 			} else if (args.length == 2 && casterSpellbook.hasAdvancedPerm("forget")) {
 				List<Player> players = MagicSpells.plugin.getServer().matchPlayer(args[0]);
 				if (players.size() != 1) {
-					// fail: no player match
-					sendMessage(strNoTarget, player, args);
+					// Fail: no player match
+					sendMessage(this.strNoTarget, player, args);
 					return PostCastAction.ALREADY_HANDLED;
 				}
 				target = players.get(0);
 			} else {
-				// fail: missing args
-				sendMessage(strUsage, player, args);
+				// Fail: missing args
+				sendMessage(this.strUsage, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			
-			// get spell
+			// Get spell
 			String spellName = args.length == 1 ? args[0] : args[1];
 			boolean all = false;
 			Spell spell = null;
@@ -84,37 +84,37 @@ public class ForgetSpell extends CommandSpell {
 				spell = MagicSpells.getSpellByInGameName(spellName);
 			}
 			if (spell == null && !all) {
-				// fail: no spell match
-				sendMessage(strNoSpell, player, args);
+				// Fail: no spell match
+				sendMessage(this.strNoSpell, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			
-			// check if caster has spell
+			// Check if caster has spell
 			if (!all && !casterSpellbook.hasSpell(spell)) {
-				// fail: caster doesn't have spell
+				// Fail: caster doesn't have spell
 				sendMessage(strNoSpell, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			
-			// get target spellbook and perform checks
+			// Get target spellbook and perform checks
 			Spellbook targetSpellbook = MagicSpells.getSpellbook(target);
 			if (targetSpellbook == null || (!all && !targetSpellbook.hasSpell(spell))) {
-				// fail: error
-				sendMessage(strDoesntKnow, player, args);
+				// Fail: error
+				sendMessage(this.strDoesntKnow, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			} 
 			
-			// remove spell(s)
+			// Remove spell(s)
 			if (!all) {
 				targetSpellbook.removeSpell(spell);
 				targetSpellbook.save();
 				if (!player.equals(target)) {
-					sendMessage(formatMessage(strCastTarget, "%a", player.getDisplayName(), "%s", spell.getName(), "%t", target.getDisplayName()), target, args); //TODO check for null access
-					sendMessage(formatMessage(strCastSelf, "%a", player.getDisplayName(), "%s", spell.getName(), "%t", target.getDisplayName()), player, args);
+					sendMessage(formatMessage(this.strCastTarget, "%a", player.getDisplayName(), "%s", spell.getName(), "%t", target.getDisplayName()), target, args); //TODO check for null access
+					sendMessage(formatMessage(this.strCastSelf, "%a", player.getDisplayName(), "%s", spell.getName(), "%t", target.getDisplayName()), player, args);
 					playSpellEffects(EffectPosition.CASTER, player);
 					playSpellEffects(EffectPosition.TARGET, target);
 				} else {
-					sendMessage(formatMessage(strCastSelfTarget, "%s", spell.getName()), player, args); //TODO check for null access
+					sendMessage(formatMessage(this.strCastSelfTarget, "%s", spell.getName()), player, args); //TODO check for null access
 					playSpellEffects(EffectPosition.CASTER, player);
 				}
 				return PostCastAction.NO_MESSAGES;
@@ -123,11 +123,11 @@ public class ForgetSpell extends CommandSpell {
 			targetSpellbook.addGrantedSpells();
 			targetSpellbook.save();
 			if (!player.equals(target)) {
-				sendMessage(formatMessage(strResetTarget, "%t", target.getDisplayName()), player, args);
+				sendMessage(formatMessage(this.strResetTarget, "%t", target.getDisplayName()), player, args);
 				playSpellEffects(EffectPosition.CASTER, player);
 				playSpellEffects(EffectPosition.TARGET, target);
 			} else {
-				sendMessage(strResetSelf, player, args);
+				sendMessage(this.strResetSelf, player, args);
 				playSpellEffects(EffectPosition.CASTER, player);
 			}
 			return PostCastAction.NO_MESSAGES;
@@ -139,12 +139,12 @@ public class ForgetSpell extends CommandSpell {
 	public boolean castFromConsole(CommandSender sender, String[] args) {
 		if (args == null || args.length != 2) {
 			// fail: missing args
-			sender.sendMessage(strUsage);
+			sender.sendMessage(this.strUsage);
 		} else {
 			Player target = PlayerNameUtils.getPlayer(args[0]);
 			if (target == null) {
 				// fail: no player match
-				sender.sendMessage(strNoTarget);
+				sender.sendMessage(this.strNoTarget);
 			} else {
 				Spell spell = null;
 				boolean all = false;
@@ -155,12 +155,12 @@ public class ForgetSpell extends CommandSpell {
 				}
 				if (spell == null && !all) {
 					// fail: no spell match
-					sender.sendMessage(strNoSpell);
+					sender.sendMessage(this.strNoSpell);
 				} else {
 					Spellbook targetSpellbook = MagicSpells.getSpellbook(target);
 					if (targetSpellbook == null || (!all && !targetSpellbook.hasSpell(spell))) {
-						// fail: no spellbook for some reason or can't learn the spell
-						sender.sendMessage(strDoesntKnow);
+						// Fail: no spellbook for some reason or can't learn the spell
+						sender.sendMessage(this.strDoesntKnow);
 					} else {
 						SpellForgetEvent forgetEvent = new SpellForgetEvent(spell, target);
 						EventUtil.call(forgetEvent);
@@ -168,13 +168,13 @@ public class ForgetSpell extends CommandSpell {
 							if (!all) {
 								targetSpellbook.removeSpell(spell);
 								targetSpellbook.save();
-								sendMessage(formatMessage(strCastTarget, "%a", getConsoleName(), "%s", spell.getName(), "%t", target.getDisplayName()), target, args); //TODO check for null access
-								sender.sendMessage(formatMessage(strCastSelf, "%a", getConsoleName(), "%s", spell.getName(), "%t", target.getDisplayName()));
+								sendMessage(formatMessage(this.strCastTarget, "%a", getConsoleName(), "%s", spell.getName(), "%t", target.getDisplayName()), target, args); //TODO check for null access
+								sender.sendMessage(formatMessage(this.strCastSelf, "%a", getConsoleName(), "%s", spell.getName(), "%t", target.getDisplayName()));
 							} else {
 								targetSpellbook.removeAllSpells();
 								targetSpellbook.addGrantedSpells();
 								targetSpellbook.save();
-								sender.sendMessage(formatMessage(strResetTarget, "%t", target.getDisplayName()));
+								sender.sendMessage(formatMessage(this.strResetTarget, "%t", target.getDisplayName()));
 							}
 						}
 					}
@@ -188,7 +188,7 @@ public class ForgetSpell extends CommandSpell {
 	public List<String> tabComplete(CommandSender sender, String partial) {
 		String[] args = Util.splitParams(partial);
 		if (args.length == 1) {
-			// matching player name or spell name
+			// Matching player name or spell name
 			List<String> options = new ArrayList<>();
 			List<String> players = tabCompletePlayerName(sender, args[0]);
 			List<String> spells = tabCompleteSpellName(sender, args[0]);
@@ -198,7 +198,7 @@ public class ForgetSpell extends CommandSpell {
 		}
 		
 		if (args.length == 2) {
-			// matching spell name
+			// Matching spell name
 			return tabCompleteSpellName(sender, args[1]);
 		}
 		

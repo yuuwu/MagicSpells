@@ -17,12 +17,12 @@ public class MagicSpellsGenericPlayerEvent extends Event implements Cancellable 
 	}
 	
 	public Player getPlayer() {
-		return player;
+		return this.player;
 	}
 	
 	@Override
 	public boolean isCancelled() {
-		return cancelled;
+		return this.cancelled;
 	}
 
 	@Override

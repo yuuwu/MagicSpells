@@ -1,5 +1,6 @@
 package com.nisovin.magicspells.spelleffects;
 
+import com.nisovin.magicspells.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
@@ -66,13 +67,15 @@ public class ActionBarTextEffect extends SpellEffect {
 	@Override
 	protected Runnable playEffectEntity(Entity entity) {
 		if (broadcast) {
-			for (Player player : Bukkit.getOnlinePlayers()) {
-				MagicSpells.getVolatileCodeHandler().sendActionBarMessage(player, message);
-			}
-		} else if (entity != null && entity instanceof Player) {
-			MagicSpells.getVolatileCodeHandler().sendActionBarMessage((Player)entity, message);
+			Util.forEachPlayerOnline(this::send);
+		} else if (entity instanceof Player) {
+			send((Player) entity);
 		}
 		return null;
+	}
+	
+	private void send(Player player) {
+		MagicSpells.getVolatileCodeHandler().sendActionBarMessage(player, message);
 	}
 	
 }

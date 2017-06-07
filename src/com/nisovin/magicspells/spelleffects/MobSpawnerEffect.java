@@ -8,7 +8,7 @@ public class MobSpawnerEffect extends SpellEffect {
 
 	@Override
 	public void loadFromString(String string) {
-		//no current string loading schema
+		// No current string loading schema
 	}
 
 	@Override

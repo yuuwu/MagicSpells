@@ -26,9 +26,9 @@ public class SpellPreImpactEvent extends SpellEvent implements Cancellable {
 		super(spellPayload, caster);
 		this.target = target;
 		this.power = power;
-		redirect = false;
+		this.redirect = false;
 		this.deliverySpell = deliverySpell;
-		canceled = false;
+		this.canceled = false;
 		if (DebugHandler.isSpellPreImpactEventCheckEnabled()) {
 			MagicSpells.plugin.getLogger().info(this.toString());
 		}
@@ -44,11 +44,11 @@ public class SpellPreImpactEvent extends SpellEvent implements Cancellable {
 	}
 	
 	public LivingEntity getTarget() {
-		return target;
+		return this.target;
 	}
 	
 	public boolean getRedirected() {
-		return redirect;
+		return this.redirect;
 	}
 	
 	public void setRedirected(boolean redirect) {
@@ -56,7 +56,7 @@ public class SpellPreImpactEvent extends SpellEvent implements Cancellable {
 	}
 	
 	public float getPower() {
-		return power;
+		return this.power;
 	}
 	
 	public void setPower(float power) {
@@ -64,12 +64,12 @@ public class SpellPreImpactEvent extends SpellEvent implements Cancellable {
 	}
 	
 	public Spell getDeliverySpell() {
-		return deliverySpell;
+		return this.deliverySpell;
 	}
 
 	@Override
 	public boolean isCancelled() {
-		return canceled;
+		return this.canceled;
 	}
 
 	@Override
@@ -79,10 +79,10 @@ public class SpellPreImpactEvent extends SpellEvent implements Cancellable {
 	
 	@Override
 	public String toString() {
-		String casterLabel = "Caster: " + ((caster == null) ? "null" : caster.toString());
-		String targetLabel = "Target: " + ((target == null) ? "null" : target.toString());
-		String spellLabel = "SpellPayload: " + ((spell == null) ? "null" : spell.toString());
-		String payloadSpellLabel = "Delivery Spell: " + ((deliverySpell == null) ? "null" : deliverySpell.toString());
+		String casterLabel = "Caster: " + (this.caster == null ? "null" : this.caster.toString());
+		String targetLabel = "Target: " + (this.target == null ? "null" : this.target.toString());
+		String spellLabel = "SpellPayload: " + (this.spell == null ? "null" : this.spell.toString());
+		String payloadSpellLabel = "Delivery Spell: " + (this.deliverySpell == null ? "null" : this.deliverySpell.toString());
 		return Arrays.deepToString(new String[]{ casterLabel, targetLabel, spellLabel, payloadSpellLabel });
 	}
 	

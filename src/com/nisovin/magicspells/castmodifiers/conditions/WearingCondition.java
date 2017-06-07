@@ -11,6 +11,8 @@ import org.bukkit.inventory.PlayerInventory;
 import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.castmodifiers.Condition;
 
+import java.util.Objects;
+
 public class WearingCondition extends Condition {
 
 	int[] ids;
@@ -68,31 +70,20 @@ public class WearingCondition extends Condition {
 		if (check(inv.getHelmet())) return true;
 		if (check(inv.getChestplate())) return true;
 		if (check(inv.getLeggings())) return true;
-		return (check(inv.getBoots()));
+		return check(inv.getBoots());
 	}
 	
 	@Override
 	public boolean check(Player player, LivingEntity target) {
-		if (target instanceof Player) {
-			return check((Player)target);
-		} else {
-			EntityEquipment equip = target.getEquipment();
-			if (equip != null) {
-				if (check(equip.getHelmet())) {
-					return true;
-				} else if (check(equip.getChestplate())) {
-					return true;
-				} else if (check(equip.getLeggings())) {
-					return true;
-				} else if (check(equip.getBoots())) {
-					return true;
-				} else {
-					return false;
-				}
-			} else {
-				return false;
-			}
+		if (target instanceof Player) return check((Player)target);
+		EntityEquipment equip = target.getEquipment();
+		if (equip != null) {
+			if (check(equip.getHelmet())) return true;
+			if (check(equip.getChestplate())) return true;
+			if (check(equip.getLeggings())) return true;
+			return check(equip.getBoots());
 		}
+		return false;
 	}
 	
 	@Override
@@ -121,9 +112,7 @@ public class WearingCondition extends Condition {
 	}
 	
 	private boolean strEquals(String s1, String s2) {
-		if (s1 == s2) return true;
-		if (s1 == null || s2 == null) return false;
-		return s1.equals(s2);
+		return Objects.equals(s1, s2);
 	}
 
 }

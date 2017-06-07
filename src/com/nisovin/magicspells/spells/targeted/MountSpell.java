@@ -26,9 +26,9 @@ public class MountSpell extends TargetedSpell implements TargetedEntitySpell {
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			if (!reverse) {
-				// normal - casting player mounts target
+				// Normal - casting player mounts target
 				if (player.getVehicle() != null) {
-					// leave stack
+					// Leave stack
 					Entity veh = player.getVehicle();
 					veh.eject();
 					Entity pass = player.getPassenger();
@@ -37,7 +37,7 @@ public class MountSpell extends TargetedSpell implements TargetedEntitySpell {
 						veh.setPassenger(pass);
 					}
 				} else {
-					// join stack
+					// Join stack
 					LivingEntity target = null;
 					TargetInfo<Player> targetInfo = getTargetedPlayer(player, power);
 					if (targetInfo != null) target = targetInfo.getTarget();
@@ -53,18 +53,18 @@ public class MountSpell extends TargetedSpell implements TargetedEntitySpell {
 					return noTarget(player);
 				}
 			} else {
-				// reverse - casting player forces target to mount self
+				// Reverse - casting player forces target to mount self
 				LivingEntity target = null;
 				TargetInfo<Player> targetInfo = getTargetedPlayer(player, power);
 				if (targetInfo != null) target = targetInfo.getTarget();
 				if (target != null) {
-					// clear out any previous passengers
+					// Clear out any previous passengers
 					if (player.getPassenger() != null) player.eject();
 					if (player.getVehicle() != null) player.getVehicle().eject();
 					if (target.getPassenger() != null) target.eject();
 					if (target.getVehicle() != null) target.getVehicle().eject();
 					
-					// set passenger
+					// Set passenger
 					player.setPassenger(target);
 					sendMessages(player, target);
 					return PostCastAction.NO_MESSAGES;
@@ -95,7 +95,7 @@ public class MountSpell extends TargetedSpell implements TargetedEntitySpell {
 		Entity vehicle = player.getVehicle();
 		Entity passenger = player.getPassenger();
 		if (passenger != null) player.eject();
-		if (vehicle != null && vehicle instanceof Player) vehicle.eject();
+		if (vehicle instanceof Player) vehicle.eject();
 	}
 	
 	@EventHandler
@@ -104,7 +104,7 @@ public class MountSpell extends TargetedSpell implements TargetedEntitySpell {
 		Entity vehicle = player.getVehicle();
 		Entity passenger = player.getPassenger();
 		if (passenger != null) player.eject();
-		if (vehicle != null && vehicle instanceof Player) vehicle.eject();
+		if (vehicle instanceof Player) vehicle.eject();
 	}
 
 }

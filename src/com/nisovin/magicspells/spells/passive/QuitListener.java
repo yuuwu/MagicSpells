@@ -12,7 +12,7 @@ import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.spells.PassiveSpell;
 import com.nisovin.magicspells.util.OverridePriority;
 
-// no trigger variable is currently used
+// No trigger variable is currently used
 public class QuitListener extends PassiveListener {
 
 	List<PassiveSpell> spells = new ArrayList<>();
@@ -27,10 +27,7 @@ public class QuitListener extends PassiveListener {
 	public void onQuit(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
 		Spellbook spellbook = MagicSpells.getSpellbook(player);
-		for (PassiveSpell spell : spells) {
-			if (!spellbook.hasSpell(spell)) continue;
-			spell.activate(player);
-		}
+		spells.stream().filter(spellbook::hasSpell).forEachOrdered(spell -> spell.activate(player));
 	}
 
 }

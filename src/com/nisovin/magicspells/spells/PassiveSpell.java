@@ -21,7 +21,7 @@ import com.nisovin.magicspells.spells.passive.PassiveManager;
 import com.nisovin.magicspells.spells.passive.PassiveTrigger;
 import com.nisovin.magicspells.util.CastItem;
 import com.nisovin.magicspells.util.ConfigData;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.Util;
 
@@ -69,17 +69,17 @@ public class PassiveSpell extends Spell {
 		
 		if (manager == null) manager = new PassiveManager();
 		
-		triggers = getConfigStringList("triggers", null);
-		chance = getConfigFloat("chance", 100F) / 100F;
-		castWithoutTarget = getConfigBoolean("cast-without-target", false);
-		delay = getConfigInt("delay", -1);
-		cancelDefaultAction = getConfigBoolean("cancel-default-action", false);
-		cancelDefaultActionWhenCastFails = getConfigBoolean("cancel-default-action-when-cast-fails", false);
-		ignoreCancelled = getConfigBoolean("ignore-cancelled", true);
-		requireCancelledEvent = getConfigBoolean("require-cancelled-event", false);
-		sendFailureMessages = getConfigBoolean("send-failure-messages", false);
+		this.triggers = getConfigStringList("triggers", null);
+		this.chance = getConfigFloat("chance", 100F) / 100F;
+		this.castWithoutTarget = getConfigBoolean("cast-without-target", false);
+		this.delay = getConfigInt("delay", -1);
+		this.cancelDefaultAction = getConfigBoolean("cancel-default-action", false);
+		this.cancelDefaultActionWhenCastFails = getConfigBoolean("cancel-default-action-when-cast-fails", false);
+		this.ignoreCancelled = getConfigBoolean("ignore-cancelled", true);
+		this.requireCancelledEvent = getConfigBoolean("require-cancelled-event", false);
+		this.sendFailureMessages = getConfigBoolean("send-failure-messages", false);
 		
-		spellNames = getConfigStringList("spells", null);
+		this.spellNames = getConfigStringList("spells", null);
 	}
 	
 	public static PassiveManager getManager() {
@@ -87,31 +87,31 @@ public class PassiveSpell extends Spell {
 	}
 	
 	public List<Subspell> getActivatedSpells() {
-		return spells;
+		return this.spells;
 	}
 	
 	@Override
 	public void initialize() {
 		super.initialize();
 		
-		// create spell list
-		spells = new ArrayList<>();
-		if (spellNames != null) {
-			for (String spellName : spellNames) {
+		// Create spell list
+		this.spells = new ArrayList<>();
+		if (this.spellNames != null) {
+			for (String spellName : this.spellNames) {
 				Subspell spell = new Subspell(spellName);
 				if (!spell.process()) continue;
-				spells.add(spell);
+				this.spells.add(spell);
 			}
 		}
-		if (spells.isEmpty()) {
-			MagicSpells.error("Passive spell '" + name + "' has no spells defined!");
+		if (this.spells.isEmpty()) {
+			MagicSpells.error("Passive spell '" + this.name + "' has no spells defined!");
 			return;
 		}
 		
-		// get trigger
+		// Get trigger
 		int trigCount = 0;
-		if (triggers != null) {
-			for (String strigger : triggers) {
+		if (this.triggers != null) {
+			for (String strigger : this.triggers) {
 				String type = strigger;
 				String var = null;
 				if (strigger.contains(" ")) {
@@ -126,12 +126,12 @@ public class PassiveSpell extends Spell {
 					manager.registerSpell(this, trigger, var);
 					trigCount++;
 				} else {
-					MagicSpells.error("Invalid trigger '" + strigger + "' on passive spell '" + internalName + '\'');
+					MagicSpells.error("Invalid trigger '" + strigger + "' on passive spell '" + this.internalName + '\'');
 				}
 			}
 		}
 		if (trigCount == 0) {
-			MagicSpells.error("Passive spell '" + name + "' has no triggers defined!");
+			MagicSpells.error("Passive spell '" + this.name + "' has no triggers defined!");
 			return;
 		}
 	}
@@ -162,37 +162,29 @@ public class PassiveSpell extends Spell {
 	}
 	
 	public boolean activate(final Player caster, final LivingEntity target, final Location location, final float power) {
-		if (delay < 0) {
-			return activateSpells(caster, target, location, power);
-		} else {
-			Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
-				@Override
-				public void run() {
-					activateSpells(caster, target, location, power);
-				}
-			}, delay);
-			return false;
-		}
+		if (this.delay < 0) return activateSpells(caster, target, location, power);
+		Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, () -> activateSpells(caster, target, location, power), this.delay);
+		return false;
 	}
 	
 	boolean activateSpells(Player caster, LivingEntity target, Location location, float basePower) {
 		SpellCastState state = getCastState(caster);
 		MagicSpells.debug(3, "Activating passive spell '" + name + "' for player " + caster.getName() + " (state: " + state + ')');
-		if (!disabled && (chance >= .999 || random.nextFloat() <= chance) && state == SpellCastState.NORMAL) {
-			disabled = true;
+		if (!this.disabled && (this.chance >= .999 || this.random.nextFloat() <= this.chance) && state == SpellCastState.NORMAL) {
+			this.disabled = true;
 			SpellCastEvent event = new SpellCastEvent(this, caster, SpellCastState.NORMAL, basePower, null, this.cooldown, this.reagents.clone(), 0);
 			EventUtil.call(event);
 			if (!event.isCancelled() && event.getSpellCastState() == SpellCastState.NORMAL) {
 				if (event.haveReagentsChanged() && !hasReagents(caster, event.getReagents())) {
-					disabled = false;
+					this.disabled = false;
 					return false;
 				}
 				setCooldown(caster, event.getCooldown());
 				basePower = event.getPower();
 				boolean spellEffectsDone = false;
-				for (Subspell spell : spells) {
+				for (Subspell spell : this.spells) {
 					MagicSpells.debug(3, "    Casting spell effect '" + spell.getSpell().getName() + '\'');
-					if (castWithoutTarget) {
+					if (this.castWithoutTarget) {
 						MagicSpells.debug(3, "    Casting without target");
 						spell.cast(caster, basePower);
 						if (!spellEffectsDone) {
@@ -265,23 +257,23 @@ public class PassiveSpell extends Spell {
 					}
 				}
 				removeReagents(caster, event.getReagents());
-				sendMessage(strCastSelf, caster, MagicSpells.NULL_ARGS);
+				sendMessage(this.strCastSelf, caster, MagicSpells.NULL_ARGS);
 				SpellCastedEvent event2 = new SpellCastedEvent(this, caster, SpellCastState.NORMAL, basePower, null, event.getCooldown(), event.getReagents(), PostCastAction.HANDLE_NORMALLY);
 				EventUtil.call(event2);
-				disabled = false;
+				this.disabled = false;
 				return true;
 			} else {
 				MagicSpells.debug(3, "   Passive spell canceled");
-				disabled = false;
+				this.disabled = false;
 				return false;
 			}
-		} else if (state != SpellCastState.NORMAL && sendFailureMessages) {
+		} else if (state != SpellCastState.NORMAL && this.sendFailureMessages) {
 			if (state == SpellCastState.ON_COOLDOWN) {
-				MagicSpells.sendMessage(formatMessage(strOnCooldown, "%c", Math.round(getCooldown(caster)) + ""), caster, null);
+				MagicSpells.sendMessage(formatMessage(this.strOnCooldown, "%c", Math.round(getCooldown(caster)) + ""), caster, null);
 			} else if (state == SpellCastState.MISSING_REAGENTS) {
-				MagicSpells.sendMessage(strMissingReagents, caster, MagicSpells.NULL_ARGS);
-				if (MagicSpells.showStrCostOnMissingReagents() && strCost != null && !strCost.isEmpty()) {
-					MagicSpells.sendMessage("    (" + strCost + ')', caster, MagicSpells.NULL_ARGS);
+				MagicSpells.sendMessage(this.strMissingReagents, caster, MagicSpells.NULL_ARGS);
+				if (MagicSpells.showStrCostOnMissingReagents() && this.strCost != null && !this.strCost.isEmpty()) {
+					MagicSpells.sendMessage("    (" + this.strCost + ')', caster, MagicSpells.NULL_ARGS);
 				}
 			}
 		}
@@ -295,19 +287,19 @@ public class PassiveSpell extends Spell {
 	}
 	
 	public boolean cancelDefaultAction() {
-		return cancelDefaultAction;
+		return this.cancelDefaultAction;
 	}
 	
 	public boolean cancelDefaultActionWhenCastFails() {
-		return cancelDefaultActionWhenCastFails;
+		return this.cancelDefaultActionWhenCastFails;
 	}
 	
 	public boolean ignoreCancelled() {
-		return ignoreCancelled;
+		return this.ignoreCancelled;
 	}
 	
 	public boolean requireCancelledEvent() {
-		return requireCancelledEvent;
+		return this.requireCancelledEvent;
 	}
 	
 	@Override
@@ -326,10 +318,9 @@ public class PassiveSpell extends Spell {
 	}
 	
 	public static void resetManager() {
-		if (manager != null) {
-			manager.turnOff();
-			manager = null;
-		}
+		if (manager == null) return;
+		manager.turnOff();
+		manager = null;
 	}
 
 }

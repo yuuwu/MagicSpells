@@ -25,9 +25,8 @@ public class RightClickListener implements Listener {
 			if (items.length > 0) {
 				for (CastItem item : items) {
 					Spell old = rightClickCastItems.put(item, spell);
-					if (old != null) {
-						MagicSpells.error("The spell '" + spell.getInternalName() + "' has same right-click-cast-item as '" + old.getInternalName() + "'!");
-					}
+					if (old == null) continue;
+					MagicSpells.error("The spell '" + spell.getInternalName() + "' has same right-click-cast-item as '" + old.getInternalName() + "'!");
 				}
 			}
 		}
@@ -57,12 +56,7 @@ public class RightClickListener implements Listener {
 				lastCast.put(player.getName(), System.currentTimeMillis());
 	    	}
 			
-	    	MagicSpells.scheduleDelayedTask(new Runnable() {
-	    		@Override
-	    		public void run() {
-	    	    	spell.cast(event.getPlayer());
-	    		}
-	    	}, 0);
+	    	MagicSpells.scheduleDelayedTask(() -> spell.cast(event.getPlayer()), 0);
 	    	event.setCancelled(true);
 	    }
 	}

@@ -20,7 +20,7 @@ public abstract class SpellEvent extends Event implements IMagicSpellsCompatEven
 	 * @return the spell
 	 */
 	public Spell getSpell() {
-		return spell;
+		return this.spell;
 	}
 	
 	/**
@@ -28,7 +28,7 @@ public abstract class SpellEvent extends Event implements IMagicSpellsCompatEven
 	 * @return the casting player
 	 */
 	public Player getCaster() {
-		return caster;
+		return this.caster;
 	}
 	
 }

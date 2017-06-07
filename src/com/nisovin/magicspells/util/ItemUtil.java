@@ -11,7 +11,6 @@ import com.nisovin.magicspells.util.wrappers.NBTTagCompoundWrapper;
 import com.nisovin.magicspells.util.wrappers.NBTTagListWrapper;
 import com.nisovin.magicspells.util.wrappers.NMSItemStackWrapper;
 
-
 public class ItemUtil {
 	
 	public ItemStack setUnbreakable(ItemStack item) {
@@ -42,7 +41,6 @@ public class ItemUtil {
 		}
 		return null;
 	}
-	
 	
 	/**
 	 * 
@@ -178,7 +176,6 @@ public class ItemUtil {
 		return item;
 	}
 	
-	
 	public ItemStack hideTooltipCrap(ItemStack item) {
 		if (!CraftItemStackWrapper.targetClass.isAssignableFrom(item.getClass())) {
 			try {
@@ -197,8 +194,5 @@ public class ItemUtil {
 		setTag(item, tag);
 		return item;
 	}
-
-
 	
 }
-

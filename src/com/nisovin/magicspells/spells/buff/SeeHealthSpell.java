@@ -40,19 +40,19 @@ public class SeeHealthSpell extends BuffSpell {
 	public SeeHealthSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		mode = getConfigString("mode", "always");
-		interval = getConfigInt("update-interval", 5);
+		this.mode = getConfigString("mode", "always");
+		this.interval = getConfigInt("update-interval", 5);
 		
-		if (!mode.equals("attack") && !mode.equals("always")) mode = "attack";
+		if (!this.mode.equals("attack") && !this.mode.equals("always")) this.mode = "attack";
 		
-		bars = new HashMap<>();
+		this.bars = new HashMap<>();
 	}
 	
 	@Override
 	public void initialize() {
 		super.initialize();
 		
-		if (mode.equals("attack")) {
+		if (this.mode.equals("attack")) {
 			registerEvents(new AttackListener());
 		}
 	}
@@ -60,27 +60,27 @@ public class SeeHealthSpell extends BuffSpell {
 	@Override
 	public boolean castBuff(Player player, float power, String[] args) {
 		bars.put(player.getName(), player.getInventory().getHeldItemSlot());
-		if (updater == null && mode.equals("always")) updater = new Updater();
+		if (this.updater == null && this.mode.equals("always")) this.updater = new Updater();
 		return true;
 	}
 
 	@Override
 	public boolean isActive(Player player) {
-		return bars.containsKey(player.getName());
+		return this.bars.containsKey(player.getName());
 	}
 	
 	void showHealthBar(Player player, LivingEntity entity) {
 		int slot = player.getInventory().getHeldItemSlot();
-		// get item
+		// Get item
 		ItemStack item = HandHandler.getItemInMainHand(player);
 		if (item == null || item.getType() == Material.AIR) {
 			item = new ItemStack(Material.PISTON_MOVING_PIECE, 0);
 		} else {
 			item = item.clone();
 		}
-		// get pct health
+		// Get pct health
 		double pct = (double)entity.getHealth() / (double)entity.getMaxHealth();
-		// get bar color
+		// Get bar color
 		ChatColor color = ChatColor.WHITE;
 		if (pct <= .2) {
 			color = ChatColor.DARK_RED;
@@ -90,28 +90,28 @@ public class SeeHealthSpell extends BuffSpell {
 			color = ChatColor.GOLD;
 		} else if (pct <= .8) {
 			color = ChatColor.YELLOW;
-		} else if (!colorBlind) {
+		} else if (!this.colorBlind) {
 			color = ChatColor.GREEN;
 		}
-		// get health bar string
-		StringBuilder sb = new StringBuilder(barSize + 9);
+		// Get health bar string
+		StringBuilder sb = new StringBuilder(this.barSize + 9);
 		sb.append(getRandomColor().toString());
-		int remain = (int)Math.round(barSize * pct);
+		int remain = (int)Math.round(this.barSize * pct);
 		sb.append(color.toString());
 		for (int i = 0; i < remain; i++) {
-			sb.append(symbol);
+			sb.append(this.symbol);
 		}
-		if (remain < barSize) {
+		if (remain < this.barSize) {
 			sb.append(ChatColor.DARK_GRAY.toString());
-			for (int i = 0; i < barSize - remain; i++) {
-				sb.append(symbol);
+			for (int i = 0; i < this.barSize - remain; i++) {
+				sb.append(this.symbol);
 			}
 		}
-		// set health bar string
+		// Set health bar string
 		ItemMeta meta = item.getItemMeta();
 		meta.setDisplayName(sb.toString());
 		item.setItemMeta(meta);
-		// send update
+		// Send update
 		MagicSpells.getVolatileCodeHandler().sendFakeSlotUpdate(player, slot, item);
 	}
 	
@@ -132,28 +132,28 @@ public class SeeHealthSpell extends BuffSpell {
 	
 	@Override
 	public void turnOffBuff(Player player) {
-		Integer i = bars.remove(player.getName());
+		Integer i = this.bars.remove(player.getName());
 		if (i != null) {
 			player.updateInventory();
-			if (updater != null && bars.isEmpty()) {
-				updater.stop();
-				updater = null;
+			if (this.updater != null && this.bars.isEmpty()) {
+				this.updater.stop();
+				this.updater = null;
 			}
 		}
 	}
 
 	@Override
 	protected void turnOff() {
-		for (String playerName : bars.keySet()) {
+		for (String playerName : this.bars.keySet()) {
 			Player player = Bukkit.getPlayerExact(playerName);
 			if (player == null) continue;
 			if (!player.isValid()) continue;
 			player.updateInventory();
 		}
-		bars.clear();
-		if (updater != null) {
-			updater.stop();
-			updater = null;
+		this.bars.clear();
+		if (this.updater != null) {
+			this.updater.stop();
+			this.updater = null;
 		}
 	}
 	
@@ -161,7 +161,7 @@ public class SeeHealthSpell extends BuffSpell {
 	private final Random random = new Random();
 	
 	private ChatColor getRandomColor() {
-		return ChatColor.getByChar(colors.charAt(random.nextInt(colors.length())));
+		return ChatColor.getByChar(this.colors.charAt(this.random.nextInt(this.colors.length())));
 	}
 	
 	class AttackListener implements Listener {
@@ -173,7 +173,7 @@ public class SeeHealthSpell extends BuffSpell {
 				if (damager instanceof Projectile && ((Projectile)damager).getShooter() != null) {
 					damager = (LivingEntity)((Projectile)damager).getShooter();
 				}
-				// update bar?
+				// Update bar?
 			}
 		}
 		
@@ -184,7 +184,7 @@ public class SeeHealthSpell extends BuffSpell {
 		private int taskId;
 		
 		public Updater() {
-			taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(MagicSpells.plugin, this, 0, interval);
+			this.taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(MagicSpells.plugin, this, 0, interval);
 		}
 		
 		@Override
@@ -203,7 +203,7 @@ public class SeeHealthSpell extends BuffSpell {
 		}
 		
 		public void stop() {
-			Bukkit.getScheduler().cancelTask(taskId);
+			Bukkit.getScheduler().cancelTask(this.taskId);
 		}
 		
 	}

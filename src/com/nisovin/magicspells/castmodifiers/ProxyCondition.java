@@ -23,7 +23,7 @@ public class ProxyCondition extends Condition {
 	//<addonAPITag>:<externalConditionName>
 	public ProxyCondition(String data) {
 		if (uninitialized == null) uninitialized = new ConcurrentHashMap<>();
-		if (!uninitialized.containsKey(data.toLowerCase())) uninitialized.put(data.toLowerCase(), new ArrayList<ProxyCondition>());
+		if (!uninitialized.containsKey(data.toLowerCase())) uninitialized.put(data.toLowerCase(), new ArrayList<>());
 		uninitialized.get(data.toLowerCase()).add(this);
 	}
 	
@@ -37,8 +37,7 @@ public class ProxyCondition extends Condition {
 						try {
 							c.actualCondition = clazz.newInstance();
 							if (!c.actualCondition.setVar(c.conditionVar)) c.actualCondition = null;
-						} catch (InstantiationException e) {
-						} catch (IllegalAccessException e) {
+						} catch (InstantiationException | IllegalAccessException e) {
 						}
 					}
 					keysToRemove.add(key);

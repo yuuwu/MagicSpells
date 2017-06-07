@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.bukkit.Bukkit;
+import com.nisovin.magicspells.util.TimeUtil;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,7 +23,7 @@ import com.nisovin.magicspells.Spell.SpellCastState;
 import com.nisovin.magicspells.events.SpellCastedEvent;
 import com.nisovin.magicspells.events.SpellLearnEvent;
 import com.nisovin.magicspells.events.SpellLearnEvent.LearnSource;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.IntMap;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
@@ -32,7 +32,6 @@ import com.nisovin.magicspells.util.Util;
 public class MagicXpHandler implements Listener {
 
 	MagicSpells plugin;
-	
 	
 	Map<String, String> schools = new HashMap<>();
 	Map<String, IntMap<String>> xp = new HashMap<>();
@@ -52,9 +51,7 @@ public class MagicXpHandler implements Listener {
 		if (keys != null) {
 			for (String school : keys) {
 				String name = config.getString("general.magic-schools." + school, null);
-				if (name != null) {
-					schools.put(school.toLowerCase(), name);
-				}
+				if (name != null) schools.put(school.toLowerCase(), name);
 			}
 		}
 		autoLearn = config.getBoolean("general.magic-xp-auto-learn", false);
@@ -74,18 +71,8 @@ public class MagicXpHandler implements Listener {
 				}
 			}
 		}
-		
-		for (Player player : Bukkit.getOnlinePlayers()) {
-			load(player);
-		}
-		
-		MagicSpells.scheduleRepeatingTask(new Runnable() {
-			@Override
-			public void run() {
-				saveAll();
-			}
-		}, 60 * 20, 60 * 20);
-		
+		Util.forEachPlayerOnline(this::load);
+		MagicSpells.scheduleRepeatingTask(this::saveAll, TimeUtil.TICKS_PER_MINUTE, TimeUtil.TICKS_PER_MINUTE);
 		MagicSpells.registerEvents(this);
 	}
 	
@@ -125,14 +112,15 @@ public class MagicXpHandler implements Listener {
 		final Map<String, Integer> xpGranted = event.getSpell().getXpGranted();
 		if (xpGranted == null) return;
 
-		// get player xp
+		// Get player xp
 		IntMap<String> playerXp = xp.get(event.getCaster().getName());
 		if (playerXp == null) {
 			playerXp = new IntMap<>();
 			xp.put(event.getCaster().getName(), playerXp);
 		}
 		
-		// grant xp
+		// Grant xp
+		// FIXME use entry set here
 		for (String school : xpGranted.keySet()) {
 			playerXp.increment(school.toLowerCase(), xpGranted.get(school));
 		}
@@ -141,11 +129,12 @@ public class MagicXpHandler implements Listener {
 		if (autoLearn) {
 			final Player player = event.getCaster();
 			final Spell castedSpell = event.getSpell();
+			// TODO use lambda
 			MagicSpells.scheduleDelayedTask(new Runnable() {
 				@Override
 				public void run() {
 					
-					// get spells to check if learned
+					// Get spells to check if learned
 					Set<Spell> toCheck = new HashSet<>();
 					for (String school : xpGranted.keySet()) {
 						List<Spell> list = spellSchoolRequirements.get(school.toLowerCase());
@@ -156,7 +145,7 @@ public class MagicXpHandler implements Listener {
 						}
 					}
 					
-					// check for new learned spells
+					// Check for new learned spells
 					if (!toCheck.isEmpty()) {
 						boolean learned = false;
 						Spellbook spellbook = MagicSpells.getSpellbook(player);
@@ -171,9 +160,7 @@ public class MagicXpHandler implements Listener {
 								}
 							}
 						}
-						if (learned) {
-							spellbook.save();
-						}
+						if (learned) spellbook.save();
 					}
 					
 				}
@@ -190,25 +177,22 @@ public class MagicXpHandler implements Listener {
 
 	@EventHandler
 	public void onChangeWorld(PlayerChangedWorldEvent event) {
-		if (plugin.separatePlayerSpellsPerWorld) {
-			Player player = event.getPlayer();
-			String playerName = player.getName();
-			if (dirty.contains(playerName)) {
-				save(player);
-			}
-			currentWorld.put(playerName, player.getWorld().getName());
-			load(player);
-			dirty.remove(playerName);
+		if (!plugin.separatePlayerSpellsPerWorld) return;
+		Player player = event.getPlayer();
+		String playerName = player.getName();
+		if (dirty.contains(playerName)) {
+			save(player);
 		}
+		currentWorld.put(playerName, player.getWorld().getName());
+		load(player);
+		dirty.remove(playerName);
 	}
 
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
 		String playerName = player.getName();
-		if (dirty.contains(playerName)) {
-			save(player);
-		}
+		if (dirty.contains(playerName)) save(player);
 		xp.remove(playerName);
 		dirty.remove(playerName);
 		currentWorld.remove(playerName);
@@ -227,9 +211,7 @@ public class MagicXpHandler implements Listener {
 		File file = new File(folder, uuid + ".txt");
 		if (!file.exists()) {
 			File file2 = new File(folder, player.getName().toLowerCase());
-			if (file2.exists()) {
-				file2.renameTo(file);
-			}
+			if (file2.exists()) file2.renameTo(file);
 		}
 		if (file.exists()) {
 			YamlConfiguration conf = new YamlConfiguration();

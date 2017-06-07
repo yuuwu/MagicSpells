@@ -16,10 +16,10 @@ public class BossBarManager_V1_9 implements BossBarManager {
 	
 	@Override
 	public void setPlayerBar(Player player, String title, double percent) {
-		BossBar bar = bars.get(player.getName());
+		BossBar bar = this.bars.get(player.getName());
 		if (bar == null) {
 			bar = Bukkit.createBossBar(ChatColor.translateAlternateColorCodes('&', title), BarColor.PURPLE, BarStyle.SOLID);
-			bars.put(player.getName(), bar);
+			this.bars.put(player.getName(), bar);
 		}
 		bar.setTitle(ChatColor.translateAlternateColorCodes('&', title));
 		bar.setProgress(percent);
@@ -28,16 +28,14 @@ public class BossBarManager_V1_9 implements BossBarManager {
 
 	@Override
 	public void removePlayerBar(Player player) {
-		BossBar bar = bars.remove(player.getName());
+		BossBar bar = this.bars.remove(player.getName());
 		if (bar != null) bar.removeAll();
 	}
 
 	@Override
 	public void turnOff() {
-		for (BossBar bar : bars.values()) {
-			bar.removeAll();
-		}
-		bars.clear();
+		this.bars.values().forEach(BossBar::removeAll);
+		this.bars.clear();
 	}
 
 }

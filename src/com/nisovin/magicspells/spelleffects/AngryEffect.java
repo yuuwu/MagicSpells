@@ -38,12 +38,12 @@ public class AngryEffect extends SpellEffect {
 	
 	private double range = 32;
 	
-	//these are location shifts made to the center point
+	// These are location shifts made to the center point
 	private float xOffset = 0;
 	private float yOffset = 2;
 	private float zOffset = 0;
 	
-	//these are about how far particles can be from the center
+	// These are about how far particles can be from the center
 	private float offsetX = 0;
 	private float offsetY = 0;
 	private float offsetZ = 0;
@@ -53,7 +53,7 @@ public class AngryEffect extends SpellEffect {
 	
 	@Override
 	public void loadFromString(String string) {
-		//TODO make a string loading schema
+		// TODO make a string loading schema
 	}
 
 	@Override

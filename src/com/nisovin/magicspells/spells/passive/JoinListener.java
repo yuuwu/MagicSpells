@@ -12,7 +12,7 @@ import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.spells.PassiveSpell;
 import com.nisovin.magicspells.util.OverridePriority;
 
-// no trigger variable is currently used
+// No trigger variable is currently used
 public class JoinListener extends PassiveListener {
 
 	List<PassiveSpell> spells = new ArrayList<>();
@@ -27,9 +27,7 @@ public class JoinListener extends PassiveListener {
 	public void onJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		Spellbook spellbook = MagicSpells.getSpellbook(player);
-		for (PassiveSpell spell : spells) {
-			if (spellbook.hasSpell(spell)) spell.activate(player);
-		}
+		spells.stream().filter(spellbook::hasSpell).forEachOrdered(spell -> spell.activate(player));
 	}
 
 }

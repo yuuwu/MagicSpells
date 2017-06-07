@@ -45,7 +45,7 @@ public class CrippleSpell extends TargetedSpell implements TargetedEntitySpell {
 		if (state == SpellCastState.NORMAL) {
 			TargetInfo<LivingEntity> target = getTargetedEntity(player, power);
 			if (target == null) {
-				// fail
+				// Fail
 				return noTarget(player);
 			}
 			playSpellEffects(player, target.getTarget());
@@ -76,12 +76,12 @@ public class CrippleSpell extends TargetedSpell implements TargetedEntitySpell {
 	private void cripple(LivingEntity target, float power) {
 		if (target == null) return;
 		
-		//slowness effect
+		// Slowness effect
 		if (useSlownessEffect) {
 			target.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Math.round(duration * power), strength), true);
 		}
 		
-		// portal cooldown
+		// Portal cooldown
 		// FIXME provide a version safe handling for this
 		if (applyPortalCooldown) {
 			if (target.getPortalCooldown() < (int)(portalCooldown * power)) target.setPortalCooldown((int)(portalCooldown * power));

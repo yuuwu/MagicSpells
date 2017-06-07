@@ -16,45 +16,44 @@ public class StealthSpell extends BuffSpell {
 	public StealthSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		stealthy = new HashSet<>();
+		this.stealthy = new HashSet<>();
 	}
 	
 	@Override
 	public boolean castBuff(Player player, float power, String[] args) {
-		stealthy.add(player.getName());
+		this.stealthy.add(player.getName());
 		return true;
 	}
 	
 	@EventHandler
 	public void onEntityTarget(EntityTargetEvent event) {
 		if (event.isCancelled()) return;
-		if (!stealthy.isEmpty() && event.getTarget() instanceof Player) {
-			Player player = (Player)event.getTarget();
-			if (stealthy.contains(player.getName())) {
-				if (isExpired(player)) {
-					turnOff(player);
-				} else {
-					addUse(player);
-					boolean ok = chargeUseCost(player);
-					if (ok) event.setCancelled(true);
-				}
-			}
+		if (this.stealthy.isEmpty()) return;
+		if (!(event.getTarget() instanceof Player)) return;
+		Player player = (Player)event.getTarget();
+		if (!this.stealthy.contains(player.getName())) return;
+		if (isExpired(player)) {
+			turnOff(player);
+		} else {
+			addUse(player);
+			boolean ok = chargeUseCost(player);
+			if (ok) event.setCancelled(true);
 		}
 	}
 	
 	@Override
 	public void turnOffBuff(Player player) {
-		stealthy.remove(player.getName());
+		this.stealthy.remove(player.getName());
 	}
 	
 	@Override
 	protected void turnOff() {
-		stealthy.clear();
+		this.stealthy.clear();
 	}
 
 	@Override
 	public boolean isActive(Player player) {
-		return stealthy.contains(player.getName());
+		return this.stealthy.contains(player.getName());
 	}
 	
 }

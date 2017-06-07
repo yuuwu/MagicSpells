@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.nisovin.magicspells.util.compat.EventUtil;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -63,7 +64,7 @@ public class MagicSpellsTeams extends JavaPlugin implements Listener {
 		getCommand("magicspellsteams").setExecutor(new MagicSpellsTeamsCommand(this));
 		
 		// Register events
-		getServer().getPluginManager().registerEvents(this, this);
+		EventUtil.register(this, this);
 	}
 	
 	@Override

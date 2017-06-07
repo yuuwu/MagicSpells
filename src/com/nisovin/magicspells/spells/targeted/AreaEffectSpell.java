@@ -21,7 +21,7 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.BoundingBox;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 
 public class AreaEffectSpell extends TargetedSpell implements TargetedLocationSpell {
@@ -88,8 +88,7 @@ public class AreaEffectSpell extends TargetedSpell implements TargetedLocationSp
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
-			
-			// get location for aoe
+			// Get location for aoe
 			Location loc = null;
 			if (pointBlank) {
 				loc = player.getLocation();
@@ -118,14 +117,11 @@ public class AreaEffectSpell extends TargetedSpell implements TargetedLocationSp
 			}
 			if (loc == null) return noTarget(player);
 			
-			// cast spells on nearby entities
+			// Cast spells on nearby entities
 			boolean done = doAoe(player, loc, power);
 			
-			// check if no targets
-			if (!done && failIfNoTargets) {
-				return noTarget(player);
-			}
-			
+			// Check if no targets
+			if (!done && failIfNoTargets) return noTarget(player);
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}

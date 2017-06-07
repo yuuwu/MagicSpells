@@ -3,6 +3,7 @@ package com.nisovin.magicspells.spells.targeted;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.nisovin.magicspells.util.TimeUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -141,7 +142,7 @@ public class HoldRightSpell extends TargetedSpell implements TargetedEntitySpell
 		
 		boolean isValid(Player player) {
 			if (lastCast < System.currentTimeMillis() - resetTime) return false;
-			if (maxDuration > 0 && System.currentTimeMillis() - start > maxDuration * 1000) return false;
+			if (maxDuration > 0 && System.currentTimeMillis() - start > maxDuration * TimeUtil.MILLISECONDS_PER_SECOND) return false;
 			if (maxDistance > 0) {
 				Location l = targetLocation;
 				if (targetEntity != null) l = targetEntity.getLocation();

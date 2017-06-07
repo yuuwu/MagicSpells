@@ -72,7 +72,7 @@ public class FireworksEffect extends SpellEffect {
 		flightDuration = config.getInt("flight", flightDuration);
 		
 		String[] c = config.getString("colors", "FF0000").replace(" ", "").split(",");
-		if (c != null && c.length > 0) {
+		if (c.length > 0) {
 			colors = new int[c.length];
 			for (int i = 0; i < colors.length; i++) {
 				try {
@@ -84,7 +84,7 @@ public class FireworksEffect extends SpellEffect {
 		}
 		
 		String[] fc = config.getString("fade-colors", "").replace(" ", "").split(",");
-		if (fc != null && fc.length > 0) {
+		if (fc.length > 0) {
 			fadeColors = new int[fc.length];
 			for (int i = 0; i < fadeColors.length; i++) {
 				try {

@@ -26,9 +26,6 @@ public class OffsetLocationSpell extends TargetedSpell implements TargetedLocati
 		absoluteOffset = getConfigVector("absolute-offset", "0,0,0");
 		
 		spell = new Subspell(getConfigString("spell", ""));
-		if (spell == null) {
-			MagicSpells.error("Invalid spell on OffsetLocationSpell '" + spellName + '\'');
-		}
 	}
 	
 	@Override

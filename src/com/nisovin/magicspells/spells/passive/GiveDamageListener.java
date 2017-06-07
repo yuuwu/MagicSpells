@@ -25,8 +25,8 @@ import com.nisovin.magicspells.spells.PassiveSpell;
 import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.OverridePriority;
 
-// optional trigger variable that may contain a comma separated list
-// of weapons to trigger on
+// Optional trigger variable that may contain a comma separated list
+// Of weapons to trigger on
 public class GiveDamageListener extends PassiveListener {
 
 	Set<Material> types = new HashSet<>();
@@ -41,7 +41,7 @@ public class GiveDamageListener extends PassiveListener {
 			String[] split = var.split(",");
 			for (String s : split) {
 				s = s.trim();
-				MagicMaterial mat = null;
+				MagicMaterial mat;
 				if (s.contains("|")) {
 					String[] stuff = s.split("\\|");
 					mat = MagicSpells.getItemNameResolver().resolveItem(stuff[0]);

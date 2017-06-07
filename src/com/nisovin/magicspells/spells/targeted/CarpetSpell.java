@@ -18,7 +18,7 @@ import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 
 public class CarpetSpell extends TargetedSpell implements TargetedLocationSpell {
@@ -103,7 +103,6 @@ public class CarpetSpell extends TargetedSpell implements TargetedLocationSpell 
 			for (int z = loc.getBlockZ() - rad; z <= loc.getBlockZ() + rad; z++) {
 				b = loc.getWorld().getBlockAt(x, y, z);
 				if (circle) {
-					// TODO make use of location util here
 					if (loc.getBlock().getLocation().distanceSquared(b.getLocation()) > radius * radius) continue;
 				}
 				if (b.getType().isOccluding()) {
@@ -170,7 +169,7 @@ public class CarpetSpell extends TargetedSpell implements TargetedLocationSpell 
 				if (!block.equals(b)) continue;
 				if (player == caster) continue;
 				
-				SpellTargetEvent event = new SpellTargetEvent(spellOnTouch.getSpell(), caster, player, 1f);
+				SpellTargetEvent event = new SpellTargetEvent(spellOnTouch.getSpell(), caster, player, 1F);
 				EventUtil.call(event);
 				if (!event.isCancelled()) {
 					boolean casted = spellOnTouch.castAtEntity(caster, player, event.getPower());

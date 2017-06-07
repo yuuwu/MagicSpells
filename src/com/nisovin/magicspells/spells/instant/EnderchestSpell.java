@@ -6,7 +6,7 @@ import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
 
-// advanced perm is for accessing other's echests
+// Advanced perm is for accessing other's echests
 public class EnderchestSpell extends InstantSpell {
 
 	public EnderchestSpell(MagicConfig config, String spellName) {

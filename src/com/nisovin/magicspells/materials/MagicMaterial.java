@@ -7,6 +7,8 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
+import java.util.Objects;
+
 public abstract class MagicMaterial {
 	
 	public abstract Material getMaterial();
@@ -33,7 +35,7 @@ public abstract class MagicMaterial {
 	
 	public boolean equals(MaterialData matData) {
 		MaterialData d = getMaterialData();
-		return (d != null) && d.equals(matData);
+		return Objects.equals(d, matData);
 	}
 	
 	public boolean equals(ItemStack itemStack) {

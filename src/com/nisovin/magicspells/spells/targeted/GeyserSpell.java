@@ -21,7 +21,7 @@ import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellAnimation;
 import com.nisovin.magicspells.util.TargetInfo;
@@ -63,11 +63,11 @@ public class GeyserSpell extends TargetedSpell implements TargetedEntitySpell {
 		if (state == SpellCastState.NORMAL) {
 			TargetInfo<LivingEntity> target = getTargetedEntity(player, power);
 			if (target == null) {
-				// fail -- no target
+				// Fail -- no target
 				return noTarget(player);
 			}
 			
-			// do geyser action + animation
+			// Do geyser action + animation
 			boolean ok = geyser(player, target.getTarget(), target.getPower());
 			if (!ok) return noTarget(player);
 			playSpellEffects(player, target.getTarget());
@@ -79,10 +79,9 @@ public class GeyserSpell extends TargetedSpell implements TargetedEntitySpell {
 	}
 	
 	private boolean geyser(Player caster, LivingEntity target, float power) {
-		
 		double dam = damage * power;
 		
-		// check plugins
+		// Check plugins
 		if (caster != null && target instanceof Player && checkPlugins && damage > 0) {
 			MagicSpellsEntityDamageByEntityEvent event = new MagicSpellsEntityDamageByEntityEvent(caster, target, DamageCause.ENTITY_ATTACK, dam);
 			EventUtil.call(event);
@@ -90,7 +89,7 @@ public class GeyserSpell extends TargetedSpell implements TargetedEntitySpell {
 			if (!avoidDamageModification) dam = event.getDamage();
 		}
 		
-		// do damage and launch target
+		// Do damage and launch target
 		if (dam > 0) {
 			if (ignoreArmor) {
 				double health = target.getHealth() - dam;
@@ -106,10 +105,10 @@ public class GeyserSpell extends TargetedSpell implements TargetedEntitySpell {
 			}
 		}
 		
-		// launch target into air
+		// Launch target into air
 		if (velocity > 0) target.setVelocity(new Vector(0, velocity * power, 0));
 		
-		// create animation
+		// Create animation
 		if (geyserHeight > 0) {
 			List<Entity> allNearby = target.getNearbyEntities(50, 50, 50);
 			allNearby.add(target);
@@ -164,7 +163,7 @@ public class GeyserSpell extends TargetedSpell implements TargetedEntitySpell {
 					}
 				}
 			} else {
-				int n = geyserHeight - (tick - geyserHeight) - 1; // top to bottom
+				int n = geyserHeight - (tick - geyserHeight) - 1; // Top to bottom
 				Block block = start.clone().add(0, n, 0).getBlock();
 				for (Player p : nearby) {
 					Util.restoreFakeBlockChange(p, block);

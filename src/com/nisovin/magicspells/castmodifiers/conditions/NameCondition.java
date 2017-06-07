@@ -20,18 +20,14 @@ public class NameCondition extends Condition {
 
 	@Override
 	public boolean check(Player player) {
-		if (player.getName().equalsIgnoreCase(name) || player.getDisplayName().equalsIgnoreCase(name)) {
-			return true;
-		}
-		return false;
+		return player.getName().equalsIgnoreCase(name) || player.getDisplayName().equalsIgnoreCase(name);
 	}
 
 	@Override
 	public boolean check(Player player, LivingEntity target) {
 		if (target instanceof Player) return check((Player)target);
 		String n = target.getCustomName();
-		if (n != null && !n.isEmpty()) return name.equalsIgnoreCase(n);
-		return false;
+		return n != null && !n.isEmpty() && name.equalsIgnoreCase(n);
 	}
 
 	@Override

@@ -29,8 +29,7 @@ public class ChanceCondition extends Condition {
 
 	@Override
 	public boolean check(Player player) {
-		if (random.nextInt(100) < chance) return true;
-		return false;
+		return random.nextInt(100) < chance;
 	}
 
 	@Override

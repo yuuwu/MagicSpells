@@ -6,7 +6,12 @@ import org.bukkit.configuration.ConfigurationSection;
 public class NoMagicZoneCuboid extends NoMagicZone {
 	
 	private String worldName;
-	private int minx, miny, minz, maxx, maxy, maxz;
+	private int minx;
+	private int miny;
+	private int minz;
+	private int maxx;
+	private int maxy;
+	private int maxz;
 	
 	@Override
 	public void initialize(ConfigurationSection config) {
@@ -22,36 +27,35 @@ public class NoMagicZoneCuboid extends NoMagicZone {
 		int z2 = Integer.parseInt(p2[2]);
 		
 		if (x1 < x2) {
-			minx = x1;
-			maxx = x2;
+			this.minx = x1;
+			this.maxx = x2;
 		} else {
-			minx = x2;
-			maxx = x1;
+			this.minx = x2;
+			this.maxx = x1;
 		}
 		if (y1 < y2) {
-			miny = y1;
-			maxy = y2;
+			this.miny = y1;
+			this.maxy = y2;
 		} else {
-			miny = y2;
-			maxy = y1;
+			this.miny = y2;
+			this.maxy = y1;
 		}
 		if (z1 < z2) {
-			minz = z1;
-			maxz = z2;
+			this.minz = z1;
+			this.maxz = z2;
 		} else {
-			minz = z2;
-			maxz = z1;
+			this.minz = z2;
+			this.maxz = z1;
 		}
 	}
 
 	@Override
 	public boolean inZone(Location location) {
-		if (!worldName.equalsIgnoreCase(location.getWorld().getName())) return false;
+		if (!this.worldName.equalsIgnoreCase(location.getWorld().getName())) return false;
 		int x = location.getBlockX();
 		int y = location.getBlockY();
 		int z = location.getBlockZ();
-		if (minx <= x && x <= maxx && miny <= y && y <= maxy && minz <= z && z <= maxz) return true;
-		return false;
+		return this.minx <= x && x <= this.maxx && this.miny <= y && y <= this.maxy && this.minz <= z && z <= this.maxz;
 	}
 	
 }

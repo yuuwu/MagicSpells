@@ -110,7 +110,7 @@ public final class MultiSpell extends InstantSpell {
 					}
 					Action action = this.actions.get(Math.max(0, i - 1)).getAction();
 					if (action.isSpell()) {
-						if ((this.checkIndividualCooldowns) && action.getSpell().getSpell().onCooldown(player)) {
+						if (this.checkIndividualCooldowns && action.getSpell().getSpell().onCooldown(player)) {
 							sendMessage(this.strOnCooldown, player, args);
 							return Spell.PostCastAction.ALREADY_HANDLED;
 						}
@@ -143,8 +143,7 @@ public final class MultiSpell extends InstantSpell {
 	}
 
 	@Override
-	public boolean castFromConsole(final CommandSender sender,
-			final String[] args) {
+	public boolean castFromConsole(final CommandSender sender, final String[] args) {
 		if (!this.castRandomSpellInstead) {
 			int delay = 0;
 			for (ActionChance actionChance : this.actions) {
@@ -154,12 +153,7 @@ public final class MultiSpell extends InstantSpell {
 						action.getSpell().getSpell().castFromConsole(sender, args);
 					} else {
 						final Spell spell = action.getSpell().getSpell();
-						MagicSpells.scheduleDelayedTask(new Runnable() {
-							@Override
-							public void run() {
-								spell.castFromConsole(sender, args);
-							}
-						}, delay);
+						MagicSpells.scheduleDelayedTask(() -> spell.castFromConsole(sender, args), delay);
 					}
 				} else if (action.isDelay()) {
 					delay += action.getDelay();
@@ -212,7 +206,7 @@ public final class MultiSpell extends InstantSpell {
 	private class Action {
 		
 		private Subspell spell;
-		private int delay; //also gonna serve as minimum delay
+		private int delay; // Also gonna serve as minimum delay
 		private boolean isRangedDelay = false;
 		private int maxDelay;
 

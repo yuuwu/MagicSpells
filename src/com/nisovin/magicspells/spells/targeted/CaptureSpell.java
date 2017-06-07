@@ -58,14 +58,7 @@ public class CaptureSpell extends TargetedSpell implements TargetedEntitySpell {
 	
 	@Override
 	public ValidTargetChecker getValidTargetChecker() {
-		return new ValidTargetChecker() {
-			
-			@Override
-			public boolean isValidTarget(LivingEntity entity) {
-				return (!(entity instanceof Player) && entity.getType().isSpawnable());
-			}
-			
-		};
+		return (LivingEntity entity) -> !(entity instanceof Player) && entity.getType().isSpawnable();
 	}
 	
 	boolean capture(Player caster, LivingEntity target, float power) {
@@ -96,7 +89,6 @@ public class CaptureSpell extends TargetedSpell implements TargetedEntitySpell {
 				Item dropped = target.getWorld().dropItem(target.getLocation().add(0, 1, 0), item);
 				dropped.setItemStack(item);
 				MagicSpells.getVolatileCodeHandler().setGravity(dropped, gravity);
-				
 			}
 			if (caster != null) {
 				playSpellEffects(caster, target.getLocation());

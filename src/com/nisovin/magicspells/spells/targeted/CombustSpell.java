@@ -16,7 +16,7 @@ import com.nisovin.magicspells.events.SpellApplyDamageEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
 
@@ -57,7 +57,7 @@ public class CombustSpell extends TargetedSpell implements TargetedEntitySpell {
 	
 	private boolean combust(Player player, final LivingEntity target, float power) {
 		if (target instanceof Player && checkPlugins && player != null) {
-			// call other plugins
+			// Call other plugins
 			MagicSpellsEntityDamageByEntityEvent event = new MagicSpellsEntityDamageByEntityEvent(player, target, DamageCause.ENTITY_ATTACK, 1D);
 			EventUtil.call(event);
 			if (event.isCancelled()) return false;
@@ -92,14 +92,7 @@ public class CombustSpell extends TargetedSpell implements TargetedEntitySpell {
 		
 		event.setDamage(Math.round(fireTickDamage * data.power));
 		if (preventImmunity) {
-			Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
-				
-				@Override
-				public void run() {
-					((LivingEntity)entity).setNoDamageTicks(0);
-				}
-				
-			}, 0);
+			Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, () -> ((LivingEntity)entity).setNoDamageTicks(0), 0);
 		}
 	}
 	
@@ -115,11 +108,8 @@ public class CombustSpell extends TargetedSpell implements TargetedEntitySpell {
 
 	@Override
 	public boolean castAtEntity(Player caster, LivingEntity target, float power) {
-		if (!validTargetList.canTarget(caster, target)) {
-			return false;
-		} else {
-			return combust(caster, target, power);
-		}
+		if (!validTargetList.canTarget(caster, target)) return false;
+		return combust(caster, target, power);
 	}
 
 	@Override

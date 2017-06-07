@@ -38,11 +38,8 @@ public class TimeCondition extends Condition {
 	@Override
 	public boolean check(Player player, Location location) {
 		long time = location.getWorld().getTime();
-		if (end >= start) {
-			return (start <= time && time <= end);
-		} else {
-			return (time >= start || time <= end); 
-		}
+		if (end >= start) return start <= time && time <= end;
+		return time >= start || time <= end;
 	}
 
 }

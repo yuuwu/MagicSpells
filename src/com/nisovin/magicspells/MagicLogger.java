@@ -118,25 +118,16 @@ public class MagicLogger implements Listener {
 	}
 	
 	private String getTargetName(LivingEntity target) {
-		if (target instanceof Player) {
-			return ((Player)target).getName();
-		} else {
-			return target.getType().name();
-		}
+		if (target instanceof Player) return target.getName();
+		return target.getType().name();
 	}
 	
 	private String getTeacherName(Object o) {
-		if (o == null) {
-			return "none";
-		} else if (o instanceof Player) {
-			return "player-" + ((Player)o).getName();
-		} else if (o instanceof Spell) {
-			return "spell-" + ((Spell)o).getInternalName();
-		} else if (o instanceof Block) {
-			return "block-" + formatLoc(((Block)o).getLocation());
-		} else {
-			return o.toString();
-		}
+		if (o == null) return "none";
+		if (o instanceof Player) return "player-" + ((Player)o).getName();
+		if (o instanceof Spell) return "spell-" + ((Spell)o).getInternalName();
+		if (o instanceof Block) return "block-" + formatLoc(((Block)o).getLocation());
+		return o.toString();
 	}
 	
 	private void log(String string) {

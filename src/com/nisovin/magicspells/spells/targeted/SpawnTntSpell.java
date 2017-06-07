@@ -3,6 +3,7 @@ package com.nisovin.magicspells.spells.targeted;
 import java.util.List;
 import java.util.Map;
 
+import com.nisovin.magicspells.util.TimeUtil;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -34,7 +35,7 @@ public class SpawnTntSpell extends TargetedSpell implements TargetedLocationSpel
 	public SpawnTntSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		fuse = getConfigInt("fuse", 20);
+		fuse = getConfigInt("fuse", TimeUtil.TICKS_PER_SECOND);
 		velocity = getConfigFloat("velocity", 0F);
 		upVelocity = getConfigFloat("up-velocity", velocity);
 		cancelExplosion = getConfigBoolean("cancel-explosion", false);
@@ -103,10 +104,10 @@ public class SpawnTntSpell extends TargetedSpell implements TargetedLocationSpel
 			}
 			if (preventBlockDamage) {
 				event.blockList().clear();
-				event.setYield(0f);
+				event.setYield(0F);
 			}
 			
-			//now play the block destruction effect where blocks were removed
+			// Now play the block destruction effect where blocks were removed
 			for (Block b: event.blockList()) {
 				playSpellEffects(EffectPosition.BLOCK_DESTRUCTION, b.getLocation());
 			}

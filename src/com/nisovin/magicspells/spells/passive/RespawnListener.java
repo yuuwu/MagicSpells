@@ -12,7 +12,7 @@ import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.spells.PassiveSpell;
 import com.nisovin.magicspells.util.OverridePriority;
 
-// no trigger variable is used here
+// No trigger variable is used here
 public class RespawnListener extends PassiveListener {
 
 	List<PassiveSpell> spells = new ArrayList<>();
@@ -28,15 +28,7 @@ public class RespawnListener extends PassiveListener {
 		if (spells.isEmpty()) return;
 		final Player player = event.getPlayer();
 		final Spellbook spellbook = MagicSpells.getSpellbook(player);
-		MagicSpells.scheduleDelayedTask(new Runnable() {
-			@Override
-			public void run() {
-				for (PassiveSpell spell : spells) {
-					if (!spellbook.hasSpell(spell)) continue;
-					spell.activate(player);
-				}
-			}
-		}, 1);
+		MagicSpells.scheduleDelayedTask(() -> spells.stream().filter(spellbook::hasSpell).forEachOrdered(spell -> spell.activate(player)), 1);
 	}
 
 }

@@ -23,7 +23,7 @@ public class PowerGreaterThanCondition extends Condition implements IModifier {
 
 	@Override
 	public boolean apply(ManaChangeEvent event) {
-		//no power to check
+		// No power to check
 		return false;
 	}
 
@@ -39,7 +39,7 @@ public class PowerGreaterThanCondition extends Condition implements IModifier {
 
 	@Override
 	public boolean apply(MagicSpellsGenericPlayerEvent event) {
-		//no power to check
+		// No power to check
 		return false;
 	}
 

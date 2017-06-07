@@ -15,7 +15,7 @@ import com.nisovin.magicspells.events.MagicSpellsPlayerInteractEvent;
 import com.nisovin.magicspells.events.SpellTargetLocationEvent;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 
@@ -43,18 +43,18 @@ public class TelekinesisSpell extends TargetedSpell implements TargetedLocationS
 		if (state == SpellCastState.NORMAL) {
 			Block target = getTargetedBlock(player, power);
 			if (target == null) {
-				// fail
+				// Fail
 				return noTarget(player);
 			}
 			
-			// run target event
+			// Run target event
 			SpellTargetLocationEvent event = new SpellTargetLocationEvent(this, player, target.getLocation(), power);
 			EventUtil.call(event);
 			if (event.isCancelled()) return noTarget(player);
 			
 			target = event.getTargetLocation().getBlock();
 			
-			// run effect
+			// Run effect
 			boolean activated = activate(player, target);
 			if (!activated) return noTarget(player);
 			
@@ -80,12 +80,10 @@ public class TelekinesisSpell extends TargetedSpell implements TargetedLocationS
 	}
 	
 	private boolean checkPlugins(Player caster, Block target) {
-		if (checkPlugins) {
-			MagicSpellsPlayerInteractEvent event = new MagicSpellsPlayerInteractEvent(caster, Action.RIGHT_CLICK_BLOCK, HandHandler.getItemInMainHand(caster), target, BlockFace.SELF);
-			EventUtil.call(event);
-			if (event.useInteractedBlock() == Result.DENY) return false;
-		}
-		return true;
+		if (!checkPlugins) return true;
+		MagicSpellsPlayerInteractEvent event = new MagicSpellsPlayerInteractEvent(caster, Action.RIGHT_CLICK_BLOCK, HandHandler.getItemInMainHand(caster), target, BlockFace.SELF);
+		EventUtil.call(event);
+		return event.useInteractedBlock() != Result.DENY;
 	}
 
 	@Override

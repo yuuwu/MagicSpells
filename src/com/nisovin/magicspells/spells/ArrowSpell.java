@@ -27,7 +27,7 @@ import com.nisovin.magicspells.Subspell;
 import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.events.SpellTargetEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellReagents;
@@ -147,23 +147,23 @@ public class ArrowSpell extends Spell {
 	public ArrowSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		bowName = ChatColor.translateAlternateColorCodes('&', getConfigString("bow-name", null));
-		spellNameOnHitEntity = getConfigString("spell-on-hit-entity", null);
-		spellNameOnHitGround = getConfigString("spell-on-hit-ground", null);
-		useBowForce = getConfigBoolean("use-bow-force", true);
+		this.bowName = ChatColor.translateAlternateColorCodes('&', getConfigString("bow-name", null));
+		this.spellNameOnHitEntity = getConfigString("spell-on-hit-entity", null);
+		this.spellNameOnHitGround = getConfigString("spell-on-hit-ground", null);
+		this.useBowForce = getConfigBoolean("use-bow-force", true);
 	}
 	
 	@Override
 	public void initialize() {
 		super.initialize();
 		
-		if (spellNameOnHitEntity != null && !spellNameOnHitEntity.isEmpty()) {
-			Subspell spell = new Subspell(spellNameOnHitEntity);
-			if (spell.process() && spell.isTargetedEntitySpell()) spellOnHitEntity = spell;
+		if (this.spellNameOnHitEntity != null && !this.spellNameOnHitEntity.isEmpty()) {
+			Subspell spell = new Subspell(this.spellNameOnHitEntity);
+			if (spell.process() && spell.isTargetedEntitySpell()) this.spellOnHitEntity = spell;
 		}
-		if (spellNameOnHitGround != null && !spellNameOnHitGround.isEmpty()) {
-			Subspell spell = new Subspell(spellNameOnHitGround);
-			if (spell.process() && spell.isTargetedLocationSpell()) spellOnHitGround = spell;
+		if (this.spellNameOnHitGround != null && !this.spellNameOnHitGround.isEmpty()) {
+			Subspell spell = new Subspell(this.spellNameOnHitGround);
+			if (spell.process() && spell.isTargetedLocationSpell()) this.spellOnHitGround = spell;
 		}
 		
 		if (handler == null) handler = new ArrowSpellHandler();
@@ -173,10 +173,9 @@ public class ArrowSpell extends Spell {
 	@Override
 	public void turnOff() {
 		super.turnOff();
-		if (handler != null) {
-			handler.turnOff();
-			handler = null;
-		}
+		if (handler == null) return;
+		handler.turnOff();
+		handler = null;
 	}
 
 	@Override
@@ -203,7 +202,7 @@ public class ArrowSpell extends Spell {
 		}
 		
 		public void registerSpell(ArrowSpell spell) {
-			spells.put(spell.bowName, spell);
+			this.spells.put(spell.bowName, spell);
 		}
 		
 		@EventHandler
@@ -213,23 +212,24 @@ public class ArrowSpell extends Spell {
 			ItemStack inHand = HandHandler.getItemInMainHand(shooter);
 			if (inHand == null || inHand.getType() != Material.BOW) return;
 			String bowName = inHand.getItemMeta().getDisplayName();
-			if (bowName != null && !bowName.isEmpty()) {
-				Spellbook spellbook = MagicSpells.getSpellbook(shooter);
-				ArrowSpell spell = spells.get(bowName);
-				if (spell != null && spellbook.hasSpell(spell) && spellbook.canCast(spell)) {
-					SpellReagents reagents = spell.reagents.clone();
-					SpellCastEvent castEvent = new SpellCastEvent(spell, shooter, SpellCastState.NORMAL, useBowForce ? event.getForce() : 1.0F, null, cooldown, reagents, castTime);
-					EventUtil.call(castEvent);
-					Entity projectile = event.getProjectile();
-					if (!castEvent.isCancelled()) {
-						projectile.setMetadata(METADATA_KEY, new FixedMetadataValue(MagicSpells.plugin, new ArrowSpellData(spell, castEvent.getPower(), castEvent.getReagents())));
-						spell.playSpellEffects(EffectPosition.PROJECTILE, event.getProjectile());
-						spell.playTrackingLinePatterns(EffectPosition.DYNAMIC_CASTER_PROJECTILE_LINE, shooter.getLocation(), projectile.getLocation(), shooter, projectile);
-					} else {
-						event.setCancelled(true);
-						projectile.remove();
-					}
-				}
+			if (bowName == null) return;
+			if (bowName.isEmpty()) return;
+			Spellbook spellbook = MagicSpells.getSpellbook(shooter);
+			ArrowSpell spell = this.spells.get(bowName);
+			if (spell == null) return;
+			if (!spellbook.hasSpell(spell)) return;
+			if (!spellbook.canCast(spell)) return;
+			SpellReagents reagents = spell.reagents.clone();
+			SpellCastEvent castEvent = new SpellCastEvent(spell, shooter, SpellCastState.NORMAL, useBowForce ? event.getForce() : 1.0F, null, cooldown, reagents, castTime);
+			EventUtil.call(castEvent);
+			Entity projectile = event.getProjectile();
+			if (!castEvent.isCancelled()) {
+				projectile.setMetadata(METADATA_KEY, new FixedMetadataValue(MagicSpells.plugin, new ArrowSpellData(spell, castEvent.getPower(), castEvent.getReagents())));
+				spell.playSpellEffects(EffectPosition.PROJECTILE, event.getProjectile());
+				spell.playTrackingLinePatterns(EffectPosition.DYNAMIC_CASTER_PROJECTILE_LINE, shooter.getLocation(), projectile.getLocation(), shooter, projectile);
+			} else {
+				event.setCancelled(true);
+				projectile.remove();
 			}
 		}
 
@@ -293,7 +293,7 @@ public class ArrowSpell extends Spell {
 		
 		public void turnOff() {
 			unregisterEvents(this);
-			spells.clear();
+			this.spells.clear();
 		}
 		
 	}

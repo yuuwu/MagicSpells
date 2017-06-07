@@ -1,6 +1,7 @@
 package com.nisovin.magicspells.spells.buff;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -25,13 +26,13 @@ public class LightwalkSpell extends BuffSpell {
 
 	public LightwalkSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
-				
-		lightwalkers = new HashMap<>();
+		
+		this.lightwalkers = new HashMap<>();
 	}
 
 	@Override
 	public boolean castBuff(Player player, float power, String[] args) {
-		lightwalkers.put(player.getName(), null);
+		this.lightwalkers.put(player.getName(), null);
 		return true;
 	}
 	
@@ -39,16 +40,16 @@ public class LightwalkSpell extends BuffSpell {
 	public void onPlayerMove(PlayerMoveEvent event) {
 		Player p = event.getPlayer();
 		String playerName = p.getName();
-		if (lightwalkers.containsKey(playerName)) {
-			Block oldBlock = lightwalkers.get(playerName);
+		if (this.lightwalkers.containsKey(playerName)) {
+			Block oldBlock = this.lightwalkers.get(playerName);
 			Block newBlock = p.getLocation().getBlock().getRelative(BlockFace.DOWN);
-			if ((oldBlock == null || !oldBlock.equals(newBlock)) && allowedType(newBlock.getType()) && newBlock.getType() != Material.AIR) {
+			if (!Objects.equals(oldBlock, newBlock) && allowedType(newBlock.getType()) && newBlock.getType() != Material.AIR) {
 				if (isExpired(p)) {
 					turnOff(p);
 				} else {
 					if (oldBlock != null) Util.restoreFakeBlockChange(p, oldBlock);
 					Util.sendFakeBlockChange(p, newBlock, mat);
-					lightwalkers.put(playerName, newBlock);
+					this.lightwalkers.put(playerName, newBlock);
 					addUse(p);
 					chargeUseCost(p);
 				}
@@ -77,28 +78,28 @@ public class LightwalkSpell extends BuffSpell {
 	
 	@Override
 	public void turnOffBuff(Player player) {
-		Block b = lightwalkers.remove(player.getName());
+		Block b = this.lightwalkers.remove(player.getName());
 		if (b == null) return;
 		Util.restoreFakeBlockChange(player, b);
 	}
 
 	@Override
 	protected void turnOff() {
-		for (String s : lightwalkers.keySet()) {
+		for (String s : this.lightwalkers.keySet()) {
 			Player p = PlayerNameUtils.getPlayer(s);
 			if (p == null) continue;
 			
-			Block b = lightwalkers.get(s);
+			Block b = this.lightwalkers.get(s);
 			if (b == null) continue;
 			
 			Util.restoreFakeBlockChange(p, b);
 		}
-		lightwalkers.clear();
+		this.lightwalkers.clear();
 	}
 
 	@Override
 	public boolean isActive(Player player) {
-		return lightwalkers.containsKey(player.getName());
+		return this.lightwalkers.containsKey(player.getName());
 	}
 
 }

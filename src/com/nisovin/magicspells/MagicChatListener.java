@@ -16,20 +16,13 @@ public class MagicChatListener implements Listener {
 	
 	@EventHandler(ignoreCancelled=true)
 	public void onPlayerChat(final AsyncPlayerChatEvent event) {
-		MagicSpells.scheduleDelayedTask(new Runnable() {
-			@Override
-			public void run() {
-				handleIncantation(event.getPlayer(), event.getMessage());
-			}
-		}, 0);
+		MagicSpells.scheduleDelayedTask(() -> handleIncantation(event.getPlayer(), event.getMessage()), 0);
 	}
 	
 	@EventHandler(ignoreCancelled=true)
 	public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
 		boolean casted = handleIncantation(event.getPlayer(), event.getMessage());
-		if (casted) {
-			event.setCancelled(true);
-		}
+		if (casted) event.setCancelled(true);
 	}
 	
 	boolean handleIncantation(Player player, String message) {

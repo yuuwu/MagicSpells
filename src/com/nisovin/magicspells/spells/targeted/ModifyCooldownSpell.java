@@ -26,8 +26,8 @@ public class ModifyCooldownSpell extends TargetedSpell implements TargetedEntity
 		super(config, spellName);
 		
 		spellNames = getConfigStringList("spells", null);
-		seconds = getConfigFloat("seconds", 1f);
-		multiplier = getConfigFloat("multiplier", 0f);
+		seconds = getConfigFloat("seconds", 1F);
+		multiplier = getConfigFloat("multiplier", 0F);
 	}
 	
 	@Override
@@ -58,7 +58,7 @@ public class ModifyCooldownSpell extends TargetedSpell implements TargetedEntity
 	
 	void modifyCooldowns(Player player, float power) {
 		float sec = seconds * power;
-		float mult = multiplier * (1f / power);
+		float mult = multiplier * (1F / power);
 		
 		for (Spell spell : spells) {
 			float cd = spell.getCooldown(player);

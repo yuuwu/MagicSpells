@@ -34,10 +34,9 @@ public class OnBlockCondition extends Condition {
 				mats.add(mat);
 			}
 			return true;
-		} else {
-			mat = MagicSpells.getItemNameResolver().resolveBlock(var);
-			return (mat != null);
 		}
+		mat = MagicSpells.getItemNameResolver().resolveBlock(var);
+		return mat != null;
 	}
 
 	@Override
@@ -48,16 +47,13 @@ public class OnBlockCondition extends Condition {
 	@Override
 	public boolean check(Player player, LivingEntity target) {
 		Block block = target.getLocation().subtract(0, 1, 0).getBlock();
-		if (mat != null) {
-			return mat.equals(block);
-		} else {
-			if (types.contains(block.getType())) {
-				for (MagicMaterial m : mats) {
-					if (m.equals(block)) return true;
-				}
+		if (mat != null) return mat.equals(block);
+		if (types.contains(block.getType())) {
+			for (MagicMaterial m : mats) {
+				if (m.equals(block)) return true;
 			}
-			return false;
 		}
+		return false;
 	}
 	
 	@Override

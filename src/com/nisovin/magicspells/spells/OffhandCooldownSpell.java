@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.nisovin.magicspells.util.TimeUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -24,20 +25,20 @@ public class OffhandCooldownSpell extends InstantSpell {
 	public OffhandCooldownSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		spellToCheck = getConfigString("spell", "");
+		this.spellToCheck = getConfigString("spell", "");
 		if (isConfigString("item")) {
-			item = Util.getItemStackFromString(getConfigString("item", "stone"));
+			this.item = Util.getItemStackFromString(getConfigString("item", "stone"));
 		} else if (isConfigSection("item")) {
-			item = Util.getItemStackFromConfig(getConfigSection("item"));
+			this.item = Util.getItemStackFromConfig(getConfigSection("item"));
 		}
 	}
 	
 	@Override
 	public void initialize() {
 		super.initialize();
-		spell = MagicSpells.getSpellByInternalName(spellToCheck);
+		this.spell = MagicSpells.getSpellByInternalName(this.spellToCheck);
 		
-		if (spell != null && item != null) {
+		if (this.spell != null && this.item != null) {
 			MagicSpells.scheduleRepeatingTask(new Runnable() {
 				@Override
 				public void run() {
@@ -61,14 +62,14 @@ public class OffhandCooldownSpell extends InstantSpell {
 						}
 					}
 				}
-			}, 20, 20);
+			}, TimeUtil.TICKS_PER_SECOND, TimeUtil.TICKS_PER_SECOND);
 		}
 	}
 
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
-			players.add(player);
+			this.players.add(player);
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}

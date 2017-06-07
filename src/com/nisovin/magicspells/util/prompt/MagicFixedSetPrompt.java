@@ -34,7 +34,7 @@ public class MagicFixedSetPrompt extends FixedSetPrompt {
 	}
 	
 	public static MagicFixedSetPrompt fromConfigSection(ConfigurationSection section) {
-		// get the options
+		// Get the options
 		List<String> options = section.getStringList("options");
 		if (options == null || options.isEmpty()) return null;
 		MagicFixedSetPrompt ret = new MagicFixedSetPrompt(options);

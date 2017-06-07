@@ -22,23 +22,25 @@ public class TargetListener implements Listener {
 	
 	@EventHandler(priority=EventPriority.LOW, ignoreCancelled=true)
 	public void onSpellTarget(SpellTargetEvent event) {
-		ModifierSet m = event.getSpell().getTargetModifiers();
-			for (IModifier premod: preModifierHooks) {
-				if (!premod.apply(event)) return;
-			}
-			if (m != null) m.apply(event);
-			for (IModifier postMod: postModifierHooks) {
-				if (!postMod.apply(event)) return;
-			}
-	}
-	
-	@EventHandler(priority=EventPriority.LOW, ignoreCancelled=true)
-	public void onSpellTarget(SpellTargetLocationEvent event) {
-		ModifierSet m = event.getSpell().getTargetModifiers();
 		for (IModifier premod: preModifierHooks) {
 			if (!premod.apply(event)) return;
 		}
 		
+		ModifierSet m = event.getSpell().getTargetModifiers();
+		if (m != null) m.apply(event);
+		
+		for (IModifier postMod: postModifierHooks) {
+			if (!postMod.apply(event)) return;
+		}
+	}
+	
+	@EventHandler(priority=EventPriority.LOW, ignoreCancelled=true)
+	public void onSpellTarget(SpellTargetLocationEvent event) {
+		for (IModifier premod: preModifierHooks) {
+			if (!premod.apply(event)) return;
+		}
+		
+		ModifierSet m = event.getSpell().getTargetModifiers();
 		if (m != null) m.apply(event);
 		
 		for (IModifier postMod: postModifierHooks) {

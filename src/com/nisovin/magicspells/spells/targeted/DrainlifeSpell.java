@@ -17,7 +17,7 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.SpellDamageSpell;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.ExperienceUtils;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellAnimation;
@@ -44,7 +44,7 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 	public static final int MAX_FOOD_LEVEL = 20;
 	public static final int MIN_FOOD_LEVEL = 0;
 	
-	public static final double MIN_HEALTH = 0d;
+	public static final double MIN_HEALTH = 0D;
 	
 	private String takeType;
 	private double takeAmt;
@@ -86,7 +86,7 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 		if (state == SpellCastState.NORMAL) {
 			TargetInfo<LivingEntity> target = getTargetedEntity(player, power);
 			if (target == null) {
-				// fail: no target
+				// Fail: no target
 				return noTarget(player);
 			}
 			boolean drained = drain(player, target.getTarget(), target.getPower());
@@ -106,7 +106,7 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 		double take = takeAmt * power;
 		double give = giveAmt * power;
 		
-		// drain from target
+		// Drain from target
 		if (takeType.equals(STR_GIVE_TAKE_TYPE_HEALTH)) {
 			if (target instanceof Player && checkPlugins) {
 				MagicSpellsEntityDamageByEntityEvent event = new MagicSpellsEntityDamageByEntityEvent(player, target, DamageCause.ENTITY_ATTACK, take);
@@ -153,7 +153,7 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 			}
 		}
 		
-		// give to caster
+		// Give to caster
 		if (instant) {
 			giveToCaster(player, give);
 			playSpellEffects(player, target);
@@ -161,7 +161,7 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 			playSpellEffects(EffectPosition.TARGET, target);
 		}		
 		
-		// show animation
+		// Show animation
 		if (showSpellEffect) new DrainlifeAnim(target.getLocation(), player, give, power);
 		
 		return true;

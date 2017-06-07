@@ -1,5 +1,6 @@
 package com.nisovin.magicspells.spelleffects;
 
+import com.nisovin.magicspells.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
@@ -89,10 +90,10 @@ public class BroadcastEffect extends SpellEffect {
 	@Override
 	public Runnable playEffectEntity(Entity entity) {
 		if (targeted) {
-			if (entity != null && entity instanceof Player) MagicSpells.sendMessage(message, (Player)entity, null);
+			if (entity instanceof Player) MagicSpells.sendMessage(message, (Player)entity, null);
 		} else {
 			String msg = message;
-			if (entity != null && entity instanceof Player) msg = msg.replace("%a", ((Player)entity).getDisplayName()).replace("%t", ((Player)entity).getDisplayName()).replace("%n", ((Player)entity).getName());
+			if (entity instanceof Player) msg = msg.replace("%a", ((Player)entity).getDisplayName()).replace("%t", ((Player)entity).getDisplayName()).replace("%n", entity.getName());
 			broadcast(entity == null ? null : entity.getLocation(), msg);
 		}
 		return null;
@@ -100,9 +101,7 @@ public class BroadcastEffect extends SpellEffect {
 	
 	private void broadcast(Location location, String message) {
 		if (range <= 0) {
-			for (Player player : Bukkit.getOnlinePlayers()) {
-				MagicSpells.sendMessage(message, player, null);
-			}
+			Util.forEachPlayerOnline(player -> MagicSpells.sendMessage(message, player, null));
 		} else if (location != null) {
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				if (player.getWorld().equals(location.getWorld()) && player.getLocation().distanceSquared(location) <= rangeSq) MagicSpells.sendMessage(message, player, null);

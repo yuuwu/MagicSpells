@@ -41,7 +41,7 @@ public class CastItem {
 			this.data = 0;
 		} else {
 			this.type = item.getTypeId();
-			if (this.type == 0 || MagicSpells.ignoreCastItemDurability(type)) {
+			if (this.type == 0 || MagicSpells.ignoreCastItemDurability(this.type)) {
 				this.data = 0;
 			} else {
 				this.data = item.getDurability();
@@ -57,7 +57,7 @@ public class CastItem {
 				}
 			}
 			if (this.type > 0 && !MagicSpells.ignoreCastItemEnchants()) {
-				enchants = getEnchants(item);
+				this.enchants = getEnchants(item);
 			}
 		}
 	}
@@ -69,9 +69,9 @@ public class CastItem {
 			s = temp[0];
 			if (!MagicSpells.ignoreCastItemNames() && temp.length > 1) {
 				if (MagicSpells.ignoreCastItemNameColors()) {
-					name = ChatColor.stripColor(temp[1]);
+					this.name = ChatColor.stripColor(temp[1]);
 				} else {
-					name = temp[1];
+					this.name = temp[1];
 				}
 			}
 		}
@@ -80,18 +80,18 @@ public class CastItem {
 			s = temp[0];
 			if (!MagicSpells.ignoreCastItemEnchants()) {
 				String[] split = temp[1].split("\\+");
-				enchants = new int[split.length][];
-				for (int i = 0; i < enchants.length; i++) {
+				this.enchants = new int[split.length][];
+				for (int i = 0; i < this.enchants.length; i++) {
 					String[] enchantData = split[i].split("-");
-					enchants[i] = new int[] { Integer.parseInt(enchantData[0]), Integer.parseInt(enchantData[1]) };
+					this.enchants[i] = new int[] { Integer.parseInt(enchantData[0]), Integer.parseInt(enchantData[1]) };
 				}
-				sortEnchants(enchants);
+				sortEnchants(this.enchants);
 			}
 		}
 		if (s.contains(":")) {
 			String[] split = s.split(":");
 			this.type = Integer.parseInt(split[0]);
-			if (MagicSpells.ignoreCastItemDurability(type)) {
+			if (MagicSpells.ignoreCastItemDurability(this.type)) {
 				this.data = 0;
 			} else {
 				this.data = Short.parseShort(split[1]);
@@ -115,8 +115,8 @@ public class CastItem {
 	}
 	
 	public boolean equals(ItemStack i) {
-		if (i.getTypeId() != type) return false;
-		if (i.getDurability() != data) return false;
+		if (i.getTypeId() != this.type) return false;
+		if (i.getDurability() != this.data) return false;
 		if (!(MagicSpells.ignoreCastItemNames() || namesEqual(i))) return false;
 		return MagicSpells.ignoreCastItemEnchants() || compareEnchants(this.enchants, getEnchants(i));
 	}
@@ -133,9 +133,9 @@ public class CastItem {
 				}
 			}
 		}
-		if (n == null && (name == null || name.isEmpty())) return true;
-		if (n == null || name == null) return false;
-		return n.equals(name);
+		if (n == null && (this.name == null || this.name.isEmpty())) return true;
+		if (n == null || this.name == null) return false;
+		return n.equals(this.name);
 	}
 	
 	@Override
@@ -153,24 +153,24 @@ public class CastItem {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		if (data == 0) {
-			builder.append(type);
+		if (this.data == 0) {
+			builder.append(this.type);
 		} else {
-			builder.append(type);
+			builder.append(this.type);
 			builder.append(':');
-			builder.append(data);
+			builder.append(this.data);
 		}
-		if (enchants != null) {
+		if (this.enchants != null) {
 			builder.append(';');
-			for (int i = 0; i < enchants.length; i++) {
-				builder.append(enchants[i][0]);
+			for (int i = 0; i < this.enchants.length; i++) {
+				builder.append(this.enchants[i][0]);
 				builder.append('-');
-				builder.append(enchants[i][1]);
-				if (i < enchants.length - 1) builder.append('+');
+				builder.append(this.enchants[i][1]);
+				if (i < this.enchants.length - 1) builder.append('+');
 			}
 		}
 		String s = builder.toString();
-		if (name != null && !name.isEmpty()) s += '|' + name;
+		if (this.name != null && !this.name.isEmpty()) s += '|' + this.name;
 		return s;
 	}
 	
@@ -181,8 +181,8 @@ public class CastItem {
 		if (enchantments.isEmpty()) return null;
 		int[][] enchants = new int[enchantments.size()][];
 		int i = 0;
-		for (Enchantment e : enchantments.keySet()) {
-			enchants[i] = new int[] { MagicValues.Enchantments.getId(e), enchantments.get(e) };
+		for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
+			enchants[i] = new int[] { MagicValues.Enchantments.getId(entry.getKey()), entry.getValue() };
 			i++;
 		}
 		sortEnchants(enchants);
@@ -193,16 +193,7 @@ public class CastItem {
 		Arrays.sort(enchants, enchantComparator);
 	}
 	
-	private static final Comparator<int[]> enchantComparator = new Comparator<int[]>() {
-
-		@Override
-		public int compare(int[] o1, int[] o2) {
-			if (o1[0] > o2[0]) return 1;
-			if (o1[0] < o2[0]) return -1;
-			return 0;
-		}
-		
-	};
+	private static final Comparator<int[]> enchantComparator = (int[] o1, int[] o2) -> o1[0] - o2[0];
 	
 	private boolean compareEnchants(int[][] o1, int[][] o2) {
 		if (o1 == null && o2 == null) return true;

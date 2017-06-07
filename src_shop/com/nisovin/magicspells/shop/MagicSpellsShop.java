@@ -2,6 +2,7 @@ package com.nisovin.magicspells.shop;
 
 import java.io.File;
 
+import com.nisovin.magicspells.util.compat.EventUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -48,7 +49,7 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 		load();
 		
 		// Register events
-		getServer().getPluginManager().registerEvents(this, this);
+		EventUtil.register(this, this);
 	}
 	
 	public void load() {
@@ -118,7 +119,7 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 		
 		// Check for currency
 		if (!currency.has(player, cost.amount, cost.currency)) {
-			MagicSpells.sendMessage(MagicSpells.formatMessage(strCantAfford, "%s", spellName, "%c", cost+""), player, null);
+			MagicSpells.sendMessage(MagicSpells.formatMessage(strCantAfford, "%s", spellName, "%c", cost + ""), player, null);
 			return;
 		}
 		
@@ -133,7 +134,7 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 		currency.remove(player, cost.amount, cost.currency);
 		
 		// Success!
-		MagicSpells.sendMessage(MagicSpells.formatMessage(strPurchased, "%s", spellName, "%c", cost+""), player, null);
+		MagicSpells.sendMessage(MagicSpells.formatMessage(strPurchased, "%s", spellName, "%c", cost + ""), player, null);
 	}
 	
 	private void processScrollShopSign(Player player, String[] lines) {
@@ -175,7 +176,7 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 		}
 		
 		// Done!
-		MagicSpells.sendMessage(MagicSpells.formatMessage(strPurchasedScroll, "%s", spellName, "%c", cost+"", "%u", uses+""), player, null);
+		MagicSpells.sendMessage(MagicSpells.formatMessage(strPurchasedScroll, "%s", spellName, "%c", cost + "", "%u", uses + ""), player, null);
 	}
 	
 	private Cost getCost(String line) {
@@ -210,8 +211,9 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 		}
 		
 		// Check permission
-		if (!event.getPlayer().hasPermission("magicspells.createsignshop")) {
-			event.getPlayer().sendMessage(ChatColor.RED + "You do not have permission to do that.");
+		Player player = event.getPlayer();
+		if (!player.hasPermission("magicspells.createsignshop")) {
+			player.sendMessage(ChatColor.RED + "You do not have permission to do that.");
 			event.setCancelled(true);
 			return;
 		}
@@ -220,29 +222,30 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 		String spellName = lines[1];
 		Spell spell = MagicSpells.getSpellByInGameName(spellName);
 		if (spell == null) {
-			event.getPlayer().sendMessage(ChatColor.RED + "A spell by that name does not exist.");
+			player.sendMessage(ChatColor.RED + "A spell by that name does not exist.");
 			event.setCancelled(true);
 			return;
 		}
 		
 		// Check permissions
-		Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());
+		Spellbook spellbook = MagicSpells.getSpellbook(player);
 		if (requireKnownSpell && !spellbook.hasSpell(spell)) {
-			event.getPlayer().sendMessage(ChatColor.RED + "You do not have permission to do that.");
+			player.sendMessage(ChatColor.RED + "You do not have permission to do that.");
 			event.setCancelled(true);
 			return;
 		}
 		if (requireTeachPerm && !spellbook.canTeach(spell)) {
-			event.getPlayer().sendMessage(ChatColor.RED + "You do not have permission to do that.");
+			player.sendMessage(ChatColor.RED + "You do not have permission to do that.");
 			event.setCancelled(true);
 			return;
 		}
 		
 		// Get cost
-		Cost cost = getCost(lines[isSpellShop?2:3]);
+		Cost cost = getCost(lines[isSpellShop ? 2 : 3]);
 		
-		event.getPlayer().sendMessage((isSpellShop?"Spell":"Scroll") + " shop created: " + 
-				spellName + (isSpellShop ? "" : '(' + lines[2] + ')') +
+		// FIXME this should probably just use string.format
+		String shopType = isSpellShop ? "Spell" : "Scroll";
+		player.sendMessage(shopType + " shop created: " + spellName + (isSpellShop ? "" : '(' + lines[2] + ')') +
 				" for " + cost.amount + ' ' + (currency.isValidCurrency(cost.currency) ? cost.currency : "currency") + '.');
 		
 	}
@@ -256,7 +259,7 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 		
 		Sign sign = (Sign)event.getBlock().getState();
 		String line = sign.getLine(0);
-		if ((line.equals(firstLine) || line.equals(firstLineScroll)) && !event.getPlayer().hasPermission("magicspells.createsignshop")) {
+		if (isShopSignFirstLine(line) && !event.getPlayer().hasPermission("magicspells.createsignshop")) {
 			event.setCancelled(true);
 		}
 	}
@@ -267,8 +270,14 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 	}
 	
 	private class Cost {
+		
 		double amount = 0;
 		String currency = null;
+		
+	}
+	
+	private boolean isShopSignFirstLine(String firstLine) {
+		return firstLine.equals(this.firstLine) || firstLine.equals(this.firstLineScroll);
 	}
 
 }

@@ -19,9 +19,9 @@ import com.nisovin.magicspells.spells.PassiveSpell;
 import com.nisovin.magicspells.util.OverridePriority;
 import com.nisovin.magicspells.util.Util;
 
-// trigger variable is optional
-// if not specified, it triggers in all forms
-// the trigger variable may be a comma separated list containing any of the following
+// Trigger variable is optional
+// If not specified, it triggers in all forms
+// The trigger variable may be a comma separated list containing any of the following
 // ground, fish, fail, <entity type>
 public class FishListener extends PassiveListener {
 

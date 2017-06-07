@@ -16,7 +16,7 @@ import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 
 public class PhaseSpell extends InstantSpell {
-
+	
 	private int range;
 	private int maxDistance;
 	private List<MagicMaterial> allowedPassThru;
@@ -25,25 +25,25 @@ public class PhaseSpell extends InstantSpell {
 	public PhaseSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		range = getConfigInt("range", 5);
-		maxDistance = getConfigInt("max-distance", 15);
+		this.range = getConfigInt("range", 5);
+		this.maxDistance = getConfigInt("max-distance", 15);
 		List<String> passThru = getConfigStringList("allowed-pass-thru-blocks", null);
-		allowedPassThru = new ArrayList<>();
+		this.allowedPassThru = new ArrayList<>();
 		for (String s : passThru) {
 			MagicMaterial m = MagicSpells.getItemNameResolver().resolveBlock(s);
 			if (m == null) continue;
-			allowedPassThru.add(m);
+			this.allowedPassThru.add(m);
 		}
-		strCantPhase = getConfigString("str-cant-phase", "Unable to find place to phase to.");
+		this.strCantPhase = getConfigString("str-cant-phase", "Unable to find place to phase to.");
 		
-		if (allowedPassThru.isEmpty()) allowedPassThru = null;
+		if (this.allowedPassThru.isEmpty()) this.allowedPassThru = null;
 	}
 
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			int range = Math.round(this.range * power);
-			int distance = Math.round(maxDistance * power);
+			int distance = Math.round(this.maxDistance * power);
 			
 			BlockIterator iter;
 			try {
@@ -57,7 +57,7 @@ public class PhaseSpell extends InstantSpell {
 			int i = 0;
 			Location location = null;
 			
-			// get wall block
+			// Get wall block
 			while (start == null && i++ < range << 1 && iter.hasNext()) {
 				Block b = iter.next();
 				if (b.getType() == Material.AIR) continue;
@@ -67,23 +67,23 @@ public class PhaseSpell extends InstantSpell {
 				}
 			}
 			
-			// find landing spot
+			// Find landing spot
 			if (start != null) {
-				if (allowedPassThru != null && !canPassThru(start)) {
-					// can't phase through the block
+				if (this.allowedPassThru != null && !canPassThru(start)) {
+					// Can't phase through the block
 					location = null;
 				} else {
-					// get next empty space
+					// Get next empty space
 					Block end = null;
 					while (end == null && i++ < distance << 1 && iter.hasNext()) {
 						Block b = iter.next();
-						// check for suitable landing location
+						// Check for suitable landing location
 						if (b.getType() == Material.AIR && b.getRelative(0, 1, 0).getType() == Material.AIR && player.getLocation().distanceSquared(b.getLocation()) < distance * distance) {
 							location = b.getLocation();
 							break;
 						}
-						// check for invalid pass-thru block
-						if (allowedPassThru != null && !canPassThru(b)) {
+						// Check for invalid pass-thru block
+						if (this.allowedPassThru != null && !canPassThru(b)) {
 							location = null;
 							break;
 						}
@@ -91,15 +91,15 @@ public class PhaseSpell extends InstantSpell {
 				}
 			}
 			
-			// check for fail
+			// Check for fail
 			if (location == null) {
-				// no location to tp to
-				sendMessage(strCantPhase, player, args);
+				// No location to tp to
+				sendMessage(this.strCantPhase, player, args);
 				//fizzle(player);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			
-			// teleport
+			// Teleport
 			location.setX(location.getX() + .5);
 			location.setZ(location.getZ() + .5);
 			location.setPitch(player.getLocation().getPitch());
@@ -112,8 +112,8 @@ public class PhaseSpell extends InstantSpell {
 	}
 	
 	private boolean canPassThru(Block block) {
-		if (allowedPassThru == null) return true;
-		for (MagicMaterial mat : allowedPassThru) {
+		if (this.allowedPassThru == null) return true;
+		for (MagicMaterial mat : this.allowedPassThru) {
 			if (mat.equals(block)) return true;
 		}
 		return false;

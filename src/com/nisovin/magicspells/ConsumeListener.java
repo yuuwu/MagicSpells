@@ -23,13 +23,11 @@ public class ConsumeListener implements Listener {
 		this.plugin = plugin;
 		for (Spell spell : plugin.spells.values()) {
 			CastItem[] items = spell.getConsumeCastItems();
-			if (items.length > 0) {
-				for (CastItem item : items) {
-					Spell old = consumeCastItems.put(item, spell);
-					if (old != null) {
-						MagicSpells.error("The spell '" + spell.getInternalName() + "' has same consume-cast-item as '" + old.getInternalName() + "'!");
-					}
-				}
+			if (items.length <= 0) continue;
+			for (CastItem item : items) {
+				Spell old = consumeCastItems.put(item, spell);
+				if (old == null) continue;
+				MagicSpells.error("The spell '" + spell.getInternalName() + "' has same consume-cast-item as '" + old.getInternalName() + "'!");
 			}
 		}
 	}
@@ -46,17 +44,12 @@ public class ConsumeListener implements Listener {
 
 	    Player player = event.getPlayer();
 		Long lastCastTime = lastCast.get(player.getName());
-		if (lastCastTime != null && lastCastTime + plugin.globalCooldown > System.currentTimeMillis()) {
-			return;
-		} else {
-			lastCast.put(player.getName(), System.currentTimeMillis());
-		}
+		if (lastCastTime != null && lastCastTime + plugin.globalCooldown > System.currentTimeMillis()) return;
+		lastCast.put(player.getName(), System.currentTimeMillis());
 	    
 	    if (MagicSpells.getSpellbook(player).canCast(spell)) {
 	    	SpellCastResult result = spell.cast(event.getPlayer());
-	    	if (result.state != SpellCastState.NORMAL) {
-	    		event.setCancelled(true);
-	    	}
+	    	if (result.state != SpellCastState.NORMAL) event.setCancelled(true);
 	    }
 	}
 	

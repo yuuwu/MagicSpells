@@ -30,18 +30,18 @@ public class UnbindSpell extends CommandSpell {
 	public UnbindSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		strUsage = getConfigString("str-usage", "You must specify a spell name.");
-		strNoSpell = getConfigString("str-no-spell", "You do not know a spell by that name.");
-		strCantBindSpell = getConfigString("str-cant-bind-spell", "That spell cannot be bound to an item.");
-		strNotBound = getConfigString("str-not-bound", "That spell is not bound to that item.");
-		strCantUnbind = getConfigString("str-cant-unbind", "You cannot unbind this spell");
-		allowedSpellsNames = getConfigStringList("allowed-spells", null);
-		if (allowedSpellsNames != null && !allowedSpellsNames.isEmpty()) {
-			allowedSpells = new HashSet<>();
-			for (String n: allowedSpellsNames) {
+		this.strUsage = getConfigString("str-usage", "You must specify a spell name.");
+		this.strNoSpell = getConfigString("str-no-spell", "You do not know a spell by that name.");
+		this.strCantBindSpell = getConfigString("str-cant-bind-spell", "That spell cannot be bound to an item.");
+		this.strNotBound = getConfigString("str-not-bound", "That spell is not bound to that item.");
+		this.strCantUnbind = getConfigString("str-cant-unbind", "You cannot unbind this spell");
+		this.allowedSpellsNames = getConfigStringList("allowed-spells", null);
+		if (this.allowedSpellsNames != null && !this.allowedSpellsNames.isEmpty()) {
+			this.allowedSpells = new HashSet<>();
+			for (String n: this.allowedSpellsNames) {
 				Spell s = MagicSpells.getSpellByInternalName(n);
 				if (s != null) {
-					allowedSpells.add(s);
+					this.allowedSpells.add(s);
 				} else {
 					MagicSpells.plugin.getLogger().warning("Invalid spell defined: " + n);
 				}
@@ -53,37 +53,37 @@ public class UnbindSpell extends CommandSpell {
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			if (args == null || args.length == 0) {
-				sendMessage(strUsage, player, args);
+				sendMessage(this.strUsage, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			
 			Spell spell = MagicSpells.getSpellByInGameName(Util.arrayJoin(args, ' '));
 			Spellbook spellbook = MagicSpells.getSpellbook(player);
 			if (spell == null || spellbook == null) {
-				// fail - no such spell, or no spellbook
-				sendMessage(strNoSpell, player, args);
+				// Fail - no such spell, or no spellbook
+				sendMessage(this.strNoSpell, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			} else if (!spellbook.hasSpell(spell)) {
-				// fail - doesn't know spell
-				sendMessage(strNoSpell, player, args);
+				// Fail - doesn't know spell
+				sendMessage(this.strNoSpell, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			} else if (!spell.canCastWithItem()) {
-				// fail - spell can't be bound
-				sendMessage(strCantBindSpell, player, args);
+				// Fail - spell can't be bound
+				sendMessage(this.strCantBindSpell, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			} else {
-				if (allowedSpells != null && !allowedSpells.contains(spell)) {
-					sendMessage(strCantUnbind, player, args);
+				if (this.allowedSpells != null && !this.allowedSpells.contains(spell)) {
+					sendMessage(this.strCantUnbind, player, args);
 					return PostCastAction.ALREADY_HANDLED;
 				}
 				CastItem item = new CastItem(HandHandler.getItemInMainHand(player));
 				boolean removed = spellbook.removeCastItem(spell, item);
 				if (!removed) {
-					sendMessage(strNotBound, player, args);
+					sendMessage(this.strNotBound, player, args);
 					return PostCastAction.ALREADY_HANDLED;
 				}
 				spellbook.save();
-				sendMessage(formatMessage(strCastSelf, "%s", spell.getName()), player, args);
+				sendMessage(formatMessage(this.strCastSelf, "%s", spell.getName()), player, args);
 				playSpellEffects(EffectPosition.CASTER, player);
 				return PostCastAction.NO_MESSAGES;
 			}
@@ -94,10 +94,10 @@ public class UnbindSpell extends CommandSpell {
 	@Override
 	public List<String> tabComplete(CommandSender sender, String partial) {
 		if (sender instanceof Player) {
-			// only one arg
+			// Only one arg
 			if (partial.contains(" ")) return null;
 			
-			// tab complete spellname from spellbook
+			// Tab complete spellname from spellbook
 			return tabCompleteSpellName(sender, partial);
 		}
 		return null;

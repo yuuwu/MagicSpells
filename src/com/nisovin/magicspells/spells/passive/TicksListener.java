@@ -23,11 +23,11 @@ import com.nisovin.magicspells.events.SpellLearnEvent;
 import com.nisovin.magicspells.spells.PassiveSpell;
 import com.nisovin.magicspells.util.OverridePriority;
 
-// trigger argument is required
-// must be an integer.
-// the value reflects how often the trigger runs
-// where the value of the trigger variable is x
-// the trigger will activate every x ticks
+// Trigger argument is required
+// Must be an integer.
+// The value reflects how often the trigger runs
+// Where the value of the trigger variable is x
+// The trigger will activate every x ticks
 public class TicksListener extends PassiveListener {
 
 	Map<Integer, Ticker> tickers = new HashMap<>();
@@ -43,7 +43,7 @@ public class TicksListener extends PassiveListener {
 			}
 			ticker.add(spell);
 		} catch (NumberFormatException e) {
-			//no op
+			// No op
 		}
 	}
 	
@@ -122,7 +122,7 @@ public class TicksListener extends PassiveListener {
 			ticker.remove(event.getForgetter(), (PassiveSpell)spell);
 		}
 	}
-
+	
 	class Ticker implements Runnable {
 
 		int taskId;
@@ -135,7 +135,7 @@ public class TicksListener extends PassiveListener {
 		}
 		
 		public void add(PassiveSpell spell) {
-			spells.put(spell, new HashSet<Player>());
+			spells.put(spell, new HashSet<>());
 		}
 		
 		public void add(Player player) {

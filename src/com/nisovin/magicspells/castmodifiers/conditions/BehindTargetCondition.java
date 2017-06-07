@@ -24,7 +24,7 @@ public class BehindTargetCondition extends Condition {
 		float targetFaceAngle = target.getLocation().getDirection().angle(new Vector(0, 0, 0));
 		float diffAngle = target.getLocation().toVector().subtract(player.getLocation().toVector()).angle(new Vector(0, 0, 0));
 		float diff = Math.abs(targetFaceAngle - diffAngle);
-		return (diff >= 160 && diff <= 200);
+		return diff >= 160 && diff <= 200;
 	}
 
 	@Override

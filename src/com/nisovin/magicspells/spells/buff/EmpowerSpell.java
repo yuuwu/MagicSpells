@@ -46,6 +46,7 @@ public class EmpowerSpell extends BuffSpell {
 	
 	@Override
 	public boolean recastBuff(Player player, float power, String[] args) {
+		// TODO flatten this
 		if (maxPower > extraPower) {
 			String playerName = player.getName();
 			float p = empowered.get(playerName);

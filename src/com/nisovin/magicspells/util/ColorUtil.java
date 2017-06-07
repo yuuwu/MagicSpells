@@ -24,7 +24,9 @@ public class ColorUtil {
 		String[] splits = value.split(",");
 		if (splits.length < 3) return null;
 		
-		int red, green, blue;
+		int red;
+		int green;
+		int blue;
 		try {
 			red = Integer.parseInt(splits[0]);
 			green = Integer.parseInt(splits[1]);

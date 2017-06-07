@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
+import com.nisovin.magicspells.util.TimeUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
@@ -78,16 +79,16 @@ public class VariableManager implements Listener {
 				boolean expBar = section.getBoolean(var + ".exp-bar", false);
 				variable.init(def, min, max, perm, objective, bossBar, expBar);
 				variable.loadExtraData(varSection);
-				variables.put(var, variable);
+				this.variables.put(var, variable);
 				MagicSpells.debug(2, "Loaded variable " + var);
 			}
-			MagicSpells.debug(1, variables.size() + " variables loaded!");
+			MagicSpells.debug(1, this.variables.size() + " variables loaded!");
 		}
-		if (!variables.isEmpty()) MagicSpells.registerEvents(this);
+		if (!this.variables.isEmpty()) MagicSpells.registerEvents(this);
 		
-		// load vars
-		folder = new File(plugin.getDataFolder(), "vars");
-		if (!folder.exists()) folder.mkdir();
+		// Load vars
+		this.folder = new File(plugin.getDataFolder(), "vars");
+		if (!this.folder.exists()) this.folder.mkdir();
 		loadGlobalVars();
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			loadPlayerVars(player.getName(), Util.getUniqueId(player));
@@ -95,7 +96,7 @@ public class VariableManager implements Listener {
 			loadExpBar(player);
 		}
 		
-		variables.putAll(SpecialVariables.getSpecialVariables());
+		this.variables.putAll(SpecialVariables.getSpecialVariables());
 		
 		// Start save task
 		MagicSpells.scheduleRepeatingTask(new Runnable() {
@@ -106,11 +107,11 @@ public class VariableManager implements Listener {
 				if (!dirtyPlayerVars.isEmpty()) saveAllPlayerVars();
 			}
 			
-		}, 60 * 20, 60 * 20);
+		}, TimeUtil.TICKS_PER_MINUTE, TimeUtil.TICKS_PER_MINUTE);
 	}
 	
 	public int count() {
-		return variables.size();
+		return this.variables.size();
 	}
 	
 	public void modify(String variable, Player player, double amount) {
@@ -118,7 +119,7 @@ public class VariableManager implements Listener {
 	}
 	
 	public void modify(String variable, String player, double amount) {
-		Variable var = variables.get(variable);
+		Variable var = this.variables.get(variable);
 		if (var != null) {
 			boolean changed = var.modify(player, amount);
 			if (changed) {
@@ -126,9 +127,9 @@ public class VariableManager implements Listener {
 				updateExpBar(var, player);
 				if (var.permanent) {
 					if (var instanceof PlayerVariable) {
-						dirtyPlayerVars.add(player);
+						this.dirtyPlayerVars.add(player);
 					} else if (var instanceof GlobalVariable) {
-						dirtyGlobalVars = true;
+						this.dirtyGlobalVars = true;
 					}
 				}
 			}
@@ -148,16 +149,16 @@ public class VariableManager implements Listener {
 	}
 	
 	public void set(String variable, String player, double amount) {
-		Variable var = variables.get(variable);
+		Variable var = this.variables.get(variable);
 		if (var != null) {
 			var.set(player, amount);
 			updateBossBar(var, player);
 			updateExpBar(var, player);
 			if (var.permanent) {
 				if (var instanceof PlayerVariable) {
-					dirtyPlayerVars.add(player);
+					this.dirtyPlayerVars.add(player);
 				} else if (var instanceof GlobalVariable) {
-					dirtyGlobalVars = true;
+					this.dirtyGlobalVars = true;
 				}
 			}
 		}
@@ -168,60 +169,60 @@ public class VariableManager implements Listener {
 	}
 	
 	public void set(String variable, String player, String amount) {
-		Variable var = variables.get(variable);
+		Variable var = this.variables.get(variable);
 		if (var != null) {
 			var.parseAndSet(player, amount);
 			updateBossBar(var, player);
 			updateExpBar(var, player);
 			if (var.permanent) {
 				if (var instanceof PlayerVariable) {
-					dirtyPlayerVars.add(player);
+					this.dirtyPlayerVars.add(player);
 				} else if (var instanceof GlobalVariable) {
-					dirtyGlobalVars = true;
+					this.dirtyGlobalVars = true;
 				}
 			}
 		}
 	}
 	
 	public double getValue(String variable, Player player) {
-		Variable var = variables.get(variable);
+		Variable var = this.variables.get(variable);
 		if (var != null) return var.getValue(player);
 		return 0D;
 	}
 	
 	public String getStringValue(String variable, Player player) {
-		Variable var = variables.get(variable);
+		Variable var = this.variables.get(variable);
 		if (var != null) return var.getStringValue(player);
 		return 0D + "";
 	}
 	
 	public double getValue(String variable, String player) {
-		Variable var = variables.get(variable);
+		Variable var = this.variables.get(variable);
 		if (var != null) return var.getValue(player);
 		return 0;
 	}
 	
 	public String getStringValue(String variable, String player) {
-		Variable var = variables.get(variable);
+		Variable var = this.variables.get(variable);
 		if (var != null) return var.getStringValue(player);
 		return 0D + "";
 	}
 	
 	public Variable getVariable(String name) {
-		return variables.get(name);
+		return this.variables.get(name);
 	}
 	
 	public void reset(String variable, Player player) {
-		Variable var = variables.get(variable);
+		Variable var = this.variables.get(variable);
 		if (var != null) {
 			var.reset(player);
 			updateBossBar(var, player != null ? player.getName() : "");
 			updateExpBar(var, player != null ? player.getName() : "");
 			if (var.permanent) {
 				if (var instanceof PlayerVariable) {
-					dirtyPlayerVars.add(player != null ? player.getName() : "");
+					this.dirtyPlayerVars.add(player != null ? player.getName() : "");
 				} else if (var instanceof GlobalVariable) {
-					dirtyGlobalVars = true;
+					this.dirtyGlobalVars = true;
 				}
 			}
 		}
@@ -231,9 +232,7 @@ public class VariableManager implements Listener {
 		if (var.bossBar != null) {
 			if (var instanceof GlobalVariable) {
 				double pct = var.getValue("") / var.maxValue;
-				for (Player p : Bukkit.getOnlinePlayers()) {
-					MagicSpells.getBossBarManager().setPlayerBar(p, var.bossBar, pct);
-				}
+				Util.forEachPlayerOnline(p -> MagicSpells.getBossBarManager().setPlayerBar(p, var.bossBar, pct));
 			} else if (var instanceof PlayerVariable) {
 				Player p = PlayerNameUtils.getPlayerExact(player);
 				if (p != null) MagicSpells.getBossBarManager().setPlayerBar(p, var.bossBar, var.getValue(p) / var.maxValue);
@@ -245,9 +244,7 @@ public class VariableManager implements Listener {
 		if (var.expBar) {
 			if (var instanceof GlobalVariable) {
 				double pct = var.getValue("") / var.maxValue;
-				for (Player p : Bukkit.getOnlinePlayers()) {
-					MagicSpells.getVolatileCodeHandler().setExperienceBar(p, (int)var.getValue(""), (float)pct);
-				}
+				Util.forEachPlayerOnline(p -> MagicSpells.getVolatileCodeHandler().setExperienceBar(p, (int)var.getValue(""), (float)pct));
 			} else if (var instanceof PlayerVariable) {
 				Player p = PlayerNameUtils.getPlayerExact(player);
 				if (p != null) MagicSpells.getVolatileCodeHandler().setExperienceBar(p, (int)var.getValue(p), (float)(var.getValue(p) / var.maxValue));
@@ -256,7 +253,7 @@ public class VariableManager implements Listener {
 	}
 	
 	private void loadGlobalVars() {
-		File file = new File(folder, "GLOBAL.txt");
+		File file = new File(this.folder, "GLOBAL.txt");
 		if (file.exists()) {
 			try {
 				Scanner scanner = new Scanner(file);
@@ -264,7 +261,7 @@ public class VariableManager implements Listener {
 					String line = scanner.nextLine().trim();
 					if (!line.isEmpty()) {
 						String[] s = line.split("=", 2);
-						Variable variable = variables.get(s[0]);
+						Variable variable = this.variables.get(s[0]);
 						if (variable != null && variable instanceof GlobalVariable && variable.permanent) variable.parseAndSet("", s[1]);
 					}
 				}
@@ -273,9 +270,9 @@ public class VariableManager implements Listener {
 				MagicSpells.error("ERROR LOADING GLOBAL VARIABLES");
 				MagicSpells.handleException(e);
 			}
-		}	
+		}
 		
-		dirtyGlobalVars = false;
+		this.dirtyGlobalVars = false;
 	}
 	
 	void saveGlobalVars() {
@@ -283,8 +280,8 @@ public class VariableManager implements Listener {
 		if (file.exists()) file.delete();
 		
 		List<String> lines = new ArrayList<>();
-		for (String variableName : variables.keySet()) {
-			Variable variable = variables.get(variableName);
+		for (String variableName : this.variables.keySet()) {
+			Variable variable = this.variables.get(variableName);
 			if (variable instanceof GlobalVariable && variable.permanent) {
 				String val = variable.getStringValue("");
 				if (!val.equals(variable.defaultStringValue)) lines.add(variableName + '=' + Util.flattenLineBreaks(val));
@@ -313,14 +310,13 @@ public class VariableManager implements Listener {
 				}
 			}
 		}
-		
-		dirtyGlobalVars = false;
+		this.dirtyGlobalVars = false;
 	}
 	
 	private void loadPlayerVars(String player, String uniqueId) {
-		File file = new File(folder, "PLAYER_" + uniqueId + ".txt");
+		File file = new File(this.folder, "PLAYER_" + uniqueId + ".txt");
 		if (!file.exists()) {
-			File file2 = new File(folder, "PLAYER_" + player + ".txt");
+			File file2 = new File(this.folder, "PLAYER_" + player + ".txt");
 			if (file2.exists()) file2.renameTo(file);
 		}
 		if (file.exists()) {
@@ -341,18 +337,18 @@ public class VariableManager implements Listener {
 			}
 		}
 		
-		dirtyPlayerVars.remove(player);
+		this.dirtyPlayerVars.remove(player);
 	}
 	
 	private void savePlayerVars(String player, String uniqueId) {
-		File file = new File(folder, "PLAYER_" + player + ".txt");
+		File file = new File(this.folder, "PLAYER_" + player + ".txt");
 		if (file.exists()) file.delete();
-		file = new File(folder, "PLAYER_" + uniqueId + ".txt");
+		file = new File(this.folder, "PLAYER_" + uniqueId + ".txt");
 		if (file.exists()) file.delete();
 		
 		List<String> lines = new ArrayList<>();
-		for (String variableName : variables.keySet()) {
-			Variable variable = variables.get(variableName);
+		for (String variableName : this.variables.keySet()) {
+			Variable variable = this.variables.get(variableName);
 			if (variable instanceof PlayerVariable && variable.permanent) {
 				String val = variable.getStringValue(player);
 				if (!val.equals(variable.defaultStringValue)) lines.add(variableName + '=' + Util.flattenLineBreaks(val));
@@ -382,18 +378,18 @@ public class VariableManager implements Listener {
 			}
 		}
 		
-		dirtyPlayerVars.remove(player);
+		this.dirtyPlayerVars.remove(player);
 	}
 	
 	void saveAllPlayerVars() {
-		for (String playerName : new HashSet<>(dirtyPlayerVars)) {
+		for (String playerName : new HashSet<>(this.dirtyPlayerVars)) {
 			String uid = Util.getUniqueId(playerName);
 			if (uid != null) savePlayerVars(playerName, uid);
 		}
 	}
 	
 	private void loadBossBar(Player player) {
-		for (Variable var : variables.values()) {
+		for (Variable var : this.variables.values()) {
 			if (var.bossBar != null) {
 				MagicSpells.getBossBarManager().setPlayerBar(player, var.bossBar, var.getValue(player) / var.maxValue);
 				break;
@@ -402,7 +398,7 @@ public class VariableManager implements Listener {
 	}
 	
 	void loadExpBar(Player player) {
-		for (Variable var : variables.values()) {
+		for (Variable var : this.variables.values()) {
 			if (var.expBar) {
 				MagicSpells.getVolatileCodeHandler().setExperienceBar(player, (int)var.getValue(player), (float)(var.getValue(player) / var.maxValue));
 				break;
@@ -411,9 +407,9 @@ public class VariableManager implements Listener {
 	}
 	
 	public void disable() {
-		if (dirtyGlobalVars) saveGlobalVars();
-		if (!dirtyPlayerVars.isEmpty()) saveAllPlayerVars();
-		variables.clear();
+		if (this.dirtyGlobalVars) saveGlobalVars();
+		if (!this.dirtyPlayerVars.isEmpty()) saveAllPlayerVars();
+		this.variables.clear();
 	}
 	
 	@EventHandler
@@ -421,19 +417,12 @@ public class VariableManager implements Listener {
 		final Player player = event.getPlayer();
 		loadPlayerVars(player.getName(), Util.getUniqueId(player));
 		loadBossBar(player);
-		MagicSpells.scheduleDelayedTask(new Runnable() {
-			
-			@Override
-			public void run() {
-				loadExpBar(player);
-			}
-			
-		}, 10);
+		MagicSpells.scheduleDelayedTask(() -> loadExpBar(player), 10);
 	}
 	
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
-		if (dirtyPlayerVars.contains(event.getPlayer().getName())) savePlayerVars(event.getPlayer().getName(), Util.getUniqueId(event.getPlayer()));
+		if (this.dirtyPlayerVars.contains(event.getPlayer().getName())) savePlayerVars(event.getPlayer().getName(), Util.getUniqueId(event.getPlayer()));
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

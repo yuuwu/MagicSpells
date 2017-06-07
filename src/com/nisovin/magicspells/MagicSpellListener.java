@@ -10,16 +10,15 @@ import com.nisovin.magicspells.events.SpellTargetEvent;
 class MagicSpellListener implements Listener {
 		
 	public MagicSpellListener(MagicSpells plugin) {
-		//no op
+		// No op
 	}
 
 	@EventHandler
 	public void onSpellTarget(SpellTargetEvent event) {
-		// check if target has notarget permission
+		// Check if target has notarget permission
 		LivingEntity target = event.getTarget();
-		if (target instanceof Player) {
-			if (target.hasPermission("magicspells.notarget")) event.setCancelled(true);
-		}
+		if (!(target instanceof Player)) return;
+		if (Perm.NOTARGET.has(target)) event.setCancelled(true);
 	}
 	
 }

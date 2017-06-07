@@ -102,7 +102,7 @@ public class SilenceSpell extends TargetedSpell implements TargetedEntitySpell {
 			TargetInfo<Player> target = getTargetedPlayer(player, power);
 			if (target == null) return noTarget(player);
 			
-			// silence player
+			// Silence player
 			silence(target.getTarget(), target.getPower());
 			playSpellEffects(player, target.getTarget());
 			
@@ -113,12 +113,12 @@ public class SilenceSpell extends TargetedSpell implements TargetedEntitySpell {
 	}
 	
 	private void silence(Player player, float power) {
-		// handle previous silence
+		// Handle previous silence
 		String playerName = player.getName();
 		Unsilencer u = silenced.get(playerName);
 		if (u != null) u.cancel();
 		
-		// silence now
+		// Silence now
 		silenced.put(playerName, new Unsilencer(player, Math.round(duration * power)));
 	}
 
@@ -147,12 +147,8 @@ public class SilenceSpell extends TargetedSpell implements TargetedEntitySpell {
 			if (!(allowedSpells == null || !allowedSpells.contains(event.getSpell()))) return;
 			if (!(disallowedSpells == null || disallowedSpells.contains(event.getSpell()))) return;
 			event.setCancelled(true);
-			Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
-				@Override
-				public void run() {
-					sendMessage(strSilenced, event.getCaster(), event.getSpellArgs());
-				}
-			});
+			
+			Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, () -> sendMessage(strSilenced, event.getCaster(), event.getSpellArgs()));
 		}
 		
 	}

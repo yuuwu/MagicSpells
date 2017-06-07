@@ -14,12 +14,12 @@ public class VolatileCodeProtocolLib extends VolatileCodeDisabled {
 	protected ProtocolManager protocolManager;
 
 	public VolatileCodeProtocolLib() {
-		protocolManager = ProtocolLibrary.getProtocolManager();
+		this.protocolManager = ProtocolLibrary.getProtocolManager();
 	}
 
 	@Override
 	public void playSound(Location location, String sound, float volume, float pitch) {
-		PacketContainer packet = protocolManager.createPacket(62);
+		PacketContainer packet = this.protocolManager.createPacket(62);
 		packet.getStrings().write(0, sound);
 		int p = (int)(pitch * 63D);
 		if (p < 0) p = 0;
@@ -30,13 +30,13 @@ public class VolatileCodeProtocolLib extends VolatileCodeDisabled {
 			.write(2, (int)(location.getZ() * 8D))
 			.write(3, p);
 		packet.getFloat().write(0, volume);
-		protocolManager.broadcastServerPacket(packet, location, volume > 1.0 ? (int)(16 * volume) : 16);
+		this.protocolManager.broadcastServerPacket(packet, location, volume > 1.0 ? (int)(16 * volume) : 16);
 	}
 
 	@Override
 	public void playSound(Player player, String sound, float volume, float pitch) {
 		Location loc = player.getLocation();
-		PacketContainer packet = protocolManager.createPacket(62);
+		PacketContainer packet = this.protocolManager.createPacket(62);
 		packet.getStrings().write(0, sound);
 		int p = (int)(pitch * 63D);
 		if (p < 0) p = 0;
@@ -48,7 +48,7 @@ public class VolatileCodeProtocolLib extends VolatileCodeDisabled {
 			.write(3, p);
 		packet.getFloat().write(0, volume);
 		try {
-			protocolManager.sendServerPacket(player, packet);
+			this.protocolManager.sendServerPacket(player, packet);
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		}
@@ -56,7 +56,7 @@ public class VolatileCodeProtocolLib extends VolatileCodeDisabled {
 	
 	@Override
 	public void playParticleEffect(Location location, String name, float spreadHoriz, float spreadVert, float speed, int count, int radius, float yOffset) {
-		PacketContainer packet = protocolManager.createPacket(63);
+		PacketContainer packet = this.protocolManager.createPacket(63);
 		packet.getStrings().write(0, name);
 		packet.getFloat()
 			.write(0, (float)location.getX())
@@ -68,7 +68,7 @@ public class VolatileCodeProtocolLib extends VolatileCodeDisabled {
 			.write(6, speed);
 		packet.getIntegers().write(0, count);
 		packet.getBooleans().write(0, radius > 200);
-		protocolManager.broadcastServerPacket(packet, location, radius);
+		this.protocolManager.broadcastServerPacket(packet, location, radius);
 	}
 	
 }

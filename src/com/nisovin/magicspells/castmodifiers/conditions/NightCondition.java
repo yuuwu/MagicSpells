@@ -16,7 +16,7 @@ public class NightCondition extends Condition {
 	@Override
 	public boolean check(Player player) {
 		long time = player.getWorld().getTime();
-		return (time > 13000 && time < 23000);
+		return time > 13000 && time < 23000;
 	}
 	
 	@Override
@@ -27,7 +27,7 @@ public class NightCondition extends Condition {
 	@Override
 	public boolean check(Player player, Location location) {
 		long time = location.getWorld().getTime();
-		return (time > 13000 && time < 23000);
+		return time > 13000 && time < 23000;
 	}
 	
 }

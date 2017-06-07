@@ -21,7 +21,7 @@ import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.spells.PassiveSpell;
 import com.nisovin.magicspells.util.OverridePriority;
 
-// no trigger variable currently used
+// No trigger variable currently used
 public class BuffListener extends PassiveListener {
 
 	List<PassiveSpell> spells = new ArrayList<>();
@@ -64,24 +64,14 @@ public class BuffListener extends PassiveListener {
 	@OverridePriority
 	@EventHandler
 	public void onPlayerRespawn(final PlayerRespawnEvent event) {
-		Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
-			@Override
-			public void run() {
-				on(event.getPlayer());
-			}
-		}, 1);
+		Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, () -> on(event.getPlayer()), 1);
 	}
 	
 	@OverridePriority
 	@EventHandler
 	public void onSpellLearn(final SpellLearnEvent event) {
 		if (event.getSpell() instanceof PassiveSpell && spells.contains(event.getSpell())) {
-			Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
-				@Override
-				public void run() {
-					on(event.getLearner(), (PassiveSpell)event.getSpell());
-				}
-			}, 1);
+			Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, () -> on(event.getLearner(), (PassiveSpell)event.getSpell()), 1);
 		}
 	}
 	

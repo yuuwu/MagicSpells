@@ -24,48 +24,48 @@ public class RandomSpell extends InstantSpell {
 	public RandomSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		pseudoRandom = getConfigBoolean("pseudo-random", true);
-		checkIndividualCooldowns = getConfigBoolean("check-individual-cooldowns", true);
-		checkIndividualModifiers = getConfigBoolean("check-individual-modifiers", true);
-		rawOptions = getConfigStringList("spells", null);
+		this.pseudoRandom = getConfigBoolean("pseudo-random", true);
+		this.checkIndividualCooldowns = getConfigBoolean("check-individual-cooldowns", true);
+		this.checkIndividualModifiers = getConfigBoolean("check-individual-modifiers", true);
+		this.rawOptions = getConfigStringList("spells", null);
 	}
 	
 	@Override
 	public void initialize() {
 		super.initialize();
 		
-		options = new RandomOptionSet();
-		for (String s : rawOptions) {
+		this.options = new RandomOptionSet();
+		for (String s : this.rawOptions) {
 			String[] split = s.split(" ");
 			Subspell spell = new Subspell(split[0]);
 			int weight = 0;
 			try {
 				weight = Integer.parseInt(split[1]);
 			} catch (NumberFormatException e) {
-				//no op
+				// No op
 			}
 			if (spell.process() && weight > 0) {
-				options.add(new SpellOption(spell, weight));
+				this.options.add(new SpellOption(spell, weight));
 			} else {
-				MagicSpells.error("Invalid spell option on RandomSpell '" + internalName + "': " + s);
+				MagicSpells.error("Invalid spell option on RandomSpell '" + this.internalName + "': " + s);
 			}
 		}
 		
-		rawOptions.clear();
-		rawOptions = null;
+		this.rawOptions.clear();
+		this.rawOptions = null;
 	}
 
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
-			RandomOptionSet set = options;
-			if (checkIndividualCooldowns || checkIndividualModifiers) {
+			RandomOptionSet set = this.options;
+			if (this.checkIndividualCooldowns || this.checkIndividualModifiers) {
 				set = new RandomOptionSet();
-				for (SpellOption o : options.randomOptionSetOptions) {
-					if (checkIndividualCooldowns) {
+				for (SpellOption o : this.options.randomOptionSetOptions) {
+					if (this.checkIndividualCooldowns) {
 						if (o.spell.getSpell().onCooldown(player)) continue;
 					}
-					if (checkIndividualModifiers) {
+					if (this.checkIndividualModifiers) {
 						ModifierSet modifiers = o.spell.getSpell().getModifiers();
 						if (modifiers != null && !modifiers.check(player)) continue;
 					}
@@ -102,16 +102,16 @@ public class RandomSpell extends InstantSpell {
 		int total = 0;
 		
 		public void add(SpellOption option) {
-			randomOptionSetOptions.add(option);
-			total += option.adjustedWeight;
+			this.randomOptionSetOptions.add(option);
+			this.total += option.adjustedWeight;
 		}
 		
 		public Subspell choose() {
-			int r = random.nextInt(total);
+			int r = random.nextInt(this.total);
 			int x = 0;
 			Subspell spell = null;
-			for (int i = 0; i < randomOptionSetOptions.size(); i++) {
-				SpellOption o = randomOptionSetOptions.get(i);
+			for (int i = 0; i < this.randomOptionSetOptions.size(); i++) {
+				SpellOption o = this.randomOptionSetOptions.get(i);
 				if (r < o.adjustedWeight + x && spell == null) {
 					spell = o.spell;
 					if (pseudoRandom) {

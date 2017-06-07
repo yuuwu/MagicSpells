@@ -44,7 +44,7 @@ public class SpellCastEvent extends SpellEvent implements Cancellable {
 	 * @return the spell cast state
 	 */
 	public Spell.SpellCastState getSpellCastState() {
-		return state;
+		return this.state;
 	}
 	
 	/**
@@ -61,7 +61,7 @@ public class SpellCastEvent extends SpellEvent implements Cancellable {
 	 * @return true if it has been changed
 	 */
 	public boolean hasSpellCastStateChanged() {
-		return stateChanged;
+		return this.stateChanged;
 	}
 	
 	/**
@@ -69,7 +69,7 @@ public class SpellCastEvent extends SpellEvent implements Cancellable {
 	 * @return the cooldown
 	 */
 	public float getCooldown() {
-		return cooldown;
+		return this.cooldown;
 	}
 	
 	/**
@@ -85,7 +85,7 @@ public class SpellCastEvent extends SpellEvent implements Cancellable {
 	 * @return the reagents
 	 */
 	public SpellReagents getReagents() {
-		return reagents;
+		return this.reagents;
 	}
 	
 	/**
@@ -102,7 +102,7 @@ public class SpellCastEvent extends SpellEvent implements Cancellable {
 	 * @return true if reagents are changed
 	 */
 	public boolean haveReagentsChanged() {
-		return reagentsChanged;
+		return this.reagentsChanged;
 	}
 	
 	/**
@@ -119,7 +119,7 @@ public class SpellCastEvent extends SpellEvent implements Cancellable {
 	 * @return the power level
 	 */
 	public float getPower() {
-		return power;
+		return this.power;
 	}
 	
 	/**
@@ -143,7 +143,7 @@ public class SpellCastEvent extends SpellEvent implements Cancellable {
 	 * @return the cast time
 	 */
 	public int getCastTime() {
-		return castTime;
+		return this.castTime;
 	}
 	
 	/**
@@ -159,12 +159,12 @@ public class SpellCastEvent extends SpellEvent implements Cancellable {
 	 * @return the args, or null if there were none
 	 */
 	public String[] getSpellArgs() {
-		return args;
+		return this.args;
 	}
 	
 	@Override
 	public boolean isCancelled() {
-		return cancelled;
+		return this.cancelled;
 	}
 
 	@Override

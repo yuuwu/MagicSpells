@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
+// this should probably be kept as a star import for version safety
 import org.bukkit.entity.*;
 
 import com.nisovin.magicspells.MagicSpells;
@@ -18,6 +19,8 @@ public class EntityData {
 	private int var2 = 0;
 	private int var3 = 0;
 	
+	// TODO change this to use a config formatting instead with legacy support for strings temporarily here
+	// TODO the new format should use properties which check if their targets are possible on this version of spigot
 	public EntityData(String type) {		
 		if (type.startsWith("baby ")) {
 			flag = true;
@@ -146,7 +149,7 @@ public class EntityData {
 			}
 			type = "item";
 		} else if (type.toLowerCase().contains("horse")) {
-			List<String> data = new ArrayList<String>(Arrays.asList(type.split(" ")));
+			List<String> data = new ArrayList<>(Arrays.asList(type.split(" ")));
 			var1 = 0;
 			var2 = 0;
 			if (data.get(0).equalsIgnoreCase("horse")) {
@@ -333,21 +336,21 @@ public class EntityData {
 		} else if (entityType == EntityType.GUARDIAN) {
 			if (!V1_11EntityTypeHandler.newEntityTypesPresent()) {
 				if (flag) {
-					((Guardian)entity).setElder(true); // this is safe due to version checks
+					((Guardian)entity).setElder(true); // This is safe due to version checks
 				}
 			}
 		} else if (entityType == EntityType.HORSE) {
 			if (!V1_11EntityTypeHandler.newEntityTypesPresent()) {
 				if (var1 == 0) {
-					((Horse)entity).setVariant(Horse.Variant.HORSE); // this is safe due to version checks
+					((Horse)entity).setVariant(Horse.Variant.HORSE); // This is safe due to version checks
 				} else if (var1 == 1) {
-					((Horse)entity).setVariant(Horse.Variant.DONKEY); // this is safe due to version checks
+					((Horse)entity).setVariant(Horse.Variant.DONKEY); // This is safe due to version checks
 				} else if (var1 == 2) {
-					((Horse)entity).setVariant(Horse.Variant.MULE); // this is safe due to version checks
+					((Horse)entity).setVariant(Horse.Variant.MULE); // This is safe due to version checks
 				} else if (var1 == 3) {
-					((Horse)entity).setVariant(Horse.Variant.UNDEAD_HORSE); // this is safe due to version checks
+					((Horse)entity).setVariant(Horse.Variant.UNDEAD_HORSE); // This is safe due to version checks
 				} else if (var1 == 4) {
-					((Horse)entity).setVariant(Horse.Variant.SKELETON_HORSE); // this is safe due to version checks
+					((Horse)entity).setVariant(Horse.Variant.SKELETON_HORSE); // This is safe due to version checks
 				}
 			}
 		}		

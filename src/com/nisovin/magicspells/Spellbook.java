@@ -20,7 +20,7 @@ import org.bukkit.plugin.Plugin;
 import com.nisovin.magicspells.events.SpellSelectionChangedEvent;
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.util.CastItem;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.Util;
 
 public class Spellbook {
@@ -38,7 +38,7 @@ public class Spellbook {
 		@Override
 		public boolean remove(Object o) {
 			boolean ret = super.remove(o);
-			if (o != null && o instanceof Spell) {
+			if (o instanceof Spell) {
 				Spell s = (Spell)o;
 				s.unloadPlayerEffectTracker(player);
 			}
@@ -101,7 +101,8 @@ public class Spellbook {
 		if (plugin.ignoreGrantPerms || (player.isOp() && plugin.opsHaveAllSpells)) {
 			MagicSpells.debug(2, "  Op, granting all spells...");
 			for (Spell spell : plugin.spellsOrdered) {
-				if (!spell.isHelperSpell() && !allSpells.contains(spell)) {
+				if (spell.isHelperSpell()) continue;
+				if (!allSpells.contains(spell)) {
 					addSpell(spell);
 				}
 			}
@@ -189,7 +190,7 @@ public class Spellbook {
 			MagicSpells.debug(3, "    Checking spell " + spell.getInternalName() + "...");
 			if (spell.isHelperSpell()) continue;
 			if (hasSpell(spell, false)) continue;
-			if (spell.isAlwaysGranted() || player.hasPermission("magicspells.grant." + spell.getPermissionName())) {
+			if (spell.isAlwaysGranted() || Perm.GRANT.has(player, spell)) {
 				addSpell(spell);
 				added = true;
 			}
@@ -231,21 +232,21 @@ public class Spellbook {
 		}
 		
 		MagicSpells.debug("Checking learn permissions for " + player.getName());
-		return player.hasPermission("magicspells.learn." + spell.getPermissionName());
+		return Perm.LEARN.has(player, spell);
 	}
 	
 	public boolean canCast(Spell spell) {
 		if (spell.isHelperSpell()) return true;
-		return plugin.ignoreCastPerms || player.hasPermission("magicspells.cast." + spell.getPermissionName());
+		return plugin.ignoreCastPerms || Perm.CAST.has(player, spell);
 	}
 	
 	public boolean canTeach(Spell spell) {
 		if (spell.isHelperSpell()) return false;
-		return player.hasPermission("magicspells.teach." + spell.getPermissionName());
+		return Perm.TEACH.has(player, spell);
 	}
 	
 	public boolean hasAdvancedPerm(String spell) {
-		return player.hasPermission("magicspells.advanced." + spell);
+		return player.hasPermission(Perm.ADVANCED.getNode() + spell);
 	}
 	
 	public Spell getSpellByName(String spellName) {
@@ -281,14 +282,13 @@ public class Spellbook {
 			}
 			if (!options.isEmpty()) return options;
 			return null;
-		} else {
-			// Complete spell params
-			Spell spell = getSpellByName(data[0]);
-			if (spell == null) return null;
-			List<String> ret = spell.tabComplete(player, data[1]);
-			if (ret == null || ret.isEmpty()) return null;
-			return ret;
 		}
+		// Complete spell params
+		Spell spell = getSpellByName(data[0]);
+		if (spell == null) return null;
+		List<String> ret = spell.tabComplete(player, data[1]);
+		if (ret == null || ret.isEmpty()) return null;
+		return ret;
 	}
 	
 	protected CastItem getCastItemForCycling(ItemStack item) {
@@ -311,31 +311,26 @@ public class Spellbook {
 	
 	protected Spell nextSpell(CastItem castItem) {
 		Integer i = activeSpells.get(castItem); // Get the index of the active spell for the cast item
-		if (i != null) {
-			ArrayList<Spell> spells = itemSpells.get(castItem); // Get all the spells for the cast item
-			if (spells.size() > 1 || i.equals(-1) || plugin.allowCycleToNoSpell || plugin.alwaysShowMessageOnCycle) {
-				int count = 0;
-				while (count++ < spells.size()) {
-					i++;
-					if (i >= spells.size()) {
-						if (plugin.allowCycleToNoSpell) {
-							activeSpells.put(castItem, -1);
-							EventUtil.call(new SpellSelectionChangedEvent(null, player, castItem, this));
-							MagicSpells.sendMessage(plugin.strSpellChangeEmpty, player, MagicSpells.NULL_ARGS);
-							return null;
-						} else {
-							i = 0;
-						}
-					}
-					if (!plugin.onlyCycleToCastableSpells || canCast(spells.get(i))) {
-						activeSpells.put(castItem, i);
-						EventUtil.call(new SpellSelectionChangedEvent(spells.get(i), player, castItem, this));
-						return spells.get(i);
-					}
+		if (i == null) return null;
+		ArrayList<Spell> spells = itemSpells.get(castItem); // Get all the spells for the cast item
+		if (!(spells.size() > 1 || i.equals(-1) || plugin.allowCycleToNoSpell || plugin.alwaysShowMessageOnCycle)) return null;
+		int count = 0;
+		while (count++ < spells.size()) {
+			i++;
+			if (i >= spells.size()) {
+				if (plugin.allowCycleToNoSpell) {
+					activeSpells.put(castItem, -1);
+					EventUtil.call(new SpellSelectionChangedEvent(null, player, castItem, this));
+					MagicSpells.sendMessage(plugin.strSpellChangeEmpty, player, MagicSpells.NULL_ARGS);
+					return null;
+				} else {
+					i = 0;
 				}
-				return null;
-			} else {
-				return null;
+			}
+			if (!plugin.onlyCycleToCastableSpells || canCast(spells.get(i))) {
+				activeSpells.put(castItem, i);
+				EventUtil.call(new SpellSelectionChangedEvent(spells.get(i), player, castItem, this));
+				return spells.get(i);
 			}
 		}
 		return null;
@@ -349,32 +344,29 @@ public class Spellbook {
 	
 	protected Spell prevSpell(CastItem castItem) {
 		Integer i = activeSpells.get(castItem); // Get the index of the active spell for the cast item
-		if (i != null) {
-			ArrayList<Spell> spells = itemSpells.get(castItem); // Get all the spells for the cast item
-			if (spells.size() > 1 || i.equals(-1) || plugin.allowCycleToNoSpell) {
-				int count = 0;
-				while (count++ < spells.size()) {
-					i--;
-					if (i < 0) {
-						if (plugin.allowCycleToNoSpell && i == -1) {
-							activeSpells.put(castItem, -1);
-							EventUtil.call(new SpellSelectionChangedEvent(null, player, castItem, this));
-							MagicSpells.sendMessage(plugin.strSpellChangeEmpty, player, MagicSpells.NULL_ARGS);
-							return null;
-						} else {
-							i = spells.size() - 1;
-						}
-					}
-					if (!plugin.onlyCycleToCastableSpells || canCast(spells.get(i))) {
-						activeSpells.put(castItem, i);
-						EventUtil.call(new SpellSelectionChangedEvent(spells.get(i), player, castItem, this));
-						return spells.get(i);
+		if (i == null) return null;
+		ArrayList<Spell> spells = itemSpells.get(castItem); // Get all the spells for the cast item
+		if (spells.size() > 1 || i.equals(-1) || plugin.allowCycleToNoSpell) {
+			int count = 0;
+			while (count++ < spells.size()) {
+				i--;
+				if (i < 0) {
+					if (plugin.allowCycleToNoSpell && i == -1) {
+						activeSpells.put(castItem, -1);
+						EventUtil.call(new SpellSelectionChangedEvent(null, player, castItem, this));
+						MagicSpells.sendMessage(plugin.strSpellChangeEmpty, player, MagicSpells.NULL_ARGS);
+						return null;
+					} else {
+						i = spells.size() - 1;
 					}
 				}
-				return null;
-			} else {
-				return null;
+				if (!plugin.onlyCycleToCastableSpells || canCast(spells.get(i))) {
+					activeSpells.put(castItem, i);
+					EventUtil.call(new SpellSelectionChangedEvent(spells.get(i), player, castItem, this));
+					return spells.get(i);
+				}
 			}
+			return null;
 		}
 		return null;
 	}
@@ -398,13 +390,13 @@ public class Spellbook {
 		if (plugin.ignoreGrantPerms) return true;
 		boolean has = allSpells.contains(spell);
 		if (has) return true;
-		if (checkGranted && player.hasPermission("magicspells.grant." + spell.getPermissionName())) {
+		if (checkGranted && Perm.GRANT.has(player, spell)) {
 			MagicSpells.debug(2, "Adding granted spell for " + player.getName() + ": " + spell.getName());
 			addSpell(spell);
 			save();
 			return true;
 		}
-		if (MagicSpells.plugin.enableTempGrantPerms && player.hasPermission("magicspells.tempgrant." + spell.getPermissionName())) return true;
+		if (MagicSpells.plugin.enableTempGrantPerms && Perm.TEMPGRANT.has(player, spell)) return true;
 		return false;
 	}
 	
@@ -416,7 +408,6 @@ public class Spellbook {
 		addSpell(spell, new CastItem[] {castItem});
 	}
 	
-	// TODO can this safely be made varargs?
 	public void addSpell(Spell spell, CastItem[] castItems) {
 		if (spell == null) return;
 		MagicSpells.debug(3, "    Added spell: " + spell.getInternalName());

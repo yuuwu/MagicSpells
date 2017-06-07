@@ -22,7 +22,7 @@ public class ReflectionHelper<E> {
 	
 	public int getInt(E object, String field) {
 		try {
-			return fields.get(field).getInt(object);
+			return this.fields.get(field).getInt(object);
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 			return 0;
@@ -31,7 +31,7 @@ public class ReflectionHelper<E> {
 	
 	public void setInt(E object, String field, int val) {
 		try {
-			fields.get(field).setInt(object, val);
+			this.fields.get(field).setInt(object, val);
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
@@ -39,7 +39,7 @@ public class ReflectionHelper<E> {
 	
 	public byte getByte(E object, String field) {
 		try {
-			return fields.get(field).getByte(object);
+			return this.fields.get(field).getByte(object);
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 			return 0;
@@ -48,7 +48,7 @@ public class ReflectionHelper<E> {
 	
 	public void setByte(E object, String field, byte val) {
 		try {
-			fields.get(field).setByte(object, val);
+			this.fields.get(field).setByte(object, val);
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
@@ -56,7 +56,7 @@ public class ReflectionHelper<E> {
 	
 	public String getString(E object, String field) {
 		try {
-			return (String)fields.get(field).get(object);
+			return (String)this.fields.get(field).get(object);
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 			return null;
@@ -65,7 +65,7 @@ public class ReflectionHelper<E> {
 	
 	public void setString(E object, String field, String val) {
 		try {
-			fields.get(field).set(object, val);
+			this.fields.get(field).set(object, val);
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
@@ -73,7 +73,7 @@ public class ReflectionHelper<E> {
 	
 	public Object get(E object, String field) {
 		try {
-			return fields.get(field).get(object);
+			return this.fields.get(field).get(object);
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 			return null;
@@ -82,7 +82,7 @@ public class ReflectionHelper<E> {
 	
 	public void set(E object, String field, Object val) {
 		try {
-			fields.get(field).set(object, val);
+			this.fields.get(field).set(object, val);
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}

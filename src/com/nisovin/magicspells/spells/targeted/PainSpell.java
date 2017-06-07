@@ -13,7 +13,7 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.SpellDamageSpell;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
 import com.nisovin.magicspells.util.expression.Expression;
@@ -77,15 +77,14 @@ public class PainSpell extends TargetedSpell implements TargetedEntitySpell, Spe
 		if (state == SpellCastState.NORMAL) {
 			TargetInfo<LivingEntity> target = getTargetedEntity(player, power);
 			if (target == null) {
-				// fail -- no target
+				// Fail -- no target
 				return noTarget(player);
-			} else {
-				boolean done = causePain(player, target.getTarget(), target.getPower());
-				if (!done) return noTarget(player);
-				
-				sendMessages(player, target.getTarget());
-				return PostCastAction.NO_MESSAGES;
 			}
+			boolean done = causePain(player, target.getTarget(), target.getPower());
+			if (!done) return noTarget(player);
+			
+			sendMessages(player, target.getTarget());
+			return PostCastAction.NO_MESSAGES;
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}
@@ -102,7 +101,7 @@ public class PainSpell extends TargetedSpell implements TargetedEntitySpell, Spe
 		double localDamage = resolvedValue * power;
 		//double dam = damage * power;
 		if (target instanceof Player && checkPlugins) {
-			// handle the event myself so I can detect cancellation properly
+			// Handle the event myself so I can detect cancellation properly
 			MagicSpellsEntityDamageByEntityEvent event = new MagicSpellsEntityDamageByEntityEvent(player, target, damageType, localDamage);
 			EventUtil.call(event);
 			if (event.isCancelled()) return false;
@@ -119,7 +118,7 @@ public class PainSpell extends TargetedSpell implements TargetedEntitySpell, Spe
 			health = health - localDamage;
 			if (health < 0) health = 0;
 			if (health > target.getMaxHealth()) health = target.getMaxHealth();
-			if (health == 0 && player != null) MagicSpells.getVolatileCodeHandler().setKiller(target, player);
+			if (health == 0) MagicSpells.getVolatileCodeHandler().setKiller(target, player);
 			target.setHealth(health);
 			target.playEffect(EntityEffect.HURT);
 		} else {
@@ -129,11 +128,7 @@ public class PainSpell extends TargetedSpell implements TargetedEntitySpell, Spe
 				target.damage(localDamage, player);
 			}
 		}
-		if (player != null) {
-			playSpellEffects(player, target);
-		} else {
-			playSpellEffects(EffectPosition.TARGET, target);
-		}
+		playSpellEffects(player, target);
 		return true;
 	}
 

@@ -32,8 +32,8 @@ public class ReflectSpell extends BuffSpell {
 		reflectors = new HashMap<>();
 		shieldBreakerNames = new HashSet<>();
 		delayedReflectionSpells = new HashSet<>();
-		shieldBreakerNames.addAll(getConfigStringList("shield-breakers", new ArrayList<String>()));
-		delayedReflectionSpells.addAll(getConfigStringList("delayed-reflection-spells", new ArrayList<String>()));
+		shieldBreakerNames.addAll(getConfigStringList("shield-breakers", new ArrayList<>()));
+		delayedReflectionSpells.addAll(getConfigStringList("delayed-reflection-spells", new ArrayList<>()));
 		reflectedSpellPowerMultiplier = (float) getConfigDouble("reflected-spell-power-multiplier", 1.0);
 		spellPowerAffectsReflectedPower = getConfigBoolean("spell-power-affects-reflected-power", false);
 		delayedReflectionSpellsUsePayloadShieldBreaker = getConfigBoolean("delayed-reflection-spells-use-payload-shield-breaker", true);
@@ -57,8 +57,8 @@ public class ReflectSpell extends BuffSpell {
 					return;
 				}
 				if (delayedReflectionSpells != null && delayedReflectionSpells.contains(event.getSpell().getInternalName())) {
-					//let the delayed reflection spells target the reflector so the animations run
-					//it will get reflected later
+					// Let the delayed reflection spells target the reflector so the animations run
+					// It will get reflected later
 					return;
 				}
 				boolean ok = chargeUseCost(target);

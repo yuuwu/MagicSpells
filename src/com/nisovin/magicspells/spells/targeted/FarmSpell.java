@@ -14,7 +14,7 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.BlockUtils;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 
 public class FarmSpell extends TargetedSpell implements TargetedLocationSpell {
@@ -44,7 +44,7 @@ public class FarmSpell extends TargetedSpell implements TargetedLocationSpell {
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
-			Block block = null;
+			Block block;
 			if (targeted) {
 				block = getTargetedBlock(player, power);
 			} else {
@@ -71,7 +71,7 @@ public class FarmSpell extends TargetedSpell implements TargetedLocationSpell {
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}
-
+	
 	private boolean farm(Block center, int radius) {
 		int cx = center.getX();
 		int y = center.getY();
@@ -97,7 +97,7 @@ public class FarmSpell extends TargetedSpell implements TargetedLocationSpell {
 					if (newGrowth > 7) newGrowth = 7;
 					BlockUtils.setGrowthLevel(b, newGrowth);
 					count++;
-				} else if ((growWart && b.getType() == Material.NETHER_WARTS)) {
+				} else if (growWart && b.getType() == Material.NETHER_WARTS) {
 					if (BlockUtils.growWarts((NetherWarts) b, growth)) count++;
 				}
 			}

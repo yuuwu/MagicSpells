@@ -17,9 +17,9 @@ import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.OverridePriority;
 import com.nisovin.magicspells.util.Util;
 
-// trigger variable option is optional
-// if not defined, it will trigger regardless of entity type
-// if specified, it should be a comma separated list of entity types to accept
+// Trigger variable option is optional
+// If not defined, it will trigger regardless of entity type
+// If specified, it should be a comma separated list of entity types to accept
 public class RightClickEntityListener extends PassiveListener {
 
 	Map<EntityType, List<PassiveSpell>> types = new HashMap<>();

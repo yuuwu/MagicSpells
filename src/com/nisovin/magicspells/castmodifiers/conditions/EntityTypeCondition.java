@@ -37,7 +37,7 @@ public class EntityTypeCondition extends Condition {
 				}
 			}
 		}
-		return (player || monster || animal || types.size() > 0);
+		return player || monster || animal || !types.isEmpty();
 	}
 
 	@Override
@@ -50,7 +50,7 @@ public class EntityTypeCondition extends Condition {
 		if (this.player && target instanceof Player) return true;
 		if (monster && target instanceof Monster) return true;
 		if (animal && target instanceof Animals) return true;
-		return (types.contains(target.getType()));
+		return types.contains(target.getType());
 	}
 	
 	@Override

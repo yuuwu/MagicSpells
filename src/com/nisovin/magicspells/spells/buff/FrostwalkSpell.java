@@ -2,6 +2,7 @@ package com.nisovin.magicspells.spells.buff;
 
 import java.util.HashMap;
 
+import com.nisovin.magicspells.util.Util;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -87,11 +88,7 @@ public class FrostwalkSpell extends BuffSpell {
 		Block block = event.getBlock();
 		if (block.getType() != Material.ICE) return;
 		
-		for (BlockPlatform platform : frostwalkers.values()) {
-			if (!platform.blockInPlatform(block)) continue;
-			event.setCancelled(true);
-			break;
-		}
+		if (blockInPlatform(block)) event.setCancelled(true);
 	}
 	
 	@Override
@@ -106,15 +103,17 @@ public class FrostwalkSpell extends BuffSpell {
 	
 	@Override
 	protected void turnOff() {
-		for (BlockPlatform platform : frostwalkers.values()) {
-			platform.destroyPlatform();
-		}
+		Util.forEachValueOrdered(frostwalkers, BlockPlatform::destroyPlatform);
 		frostwalkers.clear();
 	}
 
 	@Override
 	public boolean isActive(Player player) {
 		return frostwalkers.containsKey(player.getName());
+	}
+	
+	private boolean blockInPlatform(final Block block) {
+		return Util.containsValueParallel(frostwalkers, platform -> platform.blockInPlatform(block));
 	}
 
 }

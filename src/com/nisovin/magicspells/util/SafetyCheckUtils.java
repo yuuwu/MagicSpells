@@ -2,7 +2,7 @@ package com.nisovin.magicspells.util;
 
 import org.apache.commons.lang.NullArgumentException;
 
-//just some methods useful for checking safety of operations
+// Just some methods useful for checking safety of operations
 public class SafetyCheckUtils {
 
 	public static boolean areAnyNull(Object... objects) {

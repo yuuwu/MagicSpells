@@ -37,24 +37,24 @@ public class ManaBar {
 	}
 	
 	public ManaRank getManaRank() {
-		return rank;
+		return this.rank;
 	}
 	
 	public int getMana() {
-		return mana;
+		return this.mana;
 	}
 	
 	public int getMaxMana() {
-		return maxMana;
+		return this.maxMana;
 	}
 	
 	public int getRegenAmount() {
-		return regenAmount;
+		return this.regenAmount;
 	}
 	
 	public void setMaxMana(int max) {
 		this.maxMana = max;
-		if (mana > maxMana) mana = maxMana;
+		if (this.mana > this.maxMana) this.mana = this.maxMana;
 	}
 	
 	public void setRegenAmount(int amount) {
@@ -68,64 +68,64 @@ public class ManaBar {
 	}
 	
 	public String getPrefix() {
-		return prefix;
+		return this.prefix;
 	}
 	public ChatColor getColorFull() {
-		return colorFull;
+		return this.colorFull;
 	}
 	public ChatColor getColorEmpty() {
-		return colorEmpty;
+		return this.colorEmpty;
 	}
 	
 	public boolean has(int amount) {
-		return mana >= amount;
+		return this.mana >= amount;
 	}
 	
 	public boolean changeMana(int amount, ManaChangeReason reason) {
-		int newAmt = mana;
+		int newAmt = this.mana;
 		
 		if (amount > 0) {
-			if (mana == maxMana) return false;
+			if (this.mana == this.maxMana) return false;
 			newAmt += amount;
-			if (newAmt > maxMana) newAmt = maxMana;
+			if (newAmt > this.maxMana) newAmt = this.maxMana;
 		} else if (amount < 0) {
-			if (mana == 0) return false;
+			if (this.mana == 0) return false;
 			newAmt += amount;
 			if (newAmt < 0) newAmt = 0;
 		}
-		if (newAmt == mana) return false;
+		if (newAmt == this.mana) return false;
 		
 		newAmt = callManaChangeEvent(newAmt, reason);
-		if (newAmt > maxMana) newAmt = maxMana;
+		if (newAmt > this.maxMana) newAmt = this.maxMana;
 		if (newAmt < 0) newAmt = 0;
-		if (newAmt == mana) return false;
-		mana = newAmt;
+		if (newAmt == this.mana) return false;
+		this.mana = newAmt;
 		return true;
 	}
 	
 	public boolean setMana(int amount, ManaChangeReason reason) {
 		int newAmt = amount;
-		if (newAmt > maxMana) {
-			newAmt = maxMana;
+		if (newAmt > this.maxMana) {
+			newAmt = this.maxMana;
 		} else if (newAmt < 0) {
 			newAmt = 0;
 		}
 		
 		newAmt = callManaChangeEvent(newAmt, reason);
-		if (newAmt == mana) return false;
-		mana = newAmt;
+		if (newAmt == this.mana) return false;
+		this.mana = newAmt;
 		return true;
 	}
 	
 	public boolean regenerate() {
-		if ((regenAmount > 0 && mana == maxMana) || (regenAmount < 0 && mana == 0)) return false;
-		return changeMana(regenAmount, ManaChangeReason.REGEN);
+		if ((this.regenAmount > 0 && this.mana == this.maxMana) || (this.regenAmount < 0 && this.mana == 0)) return false;
+		return changeMana(this.regenAmount, ManaChangeReason.REGEN);
 	}
 	
 	private int callManaChangeEvent(int newAmt, ManaChangeReason reason) {
 		Player player = getPlayer();
 		if (player != null && player.isOnline()) {
-			ManaChangeEvent event = new ManaChangeEvent(player, mana, newAmt, maxMana, reason);
+			ManaChangeEvent event = new ManaChangeEvent(player, this.mana, newAmt, this.maxMana, reason);
 			Bukkit.getPluginManager().callEvent(event);
 			return event.getNewAmount();
 		}

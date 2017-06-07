@@ -48,7 +48,7 @@ public class CleanseSpell extends TargetedSpell implements TargetedEntitySpell {
 			
 			if (s.startsWith("buff:")) {
 				Spell spell = MagicSpells.getSpellByInternalName(s.replace("buff:", ""));
-				if (spell != null && spell instanceof BuffSpell) {
+				if (spell instanceof BuffSpell) {
 					buffSpells.add((BuffSpell)spell);
 				}
 				continue;

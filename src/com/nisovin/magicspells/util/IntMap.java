@@ -10,7 +10,7 @@ public class IntMap<T> {
 	private Map<T, Integer> map = new HashMap<>();
 	
 	public int put(T key, int value) {
-		Integer prev = map.put(key, Integer.valueOf(value));
+		Integer prev = this.map.put(key, Integer.valueOf(value));
 		if (prev != null) return prev.intValue();
 		return 0;
 	}
@@ -20,31 +20,31 @@ public class IntMap<T> {
 	}
 	
 	public int get(T key) {
-		Integer value = map.get(key);
+		Integer value = this.map.get(key);
 		if (value != null) return value.intValue();
 		return 0;
 	}
 	
 	public int remove(T key) {
-		Integer value = map.remove(key);
+		Integer value = this.map.remove(key);
 		if (value != null) return value.intValue();
 		return 0;
 	}
 	
 	public int size() {
-		return map.size();
+		return this.map.size();
 	}
 	
 	public boolean contains(T key) {
-		return map.containsKey(key);
+		return this.map.containsKey(key);
 	}
 	
 	public boolean containsKey(T key) {
-		return map.containsKey(key);
+		return this.map.containsKey(key);
 	}
 	
 	public boolean containsValue(int value) {
-		return map.containsValue(Integer.valueOf(value));
+		return this.map.containsValue(Integer.valueOf(value));
 	}
 	
 	public int increment(T key) {
@@ -74,41 +74,41 @@ public class IntMap<T> {
 	}
 	
 	public Set<T> keySet() {
-		return map.keySet();
+		return this.map.keySet();
 	}
 	
 	public void clear() {
-		map.clear();
+		this.map.clear();
 	}
 	
 	public boolean isEmpty() {
-		return map.isEmpty();
+		return this.map.isEmpty();
 	}
 	
 	public void putAll(IntMap<? extends T> otherMap) {
-		map.putAll(otherMap.map);
+		this.map.putAll(otherMap.map);
 	}
 	
 	public void putAll(Map<? extends T, Integer> otherMap) {
-		map.putAll(otherMap);
+		this.map.putAll(otherMap);
 	}
 	
 	public Map<T, Integer> getIntegerMap() {
-		return map;
+		return this.map;
 	}
 	
 	@Override
 	public IntMap<T> clone() {
 		IntMap<T> newMap = new IntMap<>();
-		newMap.putAll(map);
+		newMap.putAll(this.map);
 		return newMap;
 	}
 	
 	public void useTreeMap() {
 		Map<T, Integer> newMap = new TreeMap<>();
-		newMap.putAll(map);
-		map.clear();
-		map = newMap;
+		newMap.putAll(this.map);
+		this.map.clear();
+		this.map = newMap;
 	}
 	
 }

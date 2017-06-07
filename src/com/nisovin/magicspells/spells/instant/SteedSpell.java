@@ -42,9 +42,9 @@ public class SteedSpell extends InstantSpell {
 	
 	public SteedSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
-		gravity = getConfigBoolean("gravity", true);
-		type = Util.getEntityType(getConfigString("type", "horse"));
-		if (type == EntityType.HORSE) {
+		this.gravity = getConfigBoolean("gravity", true);
+		this.type = Util.getEntityType(getConfigString("type", "horse"));
+		if (this.type == EntityType.HORSE) {
 			String c = getConfigString("color", null);
 			String s = getConfigString("style", null);
 			String v = getConfigString("variant", null);
@@ -52,120 +52,120 @@ public class SteedSpell extends InstantSpell {
 			if (c != null) {
 				for (Horse.Color h : Horse.Color.values()) {
 					if (!h.name().equalsIgnoreCase(c)) continue;
-					color = h;
+					this.color = h;
 					break;
 				}
-				if (color == null) DebugHandler.debugBadEnumValue(Horse.Color.class, c);
+				if (this.color == null) DebugHandler.debugBadEnumValue(Horse.Color.class, c);
 			}
 			if (s != null) {
 				for (Horse.Style h : Horse.Style.values()) {
 					if (!h.name().equalsIgnoreCase(s)) continue;
-					style = h;
+					this.style = h;
 					break;
 				}
-				if (style == null) DebugHandler.debugBadEnumValue(Horse.Style.class, s);
+				if (this.style == null) DebugHandler.debugBadEnumValue(Horse.Style.class, s);
 			}
 			if (v != null) {
 				for (Horse.Variant h : Horse.Variant.values()) {
 					if (!h.name().equalsIgnoreCase(v)) continue;
-					variant = h;
+					this.variant = h;
 					break;
 				}
-				if (variant == null) DebugHandler.debugBadEnumValue(Horse.Variant.class, v);
+				if (this.variant == null) DebugHandler.debugBadEnumValue(Horse.Variant.class, v);
 			}
-			if (a != null) armor = Util.getItemStackFromString(a);
+			if (a != null) this.armor = Util.getItemStackFromString(a);
 		}
 		
-		strAlreadyMounted = getConfigString("str-already-mounted", "You are already mounted!");
+		this.strAlreadyMounted = getConfigString("str-already-mounted", "You are already mounted!");
 	}
 
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			if (player.getVehicle() != null) {
-				sendMessage(strAlreadyMounted, player, args);
+				sendMessage(this.strAlreadyMounted, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
-			Entity entity = player.getWorld().spawnEntity(player.getLocation(), type);
-			MagicSpells.getVolatileCodeHandler().setGravity(entity, gravity);
-			if (type == EntityType.HORSE) {
+			Entity entity = player.getWorld().spawnEntity(player.getLocation(), this.type);
+			MagicSpells.getVolatileCodeHandler().setGravity(entity, this.gravity);
+			if (this.type == EntityType.HORSE) {
 				((Horse)entity).setTamed(true);
 				((Horse)entity).setOwner(player);
 				((Horse)entity).setJumpStrength(2d);
 				((Horse)entity).setAdult();
-				if (color != null) {
+				if (this.color != null) {
 					((Horse)entity).setColor(color);
 				} else {
-					((Horse)entity).setColor(Horse.Color.values()[random.nextInt(Horse.Color.values().length)]);
+					((Horse)entity).setColor(Horse.Color.values()[this.random.nextInt(Horse.Color.values().length)]);
 				}
-				if (style != null) {
-					((Horse)entity).setStyle(style);
+				if (this.style != null) {
+					((Horse)entity).setStyle(this.style);
 				} else {
-					((Horse)entity).setStyle(Horse.Style.values()[random.nextInt(Horse.Style.values().length)]);
+					((Horse)entity).setStyle(Horse.Style.values()[this.random.nextInt(Horse.Style.values().length)]);
 				}
-				if (variant != null) {
-					((Horse)entity).setVariant(variant);
+				if (this.variant != null) {
+					((Horse)entity).setVariant(this.variant);
 				} else {
-					((Horse)entity).setVariant(Horse.Variant.values()[random.nextInt(Horse.Variant.values().length)]);
+					((Horse)entity).setVariant(Horse.Variant.values()[this.random.nextInt(Horse.Variant.values().length)]);
 				}
 				((Horse)entity).setTamed(true);
 				((Horse)entity).setOwner(player);
 				((Horse)entity).getInventory().setSaddle(new ItemStack(Material.SADDLE));
-				if (armor != null) ((Horse)entity).getInventory().setArmor(armor);
+				if (this.armor != null) ((Horse)entity).getInventory().setArmor(this.armor);
 			}
 			entity.setPassenger(player);
 			playSpellEffects(EffectPosition.CASTER, player);
-			mounted.put(player.getName(), entity.getEntityId());
+			this.mounted.put(player.getName(), entity.getEntityId());
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}
 	
 	@EventHandler
 	void onDamage(EntityDamageEvent event) {
-		if (mounted.containsValue(event.getEntity().getEntityId())) event.setCancelled(true);
+		if (this.mounted.containsValue(event.getEntity().getEntityId())) event.setCancelled(true);
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	void onDismount(EntityDismountEvent event) {
-		if (event.getEntity() instanceof Player) {
-			Player player = (Player)event.getEntity();
-			if (mounted.containsKey(player.getName())) {
-				mounted.remove(player.getName());
-				event.getDismounted().remove();
-				playSpellEffects(EffectPosition.DISABLED, player);
-			}
-		}
+		if (!(event.getEntity() instanceof Player)) return;
+		Player player = (Player)event.getEntity();
+		if (!this.mounted.containsKey(player.getName())) return;
+		this.mounted.remove(player.getName());
+		event.getDismounted().remove();
+		playSpellEffects(EffectPosition.DISABLED, player);
 	}
 	
 	@EventHandler
 	void onDeath(PlayerDeathEvent event) {
-		if (mounted.containsKey(event.getEntity().getName()) && event.getEntity().getVehicle() != null) {
-			mounted.remove(event.getEntity().getName());
-			Entity vehicle = event.getEntity().getVehicle();
-			vehicle.eject();
-			vehicle.remove();
-		}
+		Player player = event.getEntity();
+		String playerName = player.getName();
+		if (!this.mounted.containsKey(playerName)) return;
+		if (player.getVehicle() == null) return;
+		this.mounted.remove(playerName);
+		Entity vehicle = player.getVehicle();
+		vehicle.eject();
+		vehicle.remove();
 	}
 	
 	@EventHandler
 	void onQuit(PlayerQuitEvent event) {
-		if (mounted.containsKey(event.getPlayer().getName()) && event.getPlayer().getVehicle() != null) {
-			mounted.remove(event.getPlayer().getName());
-			Entity vehicle = event.getPlayer().getVehicle();
-			vehicle.eject();
-			vehicle.remove();
-		}
+		if (!this.mounted.containsKey(event.getPlayer().getName())) return;
+		if (event.getPlayer().getVehicle() == null) return;
+		this.mounted.remove(event.getPlayer().getName());
+		Entity vehicle = event.getPlayer().getVehicle();
+		vehicle.eject();
+		vehicle.remove();
 	}
 	
 	@Override
 	public void turnOff() {
-		for (String name : mounted.keySet()) {
-			Player player = Bukkit.getPlayerExact(name);
+		for (String playerName : this.mounted.keySet()) {
+			Player player = Bukkit.getPlayerExact(playerName);
 			if (player == null) continue;
 			if (player.getVehicle() == null) continue;
 			player.getVehicle().eject();
 		}
-		mounted.clear();
+		this.mounted.clear();
 	}
 
 }

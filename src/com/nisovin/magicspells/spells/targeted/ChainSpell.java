@@ -15,7 +15,7 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedEntityFromLocationSpell;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
 
@@ -72,7 +72,7 @@ public class ChainSpell extends TargetedSpell implements TargetedEntitySpell, Ta
 		targets.add(target);
 		targetPowers.add(power);
 		
-		// get targets
+		// Get targets
 		LivingEntity current = target;
 		int attempts = 0;
 		while (targets.size() < bounces && attempts++ < bounces << 1) {
@@ -103,7 +103,7 @@ public class ChainSpell extends TargetedSpell implements TargetedEntitySpell, Ta
 			}
 		}
 		
-		// cast spell at targets
+		// Cast spell at targets
 		if (player != null) {
 			playSpellEffects(EffectPosition.CASTER, player);
 		} else if (start != null) {
@@ -111,7 +111,7 @@ public class ChainSpell extends TargetedSpell implements TargetedEntitySpell, Ta
 		}
 		if (interval <= 0) {
 			for (int i = 0; i < targets.size(); i++) {
-				Location from = null;
+				Location from;
 				if (i == 0) {
 					from = start;
 				} else {
@@ -160,7 +160,7 @@ public class ChainSpell extends TargetedSpell implements TargetedEntitySpell, Ta
 		chain(null, from, target, power);
 		return true;
 	}
-
+	
 	class ChainBouncer implements Runnable {
 		
 		Player caster;
@@ -180,11 +180,11 @@ public class ChainSpell extends TargetedSpell implements TargetedEntitySpell, Ta
 		
 		@Override
 		public void run() {
-			Location from = null;
+			Location from;
 			if (current == 0) {
 				from = start;
 			} else {
-				from = targets.get(current-1).getLocation();
+				from = targets.get(current - 1).getLocation();
 			}
 			castSpellAt(caster, from, targets.get(current), power);
 			if (current > 0) {

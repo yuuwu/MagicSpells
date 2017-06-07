@@ -16,34 +16,34 @@ public class BuffManager {
 	int taskId = -1;
 	
 	public BuffManager(int interval) {
-		activeBuffs = new HashMap<>();
-		if (interval > 0) taskId = MagicSpells.scheduleRepeatingTask(new Monitor(), interval, interval);
+		this.activeBuffs = new HashMap<>();
+		if (interval > 0) this.taskId = MagicSpells.scheduleRepeatingTask(new Monitor(), interval, interval);
 	}
 	
 	public void addBuff(Player player, BuffSpell spell) {
-		HashSet<BuffSpell> buffs = activeBuffs.get(player.getName());
+		HashSet<BuffSpell> buffs = this.activeBuffs.get(player.getName());
 		if (buffs == null) {
 			buffs = new HashSet<>();
-			activeBuffs.put(player.getName(), buffs);
+			this.activeBuffs.put(player.getName(), buffs);
 		}
 		buffs.add(spell);
 	}
 	
 	public void removeBuff(Player player, BuffSpell spell) {
-		HashSet<BuffSpell> buffs = activeBuffs.get(player.getName());
+		HashSet<BuffSpell> buffs = this.activeBuffs.get(player.getName());
 		if (buffs == null) return;
 		buffs.remove(spell);
-		if (buffs.isEmpty()) activeBuffs.remove(player.getName());
+		if (buffs.isEmpty()) this.activeBuffs.remove(player.getName());
 	}
 	
 	public HashSet<BuffSpell> getActiveBuffs(Player player) {
-		return activeBuffs.get(player.getName());
+		return this.activeBuffs.get(player.getName());
 	}
 	
 	public void turnOff() {
-		if (taskId > 0) Bukkit.getScheduler().cancelTask(taskId);
-		activeBuffs.clear();
-		activeBuffs = null;
+		if (this.taskId > 0) Bukkit.getScheduler().cancelTask(this.taskId);
+		this.activeBuffs.clear();
+		this.activeBuffs = null;
 	}
 	
 	class Monitor implements Runnable {

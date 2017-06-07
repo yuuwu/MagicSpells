@@ -17,7 +17,7 @@ import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 
@@ -52,14 +52,14 @@ public class BuildSpell extends TargetedSpell implements TargetedLocationSpell {
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
-			// get mat
+			// Get mat
 			ItemStack item = player.getInventory().getItem(slot);
 			if (item == null || !isAllowed(item.getType())) {
-				// fail
+				// Fail
 				return noTarget(player, strInvalidBlock);
 			}
 			
-			// get target
+			// Get target
 			List<Block> lastBlocks = null;
 			try {
 				lastBlocks = getLastTwoTargetedBlocks(player, power);
@@ -68,7 +68,7 @@ public class BuildSpell extends TargetedSpell implements TargetedLocationSpell {
 				lastBlocks = null;
 			}
 			if (lastBlocks == null || lastBlocks.size() < 2 || lastBlocks.get(1).getType() == Material.AIR) {
-				// fail
+				// Fail
 				return noTarget(player, strCantBuild);
 			} else {
 				boolean built = build(player, lastBlocks.get(0), lastBlocks.get(1), item);
@@ -79,7 +79,7 @@ public class BuildSpell extends TargetedSpell implements TargetedLocationSpell {
 	}
 
 	private boolean build(Player player, Block block, Block against, ItemStack item) {
-		// check plugins
+		// Check plugins
 		BlockState previousState = block.getState();
 		item.getData();
 		BlockState state = block.getState();
@@ -112,14 +112,14 @@ public class BuildSpell extends TargetedSpell implements TargetedLocationSpell {
 	
 	@Override
 	public boolean castAtLocation(Player caster, Location target, float power) {
-		// get mat
+		// Get mat
 		ItemStack item = caster.getInventory().getItem(slot);
 		if (item == null || !isAllowed(item.getType())) return false;
 		
-		// get blocks
+		// Get blocks
 		Block block = target.getBlock();
 		
-		// build
+		// Build
 		return build(caster, block, block, item);
 	}
 

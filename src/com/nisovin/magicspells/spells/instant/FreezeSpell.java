@@ -17,13 +17,17 @@ import com.nisovin.magicspells.events.SpellTargetEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.spells.SpellDamageSpell;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 
 // TODO allow power to optionally control snowball count
 // TODO allow power to optionally control slow amount
 // TODO allow power to optionally control slow duration
 // TODO should the effects on hit be fully configurable?
+// TODO add a 'stop after time' option
+// TODO add a 'hit at end' spell option for when it expires but is still in the air
+// TODO add a spell on hit entity option
+// TODO add a spell on hit ground option
 public class FreezeSpell extends InstantSpell implements SpellDamageSpell {
 
 	private int snowballs;
@@ -40,16 +44,16 @@ public class FreezeSpell extends InstantSpell implements SpellDamageSpell {
 	public FreezeSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		snowballs = getConfigInt("snowballs", 15);
-		horizSpread = getConfigInt("horizontal-spread", 15) / 10.0;
-		vertSpread = getConfigInt("vertical-spread", 15) / 10.0;
-		damage = getConfigInt("damage", 3);
-		spellDamageType = getConfigString("spell-damage-type", "");
-		slowAmount = getConfigInt("slow-amount", 3);
-		slowDuration = getConfigInt("slow-duration", 40);
-		snowballGravity = getConfigBoolean("gravity", true);
+		this.snowballs = getConfigInt("snowballs", 15);
+		this.horizSpread = getConfigInt("horizontal-spread", 15) / 10.0;
+		this.vertSpread = getConfigInt("vertical-spread", 15) / 10.0;
+		this.damage = getConfigInt("damage", 3);
+		this.spellDamageType = getConfigString("spell-damage-type", "");
+		this.slowAmount = getConfigInt("slow-amount", 3);
+		this.slowDuration = getConfigInt("slow-duration", 40);
+		this.snowballGravity = getConfigBoolean("gravity", true);
 		
-		identifier = (float)Math.random() * 20F;
+		this.identifier = (float)Math.random() * 20F;
 	}
 
 	@Override
@@ -57,13 +61,13 @@ public class FreezeSpell extends InstantSpell implements SpellDamageSpell {
 		if (state == SpellCastState.NORMAL) {
 			Random rand = new Random();
 			Vector mod;
-			for (int i = 0; i < snowballs; i++) {
+			for (int i = 0; i < this.snowballs; i++) {
 				Snowball snowball = player.launchProjectile(Snowball.class);
-				MagicSpells.getVolatileCodeHandler().setGravity(snowball, snowballGravity);
+				MagicSpells.getVolatileCodeHandler().setGravity(snowball, this.snowballGravity);
 				playSpellEffects(EffectPosition.PROJECTILE, snowball);
 				playTrackingLinePatterns(EffectPosition.DYNAMIC_CASTER_PROJECTILE_LINE, player.getLocation(), snowball.getLocation(), player, snowball);
-				snowball.setFallDistance(identifier); // tag the snowballs
-				mod = new Vector((rand.nextDouble() - .5) * horizSpread, (rand.nextDouble() - .5) * vertSpread, (rand.nextDouble() - .5) * horizSpread);
+				snowball.setFallDistance(this.identifier); // Tag the snowballs
+				mod = new Vector((rand.nextDouble() - .5) * this.horizSpread, (rand.nextDouble() - .5) * this.vertSpread, (rand.nextDouble() - .5) * this.horizSpread);
 				snowball.setVelocity(snowball.getVelocity().add(mod));
 			}
 			playSpellEffects(EffectPosition.CASTER, player);
@@ -73,22 +77,22 @@ public class FreezeSpell extends InstantSpell implements SpellDamageSpell {
 	
 	@EventHandler(priority=EventPriority.LOWEST)
 	public void onEntityDamage(EntityDamageByEntityEvent event) {
-		if (damage <= 0) return;
+		if (this.damage <= 0) return;
 		if (event.isCancelled()) return;
 		if (!(event.getEntity() instanceof LivingEntity)) return;
 		if (!(event.getDamager() instanceof Snowball)) return;
-		if (event.getDamager().getFallDistance() != identifier) return;
+		if (event.getDamager().getFallDistance() != this.identifier) return;
 		
 		LivingEntity entity = (LivingEntity)event.getEntity();
 		
-		if (validTargetList.canTarget(entity)) {
+		if (this.validTargetList.canTarget(entity)) {
 			float power = 1;
 			SpellTargetEvent e = new SpellTargetEvent(this, (Player)((Snowball)event.getDamager()).getShooter(), entity, power);
 			EventUtil.call(e);
 			if (e.isCancelled()) {
 				event.setCancelled(true);
 			} else {
-				event.setDamage(damage * e.getPower());
+				event.setDamage(this.damage * e.getPower());
 			}
 		} else {
 			event.setCancelled(true);
@@ -97,17 +101,17 @@ public class FreezeSpell extends InstantSpell implements SpellDamageSpell {
 	
 	@EventHandler(priority=EventPriority.HIGHEST, ignoreCancelled=true)
 	public void applySlowEffect(EntityDamageByEntityEvent event) {
-		if (slowAmount <= 0 || slowDuration <= 0) return;
+		if (this.slowAmount <= 0 || this.slowDuration <= 0) return;
 		
 		if (!(event.getDamager() instanceof Snowball)) return;
-		if (event.getDamager().getFallDistance() != identifier) return;
+		if (event.getDamager().getFallDistance() != this.identifier) return;
 		
-		((LivingEntity)event.getEntity()).addPotionEffect(new PotionEffect(PotionEffectType.SLOW, slowDuration, slowAmount), true);
+		((LivingEntity)event.getEntity()).addPotionEffect(new PotionEffect(PotionEffectType.SLOW, this.slowDuration, this.slowAmount), true);
 	}
 
 	@Override
 	public String getSpellDamageType() {
-		return spellDamageType;
+		return this.spellDamageType;
 	}
 
 }

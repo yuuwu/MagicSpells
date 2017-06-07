@@ -14,10 +14,10 @@ import com.nisovin.magicspells.spells.PassiveSpell;
 import com.nisovin.magicspells.util.MagicLocation;
 import com.nisovin.magicspells.util.OverridePriority;
 
-// trigger variable is a semicolon separated list of locations to accept
-// the format of locations is world,x,y,z
-// where "world" is a string
-// and x, y, and z are integers
+// Trigger variable is a semicolon separated list of locations to accept
+// The format of locations is world,x,y,z
+// Where "world" is a string
+// And x, y, and z are integers
 public class LeftClickBlockCoordListener extends PassiveListener {
 
 	Map<MagicLocation, PassiveSpell> locs = new HashMap<>();

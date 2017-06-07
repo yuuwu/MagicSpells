@@ -29,7 +29,7 @@ public class MagicItemNameResolver implements ItemNameResolver {
 	
 	public MagicItemNameResolver() {
 		for (Material mat : Material.values()) {
-			materialMap.put(mat.name().toLowerCase(), mat);
+			this.materialMap.put(mat.name().toLowerCase(), mat);
 		}
 		
 		File file = new File(MagicSpells.getInstance().getDataFolder(), "itemnames.yml");
@@ -40,21 +40,21 @@ public class MagicItemNameResolver implements ItemNameResolver {
 		try {
 			config.load(file);
 			for (String s : config.getKeys(false)) {
-				Material m = materialMap.get(config.getString(s).toLowerCase());
+				Material m = this.materialMap.get(config.getString(s).toLowerCase());
 				if (m == null) continue;
-				materialMap.put(s.toLowerCase(), m);
+				this.materialMap.put(s.toLowerCase(), m);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
 		Map<String, Material> toAdd = new HashMap<>();
-		for (String s : materialMap.keySet()) {
+		for (String s : this.materialMap.keySet()) {
 			if (s.contains("_")) {
-				toAdd.put(s.replace("_", ""), materialMap.get(s));
+				toAdd.put(s.replace("_", ""), this.materialMap.get(s));
 			}
 		}
-		materialMap.putAll(toAdd);
+		this.materialMap.putAll(toAdd);
 	}
 	
 	@Override
@@ -92,13 +92,10 @@ public class MagicItemNameResolver implements ItemNameResolver {
 		if (string == null || string.isEmpty()) return null;
 		
 		// first check for predefined material datas
-		MaterialData matData = materialDataMap.get(string.toLowerCase());
+		MaterialData matData = this.materialDataMap.get(string.toLowerCase());
 		if (matData != null) {
-			if (matData.getItemType().isBlock()) {
-				return new MagicBlockMaterial(matData);
-			} else {
-				return new MagicItemMaterial(matData);
-			}
+			if (matData.getItemType().isBlock()) return new MagicBlockMaterial(matData);
+			return new MagicItemMaterial(matData);
 		}
 		
 		// split type and data
@@ -117,19 +114,15 @@ public class MagicItemNameResolver implements ItemNameResolver {
 			sdata = "";
 		}
 		
-		Material type = materialMap.get(stype);
-		if (type == null) {
-			return resolveUnknown(stype, sdata);
-		}
+		Material type = this.materialMap.get(stype);
+		if (type == null) return resolveUnknown(stype, sdata);
 		
 		if (type.isBlock()) {
 			return new MagicBlockMaterial(resolveBlockData(type, sdata));
 		} else {
 			if (sdata.equals("*")) return new MagicItemAnyDataMaterial(type);
 			MaterialData itemData = resolveItemData(type, sdata);
-			if (itemData != null) {
-				return new MagicItemMaterial(itemData);
-			}
+			if (itemData != null) return new MagicItemMaterial(itemData);
 			short durability = 0;
 			try {
 				durability = Short.parseShort(sdata);
@@ -144,9 +137,7 @@ public class MagicItemNameResolver implements ItemNameResolver {
 	public MagicMaterial resolveBlock(String string) {
 		if (string == null || string.isEmpty()) return null;
 		
-		if (string.contains("|")) {
-			return resolveRandomBlock(string);
-		}
+		if (string.contains("|")) return resolveRandomBlock(string);
 		
 		String stype;
 		String sdata;
@@ -159,7 +150,7 @@ public class MagicItemNameResolver implements ItemNameResolver {
 			sdata = "";
 		}
 		
-		Material type = materialMap.get(stype);
+		Material type = this.materialMap.get(stype);
 		if (type == null) {
 			return resolveUnknown(stype, sdata);
 		}
@@ -214,7 +205,7 @@ public class MagicItemNameResolver implements ItemNameResolver {
 			if (sdata.equals("*")) {
 				return new MagicUnknownAnyDataMaterial(type);
 			} else {
-				short data = ((sdata == null || sdata.isEmpty()) ? 0 : Short.parseShort(sdata));
+				short data = sdata.isEmpty() ? 0 : Short.parseShort(sdata);
 				return new MagicUnknownMaterial(type, data);
 			}
 		} catch (NumberFormatException e) {
@@ -238,7 +229,7 @@ public class MagicItemNameResolver implements ItemNameResolver {
 			return DyeColor.values()[rand.nextInt(DyeColor.values().length)];
 		} else {
 			DyeColor color = DyeColor.WHITE;
-			if (data != null && data.length() > 0) {
+			if (data != null && !data.isEmpty()) {
 				data = data.replace("_", "").replace(" ", "").toLowerCase();
 				for (DyeColor c : DyeColor.values()) {
 					if (data.equals(c.name().replace("_", "").toLowerCase())) {
@@ -260,7 +251,7 @@ public class MagicItemNameResolver implements ItemNameResolver {
 	private Tree getTree(String data) {
 		TreeSpecies species = TreeSpecies.GENERIC;
 		BlockFace dir = BlockFace.UP;
-		if (data != null && data.length() > 0) {
+		if (data != null && !data.isEmpty()) {
 			String[] split = data.split("[: ]");
 			if (split.length >= 1) {
 				species = getTreeSpecies(split[0]);
@@ -291,7 +282,7 @@ public class MagicItemNameResolver implements ItemNameResolver {
 		return new Leaves(getTreeSpecies(data));
 	}
 	
-	// data can be
+	// Data can be
 	// birch, jungle, redwood, random
 	private TreeSpecies getTreeSpecies(String data) {
 		if (data.equalsIgnoreCase("birch")) {

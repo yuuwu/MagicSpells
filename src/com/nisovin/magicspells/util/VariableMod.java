@@ -51,49 +51,49 @@ public class VariableMod {
 	private boolean negate = false;
 	
 	public VariableMod(String data) {
-		op = Operation.fromPrefix(data);
+		this.op = Operation.fromPrefix(data);
 		data = operationMatcher.matcher(data).replaceFirst("");
 		if (data.startsWith("-")) {
 			data = data.substring(1);
-			negate = true;
+			this.negate = true;
 		}
 		if (!RegexUtil.matches(RegexUtil.DOUBLE_PATTERN, data)) {
-			//if it isn't a double, then let's match it as a variable
+			// If it isn't a double, then let's match it as a variable
 			if (data.contains(":")) {
-				//then there is an explicit statement of who's variable it is
+				// Then there is an explicit statement of who's variable it is
 				String[] dataSplits = data.split(":");
 				if (dataSplits[0].toLowerCase().equals("target")) {
-					variableOwner = VariableOwner.TARGET;
+					this.variableOwner = VariableOwner.TARGET;
 				} else {
-					variableOwner = VariableOwner.CASTER;
+					this.variableOwner = VariableOwner.CASTER;
 				}
 				
 			}
 		} else {
-			constantModifier = Double.parseDouble(data);
+			this.constantModifier = Double.parseDouble(data);
 		}
 		
 	}
 	
 	public double getValue(Player caster, Player target) {
-		if (modifyingVariableName != null) {
-			if (variableOwner == VariableOwner.CASTER) return MagicSpells.getVariableManager().getValue(modifyingVariableName, caster) * (negate ? -1 : 1);
+		if (this.modifyingVariableName != null) {
+			if (this.variableOwner == VariableOwner.CASTER) return MagicSpells.getVariableManager().getValue(this.modifyingVariableName, caster) * (this.negate ? -1 : 1);
 			//variable owner == target
-			return MagicSpells.getVariableManager().getValue(modifyingVariableName, target) * (negate ? -1 : 1);
+			return MagicSpells.getVariableManager().getValue(this.modifyingVariableName, target) * (this.negate ? -1 : 1);
 		}
-		return constantModifier * (negate ? -1 : 1);
+		return this.constantModifier * (this.negate ? -1 : 1);
 	}
 	
 	public boolean isConstantValue() {
-		return modifyingVariableName == null;
+		return this.modifyingVariableName == null;
 	}
 	
 	public Operation getOperation() {
-		return op;
+		return this.op;
 	}
 	
 	public VariableOwner getVariableOwner() {
-		return variableOwner;
+		return this.variableOwner;
 	}
 	
 }

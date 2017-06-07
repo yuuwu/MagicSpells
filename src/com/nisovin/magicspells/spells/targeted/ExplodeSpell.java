@@ -19,7 +19,7 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.events.SpellTargetLocationEvent;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 
 public class ExplodeSpell extends TargetedSpell implements TargetedLocationSpell {
@@ -49,7 +49,6 @@ public class ExplodeSpell extends TargetedSpell implements TargetedLocationSpell
 		damageMultiplier = getConfigFloat("damage-multiplier", 0);
 		addFire = getConfigBoolean("add-fire", false);
 		ignoreCanceled = getConfigBoolean("ignore-canceled", false);
-		
 	}
 	
 	@Override
@@ -73,7 +72,7 @@ public class ExplodeSpell extends TargetedSpell implements TargetedLocationSpell
 				}
 			}
 			if (target == null || target.getType() == Material.AIR) {
-				// fail: no target
+				// Fail: no target
 				return noTarget(player);
 			}
 			boolean exploded = explode(player, target.getLocation(), power);
@@ -83,20 +82,20 @@ public class ExplodeSpell extends TargetedSpell implements TargetedLocationSpell
 	}
 	
 	private boolean explode(Player player, Location target, float power) {
-		// check plugins
+		// Check plugins
 		if (simulateTnt) {
 			boolean cancelled = MagicSpells.getVolatileCodeHandler().simulateTnt(target, player, explosionSize * power, addFire);
 			if (cancelled) return false;
 		}
-		// backfire chance
+		// Backfire chance
 		if (backfireChance > 0) {
 			Random rand = new Random();
 			if (rand.nextInt(10000) < backfireChance) target = player.getLocation();
 		}
-		// save current explosion data
+		// Save current explosion data
 		currentTick = Bukkit.getWorlds().get(0).getFullTime();
 		currentPower = power;
-		// cause explosion
+		// Cause explosion
 		boolean ret = MagicSpells.getVolatileCodeHandler().createExplosionByPlayer(player, target, explosionSize * power, addFire, !preventBlockDamage);
 		if (ret) playSpellEffects(player, target);
 		return ret;
@@ -115,14 +114,15 @@ public class ExplodeSpell extends TargetedSpell implements TargetedLocationSpell
 	@EventHandler(priority=EventPriority.HIGH)
 	public void onEntityDamage(EntityDamageEvent event) {
 		if (event.isCancelled()) return;
-		if ((damageMultiplier > 0 || preventPlayerDamage) && (event.getCause() == DamageCause.BLOCK_EXPLOSION || event.getCause() == DamageCause.ENTITY_EXPLOSION) && currentTick == Bukkit.getWorlds().get(0).getFullTime()) {
-			if (preventPlayerDamage && event.getEntity() instanceof Player) {
-				event.setCancelled(true);
-			} else if (preventAnimalDamage && event.getEntity() instanceof Animals) {
-				event.setCancelled(true);
-			} else if (damageMultiplier > 0) {
-				event.setDamage(Math.round(event.getDamage() * damageMultiplier * currentPower));
-			}
+		if (!(damageMultiplier > 0 || preventPlayerDamage)) return;
+		if (!(event.getCause() == DamageCause.BLOCK_EXPLOSION || event.getCause() == DamageCause.ENTITY_EXPLOSION)) return;
+		if (currentTick != Bukkit.getWorlds().get(0).getFullTime()) return;
+		if (preventPlayerDamage && event.getEntity() instanceof Player) {
+			event.setCancelled(true);
+		} else if (preventAnimalDamage && event.getEntity() instanceof Animals) {
+			event.setCancelled(true);
+		} else if (damageMultiplier > 0) {
+			event.setDamage(Math.round(event.getDamage() * damageMultiplier * currentPower));
 		}
 	}
 	

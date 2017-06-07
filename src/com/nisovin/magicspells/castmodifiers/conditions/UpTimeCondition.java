@@ -1,5 +1,6 @@
 package com.nisovin.magicspells.castmodifiers.conditions;
 
+import com.nisovin.magicspells.util.TimeUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -16,7 +17,7 @@ public class UpTimeCondition extends Condition {
 	@Override
 	public boolean setVar(String var) {
 		try {
-			ms = Integer.parseInt(var) * 1000;
+			ms = Integer.parseInt(var) * (int)TimeUtil.MILLISECONDS_PER_SECOND;
 			return true;
 		} catch (NumberFormatException e) {
 			DebugHandler.debugNumberFormat(e);
@@ -26,17 +27,17 @@ public class UpTimeCondition extends Condition {
 
 	@Override
 	public boolean check(Player player) {
-		return (System.currentTimeMillis() > startTime + ms);
+		return System.currentTimeMillis() > startTime + ms;
 	}
 
 	@Override
 	public boolean check(Player player, LivingEntity target) {
-		return (System.currentTimeMillis() > startTime + ms);
+		return System.currentTimeMillis() > startTime + ms;
 	}
 
 	@Override
 	public boolean check(Player player, Location location) {
-		return (System.currentTimeMillis() > startTime + ms);
+		return System.currentTimeMillis() > startTime + ms;
 	}
 
 }

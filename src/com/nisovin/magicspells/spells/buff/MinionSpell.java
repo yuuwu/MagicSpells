@@ -41,7 +41,7 @@ public class MinionSpell extends BuffSpell {
 		
 		gravity = getConfigBoolean("gravity", true);
 		
-		// formatted as <entity type> <chance>
+		// Formatted as <entity type> <chance>
 		List<String> c = getConfigStringList("mob-chances", null);
 		if (c == null) c = new ArrayList<>();
 		if (c.isEmpty()) {
@@ -57,7 +57,7 @@ public class MinionSpell extends BuffSpell {
 				try {
 					chance = Integer.parseInt(data[1]);
 				} catch (NumberFormatException e) {
-					//no op
+					// No op
 				}
 			}
 			creatureTypes[i] = creatureType;
@@ -85,12 +85,12 @@ public class MinionSpell extends BuffSpell {
 			}
 		}
 		if (creatureType != null) {
-			// get spawn location
-			Location loc = null;
+			// Get spawn location
+			Location loc;
 			loc = player.getLocation();
 			loc.setX(loc.getX() - 1);
 			
-			// spawn creature
+			// Spawn creature
 			LivingEntity minion = (LivingEntity)player.getWorld().spawnEntity(loc, creatureType);
 			MagicSpells.getVolatileCodeHandler().setGravity(minion, gravity);
 			if (minion instanceof Creature) {
@@ -102,7 +102,7 @@ public class MinionSpell extends BuffSpell {
 				return false;
 			}
 		} else {
-			// fail -- no creature found
+			// Fail -- no creature found
 			return false;
 		}
 		return true;
@@ -112,46 +112,46 @@ public class MinionSpell extends BuffSpell {
 	public void onEntityTarget(EntityTargetEvent event) {
 		if (!event.isCancelled() && !minions.isEmpty()) {	
 			if (event.getTarget() != null && event.getTarget() instanceof Player) {
-				// a monster is trying to target a player
+				// A monster is trying to target a player
 				Player player = (Player)event.getTarget();
 				LivingEntity minion = minions.get(player.getName());
 				if (minion != null && minion.getEntityId() == event.getEntity().getEntityId()) {
-					// the targeted player owns the minion
+					// The targeted player owns the minion
 					if (isExpired(player)) {
-						// spell is expired
+						// Spell is expired
 						turnOff(player);
 						return;
 					}
-					// check if the player has a current target
+					// Check if the player has a current target
 					LivingEntity target = targets.get(player.getName());
 					if (target != null) {
-						// player has a target
+						// Player has a target
 						if (target.isDead()) {
-							// the target is dead, so remove that target
+							// The target is dead, so remove that target
 							targets.put(player.getName(), null);
 							event.setCancelled(true);
 						} else {
-							// send the minion after the player's target
+							// Send the minion after the player's target
 							event.setTarget(target);
 							MagicSpells.getVolatileCodeHandler().setTarget(minion, target);
 							addUse(player);
 							chargeUseCost(player);
 						}
 					} else {
-						// player doesn't have a target, so just order the minion to follow
+						// Player doesn't have a target, so just order the minion to follow
 						event.setCancelled(true);
 						double distSq = minion.getLocation().toVector().distanceSquared(player.getLocation().toVector());
-						if (distSq > 3*3) {
-							// minion is too far, tell him to move closer
+						if (distSq > 3 * 3) {
+							// Minion is too far, tell him to move closer
 							MagicSpells.getVolatileCodeHandler().entityPathTo(minion, player);
 						} 
 					}
 				} else if (!targetPlayers && minions.containsValue(event.getEntity())) {
-					// player doesn't own minion, but it is an owned minion and pvp is off, so cancel
+					// Player doesn't own minion, but it is an owned minion and pvp is off, so cancel
 					event.setCancelled(true);
 				}
 			} else if (event.getReason() == TargetReason.FORGOT_TARGET && minions.containsValue(event.getEntity())) {
-				// forgetting target but it's a minion, don't let them do that! (probably a spider going passive)
+				// Forgetting target but it's a minion, don't let them do that! (probably a spider going passive)
 				event.setCancelled(true);
 			}
 		}
@@ -159,43 +159,44 @@ public class MinionSpell extends BuffSpell {
 	
 	@EventHandler
 	public void onEntityDeath(EntityDeathEvent event) {
-		if (minions.containsValue(event.getEntity())) {
-			event.setDroppedExp(0);
-			event.getDrops().clear();
-		}
+		if (!minions.containsValue(event.getEntity())) return;
+		event.setDroppedExp(0);
+		event.getDrops().clear();
 	}
 
 	@EventHandler
 	public void onEntityDamage(EntityDamageEvent event) {
-		if (!event.isCancelled() && event instanceof EntityDamageByEntityEvent && event.getEntity() instanceof LivingEntity) {
-			EntityDamageByEntityEvent evt = (EntityDamageByEntityEvent)event;
-			Player p = null;
-			if (evt.getDamager() instanceof Player) {
-				p = (Player)evt.getDamager();
-			} else if (evt.getDamager() instanceof Projectile && ((Projectile)evt.getDamager()).getShooter() instanceof Player) {
-				p = (Player)((Projectile)evt.getDamager()).getShooter();
-			}
-			if (p != null) {
-				if (minions.containsKey(p.getName())) {
-					if (isExpired(p)) {
-						turnOff(p);
-						return;
-					}
-					LivingEntity target = (LivingEntity)event.getEntity();
-					MagicSpells.getVolatileCodeHandler().setTarget(minions.get(p.getName()), target);
-					targets.put(p.getName(), target);
-					addUse(p);
-					chargeUseCost(p);
+		if (event.isCancelled()) return;
+		if (!(event instanceof EntityDamageByEntityEvent)) return;
+		if (!(event.getEntity() instanceof LivingEntity)) return;
+		EntityDamageByEntityEvent evt = (EntityDamageByEntityEvent)event;
+		Player p = null;
+		if (evt.getDamager() instanceof Player) {
+			p = (Player)evt.getDamager();
+		} else if (evt.getDamager() instanceof Projectile && ((Projectile)evt.getDamager()).getShooter() instanceof Player) {
+			p = (Player)((Projectile)evt.getDamager()).getShooter();
+		}
+		if (p != null) {
+			if (minions.containsKey(p.getName())) {
+				if (isExpired(p)) {
+					turnOff(p);
+					return;
 				}
+				LivingEntity target = (LivingEntity)event.getEntity();
+				MagicSpells.getVolatileCodeHandler().setTarget(minions.get(p.getName()), target);
+				targets.put(p.getName(), target);
+				addUse(p);
+				chargeUseCost(p);
 			}
 		}
 	}	
 
 	@EventHandler
 	public void onEntityCombust(EntityCombustEvent event) {
-		if (preventCombust && !event.isCancelled() && minions.containsValue(event.getEntity())) {
-			event.setCancelled(true);
-		}
+		if (!preventCombust) return;
+		if (event.isCancelled()) return;
+		if (!minions.containsValue(event.getEntity())) return;
+		event.setCancelled(true);
 	}
 	
 	@Override
@@ -207,9 +208,7 @@ public class MinionSpell extends BuffSpell {
 	
 	@Override
 	protected void turnOff() {
-		for (LivingEntity minion : minions.values()) {
-			minion.setHealth(0);
-		}
+		Util.forEachValueOrdered(minions, minion -> minion.setHealth(0));
 		minions.clear();
 		targets.clear();
 	}

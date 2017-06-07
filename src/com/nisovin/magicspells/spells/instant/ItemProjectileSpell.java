@@ -13,7 +13,7 @@ import com.nisovin.magicspells.Subspell;
 import com.nisovin.magicspells.events.SpellTargetEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
-import com.nisovin.magicspells.util.EventUtil;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.Util;
 
@@ -32,29 +32,29 @@ public class ItemProjectileSpell extends InstantSpell {
 	public ItemProjectileSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		speed = getConfigFloat("speed", 1);
-		vertSpeedUsed = configKeyExists("vert-speed");
-		vertSpeed = getConfigFloat("vert-speed", 0);
-		hitRadius = getConfigFloat("hit-radius", 1);
-		yOffset = getConfigFloat("y-offset", 0);
-		projectileHasGravity = getConfigBoolean("gravity", true);
+		this.speed = getConfigFloat("speed", 1);
+		this.vertSpeedUsed = configKeyExists("vert-speed");
+		this.vertSpeed = getConfigFloat("vert-speed", 0);
+		this.hitRadius = getConfigFloat("hit-radius", 1);
+		this.yOffset = getConfigFloat("y-offset", 0);
+		this.projectileHasGravity = getConfigBoolean("gravity", true);
 		
-		if (configKeyExists("spell-on-hit-entity")) spellOnHitEntity = new Subspell(getConfigString("spell-on-hit-entity", ""));
-		if (configKeyExists("spell-on-hit-ground")) spellOnHitGround = new Subspell(getConfigString("spell-on-hit-ground", ""));
+		if (configKeyExists("spell-on-hit-entity")) this.spellOnHitEntity = new Subspell(getConfigString("spell-on-hit-entity", ""));
+		if (configKeyExists("spell-on-hit-ground")) this.spellOnHitGround = new Subspell(getConfigString("spell-on-hit-ground", ""));
 		
-		item = Util.getItemStackFromString(getConfigString("item", "iron_sword"));
+		this.item = Util.getItemStackFromString(getConfigString("item", "iron_sword"));
 	}
 	
 	@Override
 	public void initialize() {
 		super.initialize();
-		if (spellOnHitEntity != null && !spellOnHitEntity.process()) {
-			spellOnHitEntity = null;
-			MagicSpells.error("Invalid spell-on-hit-entity for " + internalName);
+		if (this.spellOnHitEntity != null && !this.spellOnHitEntity.process()) {
+			this.spellOnHitEntity = null;
+			MagicSpells.error("Invalid spell-on-hit-entity for " + this.internalName);
 		}
-		if (spellOnHitGround != null && !spellOnHitGround.process()) {
-			spellOnHitGround = null;
-			MagicSpells.error("Invalid spell-on-hit-ground for " + internalName);
+		if (this.spellOnHitGround != null && !this.spellOnHitGround.process()) {
+			this.spellOnHitGround = null;
+			MagicSpells.error("Invalid spell-on-hit-ground for " + this.internalName);
 		}
 	}
 
@@ -82,48 +82,48 @@ public class ItemProjectileSpell extends InstantSpell {
 			Location location = caster.getEyeLocation().add(0, yOffset, 0);
 			location.setPitch(0f);
 			if (vertSpeedUsed) {
-				vel = caster.getLocation().getDirection().setY(0).multiply(speed).setY(vertSpeed);
+				this.vel = caster.getLocation().getDirection().setY(0).multiply(speed).setY(vertSpeed);
 			} else {
-				vel = caster.getLocation().getDirection().multiply(speed);
+				this.vel = caster.getLocation().getDirection().multiply(speed);
 			}
-			entity = caster.getWorld().dropItem(location, item.clone());
-			MagicSpells.getVolatileCodeHandler().setGravity(entity, projectileHasGravity);
-			playSpellEffects(EffectPosition.PROJECTILE, entity);
-			playTrackingLinePatterns(EffectPosition.DYNAMIC_CASTER_PROJECTILE_LINE, caster.getLocation(), entity.getLocation(), caster, entity);
-			entity.teleport(location);
-			entity.setPickupDelay(1000000);
-			entity.setVelocity(vel);
+			this.entity = caster.getWorld().dropItem(location, item.clone());
+			MagicSpells.getVolatileCodeHandler().setGravity(this.entity, projectileHasGravity);
+			playSpellEffects(EffectPosition.PROJECTILE, this.entity);
+			playTrackingLinePatterns(EffectPosition.DYNAMIC_CASTER_PROJECTILE_LINE, caster.getLocation(), this.entity.getLocation(), caster, this.entity);
+			this.entity.teleport(location);
+			this.entity.setPickupDelay(1000000);
+			this.entity.setVelocity(this.vel);
 			
-			taskId = MagicSpells.scheduleRepeatingTask(this, 3, 3);
+			this.taskId = MagicSpells.scheduleRepeatingTask(this, 3, 3);
 		}
 		
 		@Override
 		public void run() {
-			for (Entity e : entity.getNearbyEntities(hitRadius, hitRadius + 0.5, hitRadius)) {
-				if (e instanceof LivingEntity && validTargetList.canTarget(caster, e)) {
-					SpellTargetEvent event = new SpellTargetEvent(ItemProjectileSpell.this, caster, (LivingEntity)e, power);
+			for (Entity e : this.entity.getNearbyEntities(hitRadius, hitRadius + 0.5, hitRadius)) {
+				if (e instanceof LivingEntity && validTargetList.canTarget(this.caster, e)) {
+					SpellTargetEvent event = new SpellTargetEvent(ItemProjectileSpell.this, this.caster, (LivingEntity)e, this.power);
 					EventUtil.call(event);
 					if (!event.isCancelled()) {
-						if (spellOnHitEntity != null) spellOnHitEntity.castAtEntity(caster, (LivingEntity)e, event.getPower());
+						if (spellOnHitEntity != null) spellOnHitEntity.castAtEntity(this.caster, (LivingEntity)e, event.getPower());
 						stop();
 						return;
 					}
 				}
 			}
-			if (entity.isOnGround()) {
-				groundCount++;
+			if (this.entity.isOnGround()) {
+				this.groundCount++;
 			} else {
-				groundCount = 0;
+				this.groundCount = 0;
 			}
-			if (groundCount >= 2) {
-				if (spellOnHitGround != null) spellOnHitGround.castAtLocation(caster, entity.getLocation(), power);
+			if (this.groundCount >= 2) {
+				if (spellOnHitGround != null) spellOnHitGround.castAtLocation(this.caster, this.entity.getLocation(), this.power);
 				stop();
 			}
 		}
 		
 		void stop() {
-			entity.remove();
-			MagicSpells.cancelTask(taskId);
+			this.entity.remove();
+			MagicSpells.cancelTask(this.taskId);
 		}
 		
 	}

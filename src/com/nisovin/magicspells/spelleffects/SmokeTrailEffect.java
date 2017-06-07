@@ -112,7 +112,15 @@ public class SmokeTrailEffect extends SpellEffect {
 		}
 		
 		private ArrayList<Location> calculateLocsForProjection() {
-			double x1, y1, z1, x2, y2, z2, xVect, yVect, zVect;
+			double x1;
+			double y1;
+			double z1;
+			double x2;
+			double y2;
+			double z2;
+			double xVect;
+			double yVect;
+			double zVect;
 			x1 = endLoc.getX();
 			y1 = endLoc.getY();
 			z1 = endLoc.getZ();

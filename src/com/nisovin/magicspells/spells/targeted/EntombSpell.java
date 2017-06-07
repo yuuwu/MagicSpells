@@ -3,6 +3,7 @@ package com.nisovin.magicspells.spells.targeted;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import com.nisovin.magicspells.util.TimeUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -137,7 +138,7 @@ public class EntombSpell extends TargetedSpell implements TargetedEntitySpell {
 		
 		if (tombDuration > 0 && !tombBlocks.isEmpty()) {
 			blocks.addAll(tombBlocks);
-			MagicSpells.plugin.getServer().getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new TombRemover(tombBlocks), Math.round(tombDuration * 20 * power));
+			MagicSpells.plugin.getServer().getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new TombRemover(tombBlocks), Math.round(tombDuration * TimeUtil.TICKS_PER_SECOND * power));
 		}
 	}
 

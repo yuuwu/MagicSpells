@@ -47,7 +47,7 @@ public class TargetingCondition extends Condition {
 
 	@Override
 	public boolean check(Player player, LivingEntity target) {
-		if (target != null && target instanceof Creature) {
+		if (target instanceof Creature) {
 			LivingEntity creatureTarget = ((Creature) target).getTarget();
 			if (creatureTarget != null) {
 				if (anyType) return true;

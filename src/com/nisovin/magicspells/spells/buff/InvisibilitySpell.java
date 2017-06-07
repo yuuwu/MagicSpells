@@ -2,6 +2,8 @@ package com.nisovin.magicspells.spells.buff;
 
 import java.util.HashMap;
 
+import com.nisovin.magicspells.util.TimeUtil;
+import com.nisovin.magicspells.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
@@ -104,11 +106,10 @@ public class InvisibilitySpell extends BuffSpell {
 	}
 	
 	private void makeInvisible(Player player) {
-		// make player invisible
-		for (Player p : Bukkit.getOnlinePlayers()) {
-			p.hidePlayer(player);
-		}
-		// detarget monsters
+		// Make player invisible
+		Util.forEachPlayerOnline(p -> p.hidePlayer(player));
+		
+		// Detarget monsters
 		Creature creature;
 		for (Entity e : player.getNearbyEntities(30, 30, 30)) {
 			if (!(e instanceof Creature)) continue;
@@ -122,7 +123,6 @@ public class InvisibilitySpell extends BuffSpell {
 		}
 	}
 	
-	
 	@EventHandler
 	public void onPlayerItemPickup(PlayerPickupItemEvent event) {
 		if (!preventPickups) return;
@@ -135,7 +135,7 @@ public class InvisibilitySpell extends BuffSpell {
 		if (event.isCancelled()) return;
 		Entity target = event.getTarget();
 		if (!(target instanceof Player)) return;
-		if (!invisibles.containsKey(((Player)target).getName())) return;
+		if (!invisibles.containsKey(target.getName())) return;
 		
 		event.setCancelled(true);
 	}
@@ -152,29 +152,24 @@ public class InvisibilitySpell extends BuffSpell {
 		}
 		
 		if (invisibles.containsKey(player.getName())) {
-			for (Player p : Bukkit.getOnlinePlayers()) {
-				p.hidePlayer(player);
-			}
+			Util.forEachPlayerOnline(p -> p.hidePlayer(player));
 		}
 	}
 	
 	@Override
 	public void turnOffBuff(Player player) {
-		// stop charge ticker
+		// Stop charge ticker
 		CostCharger c = invisibles.remove(player.getName());
 		if (c == null) return;
 		c.stop();
-		// force visible
-		for (Player p : Bukkit.getOnlinePlayers()) {
-			p.showPlayer(player);
-		}
+		
+		// Force visible
+		Util.forEachPlayerOnline(p -> p.showPlayer(player));
 	}
 
 	@Override
 	protected void turnOff() {
-		for (CostCharger c : invisibles.values()) {
-			c.stop();
-		}
+		Util.forEachValueOrdered(invisibles, CostCharger::stop);
 		invisibles.clear();
 	}
 	
@@ -185,7 +180,6 @@ public class InvisibilitySpell extends BuffSpell {
 			Player caster = event.getCaster();
 			if (!isActive(caster)) return;
 			if (event.getSpell().getInternalName().equals(internalName)) return;
-			
 			turnOff(caster);
 		}
 		
@@ -198,9 +192,7 @@ public class InvisibilitySpell extends BuffSpell {
 		
 		public CostCharger(Player player) {
 			this.player = player;
-			if (useCostInterval > 0) {
-				taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(MagicSpells.plugin, this, 20, 20);
-			}
+			if (useCostInterval > 0) taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(MagicSpells.plugin, this, TimeUtil.TICKS_PER_SECOND, TimeUtil.TICKS_PER_SECOND);
 		}
 		
 		@Override

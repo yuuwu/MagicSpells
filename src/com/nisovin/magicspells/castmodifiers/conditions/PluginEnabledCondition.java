@@ -1,6 +1,6 @@
 package com.nisovin.magicspells.castmodifiers.conditions;
 
-import org.bukkit.Bukkit;
+import com.nisovin.magicspells.util.compat.CompatBasics;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -37,7 +37,7 @@ public class PluginEnabledCondition extends Condition {
 	
 	private boolean check() {
 		if (pluginName == null) return false;
-		return Bukkit.getPluginManager().isPluginEnabled(this.pluginName);
+		return CompatBasics.pluginEnabled(this.pluginName);
 	}
 
 }

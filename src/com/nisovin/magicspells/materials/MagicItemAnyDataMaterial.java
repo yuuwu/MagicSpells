@@ -16,8 +16,8 @@ public class MagicItemAnyDataMaterial extends MagicItemMaterial {
 	
 	@Override
 	public boolean equals(ItemStack item) {
-		if (matData != null) return matData.getItemType() == item.getType();
-		return type == item.getType();
+		if (this.matData != null) return this.matData.getItemType() == item.getType();
+		return this.type == item.getType();
 	}
 
 }

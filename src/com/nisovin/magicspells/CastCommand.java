@@ -40,14 +40,14 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 		try {
 			if (command.getName().equalsIgnoreCase("magicspellcast")) {
 				// /magicspellcast /c
-				args = Util.splitParams(args); //TODO find an alternative to reassigning the parameter
+				args = Util.splitParams(args);
 				if (args == null || args.length == 0) {
 					if (sender instanceof Player) {
 						MagicSpells.sendMessage(plugin.strCastUsage, (Player)sender, MagicSpells.NULL_ARGS);
 					} else {
 						sender.sendMessage(plugin.textColor + plugin.strCastUsage);
 					}
-				} else if (sender.isOp() && args[0].equals("forcecast") && args.length >= 3) {
+				} else if (Perm.FORCECAST.has(sender) && args[0].equals("forcecast") && args.length >= 3) {
 					// /c forcecast command
 					Player target = PlayerNameUtils.getPlayer(args[1]);
 					if (target == null) {
@@ -63,9 +63,9 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 					if (args.length > 3) spellArgs = Arrays.copyOfRange(args, 3, args.length);
 					spell.cast(target, spellArgs);
 					sender.sendMessage(plugin.textColor + "Player " + target.getName() + " forced to cast " + spell.getName());
-					// end forcecast command handling
+					// End forcecast command handling
 					
-				} else if (sender.isOp() && args[0].equals("reload")) {
+				} else if (Perm.RELOAD.has(sender) && args[0].equals("reload")) {
 					// /c reload
 					if (args.length == 1) {
 						plugin.unload();
@@ -81,9 +81,9 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 							sender.sendMessage(plugin.textColor + player.getName() + "'s spellbook reloaded.");
 						}
 					}
-					// end /c reload handling
+					// End /c reload handling
 					
-				} else if (sender.isOp() && args[0].equals("resetcd")) {
+				} else if (Perm.RESET_COOLDOWN.has(sender) && args[0].equals("resetcd")) {
 					// /c resetcd
 					Player p = null;
 					if (args.length > 1) {
@@ -101,18 +101,18 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 						}
 					}
 					sender.sendMessage(plugin.textColor + "Cooldowns reset" + (p != null ? " for " + p.getName() : ""));
-					// end /c resetcd handling
+					// End /c resetcd handling
 					
-				} else if (sender.isOp() && args[0].equals("resetmana") && args.length > 1 && plugin.mana != null) {
+				} else if (Perm.RESET_MANA.has(sender) && args[0].equals("resetmana") && args.length > 1 && plugin.mana != null) {
 					// /c resetmana
 					Player p = PlayerNameUtils.getPlayer(args[1]);
 					if (p != null) {
 						plugin.mana.createManaBar(p);
 						sender.sendMessage(plugin.textColor + p.getName() + "'s mana reset.");
 					}
-					// end /c resetmana handling
+					// End /c resetmana handling
 					
-				} else if (sender.isOp() && args[0].equals("updatemanarank") && args.length > 1 && plugin.mana != null) {
+				} else if (Perm.UPDATE_MANA_RANK.has(sender) && args[0].equals("updatemanarank") && args.length > 1 && plugin.mana != null) {
 					// /c updatemanarank
 					Player p = PlayerNameUtils.getPlayer(args[1]);
 					if (p != null) {
@@ -124,9 +124,9 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 							sender.sendMessage(plugin.textColor + p.getName() + "'s mana rank already correct.");
 						}
 					}
-					// end /c updatemanarank handling
+					// End /c updatemanarank handling
 					
-				} else if (sender.isOp() && args[0].equalsIgnoreCase("setmaxmana") && args.length == 3 && plugin.mana != null) {
+				} else if (Perm.SET_MAX_MANA.has(sender) && args[0].equalsIgnoreCase("setmaxmana") && args.length == 3 && plugin.mana != null) {
 					// /c setmaxmana
 					Player p = PlayerNameUtils.getPlayer(args[1]);
 					if (p != null) {
@@ -134,9 +134,9 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 						plugin.mana.setMaxMana(p, amt);
 						sender.sendMessage(plugin.textColor + p.getName() + "'s max mana set to " + amt + '.');
 					}
-					// end /c setmaxmana handling
+					// End /c setmaxmana handling
 					
-				} else if (sender.isOp() && args[0].equalsIgnoreCase("modifymana") && args.length == 3 && plugin.mana != null) {
+				} else if (Perm.MODIFY_MANA.has(sender) && args[0].equalsIgnoreCase("modifymana") && args.length == 3 && plugin.mana != null) {
 					// /c modifymana
 					Player p = PlayerNameUtils.getPlayer(args[1]);
 					if (p != null) {
@@ -144,9 +144,9 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 						plugin.mana.addMana(p, amt, ManaChangeReason.OTHER);
 						sender.sendMessage(plugin.textColor + p.getName() + "'s mana modified by " + amt + '.');
 					}
-					// end /c modifymana handling
+					// End /c modifymana handling
 					
-				} else if (sender.isOp() && args[0].equalsIgnoreCase("setmana") && args.length == 3 && plugin.mana != null) {
+				} else if (Perm.SET_MANA.has(sender) && args[0].equalsIgnoreCase("setmana") && args.length == 3 && plugin.mana != null) {
 					// /c setmana
 					Player p = PlayerNameUtils.getPlayer(args[1]);
 					if (p != null) {
@@ -154,9 +154,9 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 						plugin.mana.setMana(p, amt, ManaChangeReason.OTHER);
 						sender.sendMessage(plugin.textColor + p.getName() + "'s mana set to " + amt + '.');
 					}
-					// end /c setmana handling
+					// End /c setmana handling
 					
-				} else if (sender.isOp() && args[0].equals("modifyvariable") && args.length == 4) {
+				} else if (Perm.MODIFY_MANA.has(sender) && args[0].equals("modifyvariable") && args.length == 4) {
 					// /c modifyvariable <var> <player> ((=|-)?)<value>
 					String var = args[1];
 					String player = args[2];
@@ -166,7 +166,7 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 					double num = 0;
 					String numString = args[3];
 					
-					//possible operations
+					// Possible operations
 					//+-=*/
 					
 					if (numString.startsWith("*")) {
@@ -212,9 +212,10 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 					} else {
 						MagicSpells.getVariableManager().modify(var, player, num);
 					}
-					// end /c modifyvariable handling
+					// End /c modifyvariable handling
 					
-				} else if (sender.isOp() && args[0].equals("magicitem") && args.length > 1 && sender instanceof Player) {
+					// TODO this can be weakened to inventoryholder
+				} else if (Perm.MAGICITEM.has(sender) && args[0].equals("magicitem") && args.length > 1 && sender instanceof Player) {
 					// /c magicitem
 					ItemStack item = Util.getItemStackFromString(args[1]);
 					if (item != null) {
@@ -223,9 +224,9 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 						}
 						((Player)sender).getInventory().addItem(item);
 					}
-					// end /c magicitem handling
+					// End /c magicitem handling
 					
-				} else if (sender.isOp() && args[0].equals("download") && args.length == 3) {
+				} else if (Perm.DOWNLOAD.has(sender) && args[0].equals("download") && args.length == 3) {
 					// /c download
 					File file = new File(plugin.getDataFolder(), "spells-" + args[1] + ".yml");
 					if (file.exists()) {
@@ -238,16 +239,16 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 							sender.sendMessage(plugin.textColor + "ERROR: The file could not be downloaded.");
 						}
 					}
-					// end /c download handling
+					// End /c download handling
 					
-				} else if (sender.isOp() && args[0].equals("update") && args.length == 3) {
+				} else if (Perm.UPDATE.has(sender) && args[0].equals("update") && args.length == 3) {
 					// /c update
 					File file = new File(plugin.getDataFolder(), "update-" + args[1] + ".yml");
 					boolean downloaded = Util.downloadFile(args[2], file);
 					boolean abort = false;
 					if (downloaded) {
 						sender.sendMessage(plugin.textColor + "Update file successfully downloaded.");
-						// delete the existing file
+						// Delete the existing file
 						File old = new File(plugin.getDataFolder(), args[1] + ".yml");
 						if (old.exists()) {
 							boolean deleteSuccess = old.delete();
@@ -263,7 +264,7 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 						}
 						
 						if (!abort) {
-							// rename the update to the original file's name
+							// Rename the update to the original file's name
 							boolean renamingSuccess = file.renameTo(new File(plugin.getDataFolder(), args[1] + ".yml"));
 							if (renamingSuccess) {
 								sender.sendMessage(plugin.textColor + "Successfully renamed the update file to " + args[1] + ".yml");
@@ -275,33 +276,33 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 					} else {
 						sender.sendMessage(plugin.textColor + "Update file failed to download.");
 					}
-					// end /c update handling
+					// End /c update handling
 					
-				} else if (sender.isOp() && args[0].equals("saveskin") && args.length == 3) {
+				} else if (Perm.SAVESKIN.has(sender) && args[0].equals("saveskin") && args.length == 3) {
 					// /c saveskin
 					Player player = PlayerNameUtils.getPlayerExact(args[1]);
 					if (player != null) {
 						MagicSpells.getVolatileCodeHandler().saveSkinData(player, args[2]);
 						sender.sendMessage("Skin data for player " + player.getName() + " saved as " + args[2]);
 					}
-					// end /c saveskin handling
+					// End /c saveskin handling
 					
-				} else if (sender.isOp() && args[0].equals("profilereport")) {
+				} else if (Perm.PROFILE.has(sender) && args[0].equals("profilereport")) {
 					// /c profilereport
 					sender.sendMessage(plugin.textColor + "Creating profiling report");
 					MagicSpells.profilingReport();
-					// end /c profilereport handling
+					// End /c profilereport handling
 					
-				} else if (sender.isOp() && args[0].equals("debug")) {
+				} else if (Perm.DEBUG.has(sender) && args[0].equals("debug")) {
 					// /c debug
 					plugin.debug = !plugin.debug;
-					sender.sendMessage("MagicSpells: debug mode " + (plugin.debug?"enabled":"disabled"));
-					// end /c debug handling
+					sender.sendMessage("MagicSpells: debug mode " + (plugin.debug ? "enabled" : "disabled"));
+					// End /c debug handling
 					
-				} else if (sender.isOp() && args[0].equals("castat")) {
-					// begin /c castat handling
+				} else if (Perm.CAST_AT.has(sender) && args[0].equals("castat")) {
+					// Begin /c castat handling
 					return CastAtSubCommand.onCommand(sender, command, label, args);
-					// end /c castat handling
+					// End /c castat handling
 				} else if (sender instanceof Player) {
 					Player player = (Player)sender;
 					Spellbook spellbook = MagicSpells.getSpellbook(player);
@@ -322,7 +323,7 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 					} else {
 						MagicSpells.sendMessage(plugin.strUnknownSpell, player, null);
 					}
-				} else { // not a player
+				} else { // Not a player
 					Spell spell = plugin.spellNames.get(args[0].toLowerCase());
 					if (spell == null) {
 						sender.sendMessage("Unknown spell.");
@@ -401,7 +402,7 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 					}
 				}
 				return true;
-				// end /magicspellcast /c handling
+				// End /magicspellcast /c handling
 				
 			} else if (command.getName().equalsIgnoreCase("magicspellmana")) {
 				// /magicspellmana
@@ -410,7 +411,7 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 					plugin.mana.showMana(player, true);
 				}
 				return true;
-				// end /magicspellmana handling
+				// End /magicspellmana handling
 				
 			} else if (command.getName().equalsIgnoreCase("magicspellxp")) {
 				// /magicspellxp
@@ -421,7 +422,7 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 					}
 				}
 				return true;
-				// end /magicspellxp handling
+				// End /magicspellxp handling
 				
 			}
 			return false;

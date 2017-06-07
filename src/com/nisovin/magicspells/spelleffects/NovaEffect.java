@@ -136,7 +136,7 @@ public class NovaEffect extends SpellEffect {
 	public Runnable playEffectLocation(Location location) {
 		if (mat == null) return null;
 		
-		// get nearby players
+		// Get nearby players
 		Item item = location.getWorld().dropItem(location, new ItemStack(Material.STONE, 0));
 		List<Entity> nearbyEntities = item.getNearbyEntities(range, range, range);
 		item.remove();
@@ -146,7 +146,7 @@ public class NovaEffect extends SpellEffect {
 			nearby.add((Player)e);
 		}
 		
-		// start animation
+		// Start animation
 		Block b = location.getBlock();
 		if (!BlockUtils.isPathable(b)) b = b.getRelative(BlockFace.UP);
 		new NovaAnimation(nearby, location.getBlock(), mat, radius, novaTickInterval, expandingRadiusChange);
@@ -175,7 +175,7 @@ public class NovaEffect extends SpellEffect {
 
 		@Override
 		protected void onTick(int tick) {
-			// remove old fire blocks
+			// Remove old fire blocks
 			tick *= radiusChange;
 			for (Block block : blocks) {
 				for (Player p : nearby) {
@@ -185,7 +185,7 @@ public class NovaEffect extends SpellEffect {
 			blocks.clear();
 			
 			if (tick <= radiusNova) {
-				// set next ring on fire
+				// Set next ring on fire
 				int bx = center.getX();
 				int y = center.getY();
 				int bz = center.getZ();
@@ -211,7 +211,7 @@ public class NovaEffect extends SpellEffect {
 					}
 				}
 			} else if (tick > radiusNova + 1) {
-				// stop if done
+				// Stop if done
 				stop();
 			}
 		}

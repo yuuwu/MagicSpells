@@ -45,41 +45,41 @@ public class LifewalkSpell extends BuffSpell {
 	public LifewalkSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		lifewalkers = new HashSet<>();
-		random = new Random();
+		this.lifewalkers = new HashSet<>();
+		this.random = new Random();
 		
-		tickInterval = getConfigInt("tick-interval", 15);
-		redFlowerChance = getConfigInt("red-flower-chance", 15);
-		yellowFlowerChance = getConfigInt("yellow-flower-chance", 15);
-		saplingChance = getConfigInt("sapling-chance", 5);
-		tallgrassChance = getConfigInt("tallgrass-chance", 25);
-		fernChance = getConfigInt("fern-chance", 15);
+		this.tickInterval = getConfigInt("tick-interval", 15);
+		this.redFlowerChance = getConfigInt("red-flower-chance", 15);
+		this.yellowFlowerChance = getConfigInt("yellow-flower-chance", 15);
+		this.saplingChance = getConfigInt("sapling-chance", 5);
+		this.tallgrassChance = getConfigInt("tallgrass-chance", 25);
+		this.fernChance = getConfigInt("fern-chance", 15);
 	}
 
 	@Override
 	public boolean castBuff(Player player, float power, String[] args) {
-		lifewalkers.add(player.getName());
-		if (grower == null) grower = new Grower();
+		this.lifewalkers.add(player.getName());
+		if (this.grower == null) this.grower = new Grower();
 		return true;
 	}	
 	
 	@Override
 	public void turnOffBuff(Player player) {
-		lifewalkers.remove(player.getName());
-		if (!lifewalkers.isEmpty()) return;
-		if (grower == null) return;
+		this.lifewalkers.remove(player.getName());
+		if (!this.lifewalkers.isEmpty()) return;
+		if (this.grower == null) return;
 		
-		grower.stop();
-		grower = null;
+		this.grower.stop();
+		this.grower = null;
 	}
 	
 	@Override
 	protected void turnOff() {
-		lifewalkers.clear();
-		if (grower == null) return;
+		this.lifewalkers.clear();
+		if (this.grower == null) return;
 		
-		grower.stop();
-		grower = null;
+		this.grower.stop();
+		this.grower = null;
 	}
 
 	private class Grower implements Runnable {
@@ -88,16 +88,16 @@ public class LifewalkSpell extends BuffSpell {
 		String[] strArr = new String[0];
 		
 		public Grower() {
-			taskId = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(MagicSpells.plugin, this, tickInterval, tickInterval);
+			this.taskId = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(MagicSpells.plugin, this, tickInterval, tickInterval);
 		}
 		
 		public void stop() {
-			Bukkit.getServer().getScheduler().cancelTask(taskId);
+			Bukkit.getServer().getScheduler().cancelTask(this.taskId);
 		}
 		
 		@Override
 		public void run() {
-			for (String s : lifewalkers.toArray(strArr)) {
+			for (String s : lifewalkers.toArray(this.strArr)) {
 				Player player = PlayerNameUtils.getPlayer(s);
 				if (player != null) {
 					if (isExpired(player)) {
@@ -158,7 +158,7 @@ public class LifewalkSpell extends BuffSpell {
 
 	@Override
 	public boolean isActive(Player player) {
-		return lifewalkers.contains(player.getName());
+		return this.lifewalkers.contains(player.getName());
 	}
 
 }

@@ -33,27 +33,27 @@ public class SpellApplyDamageEvent extends SpellEvent {
     }
     
     public LivingEntity getTarget() {
-    	return target;
+    	return this.target;
     }
     
     public double getDamage() {
-    	return damage;
+    	return this.damage;
     }
     
     public DamageCause getCause() {
-    	return cause;
+    	return this.cause;
     }
     
     public long getTimestamp() {
-    	return timestamp;
+    	return this.timestamp;
     }
     
     public float getDamageModifier() {
-    	return modifier;
+    	return this.modifier;
     }
     
     public double getFinalDamage() {
-    	return damage * modifier;
+    	return this.damage * this.modifier;
     }
     
     @Override

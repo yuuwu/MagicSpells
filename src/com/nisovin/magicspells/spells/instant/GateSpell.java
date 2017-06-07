@@ -29,27 +29,27 @@ public class GateSpell extends InstantSpell {
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
-			// get world
-			World world;
+			// Get world
+			World effectiveWorld;
 			if (this.world.equals("CURRENT")) {
-				world = player.getWorld();
+				effectiveWorld = player.getWorld();
 			} else if (this.world.equals("DEFAULT")) {
-				world = Bukkit.getServer().getWorlds().get(0);
+				effectiveWorld = Bukkit.getServer().getWorlds().get(0);
 			} else {
-				world = Bukkit.getServer().getWorld(this.world);
+				effectiveWorld = Bukkit.getServer().getWorld(this.world);
 			}
-			if (world == null) {
-				// fail -- no world
-				MagicSpells.error(name + ": world " + this.world + " does not exist");
-				sendMessage(strGateFailed, player, args);
+			if (effectiveWorld == null) {
+				// Fail -- no world
+				MagicSpells.error(this.name + ": world " + this.world + " does not exist");
+				sendMessage(this.strGateFailed, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			
-			// get location
+			// Get location
 			Location location;
-			coords = coords.replace(" ", "");
-			if (coords.matches("^-?[0-9]+,[0-9]+,-?[0-9]+(,-?[0-9.]+,-?[0-9.]+)?$")) {
-				String[] c = coords.split(",");
+			this.coords = this.coords.replace(" ", "");
+			if (this.coords.matches("^-?[0-9]+,[0-9]+,-?[0-9]+(,-?[0-9.]+,-?[0-9.]+)?$")) {
+				String[] c = this.coords.split(",");
 				int x = Integer.parseInt(c[0]);
 				int y = Integer.parseInt(c[1]);
 				int z = Integer.parseInt(c[2]);
@@ -59,35 +59,35 @@ public class GateSpell extends InstantSpell {
 					yaw = Float.parseFloat(c[3]);
 					pitch = Float.parseFloat(c[4]);
 				}
-				location = new Location(world, x, y, z, yaw, pitch);
-			} else if (coords.equals("SPAWN")) {
-				location = world.getSpawnLocation();
-				location = new Location(world, location.getX(), world.getHighestBlockYAt(location), location.getZ());
-			} else if (coords.equals("EXACTSPAWN")) {
-				location = world.getSpawnLocation();
-			} else if (coords.equals("CURRENT")) {
+				location = new Location(effectiveWorld, x, y, z, yaw, pitch);
+			} else if (this.coords.equals("SPAWN")) {
+				location = effectiveWorld.getSpawnLocation();
+				location = new Location(effectiveWorld, location.getX(), effectiveWorld.getHighestBlockYAt(location), location.getZ());
+			} else if (this.coords.equals("EXACTSPAWN")) {
+				location = effectiveWorld.getSpawnLocation();
+			} else if (this.coords.equals("CURRENT")) {
 				Location l = player.getLocation();
-				location = new Location(world, l.getBlockX(), l.getBlockY(), l.getBlockZ(), l.getYaw(), l.getPitch());
+				location = new Location(effectiveWorld, l.getBlockX(), l.getBlockY(), l.getBlockZ(), l.getYaw(), l.getPitch());
 			} else {
-				// fail -- no location
-				MagicSpells.error(name + ": " + this.coords + " is not a valid location");
-				sendMessage(strGateFailed, player, args);
+				// Fail -- no location
+				MagicSpells.error(this.name + ": " + this.coords + " is not a valid location");
+				sendMessage(this.strGateFailed, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			location.setX(location.getX() + .5);
 			location.setZ(location.getZ() + .5);
 			MagicSpells.debug(3, "Gate location: " + location.toString());
 			
-			// check for landing point
+			// Check for landing point
 			Block b = location.getBlock();
 			if (!BlockUtils.isPathable(b) || !BlockUtils.isPathable(b.getRelative(0, 1, 0))) {
-				// fail -- blocked
-				MagicSpells.error(name + ": landing spot blocked");
-				sendMessage(strGateFailed, player, args);
+				// Fail -- blocked
+				MagicSpells.error(this.name + ": landing spot blocked");
+				sendMessage(this.strGateFailed, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			
-			// teleport caster
+			// Teleport caster
 			Location from = player.getLocation();
 			Location to = b.getLocation();
 			boolean teleported = player.teleport(location);
@@ -95,9 +95,9 @@ public class GateSpell extends InstantSpell {
 				playSpellEffects(EffectPosition.CASTER, from);
 				playSpellEffects(EffectPosition.TARGET, to);
 			} else {
-				// fail - teleport blocked
-				MagicSpells.error(name + ": teleport prevented!");
-				sendMessage(strGateFailed, player, args);
+				// Fail - teleport blocked
+				MagicSpells.error(this.name + ": teleport prevented!");
+				sendMessage(this.strGateFailed, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 		}

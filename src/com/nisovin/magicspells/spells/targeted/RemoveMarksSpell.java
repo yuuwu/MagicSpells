@@ -36,7 +36,7 @@ public class RemoveMarksSpell extends TargetedSpell implements TargetedLocationS
 	public void initialize() {
 		super.initialize();
 		Spell spell = MagicSpells.getSpellByInternalName(markSpellName);
-		if (spell != null && spell instanceof MarkSpell) {
+		if (spell instanceof MarkSpell) {
 			markSpell = (MarkSpell)spell;
 		} else {
 			MagicSpells.error("Failed to get mark spell for '" + internalName + "' spell");

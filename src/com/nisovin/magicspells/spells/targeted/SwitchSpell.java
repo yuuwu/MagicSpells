@@ -24,15 +24,15 @@ public class SwitchSpell extends TargetedSpell implements TargetedEntitySpell {
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
-			// get target
+			// Get target
 			TargetInfo<LivingEntity> target = getTargetedEntity(player, power);
 			if (target == null) return noTarget(player);
 			
-			// teleport
+			// Teleport
 			playSpellEffects(player, target.getTarget());
 			switchPlaces(player, target.getTarget());			
 			
-			// send messages
+			// Send messages
 			sendMessages(player, target.getTarget());
 			return PostCastAction.NO_MESSAGES;
 		}

@@ -20,15 +20,15 @@ public class PermissionSpell extends InstantSpell {
 	public PermissionSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		duration = getConfigInt("duration", 0);		
-		permissionNodes = getConfigStringList("permission-nodes", null);
+		this.duration = getConfigInt("duration", 0);
+		this.permissionNodes = getConfigStringList("permission-nodes", null);
 	}
 
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
-		if (state == SpellCastState.NORMAL && duration > 0 && permissionNodes != null) {
-			for (String node : permissionNodes) {
-				player.addAttachment(MagicSpells.plugin, node, true, duration);
+		if (state == SpellCastState.NORMAL && duration > 0 && this.permissionNodes != null) {
+			for (String node : this.permissionNodes) {
+				player.addAttachment(MagicSpells.plugin, node, true, this.duration);
 			}
 			playSpellEffects(EffectPosition.CASTER, player);
 		}
