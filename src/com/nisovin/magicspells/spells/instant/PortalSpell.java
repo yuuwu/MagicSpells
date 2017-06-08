@@ -3,6 +3,8 @@ package com.nisovin.magicspells.spells.instant;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.nisovin.magicspells.spells.instant.MarkSpell;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,11 +18,9 @@ import com.nisovin.magicspells.events.SpellTargetEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.util.BoundingBox;
-import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellReagents;
 
-// TODO clean this up and refactor to avoid the long 'this' access
 public class PortalSpell extends InstantSpell {
 
 	private String markSpellName;
@@ -32,18 +32,25 @@ public class PortalSpell extends InstantSpell {
 	SpellReagents teleportCost;
 	boolean allowReturn;
 	boolean chargeCostToTeleporter;
-	
+
+	float horizRadius;
+	float vertRadius;
+
 	private String strNoMark;
 	private String strTooClose;
 	private String strTooFar;
 	String strTeleportCostFail;
 	String strTeleportCooldownFail;
-	
+	boolean tpOtherPlayers;
+
 	private MarkSpell mark;
-		
+
 	public PortalSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
-		
+
+		this.horizRadius = getConfigFloat("horiz-radius", 1F);
+		this.vertRadius = getConfigFloat("vert-radius", 1F);
+
 		this.markSpellName = getConfigString("mark-spell", "mark");
 		this.duration = getConfigInt("duration", 400);
 		this.teleportCooldown = getConfigInt("teleport-cooldown", 5) * 1000;
@@ -55,14 +62,15 @@ public class PortalSpell extends InstantSpell {
 		this.teleportCost = getConfigReagents("teleport-cost");
 		this.allowReturn = getConfigBoolean("allow-return", true);
 		this.chargeCostToTeleporter = getConfigBoolean("charge-cost-to-teleporter", false);
-		
+		this.tpOtherPlayers = getConfigBoolean("teleport-other-players", true);
+
 		this.strNoMark = getConfigString("str-no-mark", "You have not marked a location to make a portal to.");
 		this.strTooClose = getConfigString("str-too-close", "You are too close to your marked location.");
 		this.strTooFar = getConfigString("str-too-far", "You are too far away from your marked location.");
 		this.strTeleportCostFail = getConfigString("str-teleport-cost-fail", "");
 		this.strTeleportCooldownFail = getConfigString("str-teleport-cooldown-fail", "");
 	}
-	
+
 	@Override
 	public void initialize() {
 		super.initialize();
@@ -83,9 +91,9 @@ public class PortalSpell extends InstantSpell {
 				sendMessage(this.strNoMark, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			} else {
-				
+
 				Location playerLoc = player.getLocation();
-				
+
 				double distanceSq = 0;
 				if (this.maxDistanceSq > 0) {
 					if (!loc.getWorld().equals(playerLoc.getWorld())) {
@@ -108,21 +116,21 @@ public class PortalSpell extends InstantSpell {
 						}
 					}
 				}
-				
+
 				new PortalLink(this, player, playerLoc, loc);
 				playSpellEffects(EffectPosition.CASTER, player);
 			}
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}
-	
+
 	@Override
 	public boolean isBeneficialDefault() {
 		return true;
 	}
-	
+
 	class PortalLink implements Listener {
-		
+
 		PortalSpell spell;
 		Player caster;
 		Location loc1;
@@ -132,20 +140,20 @@ public class PortalSpell extends InstantSpell {
 		int taskId1 = -1;
 		int taskId2 = -1;
 		Map<String, Long> cooldownUntil = new HashMap<>();
-		
+
 		public PortalLink (PortalSpell spell, Player caster, Location loc1, Location loc2) {
 			this.spell = spell;
 			this.caster = caster;
 			this.loc1 = loc1;
 			this.loc2 = loc2;
-			this.box1 = new BoundingBox(loc1, .6);
-			this.box2 = new BoundingBox(loc2, .6);
-			
+			this.box1 = new BoundingBox(loc1, PortalSpell.this.horizRadius, PortalSpell.this.vertRadius);
+			this.box2 = new BoundingBox(loc2, PortalSpell.this.horizRadius, PortalSpell.this.vertRadius);
+
 			this.cooldownUntil.put(caster.getName(), System.currentTimeMillis() + PortalSpell.this.teleportCooldown);
 			registerEvents(this);
 			startTasks();
 		}
-		
+
 		void startTasks() {
 			if (PortalSpell.this.effectInterval > 0) {
 				this.taskId1 = MagicSpells.scheduleRepeatingTask(new Runnable() {
@@ -162,9 +170,10 @@ public class PortalSpell extends InstantSpell {
 			}
 			this.taskId2 = MagicSpells.scheduleDelayedTask(this::disable, PortalSpell.this.duration);
 		}
-		
-		@EventHandler(priority=EventPriority.NORMAL, ignoreCancelled=true)
+
+		@EventHandler(priority= EventPriority.NORMAL, ignoreCancelled=true)
 		void onMove(PlayerMoveEvent event) {
+			if (!tpOtherPlayers && !event.getPlayer().equals(caster)) return;
 			if (this.caster.isValid()) {
 				Player player = event.getPlayer();
 				if (this.box1.contains(event.getTo())) {
@@ -188,14 +197,14 @@ public class PortalSpell extends InstantSpell {
 				disable();
 			}
 		}
-		
+
 		boolean checkTeleport(Player player) {
 			if (cooldownUntil.containsKey(player.getName()) && cooldownUntil.get(player.getName()) > System.currentTimeMillis()) {
 				sendMessage(strTeleportCooldownFail, player, MagicSpells.NULL_ARGS);
 				return false;
 			}
 			cooldownUntil.put(player.getName(), System.currentTimeMillis() + teleportCooldown);
-			
+
 			Player payer = null;
 			if (PortalSpell.this.teleportCost != null) {
 				if (PortalSpell.this.chargeCostToTeleporter) {
@@ -215,15 +224,13 @@ public class PortalSpell extends InstantSpell {
 				}
 				if (payer == null) return false;
 			}
-			
+
 			SpellTargetEvent event = new SpellTargetEvent(this.spell, this.caster, player, 1);
-			EventUtil.call(event);
-			if (event.isCancelled()) return false;
-			
+			Bukkit.getPluginManager().callEvent(event);
 			if (payer != null) removeReagents(payer, PortalSpell.this.teleportCost);
 			return true;
 		}
-		
+
 		void disable() {
 			playSpellEffects(EffectPosition.DELAYED, this.loc1);
 			playSpellEffects(EffectPosition.DELAYED, this.loc2);
@@ -239,7 +246,7 @@ public class PortalSpell extends InstantSpell {
 			this.cooldownUntil.clear();
 			this.cooldownUntil = null;
 		}
-		
+
 	}
 
 }
