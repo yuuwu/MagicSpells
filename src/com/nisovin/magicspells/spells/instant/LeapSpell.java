@@ -2,11 +2,10 @@ package com.nisovin.magicspells.spells.instant;
 
 import java.util.HashSet;
 
-import org.bukkit.entity.Entity;
+import com.nisovin.magicspells.Subspell;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.util.Vector;
 
 import com.nisovin.magicspells.MagicSpells;
@@ -14,26 +13,41 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 
-// TODO allow this to cast a spell when the caster lands
-// TODO add a condition to see if someone is leaping
 public class LeapSpell extends InstantSpell {
-	
+
 	private double forwardVelocity;
 	private double upwardVelocity;
 	private boolean cancelDamage;
 	private boolean clientOnly;
-	
-	private HashSet<Player> jumping;
-	
+	private Subspell landSpell;
+
+	private HashSet<Player> jumping = new HashSet<>();
+
 	public LeapSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
-		
+
 		this.forwardVelocity = getConfigInt("forward-velocity", 40) / 10D;
 		this.upwardVelocity = getConfigInt("upward-velocity", 15) / 10D;
 		this.cancelDamage = getConfigBoolean("cancel-damage", true);
 		this.clientOnly = getConfigBoolean("client-only", false);
-		
-		if (this.cancelDamage) this.jumping = new HashSet<>();
+
+		String landSpellName = getConfigString("land-spell", null);
+
+		if (landSpellName != null) landSpell = new Subspell(landSpellName);
+	}
+
+	@Override
+	public void initialize() {
+		super.initialize();
+		if (landSpell == null) return;
+		if (!landSpell.process()) {
+			landSpell = null;
+			MagicSpells.error("Invalid land-spell for " + this.getInternalName() + " defined");
+		}
+	}
+
+	public boolean isJumping(Player pl) {
+		return jumping.contains(pl);
 	}
 
 	@Override
@@ -46,25 +60,22 @@ public class LeapSpell extends InstantSpell {
 			} else {
 				player.setVelocity(v);
 			}
-			if (this.cancelDamage) this.jumping.add(player);
+			this.jumping.add(player);
 			playSpellEffects(EffectPosition.CASTER, player);
 		}
-		
+
 		return PostCastAction.HANDLE_NORMALLY;
 	}
-	
-	@EventHandler
-	public void onEntityDamage(EntityDamageEvent event) {
-		if (event.isCancelled()) return;
-		if (!this.cancelDamage) return;
-		if (event.getCause() != DamageCause.FALL) return;
-		
-		Entity entity = event.getEntity();
-		if (!(entity instanceof Player)) return;
-		if (!this.jumping.contains(entity)) return;
-		event.setCancelled(true);
-		this.jumping.remove(entity);
-		playSpellEffects(EffectPosition.TARGET, entity.getLocation());
-	}
+
+    @EventHandler
+    public void onEntityDamage(EntityDamageEvent e) {
+        if (e.getCause() != EntityDamageEvent.DamageCause.FALL || !(e.getEntity() instanceof Player)) return;
+        Player pl = (Player)e.getEntity();
+        if (this.jumping.isEmpty()) return;
+        if (!jumping.remove(pl)) return;
+        if (landSpell != null) landSpell.cast(pl, 1);
+        playSpellEffects(EffectPosition.TARGET, pl.getLocation());
+        if (cancelDamage) e.setCancelled(true);
+    }
 
 }
