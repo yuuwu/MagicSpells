@@ -151,6 +151,7 @@ public abstract class Condition {
 		conditions.put("gliding", GlidingCondition.class);
 		conditions.put("spellcaststate", SpellCastStateCondition.class);
 		conditions.put("pluginenabled", PluginEnabledCondition.class);
+		conditions.put("leaping", LeapingCondition.class);
 	}
 	
 }
