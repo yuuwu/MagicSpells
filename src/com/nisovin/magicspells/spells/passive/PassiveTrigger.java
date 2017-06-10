@@ -72,6 +72,10 @@ public class PassiveTrigger {
 	public static Set<PassiveTrigger> SHEAR_SHEEP = addTriggers("shearsheep", SheepShearListener.class);
 	public static Set<PassiveTrigger> SWAP_HAND_ITEMS = addTriggers("swaphanditem", OffhandSwapListener.class);
 	
+	public static Set<PassiveTrigger> START_GLIDE = addTriggers("startglide", GlideListener.class);
+	public static Set<PassiveTrigger> STOP_GLIDE = addTriggers("stopglide", GlideListener.class);
+	
+	
 	public static Set<PassiveTrigger> addTriggers(String baseName, Class<? extends PassiveListener> listener) {
 		Set<PassiveTrigger> ret = new HashSet<>();
 		for (Map.Entry<EventPriority, String> entry: triggerPrioritySuffix.entrySet()) {
