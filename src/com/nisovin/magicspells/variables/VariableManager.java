@@ -84,6 +84,8 @@ public class VariableManager implements Listener {
 			}
 			MagicSpells.debug(1, this.variables.size() + " variables loaded!");
 		}
+		this.variables.putAll(SpecialVariables.getSpecialVariables());
+		
 		if (!this.variables.isEmpty()) MagicSpells.registerEvents(this);
 		
 		// Load vars
@@ -95,8 +97,6 @@ public class VariableManager implements Listener {
 			loadBossBar(player);
 			loadExpBar(player);
 		}
-		
-		this.variables.putAll(SpecialVariables.getSpecialVariables());
 		
 		// Start save task
 		MagicSpells.scheduleRepeatingTask(new Runnable() {
