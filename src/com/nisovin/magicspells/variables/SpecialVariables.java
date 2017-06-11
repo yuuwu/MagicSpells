@@ -4,6 +4,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.nisovin.magicspells.variables.meta.BedCoordXVariable;
+import com.nisovin.magicspells.variables.meta.BedCoordYVariable;
+import com.nisovin.magicspells.variables.meta.BedCoordZVariable;
 import com.nisovin.magicspells.variables.meta.CompassTargetXVariable;
 import com.nisovin.magicspells.variables.meta.CompassTargetYVariable;
 import com.nisovin.magicspells.variables.meta.CompassTargetZVariable;
@@ -28,6 +31,7 @@ import com.nisovin.magicspells.variables.meta.NoDamageTicksVariable;
 import com.nisovin.magicspells.variables.meta.PlayersOnlineVariable;
 import com.nisovin.magicspells.variables.meta.RemainingAirVariable;
 import com.nisovin.magicspells.variables.meta.SaturationVariable;
+import com.nisovin.magicspells.variables.meta.SleepTicksVariable;
 import com.nisovin.magicspells.variables.meta.VelocityXVariable;
 import com.nisovin.magicspells.variables.meta.VelocityYVariable;
 import com.nisovin.magicspells.variables.meta.VelocityZVariable;
@@ -73,6 +77,10 @@ public class SpecialVariables {
 		specialVariables.put("meta_no_damage_ticks", new NoDamageTicksVariable());
 		specialVariables.put("meta_max_no_damage_ticks", new MaximumNoDamageTicksVariable());
 		specialVariables.put("meta_last_damage", new LastDamageVariable());
+		specialVariables.put("meta_sleep_ticks", new SleepTicksVariable());
+		specialVariables.put("meta_bed_location_x", new BedCoordXVariable());
+		specialVariables.put("meta_bed_location_y", new BedCoordYVariable());
+		specialVariables.put("meta_bed_location_z", new BedCoordZVariable());
 	}
 	
 	public static Map<String, Variable> getSpecialVariables() {
