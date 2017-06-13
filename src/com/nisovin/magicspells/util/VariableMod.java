@@ -1,5 +1,6 @@
 package com.nisovin.magicspells.util;
 
+import java.util.function.BinaryOperator;
 import java.util.regex.Pattern;
 
 import org.bukkit.entity.Player;
@@ -17,12 +18,22 @@ public class VariableMod {
 	
 	public enum Operation {
 		
-		SET,
-		ADD,
-		MULTIPLY,
-		DIVIDE
+		SET((a, b) -> b),
+		ADD((a, b) -> a + b),
+		MULTIPLY((a, b) -> a * b),
+		DIVIDE((a, b) -> a/b)
 		
 		;
+		
+		private final BinaryOperator<Double> operator;
+		
+		Operation(BinaryOperator<Double> operator) {
+			this.operator = operator;
+		}
+		
+		public double applyTo(double arg1, double arg2) {
+			return this.operator.apply(arg1, arg2);
+		}
 		
 		static Operation fromPrefix(String s) {
 			char c = s.charAt(0);
@@ -76,12 +87,17 @@ public class VariableMod {
 	}
 	
 	public double getValue(Player caster, Player target) {
+		int negationFactor = this.getNegationFactor();
 		if (this.modifyingVariableName != null) {
-			if (this.variableOwner == VariableOwner.CASTER) return MagicSpells.getVariableManager().getValue(this.modifyingVariableName, caster) * (this.negate ? -1 : 1);
-			//variable owner == target
-			return MagicSpells.getVariableManager().getValue(this.modifyingVariableName, target) * (this.negate ? -1 : 1);
+			Player variableHolder = this.variableOwner == VariableOwner.CASTER ? caster : target;
+			return MagicSpells.getVariableManager().getValue(this.modifyingVariableName, variableHolder) * negationFactor;
 		}
-		return this.constantModifier * (this.negate ? -1 : 1);
+		return this.constantModifier * negationFactor;
+	}
+	
+	public double getValue(Player caster, Player target, double baseValue) {
+		double secondValue = this.getValue(caster, target);
+		return this.getOperation().applyTo(baseValue, secondValue);
 	}
 	
 	public boolean isConstantValue() {
@@ -94,6 +110,10 @@ public class VariableMod {
 	
 	public VariableOwner getVariableOwner() {
 		return this.variableOwner;
+	}
+	
+	private int getNegationFactor() {
+		return this.negate ? -1 : 1;
 	}
 	
 }

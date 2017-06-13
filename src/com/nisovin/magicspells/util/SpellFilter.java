@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.nisovin.magicspells.Spell;
+import org.bukkit.configuration.ConfigurationSection;
 
 public class SpellFilter {
 
@@ -83,5 +84,15 @@ public class SpellFilter {
 		
 		return this.defaultReturn;
 	}
+	
+	public static SpellFilter fromConfig(MagicConfig config, String basePath) {
+		basePath = basePath +  '.';
+		List<String> spells = config.getStringList(basePath + "spells", null);
+		List<String> deniedSpells = config.getStringList(basePath + "denied-spells", null);
+		List<String> tagList = config.getStringList(basePath + "spell-tags", null);
+		List<String> deniedTagList = config.getStringList(basePath + "denied-spell-tags", null);
+		return new SpellFilter(spells, deniedSpells, tagList, deniedTagList);
+	}
+	
 	
 }
