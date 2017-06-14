@@ -14,7 +14,7 @@ public class ListTeamsSubCommand implements TeamsSubCommand {
 	
 	@Override
 	public boolean process(CommandSender sender, String[] args) {
-		Set<String> names = plugin.getTeamNames();
+		Set<String> names = this.plugin.getTeamNames();
 		sender.sendMessage("Team Names");
 		for (String name: names) {
 			sender.sendMessage(name);

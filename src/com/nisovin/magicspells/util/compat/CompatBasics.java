@@ -18,4 +18,21 @@ public class CompatBasics {
 		return Bukkit.getServer().getServicesManager().getRegistration(clazz);
 	}
 	
+	public static boolean runsWithoutError(Runnable runnable) {
+		try {
+			runnable.run();
+			return true;
+		} catch (Throwable throwable) {
+			return false;
+		}
+	}
+	
+	public static boolean doesClassExist(String name) {
+		try {
+			return Class.forName(name) != null;
+		} catch (Throwable throwable) {
+			return false;
+		}
+	}
+	
 }

@@ -23,73 +23,73 @@ public class Team {
 	
 	public Team(ConfigurationSection config, String name) {
 		this.name = name;
-		permissionNode = config.getString("permission", "magicspells.team." + name);
-		friendlyFire = config.getBoolean("friendly-fire", false);
-		canTargetNames = config.getStringList("can-target");
-		cantTargetNames = config.getStringList("cant-target");
+		this.permissionNode = config.getString("permission", "magicspells.team." + name);
+		this.friendlyFire = config.getBoolean("friendly-fire", false);
+		this.canTargetNames = config.getStringList("can-target");
+		this.cantTargetNames = config.getStringList("cant-target");
 	}
 	
 	public void initialize(MagicSpellsTeams plugin) {
-		if (canTargetNames != null && !canTargetNames.isEmpty()) {
-			canTargetTeams = new ArrayList<>();
-			for (String name : canTargetNames) {
+		if (this.canTargetNames != null && !this.canTargetNames.isEmpty()) {
+			this.canTargetTeams = new ArrayList<>();
+			for (String name : this.canTargetNames) {
 				Team team = plugin.getTeamByName(name);
 				if (team != null) {
-					canTargetTeams.add(team);
+					this.canTargetTeams.add(team);
 				} else {
 					MagicSpells.error("Invalid team defined in can-target list");
 				}
 			}
-			if (canTargetTeams.isEmpty()) {
-				canTargetTeams = null;
+			if (this.canTargetTeams.isEmpty()) {
+				this.canTargetTeams = null;
 			}
 		}
-		canTargetNames = null;
-		if (cantTargetNames != null && !cantTargetNames.isEmpty()) {
-			cantTargetTeams = new ArrayList<>();
-			for (String name : cantTargetNames) {
+		this.canTargetNames = null;
+		if (this.cantTargetNames != null && !this.cantTargetNames.isEmpty()) {
+			this.cantTargetTeams = new ArrayList<>();
+			for (String name : this.cantTargetNames) {
 				Team team = plugin.getTeamByName(name);
 				if (team != null) {
-					cantTargetTeams.add(team);
+					this.cantTargetTeams.add(team);
 				} else {
 					MagicSpells.error("Invalid team defined in cant-target list");
 				}
 			}
-			if (cantTargetTeams.isEmpty()) {
-				cantTargetTeams = null;
+			if (this.cantTargetTeams.isEmpty()) {
+				this.cantTargetTeams = null;
 			}
 		}
-		cantTargetNames = null;
+		this.cantTargetNames = null;
 	}
 	
 	public boolean inTeam(Player player) {
-		return player.hasPermission(permissionNode);
+		return player.hasPermission(this.permissionNode);
 	}
 	
 	public boolean allowFriendlyFire() {
-		return friendlyFire;
+		return this.friendlyFire;
 	}
 	
 	public boolean canTarget(Team team) {
-		if (canTargetTeams != null && !canTargetTeams.contains(team)) return false;
-		if (cantTargetTeams != null && cantTargetTeams.contains(team)) return false;
+		if (this.canTargetTeams != null && !this.canTargetTeams.contains(team)) return false;
+		if (this.cantTargetTeams != null && this.cantTargetTeams.contains(team)) return false;
 		return true;
 	}
 	
 	public String getName() {
-		return name;
+		return this.name;
 	}
 	
 	public String getPermission() {
-		return permissionNode;
+		return this.permissionNode;
 	}
 	
 	public Set<String> getCanTarget() {
-		return new TreeSet<>(canTargetNames);
+		return new TreeSet<>(this.canTargetNames);
 	}
 	
 	public Set<String> getCantTarget() {
-		return new TreeSet<>(cantTargetNames);
+		return new TreeSet<>(this.cantTargetNames);
 	}
 	
 }

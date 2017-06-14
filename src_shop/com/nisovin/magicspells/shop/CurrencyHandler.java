@@ -24,37 +24,37 @@ public class CurrencyHandler {
 	public CurrencyHandler(Configuration config) {
 		ConfigurationSection sec = config.getConfigurationSection("currencies");
 		if (sec == null) {
-			defaultCurrency = "money";
-			currencies.put("money", "vault");
+			this.defaultCurrency = "money";
+			this.currencies.put("money", "vault");
 		} else {
 			Set<String> keys = sec.getKeys(false);
 			for (String key : keys) {
-				if (defaultCurrency == null) defaultCurrency = key;
-				currencies.put(key.toLowerCase(), sec.getString(key).toLowerCase());
+				if (this.defaultCurrency == null) this.defaultCurrency = key;
+				this.currencies.put(key.toLowerCase(), sec.getString(key).toLowerCase());
 			}
-			if (defaultCurrency == null) {
-				defaultCurrency = "money";
-				currencies.put("money", "vault");
+			if (this.defaultCurrency == null) {
+				this.defaultCurrency = "money";
+				this.currencies.put("money", "vault");
 			}
 		}
 
 		// Set up vault hook
-		if (currencies.containsValue("vault") && CompatBasics.pluginEnabled("Vault")) {
+		if (this.currencies.containsValue("vault") && CompatBasics.pluginEnabled("Vault")) {
 			RegisteredServiceProvider<Economy> provider = CompatBasics.getServiceProvider(Economy.class);
-			if (provider != null) economy = provider.getProvider();
+			if (provider != null) this.economy = provider.getProvider();
 		}
 	}
 	
 	public boolean has(Player player, double amount) {
-		return has(player, amount, defaultCurrency);
+		return has(player, amount, this.defaultCurrency);
 	}
 	
 	public boolean has(Player player, double amount, String currency) {
-		String c = currency == null ? null : currencies.get(currency.toLowerCase());
-		if (c == null) c = currencies.get(defaultCurrency);
+		String c = currency == null ? null : this.currencies.get(currency.toLowerCase());
+		if (c == null) c = this.currencies.get(this.defaultCurrency);
 		
 		if (c == null) return false;
-		if (c.equalsIgnoreCase("vault") && economy != null) return economy.has(player.getName(), amount);
+		if (c.equalsIgnoreCase("vault") && this.economy != null) return this.economy.has(player.getName(), amount);
 		if (c.equalsIgnoreCase("levels")) return player.getLevel() >= (int)amount;
 		if (c.equalsIgnoreCase("experience") || c.equalsIgnoreCase("xp")) return ExperienceUtils.hasExp(player, (int)amount);
 		if (c.matches("^[0-9]+$")) return inventoryContains(player.getInventory(), new ItemStack(Integer.parseInt(c), (int)amount));
@@ -68,16 +68,16 @@ public class CurrencyHandler {
 	}
 	
 	public void remove(Player player, double amount) {
-		remove(player, amount, defaultCurrency);
+		remove(player, amount, this.defaultCurrency);
 	}
 	
 	public void remove(Player player, double amount, String currency) {
-		String c = currency == null ? null : currencies.get(currency.toLowerCase());
-		if (c == null) c = currencies.get(defaultCurrency);
+		String c = currency == null ? null : this.currencies.get(currency.toLowerCase());
+		if (c == null) c = this.currencies.get(this.defaultCurrency);
 		
 		if (c == null) {
-		} else if (c.equalsIgnoreCase("vault") && economy != null) {
-			economy.withdrawPlayer(player.getName(), amount);
+		} else if (c.equalsIgnoreCase("vault") && this.economy != null) {
+			this.economy.withdrawPlayer(player.getName(), amount);
 		} else if (c.equalsIgnoreCase("levels")) {
 			player.setLevel(player.getLevel() - (int)amount);
 		} else if (c.equalsIgnoreCase("experience") || c.equalsIgnoreCase("xp")) {
@@ -95,7 +95,7 @@ public class CurrencyHandler {
 	}
 	
 	public boolean isValidCurrency(String currency) {
-		return currency != null && currencies.containsKey(currency);
+		return currency != null && this.currencies.containsKey(currency);
 	}
 	
 	private boolean inventoryContains(Inventory inventory, ItemStack item) {
@@ -114,7 +114,8 @@ public class CurrencyHandler {
 		int amt = item.getAmount();
 		ItemStack[] items = inventory.getContents();
 		for (int i = 0; i < items.length; i++) {
-			if (items[i] != null && items[i].getType() == item.getType() && items[i].getDurability() == item.getDurability()) {
+			if (items[i] == null) continue;
+			if (items[i].getType() == item.getType() && items[i].getDurability() == item.getDurability()) {
 				if (items[i].getAmount() > amt) {
 					items[i].setAmount(items[i].getAmount() - amt);
 					break;

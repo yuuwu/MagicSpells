@@ -35,9 +35,9 @@ public class MagicSpellsTeams extends JavaPlugin implements Listener {
 	@Override
 	public void onEnable() {
 		// Setup containers
-		teams = new ArrayList<>();
-		teamNames = new HashMap<>();
-		playerTeams = new HashMap<>();
+		this.teams = new ArrayList<>();
+		this.teamNames = new HashMap<>();
+		this.playerTeams = new HashMap<>();
 		
 		// Get config
 		File file = new File(getDataFolder(), "config.yml");
@@ -46,19 +46,19 @@ public class MagicSpellsTeams extends JavaPlugin implements Listener {
 		Configuration config = getConfig();
 		
 		// Get config
-		useCache = config.getBoolean("use-cache", true);
-		clearCacheOnDeath = config.getBoolean("clear-cache-on-death", false);
+		this.useCache = config.getBoolean("use-cache", true);
+		this.clearCacheOnDeath = config.getBoolean("clear-cache-on-death", false);
 		
 		// Setup teams
 		MagicSpells.debug(1, "Loading teams...");
 		Set<String> teamKeys = config.getConfigurationSection("teams").getKeys(false);
 		for (String name : teamKeys) {
 			Team team = new Team(config.getConfigurationSection("teams." + name), name);
-			teams.add(team);
-			teamNames.put(name, team);
+			this.teams.add(team);
+			this.teamNames.put(name, team);
 			MagicSpells.debug(2, "    Team " + name + " loaded");
 		}
-		for (Team team : teams) {
+		for (Team team : this.teams) {
 			team.initialize(this);
 		}
 		getCommand("magicspellsteams").setExecutor(new MagicSpellsTeamsCommand(this));
@@ -69,22 +69,24 @@ public class MagicSpellsTeams extends JavaPlugin implements Listener {
 	
 	@Override
 	public void onDisable() {
-		teams = null;
-		teamNames = null;
-		playerTeams = null;
+		this.teams = null;
+		this.teamNames = null;
+		this.playerTeams = null;
 		getCommand("magicspellsteams").setExecutor(null);
 		HandlerList.unregisterAll((Plugin)this);
 	}
 	
 	@EventHandler(ignoreCancelled=true)
 	public void onSpellTarget(SpellTargetEvent event) {
-		if (event.getCaster() != null && event.getTarget() instanceof Player) {
-			boolean beneficial = event.getSpell().isBeneficial();
-			if (!canTarget(event.getCaster(), (Player)event.getTarget())) {
-				if (!beneficial) event.setCancelled(true);
-			} else {
-				if (beneficial) event.setCancelled(true);
-			}
+		Player caster = event.getCaster();
+		if (caster == null) return;
+		if (!(event.getTarget() instanceof Player)) return;
+		
+		boolean beneficial = event.getSpell().isBeneficial();
+		if (!canTarget(caster, (Player)event.getTarget())) {
+			if (!beneficial) event.setCancelled(true);
+		} else {
+			if (beneficial) event.setCancelled(true);
 		}
 	}
 	
@@ -96,30 +98,27 @@ public class MagicSpellsTeams extends JavaPlugin implements Listener {
 	
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
-		if (useCache) {
-			playerTeams.remove(event.getPlayer().getName());
+		if (this.useCache) {
+			this.playerTeams.remove(event.getPlayer().getName());
 		}
 	}
 	
 	@EventHandler
 	public void onPlayerDeath(PlayerDeathEvent event) {
-		if (useCache && clearCacheOnDeath) {
-			playerTeams.remove(event.getEntity().getName());
+		if (this.useCache && this.clearCacheOnDeath) {
+			this.playerTeams.remove(event.getEntity().getName());
 		}
 	}
 	
 	public Team getTeam(Player player) {
-		if (useCache) { 
-			Team team = playerTeams.get(player.getName());
-			if (team != null) {
-				return team;
-			}
+		String playerName = player.getName();
+		if (this.useCache) {
+			Team team = this.playerTeams.get(playerName);
+			if (team != null) return team;
 		}
-		for (Team team : teams) {
+		for (Team team : this.teams) {
 			if (team.inTeam(player)) {
-				if (useCache) {
-					playerTeams.put(player.getName(), team);
-				}
+				if (this.useCache) this.playerTeams.put(playerName, team);
 				return team;
 			}
 		}
@@ -141,11 +140,11 @@ public class MagicSpellsTeams extends JavaPlugin implements Listener {
 	}
 	
 	public Team getTeamByName(String name) {
-		return teamNames.get(name);
+		return this.teamNames.get(name);
 	}
 	
 	public Set<String> getTeamNames() {
-		return new TreeSet<>(teamNames.keySet());
+		return new TreeSet<>(this.teamNames.keySet());
 	}
 	
 }

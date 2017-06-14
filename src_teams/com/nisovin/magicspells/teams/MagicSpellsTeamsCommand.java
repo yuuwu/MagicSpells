@@ -18,23 +18,23 @@ public class MagicSpellsTeamsCommand implements CommandExecutor {
 	}
 	
 	public MagicSpellsTeamsCommand(MagicSpellsTeams plugin) {
-		subCommands = new HashMap<>();
+		this.subCommands = new HashMap<>();
 		
 		// magicspellsteams create <name>
 		// Creates a team using the default perm structure
-		registerSubCommand(subCommands, new CreateTeamSubCommand(plugin), "create", "new", "make");
+		registerSubCommand(this.subCommands, new CreateTeamSubCommand(plugin), "create", "new", "make");
 		
 		// magicspellsteams list
-		registerSubCommand(subCommands, new ListTeamsSubCommand(plugin), "list");
+		registerSubCommand(this.subCommands, new ListTeamsSubCommand(plugin), "list");
 		
 		// magicspellsteams info <name>
-		registerSubCommand(subCommands, new TeamInfoSubCommand(plugin), "info", "about");
+		registerSubCommand(this.subCommands, new TeamInfoSubCommand(plugin), "info", "about");
 	}
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (args.length >= 1) {
-			TeamsSubCommand sub = subCommands.get(args[0].toLowerCase());
+			TeamsSubCommand sub = this.subCommands.get(args[0].toLowerCase());
 			if (sub != null) return sub.process(sender, args);
 		}
 		return false;

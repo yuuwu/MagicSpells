@@ -1,7 +1,9 @@
 package com.nisovin.magicspells.shop;
 
 import java.io.File;
+import java.util.regex.Pattern;
 
+import com.nisovin.magicspells.util.RegexUtil;
 import com.nisovin.magicspells.util.compat.EventUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -57,22 +59,22 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 		
 		Configuration config = getConfig();
 		
-		ignoreOtherPlugins = config.getBoolean("ignore-other-plugins", false);
-		requireKnownSpell = config.getBoolean("require-known-spell", true);
-		requireTeachPerm = config.getBoolean("require-teach-perm", true);
+		this.ignoreOtherPlugins = config.getBoolean("ignore-other-plugins", false);
+		this.requireKnownSpell = config.getBoolean("require-known-spell", true);
+		this.requireTeachPerm = config.getBoolean("require-teach-perm", true);
 		
-		firstLine = config.getString("first-line", "[SPELL SHOP]");
-		strAlreadyKnown = config.getString("str-already-known", "You already know that spell.");
-		strCantAfford = config.getString("str-cant-afford", "You cannot afford that spell.");
-		strCantLearn = config.getString("str-cant-learn", "You are not able to buy that spell.");
-		strPurchased = config.getString("str-purchased", "You have purchased the %s spell.");
+		this.firstLine = config.getString("first-line", "[SPELL SHOP]");
+		this.strAlreadyKnown = config.getString("str-already-known", "You already know that spell.");
+		this.strCantAfford = config.getString("str-cant-afford", "You cannot afford that spell.");
+		this.strCantLearn = config.getString("str-cant-learn", "You are not able to buy that spell.");
+		this.strPurchased = config.getString("str-purchased", "You have purchased the %s spell.");
 		
-		firstLineScroll = config.getString("first-line-scroll", "[SCROLL SHOP]");
-		scrollSpellName = config.getString("scroll-spell-name", "scroll");
-		strCantAffordScroll = config.getString("str-cant-afford-scroll", "You cannot afford that scroll.");
-		strPurchasedScroll = config.getString("str-purchased-scroll", "You have purchased a scroll for the %s spell.");
+		this.firstLineScroll = config.getString("first-line-scroll", "[SCROLL SHOP]");
+		this.scrollSpellName = config.getString("scroll-spell-name", "scroll");
+		this.strCantAffordScroll = config.getString("str-cant-afford-scroll", "You cannot afford that scroll.");
+		this.strPurchasedScroll = config.getString("str-purchased-scroll", "You have purchased a scroll for the %s spell.");
 		
-		currency = new CurrencyHandler(config);
+		this.currency = new CurrencyHandler(config);
 		
 		getLogger().info("MagicSpellsShop config loaded.");
 	}
@@ -84,7 +86,7 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 	
 	@EventHandler(priority=EventPriority.MONITOR)
 	public void onInteract(PlayerInteractEvent event) {
-		if (!ignoreOtherPlugins && event.isCancelled()) return;
+		if (!this.ignoreOtherPlugins && event.isCancelled()) return;
 		
 		// Check for right-click on sign
 		if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
@@ -94,9 +96,9 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 		// Get shop sign
 		Sign sign = (Sign)block.getState();
 		String[] lines = sign.getLines();		
-		if (lines[0].equals(firstLine)) {
+		if (lines[0].equals(this.firstLine)) {
 			processSpellShopSign(event.getPlayer(), lines);
-		} else if (lines[0].equals(firstLineScroll)) {
+		} else if (lines[0].equals(this.firstLineScroll)) {
 			processScrollShopSign(event.getPlayer(), lines);
 		}		
 	}
@@ -110,7 +112,7 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 		// Check if already known
 		Spellbook spellbook = MagicSpells.getSpellbook(player);
 		if (spellbook.hasSpell(spell)) {
-			MagicSpells.sendMessage(MagicSpells.formatMessage(strAlreadyKnown, "%s", spellName), player, null);
+			MagicSpells.sendMessage(MagicSpells.formatMessage(this.strAlreadyKnown, "%s", spellName), player, null);
 			return;
 		}
 		
@@ -118,15 +120,15 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 		Cost cost = getCost(lines[2]);
 		
 		// Check for currency
-		if (!currency.has(player, cost.amount, cost.currency)) {
-			MagicSpells.sendMessage(MagicSpells.formatMessage(strCantAfford, "%s", spellName, "%c", cost + ""), player, null);
+		if (!this.currency.has(player, cost.amount, cost.currency)) {
+			MagicSpells.sendMessage(MagicSpells.formatMessage(this.strCantAfford, "%s", spellName, "%c", cost + ""), player, null);
 			return;
 		}
 		
 		// Attempt to teach
 		boolean taught = MagicSpells.teachSpell(player, spellName);
 		if (!taught) {
-			MagicSpells.sendMessage(MagicSpells.formatMessage(strCantLearn, "%s", spellName), player, null);
+			MagicSpells.sendMessage(MagicSpells.formatMessage(this.strCantLearn, "%s", spellName), player, null);
 			return;
 		}
 		
@@ -137,6 +139,9 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 		MagicSpells.sendMessage(MagicSpells.formatMessage(strPurchased, "%s", spellName, "%c", cost + ""), player, null);
 	}
 	
+	private static final String USE_COUNT_REGEXP = "^[0-9]+( .+)?$";
+	private static final Pattern USE_COUNT_PATTERN = Pattern.compile(USE_COUNT_REGEXP);
+	
 	private void processScrollShopSign(Player player, String[] lines) {
 		// Get spell
 		String spellName = lines[1];
@@ -144,24 +149,24 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 		if (spell == null) return;
 		
 		// Get uses
-		if (!lines[2].matches("^[0-9]+( .+)?$")) return;
+		if (!RegexUtil.matches(USE_COUNT_PATTERN, lines[2])) return;
 		int uses = Integer.parseInt(lines[2].split(" ")[0]);
 		
 		// Get cost
 		Cost cost = getCost(lines[3]);
 		
 		// Check if can afford
-		if (!currency.has(player, cost.amount, cost.currency)) {
-			MagicSpells.sendMessage(MagicSpells.formatMessage(strCantAffordScroll, "%s", spellName, "%c", cost + "", "%u", uses + ""), player, null);
+		if (!this.currency.has(player, cost.amount, cost.currency)) {
+			MagicSpells.sendMessage(MagicSpells.formatMessage(this.strCantAffordScroll, "%s", spellName, "%c", cost + "", "%u", uses + ""), player, null);
 			return;
 		}
 		
 		// Create scroll
-		ScrollSpell scrollSpell = (ScrollSpell)MagicSpells.getSpellByInternalName(scrollSpellName);
+		ScrollSpell scrollSpell = (ScrollSpell)MagicSpells.getSpellByInternalName(this.scrollSpellName);
 		ItemStack scroll = scrollSpell.createScroll(spell, uses, null);
 		
 		// Remove currency
-		currency.remove(player, cost.amount, cost.currency);
+		this.currency.remove(player, cost.amount, cost.currency);
 		
 		// Give to player
 		int slot = player.getInventory().firstEmpty();
@@ -176,22 +181,28 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 		}
 		
 		// Done!
-		MagicSpells.sendMessage(MagicSpells.formatMessage(strPurchasedScroll, "%s", spellName, "%c", cost + "", "%u", uses + ""), player, null);
+		MagicSpells.sendMessage(MagicSpells.formatMessage(this.strPurchasedScroll, "%s", spellName, "%c", cost + "", "%u", uses + ""), player, null);
 	}
+	
+	private static final String CURRENCY_REGEXP = "^[0-9]+(\\.[0-9]+)?$";
+	private static final Pattern CURRENCY_PATTERN = Pattern.compile(CURRENCY_REGEXP);
 	
 	private Cost getCost(String line) {
 		Cost cost = new Cost();
-		if (!line.isEmpty()) {
-			if (!line.contains(" ") && line.matches("^[0-9]+(\\.[0-9]+)?$")) {
-				cost.amount = Double.parseDouble(line);
-			} else if (line.contains(" ")) {
-				String[] s = line.split(" ");
-				if (s[0].matches("^[0-9]+(\\.[0-9]+)?$")) {
-					cost.amount = Double.parseDouble(s[0]);
-					cost.currency = s[1];
-				}
+		
+		// Can we exit early?
+		if (line.isEmpty()) return cost;
+		
+		if (!line.contains(" ") && RegexUtil.matches(CURRENCY_PATTERN, line)) {
+			cost.amount = Double.parseDouble(line);
+		} else if (line.contains(" ")) {
+			String[] s = line.split(" ");
+			if (RegexUtil.matches(CURRENCY_PATTERN, s[0])) {
+				cost.amount = Double.parseDouble(s[0]);
+				cost.currency = s[1];
 			}
 		}
+		
 		return cost;
 	}
 	
@@ -202,9 +213,9 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 		boolean isSpellShop;
 		
 		String lines[] = event.getLines();
-		if (lines[0].equals(firstLine)) {
+		if (lines[0].equals(this.firstLine)) {
 			isSpellShop = true;
-		} else if (lines[0].equals(firstLineScroll)) {
+		} else if (lines[0].equals(this.firstLineScroll)) {
 			isSpellShop = false;
 		} else {
 			return;
@@ -212,7 +223,7 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 		
 		// Check permission
 		Player player = event.getPlayer();
-		if (!player.hasPermission("magicspells.createsignshop")) {
+		if (!Perm.CREATESIGNSHOP.has(player)) {
 			player.sendMessage(ChatColor.RED + "You do not have permission to do that.");
 			event.setCancelled(true);
 			return;
@@ -229,12 +240,12 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 		
 		// Check permissions
 		Spellbook spellbook = MagicSpells.getSpellbook(player);
-		if (requireKnownSpell && !spellbook.hasSpell(spell)) {
+		if (this.requireKnownSpell && !spellbook.hasSpell(spell)) {
 			player.sendMessage(ChatColor.RED + "You do not have permission to do that.");
 			event.setCancelled(true);
 			return;
 		}
-		if (requireTeachPerm && !spellbook.canTeach(spell)) {
+		if (this.requireTeachPerm && !spellbook.canTeach(spell)) {
 			player.sendMessage(ChatColor.RED + "You do not have permission to do that.");
 			event.setCancelled(true);
 			return;
@@ -245,8 +256,9 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 		
 		// FIXME this should probably just use string.format
 		String shopType = isSpellShop ? "Spell" : "Scroll";
+		String effectiveCurrencyLabel = this.currency.isValidCurrency(cost.currency) ? cost.currency : "currency";
 		player.sendMessage(shopType + " shop created: " + spellName + (isSpellShop ? "" : '(' + lines[2] + ')') +
-				" for " + cost.amount + ' ' + (currency.isValidCurrency(cost.currency) ? cost.currency : "currency") + '.');
+				" for " + cost.amount + ' ' + effectiveCurrencyLabel + '.');
 		
 	}
 	
@@ -259,9 +271,8 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 		
 		Sign sign = (Sign)event.getBlock().getState();
 		String line = sign.getLine(0);
-		if (isShopSignFirstLine(line) && !event.getPlayer().hasPermission("magicspells.createsignshop")) {
-			event.setCancelled(true);
-		}
+		if (!isShopSignFirstLine(line)) return;
+		if (!Perm.CREATESIGNSHOP.has(event.getPlayer())) event.setCancelled(true);
 	}
 
 	@Override
@@ -269,7 +280,7 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 		
 	}
 	
-	private class Cost {
+	private static class Cost {
 		
 		double amount = 0;
 		String currency = null;

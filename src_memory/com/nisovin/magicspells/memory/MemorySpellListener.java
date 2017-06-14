@@ -1,5 +1,7 @@
 package com.nisovin.magicspells.memory;
 
+import com.nisovin.magicspells.Spell;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -17,13 +19,15 @@ public class MemorySpellListener implements Listener {
 	
 	@EventHandler(priority=EventPriority.NORMAL)
 	public void onSpellLearn(SpellLearnEvent event) {
-		int req = plugin.getRequiredMemory(event.getSpell());
+		Spell spell = event.getSpell();
+		int req = this.plugin.getRequiredMemory(spell);
 		if (req > 0) {
-			int mem = plugin.getMemoryRemaining(event.getLearner());
+			Player learner = event.getLearner();
+			int mem = this.plugin.getMemoryRemaining(learner);
 			MagicSpells.debug("Memory check: " + req + " required, " + mem + " remaining");
 			if (mem < req) {
 				event.setCancelled(true);
-				MagicSpells.sendMessage(MagicSpells.formatMessage(plugin.strOutOfMemory, "%spell", event.getSpell().getName()), event.getLearner(), (String[])null);
+				MagicSpells.sendMessage(MagicSpells.formatMessage(this.plugin.strOutOfMemory, "%spell", spell.getName()), learner, (String[])null);
 			}
 		}
 	}

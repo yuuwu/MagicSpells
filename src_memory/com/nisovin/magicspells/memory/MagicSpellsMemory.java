@@ -38,18 +38,18 @@ public class MagicSpellsMemory extends JavaPlugin {
 		if (!file.exists()) saveDefaultConfig();
 		Configuration config = getConfig();
 		
-		strOutOfMemory = config.getString("str-out-of-memory");
-		strMemoryUsage = config.getString("str-memory-usage");
+		this.strOutOfMemory = config.getString("str-out-of-memory");
+		this.strMemoryUsage = config.getString("str-memory-usage");
 		
 		// Get max memory amounts
-		maxMemoryDefault = config.getInt("max-memory-default");
+		this.maxMemoryDefault = config.getInt("max-memory-default");
 		ConfigurationSection permsSec = config.getConfigurationSection("max-memory-perms");
 		if (permsSec != null) {
 			Set<String> perms = permsSec.getKeys(false);
 			if (perms != null) {
 				for (String perm : perms) {
-					maxMemoryPerms.add(perm);
-					maxMemoryAmounts.add(permsSec.getInt(perm));
+					this.maxMemoryPerms.add(perm);
+					this.maxMemoryAmounts.add(permsSec.getInt(perm));
 				}
 			}
 		}
@@ -65,7 +65,7 @@ public class MagicSpellsMemory extends JavaPlugin {
 			if (spells != null) {
 				for (String spell : spells) {
 					int mem = reqSec.getInt(spell);
-					memoryRequirements.put(spell, mem);
+					this.memoryRequirements.put(spell, mem);
 					MagicSpells.debug("Memory requirement for '" + spell + "' spell set to " + mem);
 				}
 			}
@@ -77,7 +77,7 @@ public class MagicSpellsMemory extends JavaPlugin {
 			for (String spell : magicConfig.getSpellKeys()) {
 				if (!magicConfig.contains("spells." + spell + ".memory")) continue;;
 				int mem = magicConfig.getInt("spells." + spell + ".memory", 0);
-				memoryRequirements.put(spell, mem);
+				this.memoryRequirements.put(spell, mem);
 				MagicSpells.debug("Memory requirement for '" + spell + "' spell set to " + mem);
 			}
 		}
@@ -99,9 +99,9 @@ public class MagicSpellsMemory extends JavaPlugin {
 			int used = getUsedMemory(player);
 			int max = getMaxMemory(player);
 			if (sender instanceof Player) {
-				MagicSpells.sendMessage(MagicSpells.formatMessage(strMemoryUsage, "%memory", used + "", "%total", max + ""), (Player)sender, (String[])null);
+				MagicSpells.sendMessage(MagicSpells.formatMessage(this.strMemoryUsage, "%memory", used + "", "%total", max + ""), (Player)sender, (String[])null);
 			} else {
-				String s = strMemoryUsage.replace("%memory", used + "").replace("%total", max + "");
+				String s = this.strMemoryUsage.replace("%memory", used + "").replace("%total", max + "");
 				sender.sendMessage(s);
 			}
 		}
@@ -111,7 +111,8 @@ public class MagicSpellsMemory extends JavaPlugin {
 
 
 	public int getRequiredMemory(Spell spell) {
-		if (memoryRequirements.containsKey(spell.getInternalName())) return memoryRequirements.get(spell.getInternalName());
+		// FIXME this should be a get or default type thing
+		if (this.memoryRequirements.containsKey(spell.getInternalName())) return this.memoryRequirements.get(spell.getInternalName());
 		return 0;
 	}
 	
@@ -122,12 +123,12 @@ public class MagicSpellsMemory extends JavaPlugin {
 	}
 	
 	public int getMaxMemory(Player player) {
-		for (int i = 0; i < maxMemoryPerms.size(); i++) {
-			if (player.hasPermission("magicspells.rank." + maxMemoryPerms.get(i))) {
-				return maxMemoryAmounts.get(i);
+		for (int i = 0; i < this.maxMemoryPerms.size(); i++) {
+			if (player.hasPermission("magicspells.rank." + this.maxMemoryPerms.get(i))) {
+				return this.maxMemoryAmounts.get(i);
 			}
 		}
-		return maxMemoryDefault;
+		return this.maxMemoryDefault;
 	}
 	
 	public int getUsedMemory(Player player) {
@@ -135,8 +136,8 @@ public class MagicSpellsMemory extends JavaPlugin {
 		if (spellbook != null) {
 			int used = 0;
 			for (Spell spell : spellbook.getSpells()) {
-				if (memoryRequirements.containsKey(spell.getInternalName())) {
-					used += memoryRequirements.get(spell.getInternalName());
+				if (this.memoryRequirements.containsKey(spell.getInternalName())) {
+					used += this.memoryRequirements.get(spell.getInternalName());
 				}
 			}
 			return used;
