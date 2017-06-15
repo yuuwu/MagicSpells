@@ -53,7 +53,7 @@ public class VariableMod {
 		
 	}
 	
-	private VariableOwner variableOwner = null;
+	private VariableOwner variableOwner = VariableOwner.CASTER;
 	private String modifyingVariableName = null;
 	private Operation op = null;
 	private double constantModifier;
@@ -70,6 +70,7 @@ public class VariableMod {
 		}
 		if (!RegexUtil.matches(RegexUtil.DOUBLE_PATTERN, data)) {
 			// If it isn't a double, then let's match it as a variable
+			String varName = data;
 			if (data.contains(":")) {
 				// Then there is an explicit statement of who's variable it is
 				String[] dataSplits = data.split(":");
@@ -78,8 +79,9 @@ public class VariableMod {
 				} else {
 					this.variableOwner = VariableOwner.CASTER;
 				}
-				
+				varName = dataSplits[1];
 			}
+			this.modifyingVariableName = varName;
 		} else {
 			this.constantModifier = Double.parseDouble(data);
 		}
