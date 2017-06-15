@@ -23,6 +23,7 @@ import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.Util;
 
+// TODO this should not be hardcoded to use a book
 /**
  * Configuration fields:
  * <ul>
