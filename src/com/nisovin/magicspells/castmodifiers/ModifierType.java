@@ -2,6 +2,7 @@ package com.nisovin.magicspells.castmodifiers;
 
 import java.util.HashMap;
 
+import com.nisovin.magicspells.variables.Variable;
 import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.MagicSpells;
@@ -549,6 +550,75 @@ public enum ModifierType {
 			ret.mod = variableModifier;
 			ret.modifiedVariableName = modifiedVariableName;
 			ret.modifiedVariableOwner = modifiedVariableOwner;
+			return ret;
+		}
+		
+	},
+	
+	STRING(false, false, false, true, "string") {
+		
+		class CustomData {
+			
+			public Variable variable;
+			public String value;
+			
+		}
+		
+		private void setVariable(Player player, CustomData customData) {
+			customData.variable.parseAndSet(player, customData.value);
+		}
+		
+		@Override
+		public boolean apply(SpellCastEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
+			if (check) {
+				setVariable(event.getCaster(), (CustomData) customData);
+			}
+			return true;
+		}
+		
+		@Override
+		public boolean apply(ManaChangeEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
+			if (check) {
+				setVariable(event.getPlayer(), (CustomData) customData);
+			}
+			return true;
+		}
+		
+		@Override
+		public boolean apply(SpellTargetEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
+			if (check) {
+				setVariable(event.getCaster(), (CustomData) customData);
+			}
+			return true;
+		}
+		
+		@Override
+		public boolean apply(SpellTargetLocationEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
+			if (check) {
+				setVariable(event.getCaster(), (CustomData) customData);
+			}
+			return true;
+		}
+		
+		@Override
+		public boolean apply(MagicSpellsGenericPlayerEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
+			if (check) {
+				setVariable(event.getPlayer(), (CustomData) customData);
+			}
+			return true;
+		}
+		
+		@Override
+		public Object buildCustomActionData(String text) {
+			if (text == null || text.trim().isEmpty() || !text.contains(" ")) throw new IllegalArgumentException("action \"string\" requires arguments.");
+			
+			String[] splits = text.split(" ", 2);
+			Variable variable = MagicSpells.getVariableManager().getVariable(splits[0]);
+			if (variable == null) throw new IllegalArgumentException(splits[0] + " is not a defined variable!");
+			
+			CustomData ret = new CustomData();
+			ret.variable = variable;
+			ret.value = splits[1];
 			return ret;
 		}
 		

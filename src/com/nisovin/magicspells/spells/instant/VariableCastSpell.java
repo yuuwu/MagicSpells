@@ -24,7 +24,7 @@ public class VariableCastSpell extends InstantSpell {
 		super.initialize();
 		
 		if (MagicSpells.getVariableManager().getVariable(this.variableName) == null) {
-			MagicSpells.error("variable-name references an invalid variable for ");
+			MagicSpells.error("variable-name references an invalid variable for " + this.internalName);
 		}
 	}
 	

@@ -28,7 +28,8 @@ public class Modifier implements IModifier {
 	public static Modifier factory(String s) {
 		Modifier m = new Modifier();
 		String[] s1 = s.split("\\$\\$");
-		String[] data = Util.splitParams(s1[0].trim());
+		String[] data = s1[0].trim().split(" ", 4);
+		//String[] data = Util.splitParams(s1[0].trim(), 4);
 		if (data.length < 2) return null;
 				
 		// Get condition
