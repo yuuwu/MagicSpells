@@ -215,7 +215,6 @@ public class DanceCastListener implements Listener {
 		
 		String playerName;
 		
-		// TODO rename to avoid hiding
 		public DanceCastDuration(String playerName) {
 			this.playerName = playerName;
 		}

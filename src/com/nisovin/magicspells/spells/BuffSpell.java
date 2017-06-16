@@ -2,6 +2,7 @@ package com.nisovin.magicspells.spells;
 
 import java.util.HashMap;
 
+import com.nisovin.magicspells.Spell;
 import com.nisovin.magicspells.util.TimeUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -24,7 +25,6 @@ import com.nisovin.magicspells.BuffManager;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
-import com.nisovin.magicspells.spelleffects.SpellEffect;
 import com.nisovin.magicspells.util.LocationUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
@@ -271,6 +271,13 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 	private HashMap<String,Integer> useCounter;
 	private HashMap<String,Long> durationEndTime;
 	
+	private String spellOnUseIncrementName = null;
+	private Spell spellOnUseIncrement = null;
+	
+	private String spellOnCostName = null;
+	private Spell spellOnCost = null;
+	
+	
 	public BuffSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		this.thisSpell = this;
@@ -289,6 +296,8 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 		this.cancelOnChangeWorld = getConfigBoolean("cancel-on-change-world", false);
 		this.cancelOnSpellCast = getConfigBoolean("cancel-on-spell-cast", false);
 		this.cancelOnLogout = getConfigBoolean("cancel-on-logout", false);
+		this.spellOnUseIncrementName = getConfigString("spell-on-use-increment", null);
+		this.spellOnCostName = getConfigString("spell-on-cost", null);
 		if (this.cancelOnGiveDamage || this.cancelOnTakeDamage) registerEvents(new DamageListener());
 		if (this.cancelOnDeath) registerEvents(new DeathListener());
 		if (this.cancelOnTeleport) registerEvents(new TeleportListener());
@@ -305,6 +314,28 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 		
 		this.castWithItem = getConfigBoolean("can-cast-with-item", true);
 		this.castByCommand = getConfigBoolean("can-cast-by-command", true);
+	}
+	
+	@Override
+	public void initialize() {
+		// Super
+		super.initialize();
+		
+		// Check spell on use increment
+		if (this.spellOnUseIncrementName != null) {
+			this.spellOnUseIncrement = MagicSpells.getSpellByInternalName(this.spellOnUseIncrementName);
+			if (this.spellOnUseIncrement == null) {
+				MagicSpells.error("Invalid spell-on-use-increment defined for " + this.internalName);
+			}
+		}
+		
+		// Check spell on cost
+		if (this.spellOnCostName != null) {
+			this.spellOnCost = MagicSpells.getSpellByInternalName(this.spellOnCostName);
+			if (this.spellOnCost == null) {
+				MagicSpells.error("Invalid spell-on-cost defined for " + this.internalName);
+			}
+		}
 	}
 	
 	@Override
@@ -414,13 +445,7 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 			}, Math.round(dur * TimeUtil.TICKS_PER_SECOND) + 20); // overestimate ticks, since the duration is real-time ms based
 		}
 		
-		// TODO use lambda
-		playSpellEffectsBuff(player, new SpellEffect.SpellEffectActiveChecker() {
-			@Override
-			public boolean isActive(Entity entity) {
-				return thisSpell.isActiveAndNotExpired((Player)entity);
-			}
-		});
+		playSpellEffectsBuff(player, entity -> thisSpell.isActiveAndNotExpired((Player)entity));
 		
 		BuffManager buffman = MagicSpells.getBuffManager();
 		if (buffman != null) buffman.addBuff(player, this);
@@ -458,6 +483,9 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 	 * @return the player's current number of uses (returns 0 if the use counting feature is disabled)
 	 */
 	protected int addUse(Player player) {
+		// Run spell on use increment first thing in case we want to intervene
+		if (this.spellOnUseIncrement != null) this.spellOnUseIncrement.cast(player, 1F, null);
+		
 		if (this.numUses > 0 || (this.reagents != null && this.useCostInterval > 0)) {
 			String playerName = player.getName();
 			Integer uses = this.useCounter.get(playerName);
@@ -483,6 +511,9 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 	 * @return true if the reagents were removed, or if the use cost is disabled, false otherwise
 	 */
 	protected boolean chargeUseCost(Player player) {
+		// Run spell on cost first thing to dodge the early returns and allow intervention
+		if (this.spellOnCost != null) this.spellOnCost.cast(player, 1F, null);
+		
 		if (this.reagents == null) return true;
 		if (this.useCostInterval <= 0) return true;
 		if (this.useCounter == null) return true;

@@ -17,6 +17,8 @@ public class RegexUtil {
 		return pattern.matcher(string).matches();
 	}
 	
-	
+	public static final String[] split(Pattern pattern, String string, int max) {
+		return pattern.split(string, max);
+	}
 	
 }

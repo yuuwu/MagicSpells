@@ -16,7 +16,7 @@ public class BuffActiveCondition extends Condition {
 	@Override
 	public boolean setVar(String var) {
 		Spell spell = MagicSpells.getSpellByInternalName(var);
-		if (spell != null && spell instanceof BuffSpell) {
+		if (spell instanceof BuffSpell) {
 			buff = (BuffSpell)spell;
 			return true;
 		}

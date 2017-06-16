@@ -36,7 +36,7 @@ public class AgeCondition extends Condition {
 
 	@Override
 	public boolean check(Player player, LivingEntity target) {
-		if (target != null && target instanceof Ageable) {
+		if (target instanceof Ageable) {
 			boolean adult = ((Ageable) target).isAdult();
 			return adult ? passAdult : passBaby;
 		}

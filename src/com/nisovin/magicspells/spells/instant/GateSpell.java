@@ -1,5 +1,6 @@
 package com.nisovin.magicspells.spells.instant;
 
+import com.nisovin.magicspells.util.RegexUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -12,12 +13,16 @@ import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.util.BlockUtils;
 import com.nisovin.magicspells.util.MagicConfig;
 
+import java.util.regex.Pattern;
+
 public class GateSpell extends InstantSpell {
 	
 	private String world;
 	private String coords;
 	private String strGateFailed;
 
+	private static final Pattern COORDINATE_PATTERN = Pattern.compile("^-?[0-9]+,[0-9]+,-?[0-9]+(,-?[0-9.]+,-?[0-9.]+)?$");
+	
 	public GateSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
@@ -48,7 +53,7 @@ public class GateSpell extends InstantSpell {
 			// Get location
 			Location location;
 			this.coords = this.coords.replace(" ", "");
-			if (this.coords.matches("^-?[0-9]+,[0-9]+,-?[0-9]+(,-?[0-9.]+,-?[0-9.]+)?$")) {
+			if (RegexUtil.matches(COORDINATE_PATTERN, this.coords)) {
 				String[] c = this.coords.split(",");
 				int x = Integer.parseInt(c[0]);
 				int y = Integer.parseInt(c[1]);

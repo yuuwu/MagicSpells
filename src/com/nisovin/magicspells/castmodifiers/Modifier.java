@@ -1,5 +1,6 @@
 package com.nisovin.magicspells.castmodifiers;
 
+import com.nisovin.magicspells.util.RegexUtil;
 import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.DebugHandler;
@@ -8,7 +9,8 @@ import com.nisovin.magicspells.events.ManaChangeEvent;
 import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.events.SpellTargetEvent;
 import com.nisovin.magicspells.events.SpellTargetLocationEvent;
-import com.nisovin.magicspells.util.Util;
+
+import java.util.regex.Pattern;
 
 public class Modifier implements IModifier {
 
@@ -25,9 +27,11 @@ public class Modifier implements IModifier {
 	// Is this a condition that will want to access the events directly?
 	boolean alertCondition = false;
 	
+	private static final Pattern MODIFIER_STR_FAILED_PATTERN = Pattern.compile("\\$\\$");
+	
 	public static Modifier factory(String s) {
 		Modifier m = new Modifier();
-		String[] s1 = s.split("\\$\\$");
+		String[] s1 = RegexUtil.split(MODIFIER_STR_FAILED_PATTERN, s, 0);
 		String[] data = s1[0].trim().split(" ", 4);
 		//String[] data = Util.splitParams(s1[0].trim(), 4);
 		if (data.length < 2) return null;

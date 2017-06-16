@@ -2,7 +2,7 @@ name: MagicSpells
 main: com.nisovin.magicspells.MagicSpells
 version: VERSION_STRING
 authors: [nisovin, TheComputerGeek2]
-softdepend: [Vault,ProtocolLib,WorldGuard,Residence,PowerNBT,LibsDisguises]
+softdepend: [Vault,ProtocolLib,WorldGuard,Residence,PowerNBT,LibsDisguises,NoCheatPlus]
 depend: [EffectLib]
 commands:
     magicspellcast:

@@ -970,7 +970,6 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	}
 	
 	protected SpellReagents getConfigReagents(String option) {
-		// TODO rename to avoid hiding
 		SpellReagents reagents = null;
 		List<String> costList = config.getStringList("spells." + this.internalName + '.' + option, null);
 		if (costList != null && !costList.isEmpty()) {
@@ -1189,7 +1188,6 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		return cast(player, 1.0F, null);
 	}
 	
-	// TODO rename to avoid hiding
 	// TODO can this safely be made varargs?
 	public final SpellCastResult cast(Player player, String[] args) {
 		return cast(player, 1.0F, args);
@@ -1200,7 +1198,6 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		SpellCastEvent spellCast = preCast(player, power, args);
 		if (spellCast == null) return new SpellCastResult(SpellCastState.CANT_CAST, PostCastAction.HANDLE_NORMALLY);
 		PostCastAction action;
-		// TODO rename to avoid hiding
 		int castTime = spellCast.getCastTime();
 		if (castTime <= 0 || spellCast.getSpellCastState() != SpellCastState.NORMAL) {
 			action = handleCast(spellCast);
@@ -1349,7 +1346,6 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		partial = partial.toLowerCase();
 		// TODO stream this
 		for (Player p : Bukkit.getOnlinePlayers()) {
-			// TODO rename to avoid hiding
 			String name = p.getName();
 			if (!name.toLowerCase().startsWith(partial)) continue;
 			if (sender.isOp() || !(sender instanceof Player) || ((Player)sender).canSee(p)) matches.add(name);
@@ -1460,7 +1456,6 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		return cd;
 	}
 	
-	// TODO rename to avoid hiding
 	/**
 	 * Begins the cooldown for the spell for the specified player
 	 * @param player The player to set the cooldown for
@@ -1469,7 +1464,6 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		setCooldown(player, cooldown, true);
 	}
 	
-	// TODO rename to avoid hiding
 	/**
 	 * Begins the cooldown for the spell for the specified player
 	 * @param player The player to set the cooldown for
@@ -1479,7 +1473,6 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 			if (this.charges <= 0) {
 				this.nextCast.put(player.getName(), System.currentTimeMillis() + (long)(cooldown * TimeUtil.MILLISECONDS_PER_SECOND));
 			} else {
-				// TODO rename to avoid hiding
 				final String name = player.getName();
 				this.chargesConsumed.increment(name);
 				// TODO convert this to lambda
@@ -1522,7 +1515,6 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	}
 	
 	// FIXME this doesn't seem strictly tied to Spell logic, could probably be moved
-	// TODO rename to avoid hiding
 	/**
 	 * Checks if a player has the reagents required to cast this spell
 	 * @param player the player to check
@@ -1534,7 +1526,6 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		return hasReagents(player, reagents.getItemsAsArray(), reagents.getHealth(), reagents.getMana(), reagents.getHunger(), reagents.getExperience(), reagents.getLevels(), reagents.getDurability(), reagents.getMoney(), reagents.getVariables());
 	}
 	
-	// TODO rename to avoid hiding
 	/**
 	 * Checks if a player has the specified reagents, including health and mana
 	 * @param player the player to check
@@ -1611,7 +1602,6 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		removeReagents(player, this.reagents);
 	}
 	
-	// TODO rename to avoid hiding
 	// TODO can this safely be made varargs?
 	/**
 	 * Removes the specified reagents from the player's inventory.
@@ -1623,12 +1613,10 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		removeReagents(player, reagents, 0, 0, 0, 0, 0, 0, 0, null);
 	}
 	
-	// TODO rename to avoid hiding
 	protected void removeReagents(Player player, SpellReagents reagents) {
 		removeReagents(player, reagents.getItemsAsArray(), reagents.getHealth(), reagents.getMana(), reagents.getHunger(), reagents.getExperience(), reagents.getLevels(), reagents.getDurability(), reagents.getMoney(), reagents.getVariables());
 	}
 	
-	// TODO rename to avoid hiding
 	/**
 	 * Removes the specified reagents, including health and mana, from the player's inventory.
 	 * This does not check if the player has the reagents, use hasReagents() for that.
@@ -2128,7 +2116,6 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		sendMessageNear(player, null, message, this.broadcastRange, MagicSpells.NULL_ARGS);
 	}
 	
-	// TODO rename to avoid hiding
 	// TODO can this safely be made varargs?
 	/**
 	 * Sends a message to all players near the specified player, within the specified broadcast range.
@@ -2137,20 +2124,21 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	 * @param range the broadcast range
 	 */
 	protected void sendMessageNear(Player player, Player ignore, String message, int range, String[] args) {
-		// FIXME flatten this
-		if (message != null && !message.isEmpty() && !Perm.SILENT.has(player)) {
-			// FIXME extract the regexp to a pattern
-			String [] msgs = message.replaceAll("&([0-9a-f])", "\u00A7$1").split("\n");
-			int rangeDoubled = range << 1;
-			List<Entity> entities = player.getNearbyEntities(rangeDoubled, rangeDoubled, rangeDoubled);
-			for (Entity entity : entities) {
-				if (!(entity instanceof Player)) continue;
-				if (entity == player) continue;
-				if (entity == ignore) continue;
-				for (String msg : msgs) {
-					if (msg.isEmpty()) continue;
-					((Player)entity).sendMessage(MagicSpells.plugin.textColor + msg);
-				}
+		if (message == null) return;
+		if (message.isEmpty()) return;
+		if (Perm.SILENT.has(player)) return;
+		
+		// FIXME extract the regexp to a pattern
+		String [] msgs = message.replaceAll("&([0-9a-f])", "\u00A7$1").split("\n");
+		int rangeDoubled = range << 1;
+		List<Entity> entities = player.getNearbyEntities(rangeDoubled, rangeDoubled, rangeDoubled);
+		for (Entity entity : entities) {
+			if (!(entity instanceof Player)) continue;
+			if (entity == player) continue;
+			if (entity == ignore) continue;
+			for (String msg : msgs) {
+				if (msg.isEmpty()) continue;
+				((Player)entity).sendMessage(MagicSpells.plugin.textColor + msg);
 			}
 		}
 	}
@@ -2269,7 +2257,6 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		return this.variableModsTarget;
 	}
 	
-	// TODO rename to avoid hiding
 	void setCooldownManually(String name, long nextCast) {
 		this.nextCast.put(name, nextCast);
 	}
@@ -2329,7 +2316,6 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		private boolean reagents;
 		private boolean messages;
 		
-		// TODO rename to avoid hiding
 		PostCastAction(boolean cooldown, boolean reagents, boolean messages) {
 			this.cooldown = cooldown;
 			this.reagents = reagents;
@@ -2356,7 +2342,6 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		public SpellCastState state;
 		public PostCastAction action;
 		
-		// TODO rename to avoid hiding
 		public SpellCastResult(SpellCastState state, PostCastAction action) {
 			this.state = state;
 			this.action = action;
@@ -2376,7 +2361,6 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		private double motionToleranceY = 0.2;
 		private double motionToleranceZ = 0.2;
 		
-		// TODO rename to avoid hiding
 		public DelayedSpellCast(SpellCastEvent spellCast) {
 			this.player = spellCast.getCaster();
 			this.prevLoc = player.getLocation().clone();
@@ -2448,7 +2432,6 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		private Location prevLoc;
 		private Spell spell;
 		private SpellCastEvent spellCast;
-		// TODO rename to avoid hiding
 		private int castTime;
 		private int taskId;
 		private boolean cancelled = false;
@@ -2460,7 +2443,6 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		private double motionToleranceY = 0.2;
 		private double motionToleranceZ = 0.2;
 		
-		// TODO rename to avoid hiding
 		public DelayedSpellCastWithBar(SpellCastEvent spellCast) {
 			this.player = spellCast.getCaster();
 			this.prevLoc = player.getLocation().clone();

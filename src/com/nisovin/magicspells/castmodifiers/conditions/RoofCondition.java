@@ -1,5 +1,6 @@
 package com.nisovin.magicspells.castmodifiers.conditions;
 
+import com.nisovin.magicspells.util.RegexUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -15,7 +16,7 @@ public class RoofCondition extends Condition {
 	
 	@Override
 	public boolean setVar(String var) {
-		if (var != null && var.matches("^[0-9]+$")) {
+		if (var != null && RegexUtil.matches(RegexUtil.SIMPLE_INT_PATTERN, var)) {
 			height = Integer.parseInt(var);
 		}
 		return true;

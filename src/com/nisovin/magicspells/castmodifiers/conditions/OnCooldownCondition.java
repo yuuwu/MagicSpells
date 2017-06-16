@@ -25,11 +25,7 @@ public class OnCooldownCondition extends Condition {
 
 	@Override
 	public boolean check(Player player, LivingEntity target) {
-		if (target instanceof Player) {
-			return spell.onCooldown((Player)target);
-		} else {
-			return false;
-		}
+		return target instanceof Player && spell.onCooldown((Player)target);
 	}
 
 	@Override
