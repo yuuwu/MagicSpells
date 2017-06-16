@@ -152,6 +152,9 @@ public abstract class Condition {
 		conditions.put("spellcaststate", SpellCastStateCondition.class);
 		conditions.put("pluginenabled", PluginEnabledCondition.class);
 		conditions.put("leaping", LeapingCondition.class);
+		conditions.put("hasitemprecise", HasItemPreciseCondition.class);
+		conditions.put("wearingprecise", WearingPreciseCondition.class);
+		conditions.put("holdingprecise", HoldingPreciseCondition.class);
 	}
 	
 }
