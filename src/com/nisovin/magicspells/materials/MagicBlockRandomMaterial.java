@@ -5,6 +5,8 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.material.MaterialData;
 
+import java.util.Arrays;
+
 public class MagicBlockRandomMaterial extends MagicBlockMaterial {
 	
 	MagicMaterial[] materials;
@@ -36,10 +38,7 @@ public class MagicBlockRandomMaterial extends MagicBlockMaterial {
 	
 	@Override
 	public boolean equals(MaterialData data) {
-		for (MagicMaterial m : this.materials) {
-			if (m.equals(data)) return true;
-		}
-		return false;
+		return Arrays.stream(this.materials).anyMatch(m -> m.equals(data));
 	}
 	
 }

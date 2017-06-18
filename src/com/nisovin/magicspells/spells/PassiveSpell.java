@@ -167,6 +167,17 @@ public class PassiveSpell extends Spell {
 		return false;
 	}
 	
+	// DEBUG INFO: level 3, activating passive spell spellname for player playername state state
+	// DEBUG INFO: level 3, casting spell effect spellname
+	// DEBUG INFO: level 3, casting without target
+	// DEBUG INFO: level 3, casting at entity
+	// DEBUG INFO: level 3, target cancelled (TE)
+	// DEBUG INFO: level 3, casting at location
+	// DEBUG INFO: level 3, target cancelled (TL)
+	// DEBUG INFO: level 3, casting normally
+	// DEBUG INFO: level 3, target cancelled (UE)
+	// DEBUG INFO: level 3, target cancelled (UL)
+	// DEBUG INFO: level 3, passive spell cancelled
 	boolean activateSpells(Player caster, LivingEntity target, Location location, float basePower) {
 		SpellCastState state = getCastState(caster);
 		MagicSpells.debug(3, "Activating passive spell '" + name + "' for player " + caster.getName() + " (state: " + state + ')');

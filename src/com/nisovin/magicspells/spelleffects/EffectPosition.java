@@ -20,7 +20,6 @@ public enum EffectPosition {
 	/** Can be referenced as: disabled
 	 *  Used in:
 	 *      - SteedSpell
-	 *      - HasteSpell
 	 *      - ExternalCommandSpell
 	 *      - BuffSpell (and all sub classes)
 	 *      - DisguiseSpell
@@ -48,6 +47,8 @@ public enum EffectPosition {
 	 *  - BombSpell
 	 *  - AreaEffectSpell
 	 *  - FirenovaSpell
+	 *  - ParticleProjectileSpell
+	 *  - DrainlifeSpell
 	 **/
 	SPECIAL(6, "special"),
 	
@@ -83,6 +84,7 @@ public enum EffectPosition {
 	 *   - ThrowBlockSpell
 	 *   - VolleySpell
 	 *   - WitherSkullSpell
+	 *   - Magnetspell
 	 **/
 	PROJECTILE(10, "projectile"),
 	
@@ -102,6 +104,7 @@ public enum EffectPosition {
 	 *    - ThrowBlockSpell
 	 *    - VolleySpell
 	 *    - WitherSkullSpell
+	 *    - LevitateSpell
 	 */
 	DYNAMIC_CASTER_PROJECTILE_LINE(11, "casterprojectile", "casterprojectileline"),
 	

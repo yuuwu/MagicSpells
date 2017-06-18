@@ -1,7 +1,9 @@
 package com.nisovin.magicspells.spells.command;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
+import com.nisovin.magicspells.util.RegexUtil;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -45,6 +47,8 @@ import com.nisovin.magicspells.util.Util;
  */
 public class TomeSpell extends CommandSpell {
 
+	private static final Pattern INT_PATTERN = Pattern.compile("^[0-9]+$");
+	
 	private boolean cancelReadOnLearn;
 	private boolean consumeBook;
 	private boolean allowOverwrite;
@@ -113,7 +117,7 @@ public class TomeSpell extends CommandSpell {
 				return PostCastAction.ALREADY_HANDLED;
 			} else {
 				int uses = this.defaultUses;
-				if (args.length > 1 && args[1].matches("^[0-9]+$")) {
+				if (args.length > 1 && RegexUtil.matches(INT_PATTERN, args[1])) {
 					uses = Integer.parseInt(args[1]);
 				}
 				item = createTome(spell, uses, item);

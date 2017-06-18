@@ -159,6 +159,7 @@ public class ConjureBookSpell extends InstantSpell implements TargetedLocationSp
 	}
 	
 	private static String applyVariables(String raw, String playerName, String displayName) {
+		// TODO have regexutil replace all on these instead
 		raw = NAME_VARIABLE_PATTERN.matcher(raw).replaceAll(playerName);
 		raw = DISPLAY_NAME_VARIABLE_PATTERN.matcher(raw).replaceAll(displayName);
 		return raw;

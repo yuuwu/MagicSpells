@@ -94,6 +94,7 @@ public class ManaSystem extends ManaHandler {
 		this.taskId = MagicSpells.scheduleRepeatingTask(new Regenerator(), this.regenInterval, this.regenInterval);
 	}
 	
+	// DEBUG INFO: level 2, adding mana modifiers
 	@Override
 	public void initialize() {
 		if (this.modifierList != null && !this.modifierList.isEmpty()) {
@@ -103,6 +104,7 @@ public class ManaSystem extends ManaHandler {
 		}
 	}
 	
+	// DEBUG INFO: level 1, creating mana bar for player playername with rank rankname
 	private ManaBar getManaBar(Player player) {
 		ManaBar bar = this.manaBars.get(player.getName().toLowerCase());
 		if (bar == null) {
@@ -115,6 +117,7 @@ public class ManaSystem extends ManaHandler {
 		return bar;
 	}
 	
+	// DEBUG INFO: level 1, updating mana bar for player playername with rank rankname
 	@Override
 	public void createManaBar(final Player player) {
 		boolean update = this.manaBars.containsKey(player.getName().toLowerCase());
@@ -146,6 +149,10 @@ public class ManaSystem extends ManaHandler {
 		return false;
 	}
 	
+	// DEBUG INFO: level 3, fetching mana rank for playername
+	// DEBUG INFO: level 3, checking rank rankname
+	// DEBUG INFO: level 3, rank found
+	// DEBUG INFO: level 3, no rank found
 	private ManaRank getRank(Player player) {
 		MagicSpells.debug(3, "Fetching mana rank for player " + player.getName() + "...");
 		for (ManaRank rank : this.ranks) {

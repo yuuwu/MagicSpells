@@ -14,6 +14,8 @@ import org.bukkit.inventory.ItemStack;
 import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.castmodifiers.Condition;
 
+import java.util.Objects;
+
 public class HasItemCondition extends Condition {
 
 	int id;
@@ -74,17 +76,11 @@ public class HasItemCondition extends Condition {
 				} catch (Exception e) {
 					DebugHandler.debugGeneral(e);
 				}
-				if (item.getTypeId() == id && (!checkData || item.getDurability() == data) && (!checkName || strEquals(thisname, name))) return true;
+				if (item.getTypeId() == id && (!checkData || item.getDurability() == data) && (!checkName || Objects.equals(thisname, name))) return true;
 			}
 			return false;
 		}
 		return inventory.contains(Material.getMaterial(id));
-	}
-	
-	private boolean strEquals(String s1, String s2) {
-		if (s1 == s2) return true;
-		if (s1 == null || s2 == null) return false;
-		return s1.equals(s2);
 	}
 	
 	@Override

@@ -93,7 +93,11 @@ public class BroadcastEffect extends SpellEffect {
 			if (entity instanceof Player) MagicSpells.sendMessage(message, (Player)entity, null);
 		} else {
 			String msg = message;
-			if (entity instanceof Player) msg = msg.replace("%a", ((Player)entity).getDisplayName()).replace("%t", ((Player)entity).getDisplayName()).replace("%n", entity.getName());
+			if (entity instanceof Player) {
+				msg = msg.replace("%a", ((Player)entity).getDisplayName())
+					.replace("%t", ((Player)entity).getDisplayName())
+					.replace("%n", entity.getName());
+			}
 			broadcast(entity == null ? null : entity.getLocation(), msg);
 		}
 		return null;

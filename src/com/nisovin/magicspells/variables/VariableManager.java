@@ -42,6 +42,8 @@ public class VariableManager implements Listener {
 	boolean dirtyGlobalVars = false;
 	File folder;
 	
+	// DEBUG INFO: level 2, loaded variable (name)
+	// DEBUG INFO: level 1, # variables loaded
 	public VariableManager(MagicSpells plugin, ConfigurationSection section) {
 		if (section != null) {
 			for (String var : section.getKeys(false)) {
@@ -262,7 +264,7 @@ public class VariableManager implements Listener {
 					if (!line.isEmpty()) {
 						String[] s = line.split("=", 2);
 						Variable variable = this.variables.get(s[0]);
-						if (variable != null && variable instanceof GlobalVariable && variable.permanent) variable.parseAndSet("", s[1]);
+						if (variable instanceof GlobalVariable && variable.permanent) variable.parseAndSet("", s[1]);
 					}
 				}
 				scanner.close();
@@ -327,7 +329,7 @@ public class VariableManager implements Listener {
 					if (!line.isEmpty()) {
 						String[] s = line.split("=", 2);
 						Variable variable = variables.get(s[0]);
-						if (variable != null && variable instanceof PlayerVariable && variable.permanent) variable.parseAndSet(player, s[1]);
+						if (variable instanceof PlayerVariable && variable.permanent) variable.parseAndSet(player, s[1]);
 					}
 				}
 				scanner.close();
@@ -425,6 +427,7 @@ public class VariableManager implements Listener {
 		if (this.dirtyPlayerVars.contains(event.getPlayer().getName())) savePlayerVars(event.getPlayer().getName(), Util.getUniqueId(event.getPlayer()));
 	}
 	
+	// DEBUG INFO: Debug log level 3, variable was modified for player by amount because of spell cast
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void variableModsCast(SpellCastEvent event) {
 		if (event.getSpellCastState() == SpellCastState.NORMAL) {
@@ -433,7 +436,6 @@ public class VariableManager implements Listener {
 				Player player = event.getCaster();
 				for (String var : varMods.keySet()) {
 					VariableMod mod = varMods.get(var);
-					//double val = varMods.get(var);
 					double amount = mod.getValue(player, null);
 					if (amount == 0 && mod.isConstantValue()) {
 						reset(var, player);
@@ -453,7 +455,6 @@ public class VariableManager implements Listener {
 							set(var, player, amount);
 							break;
 						}
-						//modify(var, player, val);
 					}
 					MagicSpells.debug(3, "Variable '" + var + "' for player '" + player.getName() + "' modified by " + amount + " as a result of spell cast '" + event.getSpell().getName() + '\'');
 				}
@@ -461,6 +462,7 @@ public class VariableManager implements Listener {
 		}
 	}
 	
+	// DEBUG INFO: Debug log level 3, variable was modified for player by amount because of spell casted
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void variableModsCasted(SpellCastedEvent event) {
 		if (event.getSpellCastState() == SpellCastState.NORMAL && event.getPostCastAction() != PostCastAction.ALREADY_HANDLED) {
@@ -470,7 +472,6 @@ public class VariableManager implements Listener {
 				for (String var : varMods.keySet()) {
 					VariableMod mod = varMods.get(var);
 					double amount = mod.getValue(player, null);
-					//double val = varMods.get(var);
 					if (amount == 0 && mod.isConstantValue()) {
 						reset(var, player);
 					} else {
@@ -489,7 +490,6 @@ public class VariableManager implements Listener {
 							set(var, player, amount);
 							break;
 						}
-						//modify(var, player, val);
 					}
 					MagicSpells.debug(3, "Variable '" + var + "' for player '" + player.getName() + "' modified by " + amount + " as a result of spell casted '" + event.getSpell().getName() + '\'');
 				}
@@ -497,6 +497,7 @@ public class VariableManager implements Listener {
 		}
 	}
 	
+	// DEBUG INFO: Debug log level 3, variable was modified for player by amount because of spell target
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void variableModsTarget(SpellTargetEvent event) {
 		Map<String, VariableMod> varMods = event.getSpell().getVariableModsTarget();
@@ -507,7 +508,6 @@ public class VariableManager implements Listener {
 				for (String var : varMods.keySet()) {
 					VariableMod mod = varMods.get(var);
 					double amount = mod.getValue(player, target);
-					//double val = varMods.get(var);
 					if (amount == 0 && mod.isConstantValue()) {
 						reset(var, player);
 					} else {
@@ -526,7 +526,6 @@ public class VariableManager implements Listener {
 							set(var, player, amount);
 							break;
 						}
-						//modify(var, player, val);
 					}
 					MagicSpells.debug(3, "Variable '" + var + "' for player '" + player.getName() + "' modified by " + amount + " as a result of spell target from '" + event.getSpell().getName() + '\'');
 				}

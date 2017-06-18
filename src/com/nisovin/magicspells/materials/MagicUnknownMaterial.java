@@ -7,6 +7,8 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
+import java.util.Objects;
+
 public class MagicUnknownMaterial extends MagicMaterial {
 	
 	int type;
@@ -55,8 +57,11 @@ public class MagicUnknownMaterial extends MagicMaterial {
 	
 	@Override
 	public int hashCode() {
-		// TODO fix the hash code
-		return (this.type + ":" + this.data).hashCode();
+		return Objects.hash(
+			this.type,
+			":",
+			this.data
+		);
 	}
 	
 }

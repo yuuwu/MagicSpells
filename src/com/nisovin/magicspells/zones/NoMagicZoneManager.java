@@ -28,6 +28,8 @@ public class NoMagicZoneManager {
 		this.zoneTypes.put("residence", NoMagicZoneResidence.class);
 	}
 	
+	// DEBUG INFO: level 3, loaded no magic zone, zonename
+	// DEBUG INFO: level 1, no magic zones loaded #
 	public void load(MagicConfig config) {
 		// Get zones
 		this.zones = new HashMap<>();

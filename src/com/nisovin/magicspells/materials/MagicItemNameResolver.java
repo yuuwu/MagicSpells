@@ -6,7 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.regex.Pattern;
 
+import com.nisovin.magicspells.util.RegexUtil;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.TreeSpecies;
@@ -22,7 +24,10 @@ import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 
 public class MagicItemNameResolver implements ItemNameResolver {
-
+	
+	private static final Pattern DIGITS = Pattern.compile("[0-9]+");
+	private static final Pattern BLOCK_BYTE_DATA_PATTERN = Pattern.compile("^[0-9]+$");
+	
 	Map<String, Material> materialMap = new HashMap<>();
 	Map<String, MaterialData> materialDataMap = new HashMap<>();
 	Random rand = new Random();
@@ -63,20 +68,20 @@ public class MagicItemNameResolver implements ItemNameResolver {
 		ItemTypeAndData item = new ItemTypeAndData();
 		if (string.contains(":")) {
 			String[] split = string.split(":");
-			if (split[0].matches("[0-9]+")) {
+			if (RegexUtil.matches(DIGITS, split[0])) {
 				item.id = Integer.parseInt(split[0]);
 			} else {
 				Material mat = Material.getMaterial(split[0].toUpperCase());
 				if (mat == null) return null;
 				item.id = mat.getId();
 			}
-			if (split[1].matches("[0-9]+")) {
+			if (RegexUtil.matches(DIGITS, split[1])) {
 				item.data = Short.parseShort(split[1]);
 			} else {
 				return null;
 			}
 		} else {
-			if (string.matches("[0-9]+")) {
+			if (RegexUtil.matches(DIGITS, string)) {
 				item.id = Integer.parseInt(string);
 			} else {
 				Material mat = Material.getMaterial(string.toUpperCase());
@@ -184,7 +189,7 @@ public class MagicItemNameResolver implements ItemNameResolver {
 			return getLeaves(sdata);
 		} else if (type == Material.WOOL) {
 			return getWool(sdata);
-		} else if (sdata.matches("^[0-9]+$")) {
+		} else if (RegexUtil.matches(BLOCK_BYTE_DATA_PATTERN, sdata)) {
 			return new MaterialData(type, Byte.parseByte(sdata));
 		} else {
 			return new MaterialData(type);

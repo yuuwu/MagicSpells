@@ -57,7 +57,10 @@ public class BindSpell extends CommandSpell {
 			}
 		}
 	}
-
+	
+	// DEBUG INFO: level 3, trying to bind spell internalname to cast item castitemstring
+	// DEBUG INFO: level 3, performing bind
+	// DEBUG INFO: level 3, bind successful
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {

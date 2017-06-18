@@ -3,6 +3,8 @@ package com.nisovin.magicspells.materials;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
+import java.util.Objects;
+
 public class MagicUnknownAnyDataMaterial extends MagicUnknownMaterial {
 
 	public MagicUnknownAnyDataMaterial(int type) {
@@ -21,8 +23,10 @@ public class MagicUnknownAnyDataMaterial extends MagicUnknownMaterial {
 	
 	@Override
 	public int hashCode() {
-		// TODO fix the hash code
-		return (this.type + ":*").hashCode();
+		return Objects.hash(
+			this.type,
+			":*"
+		);
 	}
 
 }

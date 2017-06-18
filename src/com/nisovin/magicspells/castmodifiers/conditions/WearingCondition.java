@@ -104,15 +104,11 @@ public class WearingCondition extends Condition {
 			DebugHandler.debugGeneral(e);
 		}
 		for (int i = 0; i < ids.length; i++) {
-			if (ids[i] == thisid && (!checkData[i] || datas[i] == thisdata) && (!checkName[i] || strEquals(names[i], thisname))) {
+			if (ids[i] == thisid && (!checkData[i] || datas[i] == thisdata) && (!checkName[i] || Objects.equals(names[i], thisname))) {
 				return true;
 			}
 		}
 		return false;
-	}
-	
-	private boolean strEquals(String s1, String s2) {
-		return Objects.equals(s1, s2);
 	}
 
 }

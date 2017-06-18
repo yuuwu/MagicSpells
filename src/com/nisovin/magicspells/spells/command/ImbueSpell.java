@@ -5,8 +5,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import com.nisovin.magicspells.Perm;
+import com.nisovin.magicspells.util.RegexUtil;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -31,6 +33,8 @@ import com.nisovin.magicspells.util.Util;
 // Advanced perm is for specifying the number of uses if it isn't normally allowed
 public class ImbueSpell extends CommandSpell {
 
+	private static final Pattern CAST_ARG_USES_PATTERN  = Pattern.compile("[0-9]+");
+	
 	private String key;
 	
 	private int defaultUses;
@@ -144,7 +148,7 @@ public class ImbueSpell extends CommandSpell {
 			
 			// Get uses
 			int uses = this.defaultUses;
-			if (args.length > 1 && args[1].matches("[0-9]+") && (this.allowSpecifyUses || Perm.ADVANCED_IMBUE.has(player))) {
+			if (args.length > 1 && RegexUtil.matches(CAST_ARG_USES_PATTERN, args[1]) && (this.allowSpecifyUses || Perm.ADVANCED_IMBUE.has(player))) {
 				uses = Integer.parseInt(args[1]);
 				if (uses > this.maxUses) {
 					uses = this.maxUses;

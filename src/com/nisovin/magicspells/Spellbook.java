@@ -68,6 +68,7 @@ public class Spellbook {
 	private HashMap<Plugin, Set<Spell>> temporarySpells = new HashMap<>();
 	private Set<String> cantLearn = new HashSet<>();
 	
+	// DEBUG INFO: level 1, loaded player spell list (player)
 	public Spellbook(Player player, MagicSpells plugin) {
 		this.plugin = plugin;
 		this.player = player;
@@ -93,6 +94,7 @@ public class Spellbook {
 		load(player.getWorld());
 	}
 	
+	// DEBUG INFO: level 2, "op, granting all spells"
 	public void load(World playerWorld) {
 		// Load spells from file
 		loadFromFile(playerWorld);
@@ -122,6 +124,7 @@ public class Spellbook {
 		}		
 	}
 	
+	// DEBUG INFO: level 2, loading spells from player file
 	private void loadFromFile(World playerWorld) {
 		try {
 			MagicSpells.debug(2, "  Loading spells from player file...");
@@ -183,6 +186,8 @@ public class Spellbook {
 		}
 	}
 	
+	// DEBUG INFO: level 2, adding granted spells
+	// DEBUG INFO: level 3, checking spell <internal name>
 	public void addGrantedSpells() {
 		MagicSpells.debug(2, "  Adding granted spells...");
 		boolean added = false;
@@ -198,6 +203,11 @@ public class Spellbook {
 		if (added) save();
 	}
 	
+	// DEBUG INFO: level 2, cannot learn spell because helper
+	// DEBUG INFO: level 2, cannot learn because precludes
+	// DEBUG INFO: level 2, cannot learn because prereq not meet
+	// DEBUG INFO: level 2, cannot learn insufficient magic xp
+	// DEBUG INFO: level 2, checking learn permissions
 	public boolean canLearn(Spell spell) {
 		if (spell.isHelperSpell()) {
 			MagicSpells.debug("Cannot learn " + spell.getName() + " because it is a helper spell");
@@ -386,6 +396,7 @@ public class Spellbook {
 		return hasSpell(spell, true);
 	}
 	
+	// DEBUG INFO: level 2, adding granted spell for player, spell
 	public boolean hasSpell(Spell spell, boolean checkGranted) {
 		if (plugin.ignoreGrantPerms) return true;
 		boolean has = allSpells.contains(spell);
@@ -408,6 +419,9 @@ public class Spellbook {
 		addSpell(spell, new CastItem[] {castItem});
 	}
 	
+	// DEBUG INFO: level 3, added spell, internalname
+	// DEBUG INFO: level 3, cast item item, custom|default
+	// DEBUG INFO: level 3, removing replaced spell, internalname
 	public void addSpell(Spell spell, CastItem[] castItems) {
 		if (spell == null) return;
 		MagicSpells.debug(3, "    Added spell: " + spell.getInternalName());
@@ -572,12 +586,14 @@ public class Spellbook {
 		customBindings.clear();
 	}
 	
+	// DEBUG INFO: level 1, reloading player spell list, playername
 	public void reload() {
 		MagicSpells.debug(1, "Reloading player spell list: " + playerName);
 		removeAllSpells();
 		load();
 	}
 	
+	// DEBUG INFO: level 2, saved spellbook file, playername
 	public void save() {
 		try {
 			File file;

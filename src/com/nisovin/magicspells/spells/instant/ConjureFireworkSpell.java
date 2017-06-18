@@ -1,7 +1,9 @@
 package com.nisovin.magicspells.spells.instant;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
+import com.nisovin.magicspells.util.RegexUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
@@ -23,6 +25,8 @@ import com.nisovin.magicspells.util.Util;
 // The special position plays on the dropped items
 public class ConjureFireworkSpell extends InstantSpell implements TargetedLocationSpell {
 
+	private static final Pattern COLORS_PATTERN = Pattern.compile("^[A-Fa-f0-9]{6}(,[A-Fa-f0-9]{6})*$");
+	
 	boolean addToInventory;
 	ItemStack firework;
 	private boolean itemHasGravity;
@@ -67,7 +71,7 @@ public class ConjureFireworkSpell extends InstantSpell implements TargetedLocati
 						trail = true;
 					} else if (s.equalsIgnoreCase("twinkle") || s.equalsIgnoreCase("flicker")) {
 						twinkle = true;
-					} else if (s.matches("^[A-Fa-f0-9]{6}(,[A-Fa-f0-9]{6})*$")) {
+					} else if (RegexUtil.matches(COLORS_PATTERN, s)) {
 						String[] scolors = s.split(",");
 						int[] icolors = new int[scolors.length];
 						for (int i = 0; i < scolors.length; i++) {

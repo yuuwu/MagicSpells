@@ -83,6 +83,7 @@ public class SpawnMonsterSpell extends TargetedSpell implements TargetedLocation
 	
 	private Random random = new Random();
 	
+	// DEBUG INFO: level 2, invalid potion effect on internalname spell data
 	public SpawnMonsterSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		

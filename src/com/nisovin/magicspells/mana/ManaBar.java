@@ -1,6 +1,6 @@
 package com.nisovin.magicspells.mana;
 
-import org.bukkit.Bukkit;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -126,7 +126,7 @@ public class ManaBar {
 		Player player = getPlayer();
 		if (player != null && player.isOnline()) {
 			ManaChangeEvent event = new ManaChangeEvent(player, this.mana, newAmt, this.maxMana, reason);
-			Bukkit.getPluginManager().callEvent(event);
+			EventUtil.call(event);
 			return event.getNewAmount();
 		}
 		return newAmt;

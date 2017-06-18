@@ -61,6 +61,7 @@ public class DanceCastListener implements Listener {
 	@ConfigData(field="general.str-dance-fail", dataType="String")
 	String strDanceFail;
 	
+	// DEBUG INFO: level 2, dance cast registered internalname sequence
 	public DanceCastListener(MagicSpells plugin, MagicConfig config) {
 		this.plugin = plugin;
 		
@@ -117,6 +118,7 @@ public class DanceCastListener implements Listener {
 		return casted;
 	}
 	
+	// DEBUG INFO: level 2, player playername performance dance sequence sequence
 	@EventHandler
 	public void onInteract(PlayerInteractEvent event) {
 		if (!event.hasItem()) return;

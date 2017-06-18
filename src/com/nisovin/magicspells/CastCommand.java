@@ -3,7 +3,7 @@ package com.nisovin.magicspells;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -26,7 +26,10 @@ import com.nisovin.magicspells.util.RegexUtil;
 import com.nisovin.magicspells.util.Util;
 
 public class CastCommand implements CommandExecutor, TabCompleter {
-
+	
+	private static final Pattern LOOSE_PLAYER_NAME_PATTERN = Pattern.compile("^[A-Za-z0-9_]+$");
+	private static final Pattern LOCATION_PATTERN = Pattern.compile("^[^,]+,-?[0-9.]+,-?[0-9.]+,-?[0-9.]+(,-?[0-9.]+,-?[0-9.]+)?$");
+	
 	MagicSpells plugin;
 	boolean enableTabComplete;
 	
@@ -182,8 +185,7 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 						numString = numString.substring(1);
 					}
 					
-					Matcher m = RegexUtil.DOUBLE_PATTERN.matcher(numString);
-					if (!m.matches()) {
+					if (!RegexUtil.matches(RegexUtil.DOUBLE_PATTERN, numString)) {
 						boolean negate = false;
 						if (numString.startsWith("-")) {
 							negate = true;
@@ -362,7 +364,7 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 						if (!casted) {
 							boolean ok = spell.castFromConsole(sender, spellArgs);
 							if (!ok) {
-								if ((spell instanceof TargetedEntitySpell || spell instanceof TargetedLocationSpell) && spellArgs != null && spellArgs.length == 1 && spellArgs[0].matches("^[A-Za-z0-9_]+$")) {
+								if ((spell instanceof TargetedEntitySpell || spell instanceof TargetedLocationSpell) && spellArgs != null && spellArgs.length == 1 && RegexUtil.matches(LOOSE_PLAYER_NAME_PATTERN, spellArgs[0])) {
 									Player target = PlayerNameUtils.getPlayer(spellArgs[0]);
 									if (target != null) {
 										if (spell instanceof TargetedEntitySpell) {
@@ -378,7 +380,7 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 									} else {
 										sender.sendMessage("Invalid target.");
 									}
-								} else if (spell instanceof TargetedLocationSpell && spellArgs != null && spellArgs.length == 1 && spellArgs[0].matches("^[^,]+,-?[0-9.]+,-?[0-9.]+,-?[0-9.]+(,-?[0-9.]+,-?[0-9.]+)?$")) {
+								} else if (spell instanceof TargetedLocationSpell && spellArgs != null && spellArgs.length == 1 && RegexUtil.matches(LOCATION_PATTERN, spellArgs[0])) {
 									String[] locData = spellArgs[0].split(",");
 									World world = Bukkit.getWorld(locData[0]);
 									if (world != null) {

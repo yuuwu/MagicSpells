@@ -3,7 +3,9 @@ package com.nisovin.magicspells.spells;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.regex.Pattern;
 
+import com.nisovin.magicspells.util.RegexUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -15,6 +17,9 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.util.MagicConfig;
 
 public final class MultiSpell extends InstantSpell {
+	
+	private static final Pattern RANGED_DELAY_PATTERN = Pattern.compile("DELAY [0-9]+ [0-9]+");
+	private static final Pattern BASIC_DELAY_PATTERN = Pattern.compile("DELAY [0-9]+");
 	
 	private boolean castWithItem;
 	private boolean castByCommand;
@@ -48,12 +53,12 @@ public final class MultiSpell extends InstantSpell {
 				String[] parts = s.split(":");
 				double chance = parts.length == 2 ? Double.parseDouble(parts[1]) : 0.0D;
 				s = parts[0];
-				if (s.matches("DELAY [0-9]+ [0-9]+")) {
+				if (RegexUtil.matches(RANGED_DELAY_PATTERN, s)) {
 					String[] splits = s.split(" ");
 					int minDelay = Integer.parseInt(splits[1]);
 					int maxDelay = Integer.parseInt(splits[2]);
 					this.actions.add(new ActionChance(new Action(minDelay, maxDelay), chance));
-				} else if (s.matches("DELAY [0-9]+")) {
+				} else if (RegexUtil.matches(BASIC_DELAY_PATTERN, s)) {
 					int delay = Integer.parseInt(s.split(" ")[1]);
 					this.actions.add(new ActionChance(new Action(delay), chance));
 				} else {

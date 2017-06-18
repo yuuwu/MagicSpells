@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import com.nisovin.magicspells.Perm;
+import com.nisovin.magicspells.util.RegexUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -55,6 +57,9 @@ import com.nisovin.magicspells.util.Util;
 */
 public class ScrollSpell extends CommandSpell {
 
+	private static final Pattern CAST_ARGUMENT_USE_COUNT_PATTERN = Pattern.compile("^-?[0-9]+$");
+	private static final Pattern SCROLL_DATA_USES_PATTERN = Pattern.compile("^[0-9]+$");
+	
 	private boolean castForFree;
 	private boolean ignoreCastPerm;
 	private boolean bypassNormalChecks;
@@ -166,7 +171,7 @@ public class ScrollSpell extends CommandSpell {
 			
 			// Get uses
 			int uses = this.defaultUses;
-			if (args.length > 1 && args[1].matches("^-?[0-9]+$")) {
+			if (args.length > 1 && RegexUtil.matches(CAST_ARGUMENT_USE_COUNT_PATTERN, args[1])) {
 				uses = Integer.parseInt(args[1]);
 			}
 			if (uses > this.maxUses || (this.maxUses > 0 && uses <= 0)) {
@@ -256,7 +261,7 @@ public class ScrollSpell extends CommandSpell {
 		Spell spell = MagicSpells.getSpellByInternalName(scrollData[0]);
 		if (spell == null) return;
 		int uses = 0;
-		if (scrollData.length > 1 && scrollData[1].matches("^[0-9]+$")) {
+		if (scrollData.length > 1 && RegexUtil.matches(SCROLL_DATA_USES_PATTERN, scrollData[1])) {
 			uses = Integer.parseInt(scrollData[1]);
 		}
 

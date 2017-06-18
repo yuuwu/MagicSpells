@@ -36,7 +36,8 @@ class MagicPlayerListener implements Listener {
 			spellbook.destroy();
 		}
 	}
-
+	
+	// DEBUG INFO: level 2, player changed from world to world, reloading spells
 	@EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
 	public void onPlayerChangeWorld(PlayerChangedWorldEvent event) {
 		if (plugin.separatePlayerSpellsPerWorld) {

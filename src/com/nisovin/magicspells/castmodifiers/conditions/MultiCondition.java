@@ -194,6 +194,7 @@ public class MultiCondition extends Condition implements IModifier {
 	}
 	
 	public enum PassCondition {
+		
 		ALL{
 
 			@Override
@@ -206,8 +207,9 @@ public class MultiCondition extends Condition implements IModifier {
 				return fails == 0;
 			}
 			
-		}
-		, ANY {
+		},
+		
+		ANY {
 			@Override
 			public boolean hasPassed(int passes, int fails) {
 				return passes > 0;

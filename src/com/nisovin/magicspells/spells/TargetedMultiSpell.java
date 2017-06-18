@@ -3,7 +3,9 @@ package com.nisovin.magicspells.spells;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.regex.Pattern;
 
+import com.nisovin.magicspells.util.RegexUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -21,6 +23,8 @@ import com.nisovin.magicspells.util.TargetInfo;
 
 public final class TargetedMultiSpell extends TargetedSpell implements TargetedEntitySpell, TargetedLocationSpell {
 
+	private static final Pattern DELAY_PATTERN = Pattern.compile("DELAY [0-9]+");
+	
 	@ConfigData(field="check-individual-cooldowns", dataType="boolean", defaultValue="false")
 	private boolean checkIndividualCooldowns;
 	
@@ -65,7 +69,7 @@ public final class TargetedMultiSpell extends TargetedSpell implements TargetedE
 
 		if (this.spellList != null) {
 			for (String s : this.spellList) {
-				if (s.matches("DELAY [0-9]+")) {
+				if (RegexUtil.matches(DELAY_PATTERN, s)) {
 					int delay = Integer.parseInt(s.split(" ")[1]);
 					this.actions.add(new Action(delay));
 				} else {
