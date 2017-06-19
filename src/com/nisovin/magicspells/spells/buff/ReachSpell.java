@@ -26,6 +26,7 @@ import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 
+// TODO this needs exemptions for anticheat
 public class ReachSpell extends BuffSpell {
 	
 	private int range;

@@ -14,18 +14,16 @@ public class VariableDouble {
 		this.secondaryValue = secondaryValue;
 	}
 	
-	
 	public VariableDouble(String raw) {
 		if (raw == null) throw new IllegalArgumentException("VariableDouble cannot be created from null");
 		if (raw.isEmpty()) throw new IllegalArgumentException("VariableDouble cannot");
 		if (raw.contains(" ")) {
 			String[] splits = raw.split(" ");
-			secondaryValue = new VariableMod(splits[1]);
+			this.secondaryValue = new VariableMod(splits[1]);
 			raw = splits[0];
 		}
-		primaryValue = new VariableMod(raw);
+		this.primaryValue = new VariableMod(raw);
 	}
-	
 	
 	public boolean hasSecondaryValue() {
 		return this.secondaryValue != null;
@@ -40,7 +38,7 @@ public class VariableDouble {
 	}
 	
 	public double calculateValue(Player caster, Player target) {
-		double ret = getPrimaryValue(caster, target);
+		double ret = this.getPrimaryValue(caster, target);
 		if (this.hasSecondaryValue()) {
 			ret = this.secondaryValue.getValue(caster, target, ret);
 		}

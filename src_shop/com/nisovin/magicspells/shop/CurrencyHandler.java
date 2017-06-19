@@ -2,7 +2,9 @@ package com.nisovin.magicspells.shop;
 
 import java.util.HashMap;
 import java.util.Set;
+import java.util.regex.Pattern;
 
+import com.nisovin.magicspells.util.RegexUtil;
 import com.nisovin.magicspells.util.compat.CompatBasics;
 import net.milkbowl.vault.economy.Economy;
 
@@ -16,7 +18,10 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import com.nisovin.magicspells.util.ExperienceUtils;
 
 public class CurrencyHandler {
-
+	
+	private static final Pattern PATTERN_CURRENCY_ITEM_BASIC = Pattern.compile("^[0-9]+$");
+	private static final Pattern PATTERN_CURRENCY_ITEM_ADVANCED = Pattern.compile("^[0-9]+:[0-9]+$");
+	
 	private HashMap<String,String> currencies = new HashMap<>();
 	private String defaultCurrency;
 	private Economy economy;
@@ -57,8 +62,8 @@ public class CurrencyHandler {
 		if (c.equalsIgnoreCase("vault") && this.economy != null) return this.economy.has(player.getName(), amount);
 		if (c.equalsIgnoreCase("levels")) return player.getLevel() >= (int)amount;
 		if (c.equalsIgnoreCase("experience") || c.equalsIgnoreCase("xp")) return ExperienceUtils.hasExp(player, (int)amount);
-		if (c.matches("^[0-9]+$")) return inventoryContains(player.getInventory(), new ItemStack(Integer.parseInt(c), (int)amount));
-		if (c.matches("^[0-9]+:[0-9]+$")) {
+		if (RegexUtil.matches(PATTERN_CURRENCY_ITEM_BASIC, c)) return inventoryContains(player.getInventory(), new ItemStack(Integer.parseInt(c), (int)amount));
+		if (RegexUtil.matches(PATTERN_CURRENCY_ITEM_ADVANCED, c)) {
 			String[] s = c.split(":");
 			int type = Integer.parseInt(s[0]);
 			short data = Short.parseShort(s[1]);
@@ -82,10 +87,10 @@ public class CurrencyHandler {
 			player.setLevel(player.getLevel() - (int)amount);
 		} else if (c.equalsIgnoreCase("experience") || c.equalsIgnoreCase("xp")) {
 			ExperienceUtils.changeExp(player, -(int)amount);
-		} else if (c.matches("^[0-9]+$")) {
+		} else if (RegexUtil.matches(PATTERN_CURRENCY_ITEM_BASIC, c)) {
 			removeFromInventory(player.getInventory(), new ItemStack(Integer.parseInt(c), (int)amount));
 			player.updateInventory();
-		} else if (c.matches("^[0-9]+:[0-9]+$")) {
+		} else if (RegexUtil.matches(PATTERN_CURRENCY_ITEM_ADVANCED, c)) {
 			String[] s = c.split(":");
 			int type = Integer.parseInt(s[0]);
 			short data = Short.parseShort(s[1]);

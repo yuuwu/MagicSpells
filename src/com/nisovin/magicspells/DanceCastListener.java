@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.nisovin.magicspells.util.RegexUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -34,6 +35,7 @@ public class DanceCastListener implements Listener {
 	@ConfigData(field="general.dance-cast-duration", dataType="int")
 	int duration;
 	
+	// TODO make this a map of dance cast items to maps of sequences to spells
 	Map<String, Spell> spells = new HashMap<>();
 	
 	Map<String, String> playerCasts = new HashMap<>();
@@ -84,7 +86,7 @@ public class DanceCastListener implements Listener {
 		for (Spell spell : MagicSpells.spells()) {
 			String seq = spell.getDanceCastSequence();
 			if (seq == null) continue;
-			if (!DANCE_CAST_PATTERN.matcher(seq).matches()) continue;
+			if (!RegexUtil.matches(DANCE_CAST_PATTERN, seq)) continue;
 			spells.put(seq, spell);
 			if (seq.contains("D")) enableDoubleJump = true;
 			if (seq.contains("F") || seq.contains("B") || seq.contains("L") || seq.contains("R") || seq.contains("J")) enableMovement = true;

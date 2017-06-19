@@ -631,7 +631,6 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	
 	private Set<String> tags;
 	
-	// TODO rename to avoid hiding
 	public Spell(MagicConfig config, String spellName) {
 		this.config = config;
 		
@@ -640,7 +639,6 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		loadConfigData(config, spellName, "spells");
 	}
 	
-	// TODO rename to avoid hiding
 	protected void loadConfigData(MagicConfig config, String spellName, String section) {
 		this.debug = config.getBoolean(section + '.' + spellName + ".debug", false);
 		this.profilingKey = "Spell:" + this.getClass().getName().replace("com.nisovin.magicspells.spells.", "") + '-' + spellName;
@@ -1031,6 +1029,8 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		return reagents;
 	}
 	
+	// DEBUG INFO: level 2, adding modifiers to internalname
+	// DEBUG INFO: level 2, adding target modifiers to internalname
 	/**
 	 * This method is called immediately after all spells have been loaded.
 	 */
@@ -1226,6 +1226,9 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	}
 	
 	// TODO can this safely be made varargs?
+	// DEBUG INFO: level 2, spell cast state
+	// DEBUG INFO: level 2, spell canceled
+	// DEBUG INFO: level 2, spell cast state changed
 	protected SpellCastEvent preCast(Player player, float power, String[] args) {
 		// Get spell state
 		SpellCastState state = getCastState(player);
@@ -1259,6 +1262,9 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		return event;
 	}
 	
+	// DEBUG INFO: level 3, power #
+	// DEBUG INFO: level 3, cooldown #
+	// DEBUG INFO: level 3, args argsvalue
 	PostCastAction handleCast(SpellCastEvent spellCast) {
 		long start = System.nanoTime();
 		Player player = spellCast.getCaster();
@@ -1286,6 +1292,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	}
 	
 	// FIXME save the results of the redundant calculations or be cleaner about it
+	// DEBUG INFO: level 3, post cast action actionName
 	protected void postCast(SpellCastEvent spellCast, PostCastAction action) {
 		debug(3, "    Post-cast action: " + action);
 		Player player = spellCast.getCaster();

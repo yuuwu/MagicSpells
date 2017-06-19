@@ -7,8 +7,10 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 import com.nisovin.magicspells.Perm;
+import com.nisovin.magicspells.util.RegexUtil;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
@@ -53,6 +55,8 @@ import com.nisovin.magicspells.util.MagicLocation;
 // Advanced perm is for being able to destroy spellbooks
 // Op is currently required for using the reload
 public class SpellbookSpell extends CommandSpell {
+	
+	private static final Pattern PATTERN_CAST_ARG_USAGE = Pattern.compile("^[0-9]+$");
 	
 	private int defaultUses;
 	private boolean destroyBookcase;
@@ -99,7 +103,7 @@ public class SpellbookSpell extends CommandSpell {
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
-			if (args == null || args.length < 1 || args.length > 2 || (args.length == 2 && !args[1].matches("^[0-9]+$"))) {
+			if (args == null || args.length < 1 || args.length > 2 || (args.length == 2 && !RegexUtil.matches(PATTERN_CAST_ARG_USAGE, args[1]))) {
 				// Fail: show usage string
 				sendMessage(this.strUsage, player, args);
 			} else {

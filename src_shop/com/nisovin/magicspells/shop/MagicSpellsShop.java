@@ -28,7 +28,13 @@ import com.nisovin.magicspells.events.MagicSpellsLoadedEvent;
 import com.nisovin.magicspells.spells.command.ScrollSpell;
 
 public class MagicSpellsShop extends JavaPlugin implements Listener {
-
+	
+	private static final String USE_COUNT_REGEXP = "^[0-9]+( .+)?$";
+	private static final Pattern USE_COUNT_PATTERN = Pattern.compile(USE_COUNT_REGEXP);
+	
+	private static final String CURRENCY_REGEXP = "^[0-9]+(\\.[0-9]+)?$";
+	private static final Pattern CURRENCY_PATTERN = Pattern.compile(CURRENCY_REGEXP);
+	
 	private boolean ignoreOtherPlugins;
 	private boolean requireKnownSpell;
 	private boolean requireTeachPerm;
@@ -139,9 +145,6 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 		MagicSpells.sendMessage(MagicSpells.formatMessage(strPurchased, "%s", spellName, "%c", cost + ""), player, null);
 	}
 	
-	private static final String USE_COUNT_REGEXP = "^[0-9]+( .+)?$";
-	private static final Pattern USE_COUNT_PATTERN = Pattern.compile(USE_COUNT_REGEXP);
-	
 	private void processScrollShopSign(Player player, String[] lines) {
 		// Get spell
 		String spellName = lines[1];
@@ -183,9 +186,6 @@ public class MagicSpellsShop extends JavaPlugin implements Listener {
 		// Done!
 		MagicSpells.sendMessage(MagicSpells.formatMessage(this.strPurchasedScroll, "%s", spellName, "%c", cost + "", "%u", uses + ""), player, null);
 	}
-	
-	private static final String CURRENCY_REGEXP = "^[0-9]+(\\.[0-9]+)?$";
-	private static final Pattern CURRENCY_PATTERN = Pattern.compile(CURRENCY_REGEXP);
 	
 	private Cost getCost(String line) {
 		Cost cost = new Cost();

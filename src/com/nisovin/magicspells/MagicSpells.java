@@ -185,6 +185,9 @@ public class MagicSpells extends JavaPlugin {
 	
 	public boolean cycleSpellsOnOffhandAction;
 	
+	// Anticheat software integration
+	public boolean allowAnticheatIntegrations;
+	
 	@Override
 	public void onEnable() {
 		load();
@@ -346,6 +349,8 @@ public class MagicSpells extends JavaPlugin {
 		strWrongWorld = config.getString("general.str-wrong-world", "You cannot cast that spell here.");
 		strConsoleName = config.getString("general.console-name", "Admin");
 		strXpAutoLearned = config.getString("general.str-xp-auto-learned", "You have learned the %s spell!");
+		
+		allowAnticheatIntegrations = config.getBoolean("general.allow-anticheat-integrations", false);
 		
 		enableManaBars = config.getBoolean("mana.enable-mana-system", false);
 		manaPotionCooldown = config.getInt("mana.mana-potion-cooldown", 30);
@@ -607,6 +612,8 @@ public class MagicSpells extends JavaPlugin {
 			profilingRuns = new HashMap<>();
 		}
 		
+		CompatBasics.setupExemptionAssistant();
+		
 		// Call loaded event
 		pm.callEvent(new MagicSpellsLoadedEvent(this));
 		
@@ -614,6 +621,7 @@ public class MagicSpells extends JavaPlugin {
 	}
 	
 	private static final int LONG_LOAD_THRESHOLD = 50;
+	// DEBUG INFO: level 2, loaded spell spellname
 	private void loadSpells(MagicConfig config, PluginManager pm, HashMap<String, Boolean> permGrantChildren, HashMap<String, Boolean> permLearnChildren, HashMap<String, Boolean> permCastChildren, HashMap<String, Boolean> permTeachChildren) {
 		// Load spells from plugin folder
 		final List<File> jarList = new ArrayList<>();
@@ -1334,6 +1342,7 @@ public class MagicSpells extends JavaPlugin {
 		effectManager = null;
 		ModifierSet.unload();
 		PromptType.unloadDestructPromptData();
+		CompatBasics.destructExemptionAssistant();
 	}
 	
 	@Override

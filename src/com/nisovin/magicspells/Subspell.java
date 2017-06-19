@@ -3,6 +3,7 @@ package com.nisovin.magicspells;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.regex.Pattern;
 
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
@@ -34,6 +35,8 @@ public class Subspell {
 	private boolean isTargetedEntity = false;
 	private boolean isTargetedLocation = false;
 	private boolean isTargetedEntityFromLocation = false;
+	
+	private static final Pattern BARE_POWER_PATTERN = Pattern.compile("^[0-9]+\\.[0-9]+$");
 	
 	// spell-name (mode=hard|full|partial|direct,power=[subpower],delay=[delay],chance=[chance])|(hard)|(full)|(partial)|(direct)
 	public Subspell(String data) {
@@ -89,7 +92,7 @@ public class Subspell {
 					this.mode = CastMode.DIRECT;
 				} else if (RegexUtil.matches(RegexUtil.SIMPLE_INT_PATTERN, arg)) {  //TODO include this part in the comments
 					this.delay = Integer.parseInt(arg);
-				} else if (arg.matches("^[0-9]+\\.[0-9]+$")) { //TODO include this part in the comments
+				} else if (RegexUtil.matches(BARE_POWER_PATTERN, arg)) { //TODO include this part in the comments
 					this.subPower = Float.parseFloat(arg);
 				}
 			}			

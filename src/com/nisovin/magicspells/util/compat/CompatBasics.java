@@ -1,11 +1,14 @@
 package com.nisovin.magicspells.util.compat;
 
+import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.util.compat.nocheatplus.NoCheatPlusExemptionAid;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.util.Collection;
+import java.util.function.Supplier;
 
 public class CompatBasics {
 	
@@ -40,12 +43,38 @@ public class CompatBasics {
 	
 	public static ExemptionAssistant activeExemptionAssistant = null;
 	
-	public static void exemptAction(Runnable runnable, Player player, Collection<Object> checks) {
-		if (activeExemptionAssistant != null) {
-			activeExemptionAssistant.exemptRunnable(runnable, player, checks);
+	public static <T> T exemptAction(Supplier<T> runnable, Player player, Collection<?> checks) {
+		if (activeExemptionAssistant != null && player != null) {
+			return activeExemptionAssistant.exemptRunnable(runnable, player, checks);
 		} else {
-			runnable.run();
+			return runnable.get();
 		}
+	}
+	
+	public static void setupExemptionAssistant() {
+		// Already set up
+		if (activeExemptionAssistant != null) return;
+		
+		if (!MagicSpells.plugin.allowAnticheatIntegrations) {
+			activeExemptionAssistant = new DummyExemptionAssistant();
+			return;
+		}
+		
+		if (pluginEnabled("NoCheatPlus")) {
+			activeExemptionAssistant = new NoCheatPlusExemptionAid();
+			return;
+		}
+		
+		// Nothing else has been successfully enabled, so just use this
+		activeExemptionAssistant = new DummyExemptionAssistant();
+	}
+	
+	public static void destructExemptionAssistant() {
+		// Nothing there already
+		if (activeExemptionAssistant == null) return;
+		
+		// Put any additional cleanup calls here
+		activeExemptionAssistant = null;
 	}
 	
 }

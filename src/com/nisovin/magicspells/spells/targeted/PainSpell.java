@@ -1,5 +1,6 @@
 package com.nisovin.magicspells.spells.targeted;
 
+import com.nisovin.magicspells.util.compat.CompatBasics;
 import org.bukkit.EntityEffect;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -9,7 +10,6 @@ import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.events.MagicSpellsEntityDamageByEntityEvent;
 import com.nisovin.magicspells.events.SpellApplyDamageEvent;
-import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.SpellDamageSpell;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
@@ -80,7 +80,8 @@ public class PainSpell extends TargetedSpell implements TargetedEntitySpell, Spe
 				// Fail -- no target
 				return noTarget(player);
 			}
-			boolean done = causePain(player, target.getTarget(), target.getPower());
+			
+			boolean done = CompatBasics.exemptAction(() -> causePain(player, target.getTarget(), target.getPower()), player, CompatBasics.activeExemptionAssistant.getPainExemptions());
 			if (!done) return noTarget(player);
 			
 			sendMessages(player, target.getTarget());

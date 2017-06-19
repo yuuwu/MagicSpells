@@ -3,6 +3,7 @@ package com.nisovin.magicspells.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -18,6 +19,11 @@ public class EntityData {
 	private int var1 = 0;
 	private int var2 = 0;
 	private int var3 = 0;
+	
+	private static final Pattern PATTERN_VILLAGER_PROFESSION_INT = Pattern.compile("^[0-5]$");
+	private static final Pattern PATTERN_WOLF_COLLAR = Pattern.compile("[0-9a-fA-F]+");
+	private static final Pattern PATTERN_HORSE_ARMOR_TYPE = Pattern.compile("^[0-9]+$");
+	private static final Pattern PATTERN_OZELOT_TYPE_DIGIT = Pattern.compile("ozelot [0-3]");
 	
 	// TODO change this to use a config formatting instead with legacy support for strings temporarily here
 	// TODO the new format should use properties which check if their targets are possible on this version of spigot
@@ -47,7 +53,7 @@ public class EntityData {
 			flag = true;
 		} else if (type.toLowerCase().startsWith("villager ")) {
 			String prof = type.toLowerCase().replace("villager ", "");
-			if (prof.matches("^[0-5]$")) {
+			if (RegexUtil.matches(PATTERN_VILLAGER_PROFESSION_INT, prof)) {
 				var1 = Integer.parseInt(prof);
 			} else if (prof.toLowerCase().startsWith("green")) {
 				var1 = 5;
@@ -107,7 +113,7 @@ public class EntityData {
 			String color = type.toLowerCase().replace("wolf ", "");
 			if (color.equals("angry")) {
 				var1 = -1;
-			} else if (color.matches("[0-9a-fA-F]+")) {
+			} else if (RegexUtil.matches(PATTERN_WOLF_COLLAR, color)) {
 				var1 = Integer.parseInt(color, 16);
 			}
 			type = "wolf";
@@ -186,7 +192,7 @@ public class EntityData {
 			}
 			while (!data.isEmpty()) {
 				String d = data.remove(0);
-				if (d.matches("^[0-9]+$")) {
+				if (RegexUtil.matches(PATTERN_HORSE_ARMOR_TYPE, d)) {
 					var2 = Integer.parseInt(d);
 				} else if (d.equalsIgnoreCase("iron")) {
 					var3 = 1;
@@ -213,7 +219,7 @@ public class EntityData {
 			flag = true;
 			type = "guardian";
 		}
-		if (type.toLowerCase().matches("ozelot [0-3]")) {
+		if (RegexUtil.matches(PATTERN_OZELOT_TYPE_DIGIT, type.toLowerCase())) {
 			var1 = Integer.parseInt(type.split(" ")[1]);
 			type = "ozelot";
 		} else if (type.toLowerCase().equals("ozelot random") || type.toLowerCase().equals("random ozelot")) {
