@@ -105,6 +105,7 @@ public class MagicSpells extends JavaPlugin {
 	boolean opsHaveAllSpells;
 	boolean defaultAllPermsFalse;
 	boolean ignoreGrantPerms;
+	boolean ignoreGrantPermsFakeValue;
 	boolean ignoreCastPerms;
 	
 	boolean enableTempGrantPerms = true;
@@ -297,6 +298,7 @@ public class MagicSpells extends JavaPlugin {
 		opsHaveAllSpells = config.getBoolean("general.ops-have-all-spells", true);
 		defaultAllPermsFalse = config.getBoolean("general.default-all-perms-false", false);
 		ignoreGrantPerms = config.getBoolean("general.ignore-grant-perms", false);
+		ignoreGrantPermsFakeValue = config.getBoolean("general.ignore-grant-perms-fake-value", true);
 		ignoreCastPerms = config.getBoolean("general.ignore-cast-perms", false);
 		enableTempGrantPerms = config.getBoolean("general.enable-tempgrant-perms", true);
 

@@ -21,13 +21,13 @@ import com.nisovin.magicspells.util.Util;
 
 public class PurgeSpell extends InstantSpell implements TargetedLocationSpell {
 	
-	private int radius;
+	private double radius;
 	private List<EntityType> entities;
 	
 	public PurgeSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		this.radius = getConfigInt("range", 15);
+		this.radius = getConfigDouble("range", 15);
 		
 		List<String> list = getConfigStringList("entities", null);
 		if (list != null && !list.isEmpty()) {
@@ -47,7 +47,7 @@ public class PurgeSpell extends InstantSpell implements TargetedLocationSpell {
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
-			int castingRange = Math.round(this.radius * power);
+			double castingRange = this.radius * power;
 			List<Entity> entitiesNearby = player.getNearbyEntities(castingRange, castingRange, castingRange);
 			boolean killed = false;
 			for (Entity entity : entitiesNearby) {

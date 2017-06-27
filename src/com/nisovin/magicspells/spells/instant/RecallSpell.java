@@ -18,7 +18,7 @@ public class RecallSpell extends InstantSpell implements TargetedEntitySpell {
 	
 	private String markSpellName;
 	private boolean allowCrossWorld;
-	private int maxRange;
+	private double maxRange;
 	private boolean useBedLocation;
 	private String strNoMark;
 	private String strOtherWorld;
@@ -32,7 +32,7 @@ public class RecallSpell extends InstantSpell implements TargetedEntitySpell {
 		
 		this.markSpellName = getConfigString("mark-spell", "mark");
 		this.allowCrossWorld = getConfigBoolean("allow-cross-world", true);
-		this.maxRange = getConfigInt("max-range", 0);
+		this.maxRange = getConfigDouble("max-range", 0);
 		this.useBedLocation = getConfigBoolean("use-bed-location", false);
 		this.strNoMark = getConfigString("str-no-mark", "You have no mark to recall to.");
 		this.strOtherWorld = getConfigString("str-other-world", "Your mark is in another world.");

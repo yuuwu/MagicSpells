@@ -128,7 +128,7 @@ public class RitualSpell extends InstantSpell {
 			this.power = power;
 			this.args = args;
 			this.caster = caster;
-			this.channelers.put(caster, caster.getLocation().clone());
+			this.channelers.put(caster, caster.getLocation());
 			this.taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(MagicSpells.plugin, this, tickInterval, tickInterval);
 			if (showProgressOnExpBar) MagicSpells.getExpBarManager().lock(caster, this);
 			playSpellEffects(EffectPosition.CASTER, caster);
@@ -136,7 +136,7 @@ public class RitualSpell extends InstantSpell {
 		
 		public void addChanneler(Player player) {
 			if (this.channelers.containsKey(player)) return;
-			this.channelers.put(player, player.getLocation().clone());
+			this.channelers.put(player, player.getLocation());
 			if (showProgressOnExpBar) MagicSpells.getExpBarManager().lock(player, this);
 			playSpellEffects(EffectPosition.CASTER, player);
 		}

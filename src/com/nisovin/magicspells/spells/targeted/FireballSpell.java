@@ -122,7 +122,8 @@ public class FireballSpell extends TargetedSpell implements TargetedEntityFromLo
 			// Create fireball
 			Location loc;
 			if (!selfTarget) {
-				loc = player.getEyeLocation().toVector().add(player.getLocation().getDirection().multiply(2)).toLocation(player.getWorld(), player.getLocation().getYaw(), player.getLocation().getPitch());
+				Location playerLocation = player.getLocation();
+				loc = player.getEyeLocation().toVector().add(playerLocation.getDirection().multiply(2)).toLocation(player.getWorld(), playerLocation.getYaw(), playerLocation.getPitch());
 				loc = offsetLocation(loc);
 				loc = applyOffsetTargetingCorrection(loc, targetLoc);
 			} else {

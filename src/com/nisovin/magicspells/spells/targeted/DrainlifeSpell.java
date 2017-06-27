@@ -217,9 +217,10 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 
 		@Override
 		protected void onTick(int tick) {
-			Vector targetVector = caster.getLocation().toVector();
+			Location casterLocation = caster.getLocation();
+			Vector targetVector = casterLocation.toVector();
 			Vector tempVector = current.clone();
-			tempVector.subtract(caster.getLocation().toVector()).normalize();
+			tempVector.subtract(casterLocation.toVector()).normalize();
 			current.subtract(tempVector);
 			Location playAt = current.toLocation(world);
 			if (useSmoke) world.playEffect(playAt, Effect.SMOKE, 4);

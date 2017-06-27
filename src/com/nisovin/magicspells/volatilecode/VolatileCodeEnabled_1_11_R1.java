@@ -70,6 +70,7 @@ import org.bukkit.util.Vector;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -104,9 +105,7 @@ public class VolatileCodeEnabled_1_11_R1 implements VolatileCodeHandle {
 			this.packet63Fields[8] = PacketPlayOutWorldParticles.class.getDeclaredField("i");
 			this.packet63Fields[9] = PacketPlayOutWorldParticles.class.getDeclaredField("j");
 			this.packet63Fields[10] = PacketPlayOutWorldParticles.class.getDeclaredField("k");
-			for (int i = 0; i <= 10; i++) {
-				this.packet63Fields[i].setAccessible(true);
-			}
+			AccessibleObject.setAccessible(this.packet63Fields, true);
 			
 			this.craftItemStackHandleField = CraftItemStack.class.getDeclaredField("handle");
 			this.craftItemStackHandleField.setAccessible(true);

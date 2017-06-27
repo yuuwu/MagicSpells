@@ -91,6 +91,7 @@ public class BlinkSpell extends TargetedSpell implements TargetedLocationSpell {
 				if (loc != null) {
 					loc.setX(loc.getX() + .5);
 					loc.setZ(loc.getZ() + .5);
+					// TODO see what can be cleaned up here with constructing locations and vectors
 					loc.setPitch(player.getLocation().getPitch());
 					loc.setYaw(player.getLocation().getYaw());
 					Location origLoc = player.getLocation();
@@ -120,6 +121,7 @@ public class BlinkSpell extends TargetedSpell implements TargetedLocationSpell {
 	
 	@Override
 	public boolean castAtLocation(Player caster, Location target, float power) {
+		// TODO see what can be cleaned up here with constructing locations and vectors
 		target.setYaw(caster.getLocation().getYaw());
 		target.setPitch(caster.getLocation().getPitch());
 		teleport(caster, target, null);

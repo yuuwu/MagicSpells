@@ -129,6 +129,7 @@ public class HomingArrowSpell extends TargetedSpell implements TargetedEntitySpe
 					iter.remove();
 					playSpellEffects(EffectPosition.TARGET, arrow.arrow.getLocation());
 				} else { // if (arrow.arrow.getLocation().distanceSquared(arrow.target.getLocation()) > 5 * 5) {
+					// TODO see what can be cleaned up here with constructing locations and vectors
 					Vector v = arrow.target.getLocation().add(0, 0.75, 0).toVector().subtract(arrow.arrow.getLocation().toVector()).normalize();
 					v.multiply(velocity * arrow.power);
 					v.setY(v.getY() + 0.15);

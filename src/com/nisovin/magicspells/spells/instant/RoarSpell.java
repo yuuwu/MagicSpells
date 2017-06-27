@@ -13,14 +13,14 @@ import com.nisovin.magicspells.util.MagicConfig;
 
 public class RoarSpell extends InstantSpell {
 
-	private int radius;
+	private double radius;
 	private boolean cancelIfNoTargets;
 	private String strNoTarget;
 	
 	public RoarSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		this.radius = getConfigInt("range", 8);
+		this.radius = getConfigDouble("range", 8);
 		this.cancelIfNoTargets = getConfigBoolean("cancel-if-no-targets", true);
 		this.strNoTarget = getConfigString("str-no-target", "No targets found.");
 	}

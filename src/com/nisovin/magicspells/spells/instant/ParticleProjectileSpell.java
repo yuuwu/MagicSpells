@@ -193,6 +193,7 @@ public class ParticleProjectileSpell extends InstantSpell implements TargetedLoc
 				this.startLocation.setY(this.startLocation.getY() + ParticleProjectileSpell.this.startYOffset);
 			}
 			if (ParticleProjectileSpell.this.startForwardOffset != 0) {
+				// TODO see what can be cleaned up here with constructing locations and vectors
 				this.startLocation.add(this.startLocation.getDirection().clone().multiply(ParticleProjectileSpell.this.startForwardOffset));
 			}
 			this.previousLocation = this.startLocation.clone();

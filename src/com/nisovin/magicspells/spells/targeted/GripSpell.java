@@ -11,6 +11,7 @@ import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.BlockUtils;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
+import org.bukkit.util.Vector;
 
 public class GripSpell extends TargetedSpell implements TargetedEntitySpell, TargetedEntityFromLocationSpell {
 
@@ -43,7 +44,9 @@ public class GripSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 	}
 	
 	private boolean grip(Player player, LivingEntity target) {
-		Location loc = player.getLocation().add(player.getLocation().getDirection().setY(0).normalize().multiply(locationOffset));
+		Location loc = player.getLocation();
+		Vector v = loc.getDirection().setY(0).normalize().multiply(locationOffset);
+		loc = loc.add(v);
 		loc.add(0, yOffset, 0);
 		if (!BlockUtils.isSafeToStand(loc)) return false;
 		playSpellEffects(player, target);
@@ -77,7 +80,7 @@ public class GripSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 				loc.add(0, 1, 0);
 				if (!BlockUtils.isSafeToStand(loc)) return false;
 			}
-			Location start = target.getLocation().clone();
+			Location start = target.getLocation();
 			playSpellEffects(EffectPosition.TARGET, target);
 			target.teleport(loc);
 			playSpellEffectsTrail(start, loc);

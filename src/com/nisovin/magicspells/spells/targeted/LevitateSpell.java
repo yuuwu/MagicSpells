@@ -168,6 +168,7 @@ public class LevitateSpell extends TargetedSpell implements TargetedEntitySpell 
 					if (distance < minDistance) distance = minDistance;
 				}
 				target.setFallDistance(0);
+				// TODO see what can be cleaned up here with constructing locations and vectors
 				Vector casterLocation = caster.getEyeLocation().toVector();
 				Vector targetLocation = target.getLocation().toVector();
 				Vector wantedLocation = casterLocation.add(caster.getLocation().getDirection().multiply(distance));

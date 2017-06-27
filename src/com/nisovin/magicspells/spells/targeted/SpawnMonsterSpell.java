@@ -75,9 +75,9 @@ public class SpawnMonsterSpell extends TargetedSpell implements TargetedLocation
 	private int[] attributeOperations;
 	
 	private Subspell attackSpell;
-	private int retargetRange;
+	private double retargetRange;
 	private int targetInterval;
-	private int targetRange;
+	private double targetRange;
 	
 	private boolean gravity;
 	
@@ -173,9 +173,9 @@ public class SpawnMonsterSpell extends TargetedSpell implements TargetedLocation
 		
 		String attackSpellName = getConfigString("attack-spell", null);
 		if (attackSpellName != null && !attackSpellName.isEmpty()) attackSpell = new Subspell(attackSpellName);
-		retargetRange = getConfigInt("retarget-range", 50);
+		retargetRange = getConfigDouble("retarget-range", 50);
 		targetInterval = getConfigInt("target-interval", -1);
-		targetRange = getConfigInt("target-range", 20);
+		targetRange = getConfigDouble("target-range", 20);
 		
 		if (entityData.getType() == null || !entityData.getType().isAlive()) {
 			MagicSpells.error("SpawnMonster spell '" + spellName + "' has an invalid entity-type!");
@@ -484,7 +484,7 @@ public class SpawnMonsterSpell extends TargetedSpell implements TargetedLocation
 		
 		void retarget(LivingEntity ignore) {
 			LivingEntity t = null;
-			int r = retargetRange * retargetRange;
+			double r = retargetRange * retargetRange;
 			for (Entity e : monster.getNearbyEntities(retargetRange, retargetRange, retargetRange)) {
 				if (!(e instanceof LivingEntity)) continue;
 				if (!validTargetList.canTarget(caster, e)) continue;

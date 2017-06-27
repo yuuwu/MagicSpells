@@ -420,7 +420,7 @@ public class ProjectileSpell extends InstantSpell {
 		
 		public ProjectileInfo(Player player, float power) {
 			this.player = player;
-			this.start = player.getLocation().clone();
+			this.start = player.getLocation();
 			this.power = power;
 			this.done = false;
 			this.monitor = null;

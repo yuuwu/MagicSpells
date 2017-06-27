@@ -100,7 +100,7 @@ public class Spellbook {
 		loadFromFile(playerWorld);
 		
 		// Give all spells to ops, or if ignoring grant perms
-		if (plugin.ignoreGrantPerms || (player.isOp() && plugin.opsHaveAllSpells)) {
+		if ((plugin.ignoreGrantPerms && plugin.ignoreGrantPermsFakeValue) || (player.isOp() && plugin.opsHaveAllSpells)) {
 			MagicSpells.debug(2, "  Op, granting all spells...");
 			for (Spell spell : plugin.spellsOrdered) {
 				if (spell.isHelperSpell()) continue;
@@ -398,10 +398,10 @@ public class Spellbook {
 	
 	// DEBUG INFO: level 2, adding granted spell for player, spell
 	public boolean hasSpell(Spell spell, boolean checkGranted) {
-		if (plugin.ignoreGrantPerms) return true;
+		if (plugin.ignoreGrantPerms && plugin.ignoreGrantPermsFakeValue) return true;
 		boolean has = allSpells.contains(spell);
 		if (has) return true;
-		if (checkGranted && Perm.GRANT.has(player, spell)) {
+		if (checkGranted && !plugin.ignoreGrantPerms && Perm.GRANT.has(player, spell)) {
 			MagicSpells.debug(2, "Adding granted spell for " + player.getName() + ": " + spell.getName());
 			addSpell(spell);
 			save();

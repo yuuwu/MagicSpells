@@ -36,7 +36,7 @@ public class PulserSpell extends TargetedSpell implements TargetedLocationSpell 
 	int totalPulses;
 	int interval;
 	private int capPerPlayer;
-	int maxDistanceSquared;
+	double maxDistanceSquared;
 	MagicMaterial material;
 	private boolean unbreakable;
 	boolean onlyCountOnSuccess;
@@ -57,7 +57,7 @@ public class PulserSpell extends TargetedSpell implements TargetedLocationSpell 
 		totalPulses = getConfigInt("total-pulses", 5);
 		interval = getConfigInt("interval", 30);
 		capPerPlayer = getConfigInt("cap-per-player", 10);
-		maxDistanceSquared = getConfigInt("max-distance", 30);
+		maxDistanceSquared = getConfigDouble("max-distance", 30);
 		maxDistanceSquared *= maxDistanceSquared;
 		material = MagicSpells.getItemNameResolver().resolveBlock(getConfigString("block-type", "diamond_block"));
 		unbreakable = getConfigBoolean("unbreakable", false);

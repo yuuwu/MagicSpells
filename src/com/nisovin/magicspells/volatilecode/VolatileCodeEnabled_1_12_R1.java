@@ -71,6 +71,7 @@ import org.bukkit.util.Vector;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -105,9 +106,7 @@ public class VolatileCodeEnabled_1_12_R1 implements VolatileCodeHandle {
 			this.packet63Fields[8] = PacketPlayOutWorldParticles.class.getDeclaredField("i");
 			this.packet63Fields[9] = PacketPlayOutWorldParticles.class.getDeclaredField("j");
 			this.packet63Fields[10] = PacketPlayOutWorldParticles.class.getDeclaredField("k");
-			for (int i = 0; i <= 10; i++) {
-				this.packet63Fields[i].setAccessible(true);
-			}
+			AccessibleObject.setAccessible(this.packet63Fields, true);
 			
 			this.craftItemStackHandleField = CraftItemStack.class.getDeclaredField("handle");
 			this.craftItemStackHandleField.setAccessible(true);
@@ -594,6 +593,7 @@ public class VolatileCodeEnabled_1_12_R1 implements VolatileCodeHandle {
 	public void resetEntityAttributes(LivingEntity entity) {
 		try {
 			EntityLiving e = ((CraftLivingEntity)entity).getHandle();
+			// TODO this field should be calculated only once
 			Field field = EntityLiving.class.getDeclaredField("bp");
 			field.setAccessible(true);
 			field.set(e, null);
@@ -624,11 +624,13 @@ public class VolatileCodeEnabled_1_12_R1 implements VolatileCodeHandle {
 	public void removeAI(LivingEntity entity) {
         try {
         	EntityInsentient ev = (EntityInsentient)((CraftLivingEntity)entity).getHandle();
-               
+			
+			// TODO this field should be calculated only once
             Field goalsField = EntityInsentient.class.getDeclaredField("goalSelector");
             goalsField.setAccessible(true);
             PathfinderGoalSelector goals = (PathfinderGoalSelector) goalsField.get(ev);
-           
+			
+			// TODO this field should be calculated only once
             Field listField = PathfinderGoalSelector.class.getDeclaredField("b");
             listField.setAccessible(true);
             Set list = (Set)listField.get(goals);
@@ -637,7 +639,7 @@ public class VolatileCodeEnabled_1_12_R1 implements VolatileCodeHandle {
             listField.setAccessible(true);
             list = (Set)listField.get(goals);
             list.clear();
-
+			
             goals.a(0, new PathfinderGoalFloat(ev));
         } catch (Exception e) {
             e.printStackTrace();

@@ -25,7 +25,7 @@ public class ChainSpell extends TargetedSpell implements TargetedEntitySpell, Ta
 	Subspell spellToCast;
 	ValidTargetChecker checker;
 	int bounces;
-	int bounceRange;
+	double bounceRange;
 	int interval;
 	boolean targetPlayers;
 	boolean targetNonPlayers;
@@ -35,7 +35,7 @@ public class ChainSpell extends TargetedSpell implements TargetedEntitySpell, Ta
 		
 		spellNameToCast = getConfigString("spell", "heal");
 		bounces = getConfigInt("bounces", 3);
-		bounceRange = getConfigInt("bounce-range", 8);
+		bounceRange = getConfigDouble("bounce-range", 8);
 		interval = getConfigInt("interval", 10);
 		targetPlayers = getConfigBoolean("target-players", true);
 		targetNonPlayers = getConfigBoolean("target-non-players", false);

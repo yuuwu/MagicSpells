@@ -26,8 +26,8 @@ import com.nisovin.magicspells.util.MagicConfig;
 
 public class AreaEffectSpell extends TargetedSpell implements TargetedLocationSpell {
 
-	private int radius;
-	private int verticalRadius;
+	private double radius;
+	private double verticalRadius;
 	private boolean pointBlank;
 	private int cone;
 	private boolean failIfNoTargets;
@@ -42,8 +42,8 @@ public class AreaEffectSpell extends TargetedSpell implements TargetedLocationSp
 	public AreaEffectSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		radius = getConfigInt("horizontal-radius", 10);
-		verticalRadius = getConfigInt("vertical-radius", 5);
+		radius = getConfigDouble("horizontal-radius", 10);
+		verticalRadius = getConfigDouble("vertical-radius", 5);
 		pointBlank = getConfigBoolean("point-blank", true);
 		cone = getConfigInt("cone", 0);
 		failIfNoTargets = getConfigBoolean("fail-if-no-targets", true);

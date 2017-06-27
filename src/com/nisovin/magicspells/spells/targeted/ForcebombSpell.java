@@ -20,7 +20,7 @@ import com.nisovin.magicspells.util.MagicConfig;
 
 public class ForcebombSpell extends TargetedSpell implements TargetedLocationSpell {
 
-	private int radiusSquared;
+	private double radiusSquared;
 	private float yOffset;
 	private int force;
 	private int yForce;
@@ -30,7 +30,7 @@ public class ForcebombSpell extends TargetedSpell implements TargetedLocationSpe
 	public ForcebombSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		radiusSquared = getConfigInt("radius", 3);
+		radiusSquared = getConfigDouble("radius", 3);
 		radiusSquared *= radiusSquared;
 		yOffset = getConfigFloat("y-offset", 0F);
 		force = getConfigInt("pushback-force", 30);

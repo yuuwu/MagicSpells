@@ -154,7 +154,7 @@ public class HomingMissileSpell extends TargetedSpell implements TargetedEntityS
 		int counter = 0;
 		
 		public MissileTracker(Player caster, LivingEntity target, float power) {
-			this.currentLocation = caster.getLocation().clone().add(0, yOffset, 0);
+			this.currentLocation = caster.getLocation().add(0, yOffset, 0);
 			this.currentVelocity = currentLocation.getDirection();
 			init(caster, target, power);
 			playSpellEffects(EffectPosition.CASTER, caster);
