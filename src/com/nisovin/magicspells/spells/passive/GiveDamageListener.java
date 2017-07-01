@@ -50,11 +50,7 @@ public class GiveDamageListener extends PassiveListener {
 					mat = MagicSpells.getItemNameResolver().resolveItem(s);
 				}
 				if (mat != null) {
-					List<PassiveSpell> list = weapons.get(mat);
-					if (list == null) {
-						list = new ArrayList<>();
-						weapons.put(mat, list);
-					}
+					List<PassiveSpell> list = weapons.computeIfAbsent(mat, magicMaterial -> new ArrayList<>());
 					list.add(spell);
 					types.add(mat.getMaterial());
 				}

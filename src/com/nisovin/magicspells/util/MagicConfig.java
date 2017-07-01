@@ -160,6 +160,8 @@ public class MagicConfig {
 				try {
 					spellConfig.load(spellConfigFile);
 					Set<String> keys = spellConfig.getKeys(false);
+					
+					// TODO this should be refactored to allow registration of additional "special sections"
 					for (String key : keys) {
 						if (key.equals("predefined-items")) {
 							ConfigurationSection sec = this.mainConfig.getConfigurationSection("general.predefined-items");

@@ -62,11 +62,7 @@ public class MagicXpHandler implements Listener {
 			Map<String, Integer> xpRequired = spell.getXpRequired();
 			if (xpRequired != null) {
 				for (String school : xpRequired.keySet()) {
-					List<Spell> list = spellSchoolRequirements.get(school.toLowerCase());
-					if (list == null) {
-						list = new ArrayList<>();
-						spellSchoolRequirements.put(school.toLowerCase(), list);
-					}
+					List<Spell> list = spellSchoolRequirements.computeIfAbsent(school.toLowerCase(), s -> new ArrayList<>());
 					list.add(spell);
 				}
 			}
@@ -113,11 +109,7 @@ public class MagicXpHandler implements Listener {
 		if (xpGranted == null) return;
 
 		// Get player xp
-		IntMap<String> playerXp = xp.get(event.getCaster().getName());
-		if (playerXp == null) {
-			playerXp = new IntMap<>();
-			xp.put(event.getCaster().getName(), playerXp);
-		}
+		IntMap<String> playerXp = xp.computeIfAbsent(event.getCaster().getName(), s -> new IntMap<>());
 		
 		// Grant xp
 		// FIXME use entry set here

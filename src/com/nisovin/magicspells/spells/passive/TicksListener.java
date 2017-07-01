@@ -36,11 +36,7 @@ public class TicksListener extends PassiveListener {
 	public void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var) {
 		try {
 			int interval = Integer.parseInt(var);
-			Ticker ticker = tickers.get(interval);
-			if (ticker == null) {
-				ticker = new Ticker(interval);
-				tickers.put(interval, ticker);
-			}
+			Ticker ticker = tickers.computeIfAbsent(interval, Ticker::new);
 			ticker.add(spell);
 		} catch (NumberFormatException e) {
 			// No op

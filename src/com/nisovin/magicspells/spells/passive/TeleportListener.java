@@ -31,11 +31,7 @@ public class TeleportListener extends PassiveListener {
 				s = s.trim().replace("_", "");
 				for (TeleportCause cause : TeleportCause.values()) {
 					if (cause.name().replace("_", "").equalsIgnoreCase(s)) {
-						List<PassiveSpell> list = types.get(cause);
-						if (list == null) {
-							list = new ArrayList<>();
-							types.put(cause, list);
-						}
+						List<PassiveSpell> list = types.computeIfAbsent(cause, c -> new ArrayList<>());
 						list.add(spell);
 						break;
 					}

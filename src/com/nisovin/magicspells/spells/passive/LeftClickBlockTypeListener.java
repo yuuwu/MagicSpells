@@ -34,11 +34,7 @@ public class LeftClickBlockTypeListener extends PassiveListener {
 			s = s.trim();
 			MagicMaterial m = MagicSpells.getItemNameResolver().resolveBlock(s);
 			if (m != null) {
-				List<PassiveSpell> list = types.get(m);
-				if (list == null) {
-					list = new ArrayList<>();
-					types.put(m, list);
-				}
+				List<PassiveSpell> list = types.computeIfAbsent(m, magicMaterial -> new ArrayList<>());
 				list.add(spell);
 				materials.add(m.getMaterial());
 			} else {

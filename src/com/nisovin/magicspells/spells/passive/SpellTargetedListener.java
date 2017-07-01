@@ -30,11 +30,7 @@ public class SpellTargetedListener extends PassiveListener {
 			for (String s : split) {
 				Spell sp = MagicSpells.getSpellByInternalName(s.trim());
 				if (sp == null) continue;
-				List<PassiveSpell> passives = spells.get(sp);
-				if (passives == null) {
-					passives = new ArrayList<>();
-					spells.put(sp, passives);
-				}
+				List<PassiveSpell> passives = spells.computeIfAbsent(sp, p -> new ArrayList<>());
 				passives.add(spell);
 			}
 		}

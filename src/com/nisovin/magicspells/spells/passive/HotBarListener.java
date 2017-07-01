@@ -41,17 +41,9 @@ public class HotBarListener extends PassiveListener {
 			materials.add(mat.getMaterial());
 			List<PassiveSpell> list = null;
 			if (PassiveTrigger.HOT_BAR_SELECT.contains(trigger)) {
-				list = select.get(mat);
-				if (list == null) {
-					list = new ArrayList<>();
-					select.put(mat, list);
-				}
+				list = select.computeIfAbsent(mat, material -> new ArrayList<>());
 			} else if (PassiveTrigger.HOT_BAR_DESELECT.contains(trigger)) {
-				list = deselect.get(mat);
-				if (list == null) {
-					list = new ArrayList<>();
-					deselect.put(mat, list);
-				}
+				list = deselect.computeIfAbsent(mat, material -> new ArrayList<>());
 			}
 			if (list != null) list.add(spell);
 		}

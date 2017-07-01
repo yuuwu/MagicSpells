@@ -21,11 +21,9 @@ public class BuffManager {
 	}
 	
 	public void addBuff(Player player, BuffSpell spell) {
-		HashSet<BuffSpell> buffs = this.activeBuffs.get(player.getName());
-		if (buffs == null) {
-			buffs = new HashSet<>();
-			this.activeBuffs.put(player.getName(), buffs);
-		}
+		HashSet<BuffSpell> buffs = this.activeBuffs.computeIfAbsent(player.getName(), s -> new HashSet<>());
+		// Sanity Check
+		if (buffs == null) throw new IllegalStateException("buffs should not be null here");
 		buffs.add(spell);
 	}
 	

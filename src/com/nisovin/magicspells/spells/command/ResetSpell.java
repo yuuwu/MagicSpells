@@ -34,11 +34,13 @@ public class ResetSpell extends CommandSpell {
 		return false;
 	}
 	
+	// Arg format should be <player[,player[,player...]]>|all
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
-		// get player(s)
+		if (state == SpellCastState.NORMAL) {
 		
-		return null;
+		}
+		return PostCastAction.HANDLE_NORMALLY;
 	}
 	
 	@Override

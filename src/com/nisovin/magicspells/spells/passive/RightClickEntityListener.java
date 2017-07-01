@@ -49,11 +49,7 @@ public class RightClickEntityListener extends PassiveListener {
 			for (String s : split) {
 				EntityType t = Util.getEntityType(s);
 				if (t != null) {
-					List<PassiveSpell> list = typeMapLocal.get(t);
-					if (list == null) {
-						list = new ArrayList<>();
-						typeMapLocal.put(t, list);
-					}
+					List<PassiveSpell> list = typeMapLocal.computeIfAbsent(t, type -> new ArrayList<>());
 					list.add(spell);
 				}
 			}

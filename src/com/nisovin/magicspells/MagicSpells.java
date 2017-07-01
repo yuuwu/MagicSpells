@@ -769,11 +769,8 @@ public class MagicSpells extends JavaPlugin {
 	 * @return the player's spellbook
 	 */
 	public static Spellbook getSpellbook(Player player) {
-		Spellbook spellbook = plugin.spellbooks.get(player.getName());
-		if (spellbook == null) {
-			spellbook = new Spellbook(player, plugin);
-			plugin.spellbooks.put(player.getName(), spellbook);
-		}
+		Spellbook spellbook = plugin.spellbooks.computeIfAbsent(player.getName(), playerName -> new Spellbook(player, plugin));
+		if (spellbook == null) throw new IllegalStateException();
 		return spellbook;
 	}
 	

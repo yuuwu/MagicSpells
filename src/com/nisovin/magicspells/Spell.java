@@ -803,11 +803,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 								SpellEffect effect = SpellEffect.createNewEffectByName(data[1]);
 								if (effect != null) {
 									effect.loadFromString(data.length > 2 ? data[2] : null);
-									List<SpellEffect> e = this.effects.get(pos);
-									if (e == null) {
-										e = new ArrayList<>();
-										this.effects.put(pos, e);
-									}
+									List<SpellEffect> e = this.effects.computeIfAbsent(pos, p -> new ArrayList<>());
 									e.add(effect);
 								}
 							}
@@ -822,11 +818,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 						SpellEffect effect = SpellEffect.createNewEffectByName(effConf.getString("effect", ""));
 						if (effect != null) {
 							effect.loadFromConfiguration(effConf);
-							List<SpellEffect> e = this.effects.get(pos);
-							if (e == null) {
-								e = new ArrayList<>();
-								this.effects.put(pos, e);
-							}
+							List<SpellEffect> e = this.effects.computeIfAbsent(pos, p -> new ArrayList<>());
 							e.add(effect);
 						}
 					}

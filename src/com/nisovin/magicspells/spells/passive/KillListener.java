@@ -33,11 +33,7 @@ public class KillListener extends PassiveListener {
 			for (String s : split) {
 				EntityType t = Util.getEntityType(s);
 				if (t == null) continue;
-				List<PassiveSpell> spells = entityTypes.get(t);
-				if (spells == null) {
-					spells = new ArrayList<>();
-					entityTypes.put(t, spells);
-				}
+				List<PassiveSpell> spells = entityTypes.computeIfAbsent(t, type -> new ArrayList<>());
 				spells.add(spell);
 			}
 		}

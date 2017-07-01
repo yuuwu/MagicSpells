@@ -59,11 +59,7 @@ public class RightClickItemListener extends PassiveListener {
 				mat = MagicSpells.getItemNameResolver().resolveItem(s);
 			}
 			if (mat != null) {
-				List<PassiveSpell> list = typesMapAddTo.get(mat);
-				if (list == null) {
-					list = new ArrayList<>();
-					typesMapAddTo.put(mat, list);
-				}
+				List<PassiveSpell> list = typesMapAddTo.computeIfAbsent(mat, m -> new ArrayList<>());
 				list.add(spell);
 				materialSetAddTo.add(mat.getMaterial());
 			}

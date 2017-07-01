@@ -499,11 +499,8 @@ public class Spellbook {
 	public void addTemporarySpell(Spell spell, Plugin plugin) {
 		if (!hasSpell(spell)) {
 			addSpell(spell);
-			Set<Spell> temps = temporarySpells.get(plugin);
-			if (temps == null) {
-				temps = new HashSet<>();
-				temporarySpells.put(plugin, temps);
-			}
+			Set<Spell> temps = temporarySpells.computeIfAbsent(plugin, pl -> new HashSet<>());
+			if (temps == null) throw new IllegalStateException("temporary spells should not contain a null value!");
 			temps.add(spell);
 		}
 	}
@@ -528,11 +525,8 @@ public class Spellbook {
 	
 	public void addCastItem(Spell spell, CastItem castItem) {
 		// Add to custom bindings
-		Set<CastItem> bindings = customBindings.get(spell);
-		if (bindings == null) {
-			bindings = new HashSet<>();
-			customBindings.put(spell, bindings);
-		}
+		Set<CastItem> bindings = customBindings.computeIfAbsent(spell, s -> new HashSet<>());
+		if (bindings == null) throw new IllegalStateException("customBindings spells should not contain a null value!");
 		if (!bindings.contains(castItem)) bindings.add(castItem);
 		
 		// Add to item bindings

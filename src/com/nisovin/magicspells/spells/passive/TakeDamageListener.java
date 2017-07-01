@@ -47,11 +47,7 @@ public class TakeDamageListener extends PassiveListener {
 				boolean isDamCause = false;
 				for (DamageCause c : DamageCause.values()) {
 					if (!s.equalsIgnoreCase(c.name())) continue;
-					List<PassiveSpell> spells = damageCauses.get(c);
-					if (spells == null) {
-						spells = new ArrayList<>();
-						damageCauses.put(c, spells);
-					}
+					List<PassiveSpell> spells = damageCauses.computeIfAbsent(c, cause -> new ArrayList<>());
 					spells.add(spell);
 					isDamCause = true;
 					break;
@@ -68,11 +64,7 @@ public class TakeDamageListener extends PassiveListener {
 						mat = MagicSpells.getItemNameResolver().resolveItem(s);
 					}
 					if (mat != null) {
-						List<PassiveSpell> list = weapons.get(mat);
-						if (list == null) {
-							list = new ArrayList<>();
-							weapons.put(mat, list);
-						}
+						List<PassiveSpell> list = weapons.computeIfAbsent(mat, m -> new ArrayList<>());
 						list.add(spell);
 						types.add(mat.getMaterial());
 					}

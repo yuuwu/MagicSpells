@@ -44,11 +44,7 @@ public class PickupItemListener extends PassiveListener {
 					mat = MagicSpells.getItemNameResolver().resolveItem(s);
 				}
 				if (mat != null) {
-					List<PassiveSpell> list = types.get(mat);
-					if (list == null) {
-						list = new ArrayList<>();
-						types.put(mat, list);
-					}
+					List<PassiveSpell> list = types.computeIfAbsent(mat, material -> new ArrayList<>());
 					list.add(spell);
 					materials.add(mat.getMaterial());
 				}

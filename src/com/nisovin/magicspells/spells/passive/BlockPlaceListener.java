@@ -37,11 +37,7 @@ public class BlockPlaceListener extends PassiveListener {
 				s = s.trim();
 				MagicMaterial m = MagicSpells.getItemNameResolver().resolveBlock(s);
 				if (m == null) continue;
-				List<PassiveSpell> list = types.get(m);
-				if (list == null) {
-					list = new ArrayList<>();
-					types.put(m, list);
-				}
+				List<PassiveSpell> list = types.computeIfAbsent(m, material -> new ArrayList<>());
 				list.add(spell);
 				materials.add(m.getMaterial());
 			}

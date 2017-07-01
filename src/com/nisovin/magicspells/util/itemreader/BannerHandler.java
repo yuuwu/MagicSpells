@@ -19,6 +19,7 @@ public class BannerHandler {
 		if (config.contains("color") && config.isString("color")) {
 			String s = config.getString("color").toLowerCase();
 			for (DyeColor c : DyeColor.values()) {
+				// TODO use objects.equals
 				if (c != null && c.name().replace("_", "").toLowerCase().equals(s)) {
 					bmeta.setBaseColor(c);
 					break;
@@ -33,6 +34,7 @@ public class BannerHandler {
 					DyeColor color = null;
 					String splitZeroLowercase = split[0].toLowerCase();
 					for (DyeColor c : DyeColor.values()) {
+						// TODO use objects.equals
 						if (c != null && c.name().replace("_", "").toLowerCase().equals(splitZeroLowercase)) {
 							color = c;
 							break;

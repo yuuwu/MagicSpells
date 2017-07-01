@@ -93,11 +93,7 @@ public class KeybindSpell extends CommandSpell {
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			
-			Keybinds keybinds = this.playerKeybinds.get(player.getName());
-			if (keybinds == null) {
-				keybinds = new Keybinds(player);
-				this.playerKeybinds.put(player.getName(), keybinds);
-			}
+			Keybinds keybinds = this.playerKeybinds.computeIfAbsent(player.getName(), name -> new Keybinds(player));
 			
 			int slot = player.getInventory().getHeldItemSlot();
 			ItemStack item = HandHandler.getItemInMainHand(player);

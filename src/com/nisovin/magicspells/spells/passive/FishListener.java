@@ -47,11 +47,7 @@ public class FishListener extends PassiveListener {
 				} else {
 					EntityType t = Util.getEntityType(s);
 					if (t != null) {
-						List<PassiveSpell> list = types.get(t);
-						if (list == null) {
-							list = new ArrayList<>();
-							types.put(t, list);
-						}
+						List<PassiveSpell> list = types.computeIfAbsent(t, type -> new ArrayList<>());
 						list.add(spell);
 					}
 				}
