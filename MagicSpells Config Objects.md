@@ -6,6 +6,10 @@ Vector
 --------
 The vector format is `x,y,z` where each letter may be replaced with a `double` value.
 
+TargetBooleanState
+--------
+The TargetBooleanState format is just a string which represents a 3 outcome type boolean state, `on`, `off`, and `toggle`.
+
 Prompt
 --------
 - `prompt-type` accepts a `string` and will fail if not set. Current valid values are
