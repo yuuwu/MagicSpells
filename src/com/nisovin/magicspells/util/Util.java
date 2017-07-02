@@ -769,4 +769,11 @@ public class Util {
 		forEachOrdered(Bukkit.getOnlinePlayers(), consumer);
 	}
 	
+	public static int clampValue(int min, int max, int value) {
+		if (value < min) return min;
+		if (value > max) return max;
+		return value;
+	}
+	
+	
 }
