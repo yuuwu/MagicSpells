@@ -11,10 +11,29 @@ public class DataEntity {
 	private static Map<String, Function<Entity, String>> dataElements = new HashMap<>();
 	
 	static {
-		dataElements.put("uuid", entity -> entity.getUniqueId().toString());
-		dataElements.put("name", Entity::getName);
-		dataElements.put("customname", Entity::getCustomName);
-		dataElements.put("entitytype", entity -> entity.getType().name());
+		try {
+			dataElements.put("uuid", entity -> entity.getUniqueId().toString());
+		} catch (Throwable exception) {
+			exception.printStackTrace();
+		}
+		
+		try {
+			dataElements.put("name", entity -> entity.getName());
+		} catch (Throwable exception) {
+			exception.printStackTrace();
+		}
+		
+		try {
+			dataElements.put("customname", entity -> entity.getCustomName());
+		} catch (Throwable exception) {
+			exception.printStackTrace();
+		}
+		
+		try {
+			dataElements.put("entitytype", entity -> entity.getType().name());
+		} catch (Throwable exception) {
+			exception.printStackTrace();
+		}
 	}
 	
 	public static Function<Entity, String> getDataFunction(String elementId) {
