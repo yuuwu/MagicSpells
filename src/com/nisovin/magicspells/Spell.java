@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.nisovin.magicspells.util.LocationUtil;
 import com.nisovin.magicspells.util.TimeUtil;
 import com.nisovin.magicspells.util.TxtUtil;
 import org.bukkit.Bukkit;
@@ -1963,6 +1964,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	
 	protected void playSpellEffectsTrail(Location loc1, Location loc2) {
 		if (this.effects != null) {
+			if (!LocationUtil.isSameWorld(loc1, loc2)) return;
 			List<SpellEffect> effectsList = this.effects.get(EffectPosition.TRAIL);
 			if (effectsList != null) {
 				for (SpellEffect effect : effectsList) {
