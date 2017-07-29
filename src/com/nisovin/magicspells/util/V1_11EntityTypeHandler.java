@@ -10,7 +10,12 @@ public class V1_11EntityTypeHandler {
 	private static void initialize() {
 		if (initialized) return;
 		
-		EntityType type = EntityType.valueOf("STRAY");
+		EntityType type = null;
+		try {
+			type = EntityType.valueOf("STRAY");
+		} catch (Throwable ignored) {
+			// No op
+		}
 		if (type != null) v_1_11API = true;
 		
 		initialized = true;
