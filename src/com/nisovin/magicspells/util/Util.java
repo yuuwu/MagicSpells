@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import com.nisovin.magicspells.util.itemreader.alternative.AlternativeReaderManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -238,12 +239,17 @@ public class Util {
 	 */
 	public static ItemStack getItemStackFromConfig(ConfigurationSection config) {
 		try {
+			// It MUST have a type option
 			if (!config.contains("type")) return null;
+			
+			// See if this is managed by an alternative reader
+			ItemStack item = AlternativeReaderManager.deserialize(config);
+			if (item != null) return item;
 			
 			// Basic item
 			MagicMaterial material = MagicSpells.getItemNameResolver().resolveItem(config.getString("type"));
 			if (material == null) return null;
-			ItemStack item = material.toItemStack();
+			item = material.toItemStack();
 			ItemMeta meta = item.getItemMeta();
 			
 			// Name and lore
