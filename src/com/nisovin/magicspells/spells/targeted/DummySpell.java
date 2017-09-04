@@ -1,5 +1,6 @@
 package com.nisovin.magicspells.spells.targeted;
 
+import com.nisovin.magicspells.spells.TargetedEntityFromLocationSpell;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
@@ -13,7 +14,7 @@ import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
 
-public class DummySpell extends TargetedSpell implements TargetedEntitySpell, TargetedLocationSpell {
+public class DummySpell extends TargetedSpell implements TargetedEntitySpell, TargetedLocationSpell, TargetedEntityFromLocationSpell {
 
 	public DummySpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -61,5 +62,17 @@ public class DummySpell extends TargetedSpell implements TargetedEntitySpell, Ta
 		playSpellEffects(EffectPosition.TARGET, (Entity)null);
 		return true;
 	}
-
+	
+	@Override
+	public boolean castAtEntityFromLocation(Player caster, Location from, LivingEntity target, float power) {
+		playSpellEffects(from, target);
+		return true;
+	}
+	
+	@Override
+	public boolean castAtEntityFromLocation(Location from, LivingEntity target, float power) {
+		playSpellEffects(from, target);
+		return true;
+	}
+	
 }
