@@ -14,6 +14,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -359,6 +360,37 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 								}
 								((TargetedLocationSpell)spell).castAtLocation(loc, 1.0F);
 								casted = true;
+							}
+						}
+						
+						// On to trying to handle as a non player entity
+						if (!casted) {
+							if (sender instanceof Entity) {
+								Entity senderEntity = (Entity) sender;
+								
+								// For now, just the targeted location spells
+								if (spell instanceof TargetedLocationSpell) {
+									Location loc = senderEntity.getLocation();
+									if (spellArgs != null && spellArgs.length >= 3) {
+										try {
+											int x = Integer.parseInt(spellArgs[0]);
+											int y = Integer.parseInt(spellArgs[1]);
+											int z = Integer.parseInt(spellArgs[2]);
+											float yaw = 0;
+											float pitch = 0;
+											if (spellArgs.length > 3) yaw = Float.parseFloat(spellArgs[3]);
+											if (spellArgs.length > 4) pitch = Float.parseFloat(spellArgs[4]);
+											loc.add(x, y, z);
+											loc.setYaw(yaw);
+											loc.setPitch(pitch);
+										} catch (NumberFormatException e) {
+											DebugHandler.debugNumberFormat(e);
+										}
+									}
+									// And cast
+									((TargetedLocationSpell) spell).castAtLocation(loc, 1.0F);
+									casted = true;
+								}
 							}
 						}
 						if (!casted) {
