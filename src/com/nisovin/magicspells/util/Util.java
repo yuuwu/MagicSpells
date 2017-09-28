@@ -16,6 +16,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import com.nisovin.magicspells.util.itemreader.alternative.AlternativeReaderManager;
 import org.bukkit.Bukkit;
@@ -779,6 +780,14 @@ public class Util {
 		if (value < min) return min;
 		if (value > max) return max;
 		return value;
+	}
+	
+	public static <C extends Collection<Material>> C getMaterialList(List<String> strings, Supplier<C> supplier) {
+		C ret = supplier.get();
+		strings.forEach(string -> {
+			ret.add(Material.getMaterial(string));
+		});
+		return ret;
 	}
 	
 	
