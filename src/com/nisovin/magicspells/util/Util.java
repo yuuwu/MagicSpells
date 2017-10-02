@@ -785,10 +785,9 @@ public class Util {
 	public static <C extends Collection<Material>> C getMaterialList(List<String> strings, Supplier<C> supplier) {
 		C ret = supplier.get();
 		strings.forEach(string -> {
-			ret.add(Material.getMaterial(string));
+			ret.add(Material.matchMaterial(string));
 		});
 		return ret;
 	}
-	
 	
 }
