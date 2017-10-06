@@ -790,4 +790,12 @@ public class Util {
 		return ret;
 	}
 	
+	public static <E extends Enum<E>> E enumValueSafe(Class<E> clazz, String name) {
+		try {
+			return Enum.valueOf(clazz, name);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
 }
