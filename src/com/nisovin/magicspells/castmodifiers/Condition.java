@@ -156,6 +156,8 @@ public abstract class Condition {
 		conditions.put("hasitemprecise", HasItemPreciseCondition.class);
 		conditions.put("wearingprecise", WearingPreciseCondition.class);
 		conditions.put("holdingprecise", HoldingPreciseCondition.class);
+		conditions.put("receivingredstonestrongerthan", ReceivingRSStrongerThanCondition.class);
+		conditions.put("receivingredstoneweakerthan", ReceivingRSWeakerThanCondition.class);
 	}
 	
 }
