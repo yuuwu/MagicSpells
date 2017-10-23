@@ -1945,7 +1945,11 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 					if (canceler == null) continue;
 					if (!(entity instanceof Player)) continue;
 					Player p = (Player)entity;
-					this.callbacks.get(p.getUniqueId().toString()).get(pos).add(canceler);
+					Map<EffectPosition, List<Runnable>> runnablesMap = this.callbacks.get(p.getUniqueId().toString());
+					if (runnablesMap == null) continue;
+					List<Runnable> runnables = runnablesMap.get(pos);
+					if (runnables == null) continue;
+					runnables.add(canceler);
 				}
 			}
 		}
