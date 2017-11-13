@@ -17,3 +17,5 @@ out/
 lib/Residence.jar
 lib/NoCheatPlus.jar
 lib/PlaceholderAPI.jar
+Build/
+.gradle/
