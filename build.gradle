@@ -4,6 +4,9 @@
 // Add -Prelease to the build command to version the jars with release versions
 // (defaults to dev build labeling)
 
+final String OPTION_DEPLOYMENT_NAMING = 'DeploymentNaming'
+final String OPTION_RELEASE = 'release'
+
 apply plugin: 'java'
 
 ext {
@@ -84,8 +87,10 @@ task magicspellsGetResources() {
   // Get Residence
   downloadFile(new File(libFolder, 'Residence.jar'), new URL(msconfig.resourceResidenceUrl))
 
+  // Get NoCheatPlus
   downloadFile(new File(libFolder, 'NoCheatPlus.jar'), new URL(msconfig.resourceNcpUrl))
 
+  // Get PlaceholderAPI
   downloadFile(new File(libFolder, 'PlaceholderAPI.jar'), new URL(msconfig.resourcePlaceholderapiUrl))
 
   println 'Finished running the get resources phase'
@@ -100,7 +105,7 @@ task magicspellsBuildVersion() {
 
 task magicspellsReleaseVersion() {
   description = 'Assign version suffix in release format'
-  if (project.hasProperty('release')) msconfig.versionSuffix = 'Release'
+  if (project.hasProperty("${OPTION_RELEASE}")) msconfig.versionSuffix = 'Release'
 }
 
 task magicspellsClean() {
@@ -128,6 +133,11 @@ def magicspellsClasspathBase() {
     .plus(project.files("${project.ext.magicspellsData.libDir}/Vault.jar"))
 }
 
+def magicspellsClasspathMSJar() {
+  return project.files("${project.ext.magicspellsData.distDir}/MagicSpells-${project.ext.magicspellsData.stringVersionCore}.jar")
+    .plus(project.files("${project.ext.magicspellsData.distDir}/MagicSpells.jar"))
+}
+
 task magicspellsCoreCompile(type: JavaCompile) {
   description = 'Compile the main MagicSpells java files'
   File buildDir = project.file(msconfig.coreBuildDir)
@@ -150,7 +160,6 @@ task magicspellsCoreCopyResources(type: Copy) {
   into "${msconfig.coreBuildDir}"
 }
 
-// Create the core jar file
 task magicspellsCoreJar(type: Jar) {
   description = 'Create the main MagicSpells jar'
   dependsOn = [
@@ -158,12 +167,11 @@ task magicspellsCoreJar(type: Jar) {
     'magicspellsCoreCopyResources'
   ]
   archiveName = "MagicSpells-${msconfig.stringVersionCore}.jar"
-  if (project.hasProperty('DeploymentNaming')) archiveName = 'MagicSpells.jar'
+  if (project.hasProperty("${OPTION_DEPLOYMENT_NAMING}")) archiveName = 'MagicSpells.jar'
   destinationDir = project.file(msconfig.distDir)
   from("${msconfig.coreBuildDir}")
 }
 
-// Compile teams addon
 task magicspellsTeamsCompile(type: JavaCompile) {
   description = 'Compile the teams addon'
   dependsOn = [
@@ -176,8 +184,7 @@ task magicspellsTeamsCompile(type: JavaCompile) {
   source(msconfig.teamsSrcDir)
 
   classpath = magicspellsClasspathBase()
-    .plus(project.files("${msconfig.distDir}/MagicSpells-${msconfig.stringVersionCore}.jar"))
-    .plus(project.files("${msconfig.distDir}/MagicSpells.jar"))
+    .plus(magicspellsClasspathMSJar())
 
   sourceCompatibility = "1.8"
 }
@@ -191,7 +198,6 @@ task magicspellsTeamsCopyResources(type: Copy) {
   into "${msconfig.teamsBuildDir}"
 }
 
-// Create the teams jar file
 task magicspellsTeamsJar(type: Jar) {
   description = 'Create the teams addon jar'
   dependsOn = [
@@ -199,12 +205,11 @@ task magicspellsTeamsJar(type: Jar) {
     'magicspellsTeamsCopyResources'
   ]
   archiveName = "MagicSpellsTeams-${msconfig.teamsVersion}-${msconfig.versionSuffix}.jar"
-  if (project.hasProperty('DeploymentNaming')) archiveName = 'MagicSpellsTeams.jar'
+  if (project.hasProperty("${OPTION_DEPLOYMENT_NAMING}")) archiveName = 'MagicSpellsTeams.jar'
   destinationDir = project.file(msconfig.distDir)
   from("${msconfig.teamsBuildDir}")
 }
 
-// Compile memory addon
 task magicspellsMemoryCompile(type: JavaCompile) {
   description = 'Compile the memory addon'
   dependsOn = [
@@ -217,8 +222,7 @@ task magicspellsMemoryCompile(type: JavaCompile) {
   source(msconfig.memorySrcDir)
 
   classpath = magicspellsClasspathBase()
-    .plus(project.files("${-> msconfig.distDir}/MagicSpells-${-> msconfig.stringVersionCore}.jar"))
-    .plus(project.files("${msconfig.distDir}/MagicSpells.jar"))
+    .plus(magicspellsClasspathMSJar())
 
   sourceCompatibility = "1.8"
 }
@@ -240,7 +244,7 @@ task magicspellsMemoryJar(type: Jar) {
     'magicspellsMemoryCopyResources'
   ]
   archiveName = "MagicSpellsMemory-${msconfig.stringVersionMemory}.jar"
-  if (project.hasProperty('DeploymentNaming')) archiveName = 'MagicSpellsMemory.jar'
+  if (project.hasProperty("${OPTION_DEPLOYMENT_NAMING}")) archiveName = 'MagicSpellsMemory.jar'
   destinationDir = project.file(msconfig.distDir)
   from("${msconfig.memoryBuildDir}")
 }
@@ -259,8 +263,7 @@ task magicspellsShopCompile(type: JavaCompile) {
   source(msconfig.shopSrcDir)
 
   classpath = magicspellsClasspathBase()
-    .plus(project.files("${msconfig.distDir}/MagicSpells-${msconfig.stringVersionCore}.jar"))
-    .plus(project.files("${msconfig.distDir}/MagicSpells.jar"))
+    .plus(magicspellsClasspathMSJar())
 
   sourceCompatibility = "1.8"
 }
@@ -282,7 +285,7 @@ task magicspellsShopJar(type: Jar) {
     'magicspellsShopCopyResources'
   ]
   archiveName = "MagicSpellsShop-${msconfig.shopVersion}-${msconfig.versionSuffix}.jar"
-  if (project.hasProperty('DeploymentNaming')) archiveName = 'MagicSpellsShop.jar'
+  if (project.hasProperty("${OPTION_DEPLOYMENT_NAMING}")) archiveName = 'MagicSpellsShop.jar'
   destinationDir = project.file(msconfig.distDir)
   from("${msconfig.shopBuildDir}")
 }
@@ -300,8 +303,7 @@ task magicspellsTownyCompile(type: JavaCompile) {
   source(msconfig.townySrcDir)
 
   classpath = magicspellsClasspathBase()
-    .plus(project.files("${msconfig.distDir}/MagicSpells-${msconfig.stringVersionCore}.jar"))
-    .plus(project.files("${msconfig.distDir}/MagicSpells.jar"))
+    .plus(magicspellsClasspathMSJar())
     .plus(project.files("${msconfig.libDir}/Towny.jar"))
 
   sourceCompatibility = "1.8"
@@ -324,7 +326,7 @@ task magicspellsTownyJar(type: Jar) {
     'magicspellsTownyCopyResources'
   ]
   archiveName = "MagicSpellsTowny-${msconfig.townyVersion}-${msconfig.versionSuffix}.jar"
-  if (project.hasProperty('DeploymentNaming')) archiveName = 'MagicSpellsTowny.jar'
+  if (project.hasProperty("${OPTION_DEPLOYMENT_NAMING}")) archiveName = 'MagicSpellsTowny.jar'
   destinationDir = project.file(msconfig.distDir)
   from("${msconfig.townyBuildDir}")
 }
@@ -342,8 +344,7 @@ task magicspellsFactionsCompile(type: JavaCompile) {
   source(msconfig.factionsSrcDir)
 
   classpath = magicspellsClasspathBase()
-    .plus(project.files("${msconfig.distDir}/MagicSpells-${msconfig.stringVersionCore}.jar"))
-    .plus(project.files("${msconfig.distDir}/MagicSpells.jar"))
+    .plus(magicspellsClasspathMSJar())
     .plus(project.files("${msconfig.libDir}/MassiveCore.jar"))
     .plus(project.files("${msconfig.libDir}/Factions.jar"))
 
@@ -368,7 +369,7 @@ task magicspellsFactionsJar(type: Jar) {
   ]
 
   archiveName = "MagicSpellsFactions-${msconfig.factionsVersion}-${msconfig.versionSuffix}.jar"
-  if (project.hasProperty('DeploymentNaming')) archiveName = 'MagicSpellsFactions.jar'
+  if (project.hasProperty("${OPTION_DEPLOYMENT_NAMING}")) archiveName = 'MagicSpellsFactions.jar'
 
   destinationDir = project.file(msconfig.distDir)
   from("${msconfig.factionsBuildDir}")
@@ -424,4 +425,14 @@ task magicspellsRelease() {
     'magicspellsReleaseVersion',
     'magicspellsJarAll'
   ]
+}
+
+artifacts {
+  archives magicspellsCoreJar
+  archives magicspellsTeamsJar
+  archives magicspellsMemoryJar
+  archives magicspellsShopJar
+  archives magicspellsTownyJar
+  archives magicspellsFactionsJar
+  archives magicspellsZip
 }
