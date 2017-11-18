@@ -52,7 +52,7 @@ public class MSConfig {
 
   //<tstamp><format property="datestamp" pattern="yyMMddHHmm"/></tstamp>
   def datestampPattern = 'yyMMddHHmm'
-  def datestampString = "${ -> new Date().format(datestampPattern)}"
+  def datestampString = "${-> new Date().format(datestampPattern)}"
 
   // Resource retrieving
   def resourceResidenceUrl = 'http://nexus.hc.to/content/repositories/pub_releases/com/bekvon/bukkit/residence/Residence/4.5.3.0/Residence-4.5.3.0.jar'
@@ -71,36 +71,35 @@ public class MSConfig {
 
 MSConfig msconfig = ext.magicspellsData
 
-def downloadFile = {File file, url ->
+def downloadFile(File file, URL url) {
   if (!file.exists()) {
     url.withInputStream{ i -> file.withOutputStream{ it << i }}
   }
 }
 
 // Ensures resource availability
-task magicspellsGetResources() {
-  description = 'Download dependencies'
+def magicspellsGetResources() {
   println 'Running the get resources phase'
 
-  File libFolder = project.file(msconfig.libDir)
+  File libFolder = project.file(project.ext.magicspellsData.libDir)
 
   // Get Residence
-  downloadFile(new File(libFolder, 'Residence.jar'), new URL(msconfig.resourceResidenceUrl))
+  downloadFile(new File(libFolder, 'Residence.jar'), new URL(project.ext.magicspellsData.resourceResidenceUrl))
 
   // Get NoCheatPlus
-  downloadFile(new File(libFolder, 'NoCheatPlus.jar'), new URL(msconfig.resourceNcpUrl))
+  downloadFile(new File(libFolder, 'NoCheatPlus.jar'), new URL(project.ext.magicspellsData.resourceNcpUrl))
 
   // Get PlaceholderAPI
-  downloadFile(new File(libFolder, 'PlaceholderAPI.jar'), new URL(msconfig.resourcePlaceholderapiUrl))
+  downloadFile(new File(libFolder, 'PlaceholderAPI.jar'), new URL(project.ext.magicspellsData.resourcePlaceholderapiUrl))
 
   println 'Finished running the get resources phase'
 }
 
-magicspellsGetResources
+magicspellsGetResources()
 
 task magicspellsBuildVersion() {
   description = 'Assign version suffix in dev build format'
-  msconfig.versionSuffix = "dev-${ -> msconfig.datestampString}"
+  msconfig.versionSuffix = "dev-${-> msconfig.datestampString}"
 }
 
 task magicspellsReleaseVersion() {
@@ -108,34 +107,36 @@ task magicspellsReleaseVersion() {
   if (project.hasProperty("${OPTION_RELEASE}")) msconfig.versionSuffix = 'Release'
 }
 
-task magicspellsClean() {
-  description = 'Delete old working directories'
-  delete msconfig.coreBuildDir, msconfig.teamsBuildDir, msconfig.memoryBuildDir, msconfig.shopBuildDir, msconfig.townyBuildDir, msconfig.factionsBuildDir, msconfig.docDir, msconfig.distDir
-  project.file(msconfig.distDir).mkdir()
+def magicspellsClean() {
+  //description = 'Delete old working directories'
+  project.delete project.ext.magicspellsData.coreBuildDir, project.ext.magicspellsData.teamsBuildDir, project.ext.magicspellsData.memoryBuildDir, project.ext.magicspellsData.shopBuildDir, project.ext.magicspellsData.townyBuildDir, project.ext.magicspellsData.factionsBuildDir, project.ext.magicspellsData.docDir, project.ext.magicspellsData.distDir
+  project.file(project.ext.magicspellsData.distDir).mkdir()
 }
 
+magicspellsClean()
+
 def magicspellsClasspathBase() {
-  return project.files("${project.ext.magicspellsData.libDir}/spigot-1.11.2.jar")
-    .plus(project.files("${project.ext.magicspellsData.libDir}/EffectLib-4.0.jar"))
-    .plus(project.files("${project.ext.magicspellsData.libDir}/spigot-1.10.2.jar"))
-    .plus(project.files("${project.ext.magicspellsData.libDir}/spigot-1.9.4.jar"))
-    .plus(project.files("${project.ext.magicspellsData.libDir}/spigot-1.9.jar"))
-    .plus(project.files("${project.ext.magicspellsData.libDir}/spigot-1.8.7.jar"))
-    .plus(project.files("${project.ext.magicspellsData.libDir}/spigot-1.8-R0.1-SNAPSHOT.jar"))
-    .plus(project.files("${project.ext.magicspellsData.libDir}/ProtocolLib.jar"))
-    .plus(project.files("${project.ext.magicspellsData.libDir}/spigot-1.12.jar"))
-    .plus(project.files("${project.ext.magicspellsData.libDir}/NoCheatPlus.jar"))
-    .plus(project.files("${project.ext.magicspellsData.libDir}/WorldEdit.jar"))
-    .plus(project.files("${project.ext.magicspellsData.libDir}/WorldGuard.jar"))
-    .plus(project.files("${project.ext.magicspellsData.libDir}/LibsDisguises-9.0.9.jar"))
-    .plus(project.files("${project.ext.magicspellsData.libDir}/Residence.jar"))
-    .plus(project.files("${project.ext.magicspellsData.libDir}/PlaceholderAPI.jar"))
-    .plus(project.files("${project.ext.magicspellsData.libDir}/Vault.jar"))
+  return project.files("${-> project.ext.magicspellsData.libDir}/spigot-1.11.2.jar")
+    .plus(project.files("${-> project.ext.magicspellsData.libDir}/EffectLib-4.0.jar"))
+    .plus(project.files("${-> project.ext.magicspellsData.libDir}/spigot-1.10.2.jar"))
+    .plus(project.files("${-> project.ext.magicspellsData.libDir}/spigot-1.9.4.jar"))
+    .plus(project.files("${-> project.ext.magicspellsData.libDir}/spigot-1.9.jar"))
+    .plus(project.files("${-> project.ext.magicspellsData.libDir}/spigot-1.8.7.jar"))
+    .plus(project.files("${-> project.ext.magicspellsData.libDir}/spigot-1.8-R0.1-SNAPSHOT.jar"))
+    .plus(project.files("${-> project.ext.magicspellsData.libDir}/ProtocolLib.jar"))
+    .plus(project.files("${-> project.ext.magicspellsData.libDir}/spigot-1.12.jar"))
+    .plus(project.files("${-> project.ext.magicspellsData.libDir}/NoCheatPlus.jar"))
+    .plus(project.files("${-> project.ext.magicspellsData.libDir}/WorldEdit.jar"))
+    .plus(project.files("${-> project.ext.magicspellsData.libDir}/WorldGuard.jar"))
+    .plus(project.files("${-> project.ext.magicspellsData.libDir}/LibsDisguises-9.0.9.jar"))
+    .plus(project.files("${-> project.ext.magicspellsData.libDir}/Residence.jar"))
+    .plus(project.files("${-> project.ext.magicspellsData.libDir}/PlaceholderAPI.jar"))
+    .plus(project.files("${-> project.ext.magicspellsData.libDir}/Vault.jar"))
 }
 
 def magicspellsClasspathMSJar() {
-  return project.files("${project.ext.magicspellsData.distDir}/MagicSpells-${project.ext.magicspellsData.stringVersionCore}.jar")
-    .plus(project.files("${project.ext.magicspellsData.distDir}/MagicSpells.jar"))
+  return project.files("${-> project.ext.magicspellsData.distDir}/MagicSpells-${-> project.ext.magicspellsData.stringVersionCore}.jar")
+    .plus(project.files("${-> project.ext.magicspellsData.distDir}/MagicSpells.jar"))
 }
 
 task magicspellsCoreCompile(type: JavaCompile) {

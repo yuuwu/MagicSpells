@@ -946,6 +946,8 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		if (this.strXpAutoLearned != null) this.strXpAutoLearned = this.strXpAutoLearned.replace("%s", this.name);
 		
 		this.tags = new HashSet<>(config.getStringList(section + '.' + spellName + ".tags", new ArrayList<>()));
+		this.tags.add("spell-class:" + this.getClass().getCanonicalName());
+		this.tags.add("spell-package:" + this.getClass().getPackage().getName());
 	}
 	
 	public Set<String> getTags() {
