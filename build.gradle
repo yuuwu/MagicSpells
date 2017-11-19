@@ -116,27 +116,27 @@ def magicspellsClean() {
 magicspellsClean()
 
 def magicspellsClasspathBase() {
-  return project.files("${-> project.ext.magicspellsData.libDir}/spigot-1.11.2.jar")
-    .plus(project.files("${-> project.ext.magicspellsData.libDir}/EffectLib-4.0.jar"))
-    .plus(project.files("${-> project.ext.magicspellsData.libDir}/spigot-1.10.2.jar"))
-    .plus(project.files("${-> project.ext.magicspellsData.libDir}/spigot-1.9.4.jar"))
-    .plus(project.files("${-> project.ext.magicspellsData.libDir}/spigot-1.9.jar"))
-    .plus(project.files("${-> project.ext.magicspellsData.libDir}/spigot-1.8.7.jar"))
-    .plus(project.files("${-> project.ext.magicspellsData.libDir}/spigot-1.8-R0.1-SNAPSHOT.jar"))
-    .plus(project.files("${-> project.ext.magicspellsData.libDir}/ProtocolLib.jar"))
-    .plus(project.files("${-> project.ext.magicspellsData.libDir}/spigot-1.12.jar"))
-    .plus(project.files("${-> project.ext.magicspellsData.libDir}/NoCheatPlus.jar"))
-    .plus(project.files("${-> project.ext.magicspellsData.libDir}/WorldEdit.jar"))
-    .plus(project.files("${-> project.ext.magicspellsData.libDir}/WorldGuard.jar"))
-    .plus(project.files("${-> project.ext.magicspellsData.libDir}/LibsDisguises-9.0.9.jar"))
-    .plus(project.files("${-> project.ext.magicspellsData.libDir}/Residence.jar"))
-    .plus(project.files("${-> project.ext.magicspellsData.libDir}/PlaceholderAPI.jar"))
-    .plus(project.files("${-> project.ext.magicspellsData.libDir}/Vault.jar"))
+  return project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.11.2.jar")
+    .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}EffectLib-4.0.jar"))
+    .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.10.2.jar"))
+    .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.9.4.jar"))
+    .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.9.jar"))
+    .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.8.7.jar"))
+    .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.8-R0.1-SNAPSHOT.jar"))
+    .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}ProtocolLib.jar"))
+    .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.12.jar"))
+    .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}NoCheatPlus.jar"))
+    .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}WorldEdit.jar"))
+    .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}WorldGuard.jar"))
+    .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}LibsDisguises-9.0.9.jar"))
+    .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}Residence.jar"))
+    .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}PlaceholderAPI.jar"))
+    .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}Vault.jar"))
 }
 
 def magicspellsClasspathMSJar() {
-  return project.files("${-> project.ext.magicspellsData.distDir}/MagicSpells-${-> project.ext.magicspellsData.stringVersionCore}.jar")
-    .plus(project.files("${-> project.ext.magicspellsData.distDir}/MagicSpells.jar"))
+  return project.files("${-> project.ext.magicspellsData.distDir}${File.separator}MagicSpells-${-> project.ext.magicspellsData.stringVersionCore}.jar")
+    .plus(project.files("${-> project.ext.magicspellsData.distDir}${File.separator}MagicSpells.jar"))
 }
 
 task magicspellsCoreCompile(type: JavaCompile) {
@@ -155,7 +155,7 @@ task magicspellsCoreCompile(type: JavaCompile) {
 task magicspellsCoreCopyResources(type: Copy) {
   description = 'Copy yml resources for MagicSpells'
   from(msconfig.coreSrcDir) {
-    include '**/*.yml'
+    include "**${File.separator}*.yml"
   }
   expand(project.properties)
   into "${msconfig.coreBuildDir}"
@@ -193,7 +193,7 @@ task magicspellsTeamsCompile(type: JavaCompile) {
 task magicspellsTeamsCopyResources(type: Copy) {
   description = 'Copy yml resources for MagicSpellsTeams'
   from(msconfig.teamsSrcDir) {
-    include '**/*.yml'
+    include "**${File.separator}*.yml"
   }
   expand(project.properties)
   into "${msconfig.teamsBuildDir}"
@@ -231,7 +231,7 @@ task magicspellsMemoryCompile(type: JavaCompile) {
 task magicspellsMemoryCopyResources(type: Copy) {
   description = 'Copy yml resources for MagicSpellsMemory'
   from(msconfig.memorySrcDir) {
-    include '**/*.yml'
+    include "**${File.separator}*.yml"
   }
   expand(project.properties)
   into "${msconfig.memoryBuildDir}"
@@ -272,7 +272,7 @@ task magicspellsShopCompile(type: JavaCompile) {
 task magicspellsShopCopyResources(type: Copy) {
   description = 'Copy yml resources for MagicSpellsShop'
   from(msconfig.shopSrcDir) {
-    include '**/*.yml'
+    include "**${File.separator}*.yml"
   }
   expand(project.properties)
   into "${msconfig.shopBuildDir}"
@@ -305,7 +305,7 @@ task magicspellsTownyCompile(type: JavaCompile) {
 
   classpath = magicspellsClasspathBase()
     .plus(magicspellsClasspathMSJar())
-    .plus(project.files("${msconfig.libDir}/Towny.jar"))
+    .plus(project.files("${msconfig.libDir}${File.separator}Towny.jar"))
 
   sourceCompatibility = "1.8"
 }
@@ -313,7 +313,7 @@ task magicspellsTownyCompile(type: JavaCompile) {
 task magicspellsTownyCopyResources(type: Copy) {
   description = 'Copy yml resources for MagicSpellsTowny'
   from(msconfig.townySrcDir) {
-    include '**/*.yml'
+    include "**${File.separator}*.yml"
   }
   expand(project.properties)
   into "${msconfig.townyBuildDir}"
@@ -346,8 +346,8 @@ task magicspellsFactionsCompile(type: JavaCompile) {
 
   classpath = magicspellsClasspathBase()
     .plus(magicspellsClasspathMSJar())
-    .plus(project.files("${msconfig.libDir}/MassiveCore.jar"))
-    .plus(project.files("${msconfig.libDir}/Factions.jar"))
+    .plus(project.files("${msconfig.libDir}${File.separator}MassiveCore.jar"))
+    .plus(project.files("${msconfig.libDir}${File.separator}Factions.jar"))
 
   sourceCompatibility = "1.8"
 }
@@ -355,7 +355,7 @@ task magicspellsFactionsCompile(type: JavaCompile) {
 task magicspellsFactionsCopyResources(type: Copy) {
   description = 'Copy yml resources for MagicSpellsFactions'
   from(msconfig.factionsSrcDir) {
-    include '**/*.yml'
+    include "**${File.separator}*.yml"
   }
   expand(project.properties)
   into "${msconfig.factionsBuildDir}"
