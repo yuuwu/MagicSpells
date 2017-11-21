@@ -126,7 +126,7 @@ task magicspellsReleaseVersion() {
 }
 
 def magicspellsClean() {
-  //description = 'Delete old working directories'
+  // Delete old working directories
   project.delete project.ext.magicspellsData.coreBuildDir, project.ext.magicspellsData.teamsBuildDir, project.ext.magicspellsData.memoryBuildDir, project.ext.magicspellsData.shopBuildDir, project.ext.magicspellsData.townyBuildDir, project.ext.magicspellsData.factionsBuildDir, project.ext.magicspellsData.docDir, project.ext.magicspellsData.distDir
   project.file(project.ext.magicspellsData.distDir).mkdir()
 }
@@ -157,6 +157,15 @@ def magicspellsClasspathMSJar() {
     .plus(project.files("${-> project.ext.magicspellsData.distDir}${File.separator}MagicSpells.jar"))
 }
 
+def magicspellsClasspathTowny() {
+  return project.files("${-> project.ext.magicspellsData.libDir}${File.separator}Towny.jar")
+}
+
+def magicspellsClasspathFactions() {
+  return project.files("${-> project.ext.magicspellsData.libDir}${File.separator}MassiveCore.jar")
+    .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}Factions.jar"))
+}
+
 task magicspellsCoreCompile(type: JavaCompile) {
   description = 'Compile the main MagicSpells java files'
   File buildDir = project.file(msconfig.coreBuildDir)
@@ -165,7 +174,7 @@ task magicspellsCoreCompile(type: JavaCompile) {
   source(msconfig.coreSrcDir)
 
   classpath = magicspellsClasspathBase().plus(configurations.compile)
-  sourceCompatibility = "1.8"
+  sourceCompatibility = msconfig.javaCoreVersion
 
   msconfig.stringVersionCore = "${msconfig.coreVersion}-${msconfig.versionSuffix}"
 }
@@ -197,9 +206,7 @@ task magicspellsCoreJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.S
   }
   from (project.configurations.compile)
   relocate 'org.apache.commons.math3', 'com.nisovin.magicspells.shaded.org.apache.commons'
-  magicspellsCoreJar.exclude "**${File.separator}*.xml"
-  magicspellsCoreJar.exclude "**${File.separator}*pom.properties"
-  magicspellsCoreJar.exclude "**${File.separator}**LocalizedFormats**"
+  magicspellsCoreJar.exclude "**${File.separator}*.xml", "**${File.separator}*pom.properties", "**${File.separator}**LocalizedFormats**"
   println magicspellsCoreJar.excludes
 }
 
@@ -217,7 +224,7 @@ task magicspellsTeamsCompile(type: JavaCompile) {
   classpath = magicspellsClasspathBase()
     .plus(magicspellsClasspathMSJar())
 
-  sourceCompatibility = "1.8"
+  sourceCompatibility = msconfig.javaTeamsVersion
 }
 
 task magicspellsTeamsCopyResources(type: Copy) {
@@ -255,7 +262,7 @@ task magicspellsMemoryCompile(type: JavaCompile) {
   classpath = magicspellsClasspathBase()
     .plus(magicspellsClasspathMSJar())
 
-  sourceCompatibility = "1.8"
+  sourceCompatibility = msconfig.javaMemoryVersion
 }
 
 task magicspellsMemoryCopyResources(type: Copy) {
@@ -296,7 +303,7 @@ task magicspellsShopCompile(type: JavaCompile) {
   classpath = magicspellsClasspathBase()
     .plus(magicspellsClasspathMSJar())
 
-  sourceCompatibility = "1.8"
+  sourceCompatibility = msconfig.javaShopVersion
 }
 
 task magicspellsShopCopyResources(type: Copy) {
@@ -335,9 +342,9 @@ task magicspellsTownyCompile(type: JavaCompile) {
 
   classpath = magicspellsClasspathBase()
     .plus(magicspellsClasspathMSJar())
-    .plus(project.files("${msconfig.libDir}${File.separator}Towny.jar"))
+    .plus(magicspellsClasspathTowny())
 
-  sourceCompatibility = "1.8"
+  sourceCompatibility = msconfig.javaTownyVersion
 }
 
 task magicspellsTownyCopyResources(type: Copy) {
@@ -376,10 +383,9 @@ task magicspellsFactionsCompile(type: JavaCompile) {
 
   classpath = magicspellsClasspathBase()
     .plus(magicspellsClasspathMSJar())
-    .plus(project.files("${msconfig.libDir}${File.separator}MassiveCore.jar"))
-    .plus(project.files("${msconfig.libDir}${File.separator}Factions.jar"))
+    .plus(magicspellsClasspathFactions())
 
-  sourceCompatibility = "1.8"
+  sourceCompatibility = msconfig.javaFactionsVersion
 }
 
 task magicspellsFactionsCopyResources(type: Copy) {
@@ -417,6 +423,7 @@ task magicspellsZip(type: Zip) {
     'magicspellsTownyJar',
     'magicspellsFactionsJar'
   ]
+  
   File distDir = project.file(msconfig.distDir)
 
   from distDir
