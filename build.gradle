@@ -4,10 +4,28 @@
 // Add -Prelease to the build command to version the jars with release versions
 // (defaults to dev build labeling)
 
+buildscript {
+  repositories {
+    jcenter()
+    mavenCentral()
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  }
+  dependencies {
+    classpath "com.github.jengelman.gradle.plugins:shadow:2.0.1"
+  }
+}
+
+apply plugin: 'java'
+apply plugin: 'com.github.johnrengelman.shadow'
+
 final String OPTION_DEPLOYMENT_NAMING = 'DeploymentNaming'
 final String OPTION_RELEASE = 'release'
 
-apply plugin: 'java'
+dependencies {
+  compile group: 'org.apache.commons', name: 'commons-math3', version: '3.0'
+}
 
 ext {
   magicspellsData = new MSConfig()
@@ -146,7 +164,7 @@ task magicspellsCoreCompile(type: JavaCompile) {
   destinationDir = buildDir
   source(msconfig.coreSrcDir)
 
-  classpath = magicspellsClasspathBase()
+  classpath = magicspellsClasspathBase().plus(configurations.compile)
   sourceCompatibility = "1.8"
 
   msconfig.stringVersionCore = "${msconfig.coreVersion}-${msconfig.versionSuffix}"
@@ -161,7 +179,7 @@ task magicspellsCoreCopyResources(type: Copy) {
   into "${msconfig.coreBuildDir}"
 }
 
-task magicspellsCoreJar(type: Jar) {
+task magicspellsCoreJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
   description = 'Create the main MagicSpells jar'
   dependsOn = [
     'magicspellsCoreCompile',
@@ -171,6 +189,18 @@ task magicspellsCoreJar(type: Jar) {
   if (project.hasProperty("${OPTION_DEPLOYMENT_NAMING}")) archiveName = 'MagicSpells.jar'
   destinationDir = project.file(msconfig.distDir)
   from("${msconfig.coreBuildDir}")
+  dependencies {
+    repositories {
+      mavenCentral()
+    }
+    dependency('org.apache.commons:commons-math3')
+  }
+  from (project.configurations.compile)
+  relocate 'org.apache.commons.math3', 'com.nisovin.magicspells.shaded.org.apache.commons'
+  magicspellsCoreJar.exclude "**${File.separator}*.xml"
+  magicspellsCoreJar.exclude "**${File.separator}*pom.properties"
+  magicspellsCoreJar.exclude "**${File.separator}**LocalizedFormats**"
+  println magicspellsCoreJar.excludes
 }
 
 task magicspellsTeamsCompile(type: JavaCompile) {
