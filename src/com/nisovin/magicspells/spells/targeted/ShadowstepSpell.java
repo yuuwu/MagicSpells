@@ -17,12 +17,18 @@ public class ShadowstepSpell extends TargetedSpell implements TargetedEntitySpel
 
 	private String strNoLandingSpot;
 	private double distance;
+
+	private float yaw;
+	private float pitch;
 	
 	public ShadowstepSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
 		strNoLandingSpot = getConfigString("str-no-landing-spot", "Cannot shadowstep there.");
 		distance = getConfigDouble("distance", -1);
+
+		pitch = getConfigFloat("pitch", 0);
+		yaw = getConfigFloat("yaw", 0);
 	}
 
 	@Override
@@ -47,8 +53,8 @@ public class ShadowstepSpell extends TargetedSpell implements TargetedEntitySpel
 		Location targetLoc = target.getLocation();
 		Vector facing = targetLoc.getDirection().setY(0).multiply(distance);
 		Location loc = targetLoc.toVector().add(facing).toLocation(targetLoc.getWorld());
-		loc.setPitch(0);
-		loc.setYaw(targetLoc.getYaw());
+		loc.setPitch(pitch);
+		loc.setYaw(targetLoc.getYaw() + yaw);
 		
 		// Check if clear
 		Block b = loc.getBlock();
