@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.nisovin.magicspells.util.projectile.ProjectileManager;
+import com.nisovin.magicspells.util.projectile.ProjectileManagers;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -29,6 +31,8 @@ public class HomingArrowSpell extends TargetedSpell implements TargetedEntitySpe
 	List<HomingArrow> arrows = new ArrayList<>();
 	int monitor = 0;
 	
+	ProjectileManager projectileManager;
+	
 	public HomingArrowSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
@@ -47,6 +51,8 @@ public class HomingArrowSpell extends TargetedSpell implements TargetedEntitySpe
 		} catch (ClassCastException e) {
 			MagicSpells.error("Couldn't cast \"" + projectileClassName + "\" as Projectile");
 		}
+		
+		projectileManager = ProjectileManagers.getManager(getConfigString("projectile-type",  "arrow"));
 	}
 
 	private void fireHomingArrow(Player player, Location from, LivingEntity target, float power) {
@@ -55,10 +61,10 @@ public class HomingArrowSpell extends TargetedSpell implements TargetedEntitySpe
 		if (from != null) {
 			v = target.getLocation().toVector().subtract(from.toVector()).normalize();
 			from = from.clone().setDirection(v);
-			projectile = from.getWorld().spawn(from, projectileType);
+			projectile = from.getWorld().spawn(from, projectileManager.getProjectileClass());
 			if (player != null) projectile.setShooter(player);
 		} else if (player != null) {
-			projectile = player.launchProjectile(projectileType);
+			projectile = projectileManager.launchProjectile(player);
 			v = player.getLocation().getDirection();
 		} else {
 			return;
