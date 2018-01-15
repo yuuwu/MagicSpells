@@ -1,6 +1,6 @@
 # MagicSpells
 Build status: [![Build Status](https://travis-ci.org/TheComputerGeek2/MagicSpells.svg?branch=master)](https://travis-ci.org/TheComputerGeek2/MagicSpells)
-Downloads: [![Github Releases](https://img.shields.io/github/downloads/atom/atom/latest/total.svg)](https://github.com/TheComputerGeek2/MagicSpells/releases)
+Downloads: [![Github Releases](https://img.shields.io/github/downloads/TheComputerGeek2/MagicSpells/total.svg)](https://github.com/TheComputerGeek2/MagicSpells/releases)
 
 MagicSpells is a Bukkit plugin that allows you to set up a magic system, and much more. The plugin is very configurable and flexible.
 This plugin has nearly endless possibilities.
