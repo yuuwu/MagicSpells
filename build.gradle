@@ -138,7 +138,7 @@ def magicspellsClean() {
 magicspellsClean()
 
 def magicspellsClasspathBase() {
-  return project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.11.2.jar")
+  return project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.12.jar")
     .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}EffectLib-4.0.jar"))
     .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.10.2.jar"))
     .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.9.4.jar"))
@@ -146,7 +146,7 @@ def magicspellsClasspathBase() {
     .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.8.7.jar"))
     .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.8-R0.1-SNAPSHOT.jar"))
     .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}ProtocolLib.jar"))
-    .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.12.jar"))
+    .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.11.2.jar"))
     .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}NoCheatPlus.jar"))
     .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}WorldEdit.jar"))
     .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}WorldGuard.jar"))
