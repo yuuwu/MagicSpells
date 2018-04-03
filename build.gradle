@@ -4,6 +4,17 @@
 // Add -Prelease to the build command to version the jars with release versions
 // (defaults to dev build labeling)
 
+// TODO make sure that the timestamps for the jars are correct
+// TODO make sure that the yml resources are always updated and correct timestamps
+// TODO move resource retrieval to its own task
+// TODO move the MSConfig data to settings.gradle
+// TODO make sure that builds are fast
+// TODO build the spigot server jars automatically  as needed
+// TODO create task to setup workspace
+// TODO make sure the clean task cleans everything properly
+// TODO make sure all builds can be cached where possible
+// TODO clean up dependency management
+
 buildscript {
   repositories {
     jcenter()
@@ -13,12 +24,14 @@ buildscript {
     }
   }
   dependencies {
-    classpath "com.github.jengelman.gradle.plugins:shadow:2.0.1"
+    classpath "com.github.jengelman.gradle.plugins:shadow:2.0.3"
+    classpath 'de.undercouch:gradle-download-task:3.4.2'
   }
 }
 
 apply plugin: 'java'
 apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'de.undercouch.download'
 
 final String OPTION_DEPLOYMENT_NAMING = 'DeploymentNaming'
 final String OPTION_RELEASE = 'release'
@@ -96,6 +109,7 @@ def downloadFile(File file, URL url) {
   }
 }
 
+// FIXME this should be setup as a task instead of a method running on configuration time
 // Ensures resource availability
 def magicspellsGetResources() {
   println 'Running the get resources phase'
@@ -117,16 +131,43 @@ def magicspellsGetResources() {
   println 'Finished running the get resources phase'
 }
 
-magicspellsGetResources()
+task getResidence(type: Download) {
+    dest new File(project.file(project.ext.magicspellsData.libDir), 'Residence.jar')
+    src 'http://ltcraft.lt/Residence/download.php?file=Residence4.5.3.0.jar'
+    overwrite false
+}
 
+// FIXME this should not be run at configuration time
+//magicspellsGetResources()
+task downloadDependencies() {
+    group = 'Setup'
+    dependsOn = [
+        'getResidence'
+    ]
+    doFirst {
+        magicspellsGetResources()
+    }
+}
+
+// FIXME fix up this task
 task magicspellsBuildVersion() {
   description = 'Assign version suffix in dev build format'
   msconfig.versionSuffix = "dev-${-> msconfig.datestampString}"
 }
 
+// FIXME fix up this task
 task magicspellsReleaseVersion() {
   description = 'Assign version suffix in release format'
   if (project.hasProperty("${OPTION_RELEASE}")) msconfig.versionSuffix = 'Release'
+}
+
+Spec<? super File> ymlFilter() {
+    return new Spec() {
+        boolean isSatisfiedBy(Object file) {
+            if (!(file instanceof File)) return false
+            return file.getName().endsWith("yml")
+        }
+    }
 }
 
 def magicspellsClean() {
@@ -135,7 +176,28 @@ def magicspellsClean() {
   project.file(project.ext.magicspellsData.distDir).mkdir()
 }
 
-magicspellsClean()
+project.tasks.getByPath("clean").doFirst({magicspellsClean()})
+
+def cleanYmlFiles() {
+    def files = project.files(project.ext.magicspellsData.coreBuildDir)
+      .plus(project.files(project.ext.magicspellsData.teamsBuildDir))
+      .plus(project.files(project.ext.magicspellsData.memoryBuildDir))
+      .plus(project.files(project.ext.magicspellsData.shopBuildDir))
+      .plus(project.files(project.ext.magicspellsData.townyBuildDir))
+      .plus(project.files(project.ext.magicspellsData.factionsBuildDir))
+      .filter(project.ymlFilter())
+    project.delete files
+}
+
+def cleanDistFolder() {
+  project.delete project.ext.magicspellsData.distDir
+  project.file(project.ext.magicspellsData.distDir).mkdir()
+}
+
+// FIXME this should be setup as a task instead of a method running on configuration time
+//magicspellsClean()
+cleanDistFolder()
+cleanYmlFiles()
 
 def magicspellsClasspathBase() {
   return project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.12.jar")
@@ -171,8 +233,13 @@ def magicspellsClasspathFactions() {
     .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}Factions.jar"))
 }
 
+// FIXME fix up this task
+// FIXME do more of this at build time, not config time
 task magicspellsCoreCompile(type: JavaCompile) {
   description = 'Compile the main MagicSpells java files'
+  dependsOn = [
+      'downloadDependencies'
+  ]
   File buildDir = project.file(msconfig.coreBuildDir)
   buildDir.mkdir()
   destinationDir = buildDir
@@ -184,6 +251,24 @@ task magicspellsCoreCompile(type: JavaCompile) {
   msconfig.stringVersionCore = "${msconfig.coreVersion}-${msconfig.versionSuffix}"
 }
 
+FileCollection coreYml = null
+task updateCoreYmlFiles() {
+    doFirst {
+        coreYml = project.files("${msconfig.coreBuildDir}").filter(ymlFilter())
+    }
+}
+
+task magicspellsCopyResourcesClean(type: Delete) {
+    dependsOn = [
+      "updateCoreYmlFiles"
+    ]
+
+    doFirst {
+        setProperty("delete", coreYml)
+    }
+}
+
+// FIXME fix up this task
 task magicspellsCoreCopyResources(type: Copy) {
   description = 'Copy yml resources for MagicSpells'
   from(msconfig.coreSrcDir) {
@@ -193,6 +278,7 @@ task magicspellsCoreCopyResources(type: Copy) {
   into "${msconfig.coreBuildDir}"
 }
 
+// FIXME do more of this at build time, not config time
 task magicspellsCoreJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
   description = 'Create the main MagicSpells jar'
   dependsOn = [
@@ -215,6 +301,7 @@ task magicspellsCoreJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.S
   println magicspellsCoreJar.excludes
 }
 
+// FIXME do more of this at build time, not config time
 task magicspellsTeamsCompile(type: JavaCompile) {
   description = 'Compile the teams addon'
   dependsOn = [
@@ -232,6 +319,7 @@ task magicspellsTeamsCompile(type: JavaCompile) {
   sourceCompatibility = msconfig.javaTeamsVersion
 }
 
+// FIXME fix up this task
 task magicspellsTeamsCopyResources(type: Copy) {
   description = 'Copy yml resources for MagicSpellsTeams'
   from(msconfig.teamsSrcDir) {
@@ -241,6 +329,7 @@ task magicspellsTeamsCopyResources(type: Copy) {
   into "${msconfig.teamsBuildDir}"
 }
 
+// FIXME do more of this at build time, not config time
 task magicspellsTeamsJar(type: Jar) {
   description = 'Create the teams addon jar'
   dependsOn = [
@@ -253,6 +342,7 @@ task magicspellsTeamsJar(type: Jar) {
   from("${msconfig.teamsBuildDir}")
 }
 
+// FIXME do more of this at build time, not config time
 task magicspellsMemoryCompile(type: JavaCompile) {
   description = 'Compile the memory addon'
   dependsOn = [
@@ -279,6 +369,7 @@ task magicspellsMemoryCopyResources(type: Copy) {
   into "${msconfig.memoryBuildDir}"
 }
 
+// FIXME do more of this at build time, not config time
 // Create the memory jar file
 task magicspellsMemoryJar(type: Jar) {
   description = 'Create the memory addon jar'
@@ -292,6 +383,7 @@ task magicspellsMemoryJar(type: Jar) {
   from("${msconfig.memoryBuildDir}")
 }
 
+// FIXME do more of this at build time, not config time
 // Compile shop addon
 task magicspellsShopCompile(type: JavaCompile) {
   description = 'Compile the shop addon'
@@ -333,6 +425,7 @@ task magicspellsShopJar(type: Jar) {
   from("${msconfig.shopBuildDir}")
 }
 
+// FIXME do more of this at build time, not config time
 // Compile towny addon
 task magicspellsTownyCompile(type: JavaCompile) {
   description = 'Compile the Towny addon'
@@ -428,7 +521,7 @@ task magicspellsZip(type: Zip) {
     'magicspellsTownyJar',
     'magicspellsFactionsJar'
   ]
-  
+
   File distDir = project.file(msconfig.distDir)
 
   from distDir
