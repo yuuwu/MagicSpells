@@ -36,12 +36,32 @@ apply plugin: 'de.undercouch.download'
 final String OPTION_DEPLOYMENT_NAMING = 'DeploymentNaming'
 final String OPTION_RELEASE = 'release'
 
-dependencies {
-  compile group: 'org.apache.commons', name: 'commons-math3', version: '3.0'
+configurations {
+    spigot
+    mscore.extendsFrom(compile)
+    factions.extendsFrom(spigot)
+    teams.extendsFrom(spigot)
+    memory.extendsFrom(spigot)
+    towny.extendsFrom(spigot)
+    shop.extendsFrom(spigot)
 }
 
 ext {
   magicspellsData = new MSConfig()
+}
+
+dependencies {
+  compile group: 'org.apache.commons', name: 'commons-math3', version: '3.0'
+  spigot magicspellsClasspathSpigot()
+  mscore magicspellsClasspathBase()
+  factions magicspellsClasspathFactions()
+  factions configurations.mscore.artifacts.getFiles()
+  teams configurations.mscore.artifacts.getFiles()
+  memory configurations.mscore.artifacts.getFiles()
+  towny configurations.mscore.artifacts.getFiles()
+  towny magicspellsClasspathTowny()
+  shop configurations.mscore.artifacts.getFiles()
+  shop magicspellsClasspathVault()
 }
 
 public class MSConfig {
@@ -200,28 +220,35 @@ cleanDistFolder()
 cleanYmlFiles()
 
 def magicspellsClasspathBase() {
-  return project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.12.jar")
-    .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}EffectLib-4.0.jar"))
-    .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.10.2.jar"))
-    .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.9.4.jar"))
-    .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.9.jar"))
-    .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.8.7.jar"))
-    .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.8-R0.1-SNAPSHOT.jar"))
+  return magicspellsClasspathSpigot()
+    .plus(magicspellsClasspathEffectlib())
     .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}ProtocolLib.jar"))
-    .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.11.2.jar"))
     .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}NoCheatPlus.jar"))
     .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}WorldEdit.jar"))
     .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}WorldGuard.jar"))
     .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}LibsDisguises-9.0.9.jar"))
     .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}Residence.jar"))
     .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}PlaceholderAPI.jar"))
-    .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}Vault.jar"))
+    .plus(magicspellsClasspathVault())
 	.plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}GriefPrevention.jar"))
 }
 
-def magicspellsClasspathMSJar() {
-  return project.files("${-> project.ext.magicspellsData.distDir}${File.separator}MagicSpells-${-> project.ext.magicspellsData.stringVersionCore}.jar")
-    .plus(project.files("${-> project.ext.magicspellsData.distDir}${File.separator}MagicSpells.jar"))
+def magicspellsClasspathVault() {
+    return project.files("${-> project.ext.magicspellsData.libDir}${File.separator}Vault.jar")
+}
+
+def magicspellsClasspathEffectlib() {
+    return project.files("${-> project.ext.magicspellsData.libDir}${File.separator}EffectLib-4.0.jar")
+}
+
+def magicspellsClasspathSpigot() {
+    return project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.12.jar")
+      .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.10.2.jar"))
+      .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.9.4.jar"))
+      .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.9.jar"))
+      .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.8.7.jar"))
+      .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.8-R0.1-SNAPSHOT.jar"))
+      .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.11.2.jar"))
 }
 
 def magicspellsClasspathTowny() {
@@ -245,7 +272,7 @@ task magicspellsCoreCompile(type: JavaCompile) {
   destinationDir = buildDir
   source(msconfig.coreSrcDir)
 
-  classpath = magicspellsClasspathBase().plus(configurations.compile)
+  classpath = configurations.mscore
   sourceCompatibility = msconfig.javaCoreVersion
 
   msconfig.stringVersionCore = "${msconfig.coreVersion}-${msconfig.versionSuffix}"
@@ -313,8 +340,7 @@ task magicspellsTeamsCompile(type: JavaCompile) {
   destinationDir = buildDir
   source(msconfig.teamsSrcDir)
 
-  classpath = magicspellsClasspathBase()
-    .plus(magicspellsClasspathMSJar())
+  classpath = configurations.teams
 
   sourceCompatibility = msconfig.javaTeamsVersion
 }
@@ -354,8 +380,7 @@ task magicspellsMemoryCompile(type: JavaCompile) {
   destinationDir = buildDir
   source(msconfig.memorySrcDir)
 
-  classpath = magicspellsClasspathBase()
-    .plus(magicspellsClasspathMSJar())
+  classpath = configurations.memory
 
   sourceCompatibility = msconfig.javaMemoryVersion
 }
@@ -397,8 +422,7 @@ task magicspellsShopCompile(type: JavaCompile) {
   destinationDir = buildDir
   source(msconfig.shopSrcDir)
 
-  classpath = magicspellsClasspathBase()
-    .plus(magicspellsClasspathMSJar())
+  classpath = configurations.shop
 
   sourceCompatibility = msconfig.javaShopVersion
 }
@@ -438,9 +462,7 @@ task magicspellsTownyCompile(type: JavaCompile) {
   destinationDir = buildDir
   source(msconfig.townySrcDir)
 
-  classpath = magicspellsClasspathBase()
-    .plus(magicspellsClasspathMSJar())
-    .plus(magicspellsClasspathTowny())
+  classpath = configurations.towny
 
   sourceCompatibility = msconfig.javaTownyVersion
 }
@@ -479,9 +501,7 @@ task magicspellsFactionsCompile(type: JavaCompile) {
   destinationDir = buildDir
   source(msconfig.factionsSrcDir)
 
-  classpath = magicspellsClasspathBase()
-    .plus(magicspellsClasspathMSJar())
-    .plus(magicspellsClasspathFactions())
+  classpath = configurations.factions
 
   sourceCompatibility = msconfig.javaFactionsVersion
 }
@@ -524,11 +544,7 @@ task magicspellsZip(type: Zip) {
 
   File distDir = project.file(msconfig.distDir)
 
-  from distDir
-  include distDir.list({
-    name -> name.endsWith('.jar')
-    })
-  exclude('MagicSpells.zip')
+  from magicspellsCoreJar, magicspellsMemoryJar, magicspellsShopJar, magicspellsTeamsJar, magicspellsTownyJar, magicspellsFactionsJar
   eachFile({
     fcd -> println(fcd.getName())
     })
@@ -564,11 +580,11 @@ task magicspellsRelease() {
 }
 
 artifacts {
-  archives magicspellsCoreJar
-  archives magicspellsTeamsJar
-  archives magicspellsMemoryJar
-  archives magicspellsShopJar
-  archives magicspellsTownyJar
-  archives magicspellsFactionsJar
+  mscore magicspellsCoreJar
+  teams magicspellsTeamsJar
+  memory magicspellsMemoryJar
+  shop magicspellsShopJar
+  towny magicspellsTownyJar
+  factions magicspellsFactionsJar
   archives magicspellsZip
 }
