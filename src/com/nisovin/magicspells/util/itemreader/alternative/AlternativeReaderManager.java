@@ -25,7 +25,7 @@ public class AlternativeReaderManager {
 		ItemConfigTransformer transformer = getReader(configurationSection.getString("type"));
 		if (transformer == null) return null;
 		
-		return transformer.deserialize(configurationSection.getConfigurationSection("data"));
+		return transformer.deserialize(configurationSection);
 	}
 	
 }

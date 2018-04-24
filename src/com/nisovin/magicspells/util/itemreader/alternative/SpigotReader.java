@@ -10,7 +10,7 @@ public class SpigotReader implements ItemConfigTransformer {
 	@Override
 	public ItemStack deserialize(ConfigurationSection section) {
 		if (section == null) return null;
-		return ItemStack.deserialize(section.getValues(false));
+		return section.getItemStack("data");
 	}
 	
 	@Override
