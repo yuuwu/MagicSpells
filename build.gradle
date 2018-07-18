@@ -26,12 +26,14 @@ buildscript {
   dependencies {
     classpath "com.github.jengelman.gradle.plugins:shadow:2.0.3"
     classpath 'de.undercouch:gradle-download-task:3.4.2'
+    classpath "com.sarhanm:gradle-versioner:2.4.0"
   }
 }
 
 apply plugin: 'java'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'de.undercouch.download'
+apply plugin: "com.sarhanm.versioner"
 
 final String OPTION_DEPLOYMENT_NAMING = 'DeploymentNaming'
 final String OPTION_RELEASE = 'release'
@@ -577,6 +579,24 @@ task magicspellsRelease() {
     'magicspellsReleaseVersion',
     'magicspellsJarAll'
   ]
+}
+
+apply plugin: 'maven-publish'
+
+group = 'com.github.TheComputerGeek2'
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = 'com.github.TheComputerGeek2'
+            version = "MagicSpells-${msconfig.coreVersion}-${gitdata.getCommit()}"
+            artifact magicspellsCoreJar
+            pom {
+                // https://docs.gradle.org/current/dsl/org.gradle.api.publish.maven.MavenPublication.html#N1ACB3
+                // https://docs.gradle.org/current/dsl/org.gradle.api.publish.maven.MavenPom.html
+            }
+        }
+    }
 }
 
 artifacts {
