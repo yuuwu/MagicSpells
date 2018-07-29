@@ -4,12 +4,9 @@
 // Add -Prelease to the build command to version the jars with release versions
 // (defaults to dev build labeling)
 
-// TODO make sure that the timestamps for the jars are correct
-// TODO make sure that the yml resources are always updated and correct timestamps
-// TODO move resource retrieval to its own task
-// TODO move the MSConfig data to settings.gradle
-// TODO make sure that builds are fast
-// TODO build the spigot server jars automatically  as needed
+// possible concern: make sure that the timestamps for the jars are correct
+// possible concern: make sure that the yml resources are always updated and correct timestamps
+// TODO build the spigot server jars automatically as needed
 // TODO create task to setup workspace
 // TODO make sure the clean task cleans everything properly
 // TODO make sure all builds can be cached where possible
@@ -591,10 +588,6 @@ publishing {
             groupId = 'com.github.TheComputerGeek2'
             version = "MagicSpells-${msconfig.coreVersion}-${gitdata.getCommit()}"
             artifact magicspellsCoreJar
-            pom {
-                // https://docs.gradle.org/current/dsl/org.gradle.api.publish.maven.MavenPublication.html#N1ACB3
-                // https://docs.gradle.org/current/dsl/org.gradle.api.publish.maven.MavenPom.html
-            }
         }
     }
 }
