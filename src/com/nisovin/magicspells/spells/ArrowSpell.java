@@ -248,7 +248,7 @@ public class ArrowSpell extends Spell {
 							Player shooter = (Player) arrow.getShooter();
 							if (data.casted) return;
 							if (data.spell.onCooldown(shooter)) {
-								MagicSpells.sendMessage(formatMessage(data.spell.strOnCooldown, "%c", Math.round(getCooldown(shooter)) + ""), shooter, null);
+								MagicSpells.sendMessage(formatMessage(strOnCooldown, "%c", Math.round(getCooldown(shooter)) + ""), shooter, null);
 								return;
 							}
 							if (!data.spell.hasReagents(shooter, data.arrowSpellDataReagents)) {

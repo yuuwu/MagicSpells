@@ -120,7 +120,7 @@ public class BowSpell extends Spell {
 				return;
 			}
 			if (!thisSpell.hasReagents(shooter)) {
-				MagicSpells.sendMessage(strMissingReagents, shooter, null);
+				MagicSpells.sendMessage(thisSpell.strMissingReagents, shooter, null);
 				return;
 			}
 
