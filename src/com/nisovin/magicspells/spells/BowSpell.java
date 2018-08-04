@@ -123,6 +123,8 @@ public class BowSpell extends Spell {
 			event.setCancelled(true);
 			event.getProjectile().remove();
 			spell.spellOnShoot.cast(shooter, evt1.getPower());
+			thisSpell.setCooldown(shooter, thisSpell.cooldown);
+			thisSpell.removeReagents(shooter);
 			SpellCastedEvent evt2 = new SpellCastedEvent(thisSpell, shooter, SpellCastState.NORMAL, evt1.getPower(), null, thisSpell.cooldown, thisSpell.reagents, PostCastAction.HANDLE_NORMALLY);
 			EventUtil.call(evt2);
 		}
