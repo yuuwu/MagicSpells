@@ -115,7 +115,15 @@ public class BowSpell extends Spell {
 			if (spell == null) return;
 			if (!spellbook.hasSpell(spell)) return;
 			if (!spellbook.canCast(spell)) return;
-			
+			if (thisSpell.onCooldown(shooter)) {
+				MagicSpells.sendMessage(formatMessage(thisSpell.strOnCooldown, "%c", Math.round(getCooldown(shooter)) + ""), shooter, null);
+				return;
+			}
+			if (!thisSpell.hasReagents(shooter)) {
+				MagicSpells.sendMessage(strMissingReagents, shooter, null);
+				return;
+			}
+
 			SpellCastEvent evt1 = new SpellCastEvent(thisSpell, shooter, SpellCastState.NORMAL, useBowForce ? event.getForce() : 1.0F, null, thisSpell.cooldown, thisSpell.reagents, 0);
 			EventUtil.call(evt1);
 			if (evt1.isCancelled()) return;
