@@ -256,13 +256,13 @@ public class ArrowSpell extends Spell {
 								return;
 							}
 
-                            boolean success = data.spell.spellOnHitGround.castAtLocation(shooter, arrow.getLocation(), data.power);
-                            if (success) {
-                                data.spell.setCooldown(shooter, data.spell.cooldown);
-                                data.spell.removeReagents(shooter, data.arrowSpellDataReagents);
-                            }
-                            data.casted = true;
-                            arrow.removeMetadata(METADATA_KEY, MagicSpells.plugin);
+							boolean success = data.spell.spellOnHitGround.castAtLocation(shooter, arrow.getLocation(), data.power);
+							if (success) {
+								data.spell.setCooldown(shooter, data.spell.cooldown);
+								data.spell.removeReagents(shooter, data.arrowSpellDataReagents);
+							}
+							data.casted = true;
+							arrow.removeMetadata(METADATA_KEY, MagicSpells.plugin);
 						}
 					}, 0);
 				}
