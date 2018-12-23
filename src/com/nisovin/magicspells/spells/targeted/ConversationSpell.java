@@ -29,7 +29,7 @@ public class ConversationSpell extends TargetedSpell {
 			Player target = targetInfo.getTarget();
 			Conversation c = conversationFactory.buildConversation(target);
 			ConversationContextUtil.setconversable(c.getContext(), target);
-			
+			c.begin();
 			return PostCastAction.HANDLE_NORMALLY;
 		}
 		return PostCastAction.HANDLE_NORMALLY;
