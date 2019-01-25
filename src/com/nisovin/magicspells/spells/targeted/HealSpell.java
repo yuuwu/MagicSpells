@@ -1,5 +1,6 @@
 package com.nisovin.magicspells.spells.targeted;
 
+import com.nisovin.magicspells.util.Util;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
@@ -27,7 +28,7 @@ public class HealSpell extends TargetedSpell implements TargetedEntitySpell {
 		cancelIfFull = getConfigBoolean("cancel-if-full", true);
 		strMaxHealth = getConfigString("str-max-health", "%t is already at max health.");
 		checkPlugins = getConfigBoolean("check-plugins", true);
-		checker = (LivingEntity entity) -> entity.getHealth() < entity.getMaxHealth();
+		checker = (LivingEntity entity) -> entity.getHealth() < Util.getMaxHealth(entity);
 	}
 
 	@Override
@@ -37,7 +38,7 @@ public class HealSpell extends TargetedSpell implements TargetedEntitySpell {
 			if (targetInfo == null) return noTarget(player);
 			LivingEntity target = targetInfo.getTarget();
 			power = targetInfo.getPower();
-			if (cancelIfFull && target.getHealth() == target.getMaxHealth()) return noTarget(player, formatMessage(strMaxHealth, "%t", getTargetName(target)));
+			if (cancelIfFull && target.getHealth() == Util.getMaxHealth(target)) return noTarget(player, formatMessage(strMaxHealth, "%t", getTargetName(target)));
 			boolean healed = heal(player, target, power);
 			if (!healed) return noTarget(player);
 			sendMessages(player, target);				
@@ -56,7 +57,7 @@ public class HealSpell extends TargetedSpell implements TargetedEntitySpell {
 			amt = evt.getAmount();
 		}
 		health += amt;
-		if (health > target.getMaxHealth()) health = target.getMaxHealth();
+		if (health > Util.getMaxHealth(target)) health = Util.getMaxHealth(target);
 		target.setHealth(health);
 
 		playSpellEffects(EffectPosition.TARGET, target);
@@ -70,13 +71,13 @@ public class HealSpell extends TargetedSpell implements TargetedEntitySpell {
 
 	@Override
 	public boolean castAtEntity(Player caster, LivingEntity target, float power) {
-		if (validTargetList.canTarget(caster, target) && target.getHealth() < target.getMaxHealth()) return heal(caster, target, power);
+		if (validTargetList.canTarget(caster, target) && target.getHealth() < Util.getMaxHealth(target)) return heal(caster, target, power);
 		return false;
 	}
 
 	@Override
 	public boolean castAtEntity(LivingEntity target, float power) {
-		if (validTargetList.canTarget(target) && target.getHealth() < target.getMaxHealth()) return heal(null, target, power);
+		if (validTargetList.canTarget(target) && target.getHealth() < Util.getMaxHealth(target)) return heal(null, target, power);
 		return false;
 	}
 	

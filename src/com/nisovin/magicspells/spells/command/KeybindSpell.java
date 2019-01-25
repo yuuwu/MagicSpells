@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -21,7 +20,6 @@ import org.bukkit.inventory.ItemStack;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spell;
 import com.nisovin.magicspells.spells.CommandSpell;
-import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.Util;
 
@@ -96,7 +94,7 @@ public class KeybindSpell extends CommandSpell {
 			Keybinds keybinds = this.playerKeybinds.computeIfAbsent(player.getName(), name -> new Keybinds(player));
 			
 			int slot = player.getInventory().getHeldItemSlot();
-			ItemStack item = HandHandler.getItemInMainHand(player);
+			ItemStack item = player.getEquipment().getItemInMainHand();
 			
 			if (args[0].equalsIgnoreCase("clear")) {
 				keybinds.clearKeybind(slot);

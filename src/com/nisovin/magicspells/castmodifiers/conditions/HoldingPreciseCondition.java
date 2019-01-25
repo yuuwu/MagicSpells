@@ -1,7 +1,6 @@
 package com.nisovin.magicspells.castmodifiers.conditions;
 
 import com.nisovin.magicspells.castmodifiers.Condition;
-import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.InventoryUtil;
 import com.nisovin.magicspells.util.Util;
 import org.bukkit.Location;
@@ -26,14 +25,14 @@ public class HoldingPreciseCondition extends Condition {
 
 	@Override
 	public boolean check(Player player) {
-		ItemStack item = HandHandler.getItemInMainHand(player);
+		ItemStack item = player.getEquipment().getItemInMainHand();
 		return check(item);
 	}
 	
 	@Override
 	public boolean check(Player player, LivingEntity target) {
 		EntityEquipment equip = target.getEquipment();
-		return equip != null && check(HandHandler.getItemInMainHand(equip));
+		return equip != null && check(equip.getItemInMainHand());
 	}
 	
 	@Override

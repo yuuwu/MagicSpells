@@ -15,7 +15,6 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
-import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 
 public class RepairSpell extends InstantSpell {
@@ -88,12 +87,12 @@ public class RepairSpell extends InstantSpell {
 			int repaired = 0;
 			for (String s : this.toRepair) {
 				if (s.equals(REPAIR_SELECTOR_KEY_HELD)) {
-					ItemStack item = HandHandler.getItemInMainHand(player);
+					ItemStack item = player.getEquipment().getItemInMainHand();
 					if (item == null) continue;
 					if (!isRepairable(item.getType())) continue;
 					if (item.getDurability() > 0) {
 						item.setDurability(newDura(item));
-						HandHandler.setItemInMainHand(player, item);
+						player.getEquipment().setItemInMainHand(item);
 						repaired++;
 					}
 					continue;

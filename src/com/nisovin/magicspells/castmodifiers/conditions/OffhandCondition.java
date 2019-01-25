@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import com.nisovin.magicspells.castmodifiers.Condition;
-import com.nisovin.magicspells.util.HandHandler;
 
 import java.util.Objects;
 
@@ -63,7 +62,7 @@ public class OffhandCondition extends Condition {
 
 	@Override
 	public boolean check(Player player) {
-		ItemStack item = HandHandler.getItemInOffHand(player);
+		ItemStack item = player.getEquipment().getItemInOffHand();
 		return check(item);
 	}
 	

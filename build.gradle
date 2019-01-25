@@ -242,12 +242,6 @@ def magicspellsClasspathEffectlib() {
 
 def magicspellsClasspathSpigot() {
     return project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.12.jar")
-      .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.10.2.jar"))
-      .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.9.4.jar"))
-      .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.9.jar"))
-      .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.8.7.jar"))
-      .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.8-R0.1-SNAPSHOT.jar"))
-      .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.11.2.jar"))
 }
 
 def magicspellsClasspathTowny() {

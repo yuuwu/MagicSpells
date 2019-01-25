@@ -3,18 +3,15 @@ package com.nisovin.magicspells.spells.targeted;
 import java.util.Random;
 
 import org.bukkit.DyeColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Sheep;
 
-import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
-import com.nisovin.magicspells.util.Util;
 
 //This spell currently support the shearing of sheep at the moment.
 //Future tweaks for the shearing of other mobs will be added.

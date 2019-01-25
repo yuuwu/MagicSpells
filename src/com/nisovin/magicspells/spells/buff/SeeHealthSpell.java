@@ -3,6 +3,7 @@ package com.nisovin.magicspells.spells.buff;
 import java.util.HashMap;
 import java.util.Random;
 
+import com.nisovin.magicspells.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -20,7 +21,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spells.BuffSpell;
-import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
 import com.nisovin.magicspells.util.TargetInfo;
@@ -72,14 +72,14 @@ public class SeeHealthSpell extends BuffSpell {
 	void showHealthBar(Player player, LivingEntity entity) {
 		int slot = player.getInventory().getHeldItemSlot();
 		// Get item
-		ItemStack item = HandHandler.getItemInMainHand(player);
+		ItemStack item = player.getEquipment().getItemInMainHand();
 		if (item == null || item.getType() == Material.AIR) {
 			item = new ItemStack(Material.PISTON_MOVING_PIECE, 0);
 		} else {
 			item = item.clone();
 		}
 		// Get pct health
-		double pct = (double)entity.getHealth() / (double)entity.getMaxHealth();
+		double pct = (double)entity.getHealth() / (double) Util.getMaxHealth(entity);
 		// Get bar color
 		ChatColor color = ChatColor.WHITE;
 		if (pct <= .2) {
@@ -120,7 +120,7 @@ public class SeeHealthSpell extends BuffSpell {
 	//}
 	
 	private void resetHealthBar(Player player, int slot) {
-		MagicSpells.getVolatileCodeHandler().sendFakeSlotUpdate(player, slot, HandHandler.getItemInMainHand(player));
+		MagicSpells.getVolatileCodeHandler().sendFakeSlotUpdate(player, slot, player.getEquipment().getItemInMainHand());
 	}
 	
 	@EventHandler

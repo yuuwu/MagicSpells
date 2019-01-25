@@ -5,7 +5,6 @@ import java.util.Map;
 
 import com.nisovin.magicspells.util.TimeUtil;
 import com.nisovin.magicspells.util.Util;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

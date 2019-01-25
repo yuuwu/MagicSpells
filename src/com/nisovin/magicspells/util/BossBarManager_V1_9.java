@@ -10,6 +10,7 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 
+@Deprecated
 public class BossBarManager_V1_9 implements BossBarManager {
 
 	Map<String, BossBar> bars = new HashMap<>();

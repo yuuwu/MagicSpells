@@ -28,105 +28,9 @@ import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.events.SpellTargetEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.util.compat.EventUtil;
-import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellReagents;
 
-/**
- * ArrowSpell<br>
- * <table border=1>
- *     <tr>
- *         <th>
- *             Config Field
- *         </th>
- *         <th>
- *             Data Type
- *         </th>
- *         <th>
- *             Description
- *         </th>
- *         <th>
- *             Default
- *         </th>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>bow-name</code>
- *         </td>
- *         <td>
- *             String
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             <code>null</code>
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>spell-on-hit-entity</code>
- *         </td>
- *         <td>
- *             String
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             <code>null</code>
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>spell-on-hit-ground</code>
- *         </td>
- *         <td>
- *             String
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             <code>null</code>
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>use-bow-force</code>
- *         </td>
- *         <td>
- *             Boolean
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             <code>true</code>
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *         </td>
- *         <td>
- *         </td>
- *         <td>
- *         </td>
- *         <td>
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *         </td>
- *         <td>
- *         </td>
- *         <td>
- *         </td>
- *         <td>
- *         </td>
- *     </tr>
- * </table>
- */
 public class ArrowSpell extends Spell {
 
 	private static ArrowSpellHandler handler;
@@ -209,7 +113,7 @@ public class ArrowSpell extends Spell {
 		public void onArrowLaunch(EntityShootBowEvent event) {
 			if (event.getEntity().getType() != EntityType.PLAYER) return;
 			Player shooter = (Player)event.getEntity();
-			ItemStack inHand = HandHandler.getItemInMainHand(shooter);
+			ItemStack inHand = shooter.getEquipment().getItemInMainHand();
 			if (inHand == null || inHand.getType() != Material.BOW) return;
 			String bowName = inHand.getItemMeta().getDisplayName();
 			if (bowName == null) return;

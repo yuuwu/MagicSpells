@@ -139,7 +139,7 @@ public class FireballSpell extends TargetedSpell implements TargetedEntityFromLo
 				player.getWorld().playEffect(player.getLocation(), Effect.GHAST_SHOOT, 0);
 				fireballs.put(fireball, power);
 			}
-			MagicSpells.getVolatileCodeHandler().setGravity(fireball, fireballGravity);
+			fireball.setGravity(fireballGravity);
 			fireball.setShooter(player);
 			
 			playSpellEffects(EffectPosition.CASTER, player);
@@ -162,7 +162,7 @@ public class FireballSpell extends TargetedSpell implements TargetedEntityFromLo
 		loc.add(facing.multiply(2));
 		
 		Fireball fireball = from.getWorld().spawn(loc, Fireball.class);
-		MagicSpells.getVolatileCodeHandler().setGravity(fireball, fireballGravity);
+		fireball.setGravity(fireballGravity);
 		if (caster != null) fireball.setShooter(caster);
 		fireballs.put(fireball, power);
 		

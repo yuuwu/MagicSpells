@@ -19,7 +19,6 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
 import com.nisovin.magicspells.util.Util;
@@ -124,13 +123,13 @@ public class DisarmSpell extends TargetedSpell implements TargetedEntitySpell {
 	ItemStack getItemInHand(LivingEntity entity) {
 		EntityEquipment equip = entity.getEquipment();
 		if (equip == null) return null;
-		return HandHandler.getItemInMainHand(equip);
+		return equip.getItemInMainHand();
 	}
 	
 	void setItemInHand(LivingEntity entity, ItemStack item) {
 		EntityEquipment equip = entity.getEquipment();
 		if (equip == null) return;
-		HandHandler.setItemInMainHand(equip, item);
+		equip.setItemInMainHand(item);
 	}
 
 	@Override

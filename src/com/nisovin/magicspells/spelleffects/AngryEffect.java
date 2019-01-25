@@ -5,33 +5,6 @@ import org.bukkit.configuration.ConfigurationSection;
 
 import de.slikey.effectlib.util.ParticleEffect;
 
-/**
- * AngryEffect<br>
- * <table border=1>
- *     	<tr>
- *         <th>
- *             Config Field
- *         </th>
- *    	     <th>
- *             Data Type
- *         </th>
- *         <th>
- *             Description
- *         </th>
- *     	</tr>
- *     	<tr>
- *         	<td>
- *         		<code>range</code>
- *         	</td>
- *         	<td>
- *         		Integer
- *         	</td>
- *         	<td>
- *         		How far the effect should be visible.
- *         	</td>
- *     	</tr>
- * </table>
- */
 public class AngryEffect extends SpellEffect {
 
 	private ParticleEffect effect = ParticleEffect.VILLAGER_ANGRY;

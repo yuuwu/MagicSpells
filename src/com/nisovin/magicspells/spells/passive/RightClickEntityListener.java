@@ -13,9 +13,9 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.spells.PassiveSpell;
-import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.OverridePriority;
 import com.nisovin.magicspells.util.Util;
+import org.bukkit.inventory.EquipmentSlot;
 
 // Trigger variable option is optional
 // If not defined, it will trigger regardless of entity type
@@ -64,7 +64,7 @@ public class RightClickEntityListener extends PassiveListener {
 		Map<EntityType, List<PassiveSpell>> typeMapLocal;
 		List<PassiveSpell> allTypesLocal;
 		
-		if (HandHandler.isMainHand(event)) {
+		if (event.getHand() == EquipmentSlot.HAND) {
 			typeMapLocal = types;
 			allTypesLocal = allTypes;
 		} else {

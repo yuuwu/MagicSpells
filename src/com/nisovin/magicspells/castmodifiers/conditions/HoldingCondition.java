@@ -9,7 +9,6 @@ import org.bukkit.inventory.ItemStack;
 
 import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.castmodifiers.Condition;
-import com.nisovin.magicspells.util.HandHandler;
 
 import java.util.Objects;
 
@@ -66,14 +65,14 @@ public class HoldingCondition extends Condition {
 
 	@Override
 	public boolean check(Player player) {
-		ItemStack item = HandHandler.getItemInMainHand(player);
+		ItemStack item = player.getEquipment().getItemInMainHand();
 		return check(item);
 	}
 	
 	@Override
 	public boolean check(Player player, LivingEntity target) {
 		EntityEquipment equip = target.getEquipment();
-		return equip != null && check(HandHandler.getItemInMainHand(equip));
+		return equip != null && check(equip.getItemInMainHand());
 	}
 	
 	@Override

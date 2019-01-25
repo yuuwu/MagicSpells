@@ -268,14 +268,14 @@ public class MinionSpell extends BuffSpell {
 		}
 
 		if (minion instanceof Zombie) ((Zombie)minion).setBaby(baby);
-		MagicSpells.getVolatileCodeHandler().setGravity(minion, gravity);
+		minion.setGravity(gravity);
 		minion.setCustomName(ChatColor.translateAlternateColorCodes('&', minionName.replace("%c", player.getName())));
 		minion.setCustomNameVisible(true);
 		if (powerAffectsHealth) {
-			minion.setMaxHealth(maxHealth * power * powerHealthFactor);
+			Util.setMaxHealth(minion, maxHealth * power * powerHealthFactor);
 			minion.setHealth(health * power * powerHealthFactor);
 		} else {
-			minion.setMaxHealth(maxHealth);
+			Util.setMaxHealth(minion, maxHealth);
 			minion.setHealth(health);
 		}
 

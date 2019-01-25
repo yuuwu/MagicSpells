@@ -24,37 +24,10 @@ import com.nisovin.magicspells.Spell;
 import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spells.CommandSpell;
-import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellReagents;
 import com.nisovin.magicspells.util.Util;
 
-/**
- * public class ScrollSpell extends {@link CommandSpell}
- * Configuration fields:
- * <ul>
- * <li>cast-for-free: true</li>
- * <li>ignore-cast-perm: false</li>
- * <li>bypass-normal-checks: false</li>
- * <li>default-uses: 5</li>
- * <li>max-uses: 10</li>
- * <li>item-id: paper</li>
- * <li>right-click-cast: true</li>
- * <li>left-click-cast: false</li>
- * <li>remove-scroll-when-depleted: true</li>
- * <li>charge-reagents-for-spell-per-charge: false</li>
- * <li>require-teach-perm: true</li>
- * <li>require-scroll-cast-perm-on-use: true</li>
- * <li>str-scroll-name: "Magic Scroll: %s"</li>
- * <li>str-scroll-subtext: "Uses remaining: %u"</li>
- * <li>str-usage: "You must hold a single blank paper \nand type /cast scroll <spell> <uses>."</li>
- * <li>str-no-spell: "You do not know a spell by that name."</li>
- * <li>str-cant-teach: "You cannot create a scroll with that spell."</li>
- * <li>str-on-use: "Spell Scroll: %s used. %u uses remaining."</li>
- * <li>str-use-fail: "Unable to use this scroll right now."</li>
- * <li>predefined-scrolls: null</li>
- * <ul>
-*/
 public class ScrollSpell extends CommandSpell {
 
 	private static final Pattern CAST_ARGUMENT_USE_COUNT_PATTERN = Pattern.compile("^-?[0-9]+$");
@@ -149,7 +122,7 @@ public class ScrollSpell extends CommandSpell {
 			}
 			
 			// Get item in hand
-			ItemStack inHand = HandHandler.getItemInMainHand(player);
+			ItemStack inHand = player.getEquipment().getItemInMainHand();
 			if (inHand.getAmount() != 1 || !itemType.equals(inHand)) {
 				// Fail -- incorrect item in hand
 				sendMessage(this.strUsage, player, args);
@@ -192,7 +165,7 @@ public class ScrollSpell extends CommandSpell {
 			
 			// Create scroll
 			inHand = createScroll(spell, uses, inHand);
-			HandHandler.setItemInMainHand(player, inHand);
+			player.getEquipment().setItemInMainHand(inHand);
 			
 			// Done
 			sendMessage(formatMessage(this.strCastSelf, "%s", spell.getName()), player, args);
@@ -241,7 +214,7 @@ public class ScrollSpell extends CommandSpell {
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		if (!actionAllowedForCast(event.getAction())) return;
 		Player player = event.getPlayer();
-		ItemStack inHand = HandHandler.getItemInMainHand(player);
+		ItemStack inHand = player.getEquipment().getItemInMainHand();
 		if (this.itemType.getMaterial() != inHand.getType() || inHand.getAmount() > 1) return;
 		
 		// Check for predefined scroll
@@ -250,7 +223,7 @@ public class ScrollSpell extends CommandSpell {
 			if (spell != null) {
 				int uses = this.predefinedScrollUses.get(Integer.valueOf(inHand.getDurability()));
 				inHand = createScroll(spell, uses, inHand);
-				HandHandler.setItemInMainHand(player, inHand);
+				player.getEquipment().setItemInMainHand(inHand);
 			}
 		}
 		
@@ -297,13 +270,13 @@ public class ScrollSpell extends CommandSpell {
 				if (uses > 0) {
 					inHand = createScroll(spell, uses, inHand);
 					if (this.textContainsUses) {
-						HandHandler.setItemInMainHand(player, inHand);
+						player.getEquipment().setItemInMainHand(inHand);
 					}
 				} else {
 					if (this.removeScrollWhenDepleted) {
-						HandHandler.setItemInMainHand(player, null);
+						player.getEquipment().setItemInMainHand(null);
 					} else {
-						HandHandler.setItemInMainHand(player, itemType.toItemStack(1));
+						player.getEquipment().setItemInMainHand(itemType.toItemStack(1));
 					}
 				}
 			}

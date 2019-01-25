@@ -25,39 +25,6 @@ import com.nisovin.magicspells.util.BlockUtils;
 import com.nisovin.magicspells.util.LocationUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 
-/**
- * LilywalkSpell<br>
- * <table border=1>
- *     <tr>
- *         <th>
- *             Config Field
- *         </th>
- *         <th>
- *             Data Type
- *         </th>
- *         <th>
- *             Description
- *         </th>
- *         <ht>
- *             Default
- *         </ht>
- *     </tr>
- *     <tr>
- *         <td>
- *             cancel-on-teleport
- *         </td>
- *         <td>
- *             Boolean
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             true
- *         </td>
- *     </tr>
- * </table>
- */
 public class LilywalkSpell extends BuffSpell {
 	
 	private boolean cancelOnTeleport;

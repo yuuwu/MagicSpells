@@ -5,7 +5,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.castmodifiers.Condition;
-import com.nisovin.magicspells.util.GlidingUtil;
 
 public class GlidingCondition extends Condition {
 
@@ -16,12 +15,12 @@ public class GlidingCondition extends Condition {
 
 	@Override
 	public boolean check(Player player) {
-		return GlidingUtil.isGliding(player);
+		return player.isGliding();
 	}
 
 	@Override
 	public boolean check(Player player, LivingEntity target) {
-		return GlidingUtil.isGliding(target);
+		return target.isGliding();
 	}
 
 	@Override

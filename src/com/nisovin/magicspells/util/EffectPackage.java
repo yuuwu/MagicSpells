@@ -3,6 +3,7 @@ package com.nisovin.magicspells.util;
 import de.slikey.effectlib.util.ParticleEffect;
 import de.slikey.effectlib.util.ParticleEffect.ParticleData;
 
+@Deprecated
 public class EffectPackage {
 	
 	public ParticleEffect effect;

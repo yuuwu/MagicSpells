@@ -38,7 +38,6 @@ import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.BlockUtils;
 import com.nisovin.magicspells.util.EntityData;
-import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.TargetInfo;
 import com.nisovin.magicspells.util.Util;
 import com.nisovin.magicspells.util.MagicConfig;
@@ -294,7 +293,7 @@ public class SpawnMonsterSpell extends TargetedSpell implements TargetedLocation
 			MagicSpells.getVolatileCodeHandler().removeAI((LivingEntity)entity);
 			if (addLookAtPlayerAI) MagicSpells.getVolatileCodeHandler().addAILookAtPlayer((LivingEntity)entity, 10);
 		}
-		if (noAI) MagicSpells.getVolatileCodeHandler().setNoAIFlag((LivingEntity)entity);
+		if (noAI) ((LivingEntity)entity).setAI(false);
 		
 		// Set target
 		if (target != null) MagicSpells.getVolatileCodeHandler().setTarget((LivingEntity)entity, target);
@@ -319,7 +318,7 @@ public class SpawnMonsterSpell extends TargetedSpell implements TargetedLocation
 	}
 	
 	void prepMob(Player player, Entity entity) {
-		MagicSpells.getVolatileCodeHandler().setGravity(entity, gravity);
+		entity.setGravity(gravity);
 		
 		// Set as tamed
 		if (tamed && entity instanceof Tameable && player != null) {
@@ -339,8 +338,8 @@ public class SpawnMonsterSpell extends TargetedSpell implements TargetedLocation
 				((Enderman)entity).setCarriedMaterial(holding.getData());
 			} else if (entity instanceof Skeleton || entity instanceof Zombie) {
 				final EntityEquipment equip = ((LivingEntity)entity).getEquipment();
-				HandHandler.setItemInMainHand(equip, holding.clone());
-				HandHandler.setItemInMainHandDropChance(equip, holdingDropChance);
+				equip.setItemInMainHand(holding.clone());
+				equip.setItemInMainHandDropChance(holdingDropChance);
 			}
 		}
 		

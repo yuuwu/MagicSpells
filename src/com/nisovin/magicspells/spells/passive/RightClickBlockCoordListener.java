@@ -11,9 +11,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.spells.PassiveSpell;
-import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicLocation;
 import com.nisovin.magicspells.util.OverridePriority;
+import org.bukkit.inventory.EquipmentSlot;
 
 // Trigger variable is a semicolon separated list of locations to accept
 // Locations follow the format of world,x,y,z
@@ -58,7 +58,7 @@ public class RightClickBlockCoordListener extends PassiveListener {
 		MagicLocation loc = new MagicLocation(location.getWorld().getName(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
 		
 		PassiveSpell spell;
-		if (HandHandler.isMainHand(event)) {
+		if (event.getHand() == EquipmentSlot.HAND) {
 			spell = locs.get(loc);
 		} else {
 			spell = offhandLocs.get(loc);

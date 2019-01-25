@@ -1,6 +1,5 @@
 package com.nisovin.magicspells.spells.targeted;
 
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.MagicSpells;

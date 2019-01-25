@@ -30,7 +30,6 @@ import me.libraryaddict.disguise.disguisetypes.watchers.VillagerWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.WolfWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;

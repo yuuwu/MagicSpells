@@ -1,7 +1,6 @@
 package com.nisovin.magicspells.volatilecode;
 
 import org.bukkit.Color;
-import org.bukkit.EntityEffect;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
@@ -9,13 +8,10 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Creature;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.SmallFireball;
 import org.bukkit.inventory.ItemStack;
@@ -23,8 +19,6 @@ import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.material.Button;
 import org.bukkit.material.Lever;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import com.nisovin.magicspells.util.DisguiseManager;
@@ -121,16 +115,6 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 	public void setFallingBlockHurtEntities(FallingBlock block, float damage, int max) {
 		// Need the volatile code for this
 	}
-	
-	@Override
-	public void playEntityAnimation(Location location, EntityType entityType, int animationId, boolean instant) {
-		if (entityType == EntityType.OCELOT && animationId == 7) {
-			Ocelot entity = (Ocelot)location.getWorld().spawnEntity(location, entityType);
-			entity.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 10, 0));
-			entity.playEffect(EntityEffect.WOLF_HEARTS);
-			entity.remove();
-		}
-	}
 
 	@Override
 	public void createFireworksExplosion(Location location, boolean flicker, boolean trail, int type, int[] colors, int[] fadeColors, int flightDuration) {
@@ -200,11 +184,6 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 	public void removeAI(LivingEntity entity) {
 		// Need the volatile code for this
 	}
-	
-	@Override
-	public void setNoAIFlag(LivingEntity entity) {
-		// No op
-	}
 
 	@Override
 	public void addEntityAttribute(LivingEntity entity, String attribute, double amount, int operation) {
@@ -212,27 +191,7 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 	}
 
 	@Override
-	public void resetEntityAttributes(LivingEntity entity) {
-		// Need the volatile code for this
-	}
-
-	@Override
 	public void addAILookAtPlayer(LivingEntity entity, int range) {
-		// Need the volatile code for this
-	}
-	
-	@Override
-	public void setBossBar(Player player, String title, double percent) {
-		// Need the volatile code for this
-	}
-	
-	@Override
-	public void updateBossBar(Player player, String title, double percent) {
-		// Need the volatile code for this
-	}
-	
-	@Override
-	public void removeBossBar(Player player) {
 		// Need the volatile code for this
 	}
 	
@@ -245,12 +204,7 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 	public ItemStack setUnbreakable(ItemStack item) {
 		return item;
 	}
-
-	@Override
-	public void setArrowsStuck(LivingEntity entity, int count) {
-		// Need the volatile code for this
-	}
-
+	
 	@Override
 	public void sendTitleToPlayer(Player player, String title, String subtitle, int fadeIn, int stay, int fadeOut) {
 		// Need the volatile code for this
@@ -258,11 +212,6 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 
 	@Override
 	public void sendActionBarMessage(Player player, String message) {
-		// Need the volatile code for this
-	}
-
-	@Override
-	public void setTabMenuHeaderFooter(Player player, String header, String footer) {
 		// Need the volatile code for this
 	}
 	
@@ -284,17 +233,6 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 	@Override
 	public void showItemCooldown(Player player, ItemStack item, int duration) {
 		// No op
-	}
-
-	@Override
-	public boolean hasGravity(Entity entity) {
-		// Not all versions have gravity adjustment, so can't put it here
-		return false;
-	}
-
-	@Override
-	public void setGravity(Entity entity, boolean gravity) {
-		// Not all versions have gravity adjustment, so can't put it here
 	}
 
 	@Override

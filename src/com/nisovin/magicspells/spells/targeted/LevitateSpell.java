@@ -1,6 +1,5 @@
 package com.nisovin.magicspells.spells.targeted;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.nisovin.magicspells.util.Util;

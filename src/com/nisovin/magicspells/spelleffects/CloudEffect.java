@@ -11,32 +11,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.util.BlockUtils;
 
-/**
- * CloudEffect<br>
- * <table border=1>
- *     <tr>
- *         <th>
- *             Config Field
- *         </th>
- *         <th>
- *             Data Type
- *         </th>
- *         <th>
- *             Description
- *         </th>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>radius</code>
- *         </td>
- *         <td>
- *             Integer
- *         </td>
- *         <td>
- *             ???
- *         </td>
- * </table>
- */
 public class CloudEffect extends SpellEffect {
 
 	Random rand = new Random();

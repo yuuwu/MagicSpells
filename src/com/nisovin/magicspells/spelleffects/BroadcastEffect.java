@@ -9,55 +9,6 @@ import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.MagicSpells;
 
-/**
- * BroadcastEffect<br>
- * <table border=1>
- *     <tr>
- *         <th>
- *             Config Field
- *         </th>
- *         <th>
- *             Data Type
- *         </th>
- *         <th>
- *             Description
- *         </th>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>message</code>
- *         </td>
- *         <td>
- *             String
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>range</code>
- *         </td>
- *         <td>
- *             Integer
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>targeted</code>
- *         </td>
- *         <td>
- *             Boolean
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *     </tr>
- * </table>
- */
 public class BroadcastEffect extends SpellEffect {
 
 	String message = "";

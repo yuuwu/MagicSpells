@@ -87,7 +87,7 @@ public class ItemProjectileSpell extends InstantSpell {
 				this.vel = caster.getLocation().getDirection().multiply(speed);
 			}
 			this.entity = caster.getWorld().dropItem(location, item.clone());
-			MagicSpells.getVolatileCodeHandler().setGravity(this.entity, projectileHasGravity);
+			this.entity.setGravity(projectileHasGravity);
 			playSpellEffects(EffectPosition.PROJECTILE, this.entity);
 			playTrackingLinePatterns(EffectPosition.DYNAMIC_CASTER_PROJECTILE_LINE, caster.getLocation(), this.entity.getLocation(), caster, this.entity);
 			this.entity.teleport(location);

@@ -13,7 +13,6 @@ import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.CommandSpell;
 import com.nisovin.magicspells.util.CastItem;
-import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.Util;
 
@@ -76,7 +75,7 @@ public class UnbindSpell extends CommandSpell {
 					sendMessage(this.strCantUnbind, player, args);
 					return PostCastAction.ALREADY_HANDLED;
 				}
-				CastItem item = new CastItem(HandHandler.getItemInMainHand(player));
+				CastItem item = new CastItem(player.getEquipment().getItemInMainHand());
 				boolean removed = spellbook.removeCastItem(spell, item);
 				if (!removed) {
 					sendMessage(this.strNotBound, player, args);

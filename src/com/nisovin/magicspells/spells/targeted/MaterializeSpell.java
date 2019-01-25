@@ -1,6 +1,5 @@
 package com.nisovin.magicspells.spells.targeted;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -14,22 +13,17 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 
 import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.events.MagicSpellsBlockPlaceEvent;
 import com.nisovin.magicspells.events.SpellTargetLocationEvent;
 import com.nisovin.magicspells.materials.MagicMaterial;
-import com.nisovin.magicspells.materials.MagicItemMaterial;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.compat.EventUtil;
-import com.nisovin.magicspells.util.BlockUtils;
-import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.Util;
 
 public class MaterializeSpell extends TargetedSpell implements TargetedLocationSpell {
 
@@ -282,7 +276,7 @@ public class MaterializeSpell extends TargetedSpell implements TargetedLocationS
 
 		if (checkPlugins && player != null) {
 			material.setBlock(block, false);
-			MagicSpellsBlockPlaceEvent event = new MagicSpellsBlockPlaceEvent(block, blockState, against, HandHandler.getItemInMainHand(player), player, true);
+			MagicSpellsBlockPlaceEvent event = new MagicSpellsBlockPlaceEvent(block, blockState, against, player.getEquipment().getItemInMainHand(), player, true);
 			EventUtil.call(event);
 			blockState.update(true);
 			if (event.isCancelled()) return false;

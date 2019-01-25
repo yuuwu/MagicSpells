@@ -7,44 +7,6 @@ import org.bukkit.entity.LivingEntity;
 import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 
-/**
- * PotionEffect<br>
- * <table border=1>
- *     <tr>
- *         <th>
- *             Config Field
- *         </th>
- *         <th>
- *             Data Type
- *         </th>
- *         <th>
- *             Description
- *         </th>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>color</code>
- *         </td>
- *         <td>
- *             String
- *         </td>
- *         <td>
- *             Color of the potion effect using hexidecimal color format
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>duration</code>
- *         </td>
- *         <td>
- *             Integer
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *     </tr>
- * </table>
- */
 public class PotionEffect extends SpellEffect {
 	
 	int color = 0xFF0000;
@@ -87,6 +49,7 @@ public class PotionEffect extends SpellEffect {
 	public Runnable playEffectEntity(Entity entity) {
 		if (!(entity instanceof LivingEntity)) return null;
 		LivingEntity le = (LivingEntity)entity;
+		// TODO non volatile
 		MagicSpells.getVolatileCodeHandler().addPotionGraphicalEffect(le, color, duration);
 		return null;
 	}

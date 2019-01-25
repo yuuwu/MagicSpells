@@ -11,6 +11,7 @@ import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.compat.EventUtil;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -110,7 +111,7 @@ public class BlockBeamSpell extends InstantSpell {
                 entity.setInvulnerable(true);
                 entity.setHeadPose(new EulerAngle(pitch + rotationX, yaw + rotationY, 0));
                 if (hpFix) {
-                    entity.setMaxHealth(2000);
+                    entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(2000);
                     entity.setHealth(2000);
                 }
                 if (small){

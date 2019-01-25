@@ -103,7 +103,7 @@ public class ListSpell extends CommandSpell {
 				return true;
 			} else {
 				spells = MagicSpells.getSpellbook(p).getSpells();
-				s.append(p.getName() + "'s spells: ");
+				s.append(p.getName()).append("'s spells: ");
 			}
 		} else {
 			s.append("All spells: ");

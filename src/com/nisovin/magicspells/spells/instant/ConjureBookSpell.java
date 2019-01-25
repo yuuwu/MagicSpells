@@ -11,11 +11,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
-import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
-import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.Util;
 
@@ -122,8 +120,8 @@ public class ConjureBookSpell extends InstantSpell implements TargetedLocationSp
 			boolean added = false;
 			ItemStack item = getBook(player, args);
 			if (addToInventory) {
-				if (HandHandler.getItemInMainHand(player) == null || HandHandler.getItemInMainHand(player).getType() == Material.AIR) {
-					HandHandler.setItemInMainHand(player, item);
+				if (player.getEquipment().getItemInMainHand() == null || player.getEquipment().getItemInMainHand().getType() == Material.AIR) {
+					player.getEquipment().setItemInMainHand(item);
 					added = true;
 				} else {
 					added = Util.addToInventory(player.getInventory(), item, false, false);
@@ -133,7 +131,7 @@ public class ConjureBookSpell extends InstantSpell implements TargetedLocationSp
 				Item dropped = player.getWorld().dropItem(player.getLocation(), item);
 				dropped.setItemStack(item);
 				dropped.setPickupDelay(pickupDelay);
-				MagicSpells.getVolatileCodeHandler().setGravity(dropped, projectileHasGravity);
+				dropped.setGravity(projectileHasGravity);
 				playSpellEffects(EffectPosition.SPECIAL, dropped);
 				//player.getWorld().dropItem(player.getLocation(), item).setItemStack(item);
 			}
@@ -152,7 +150,7 @@ public class ConjureBookSpell extends InstantSpell implements TargetedLocationSp
 		Item dropped = target.getWorld().dropItem(target, item);
 		dropped.setItemStack(item);
 		dropped.setPickupDelay(pickupDelay);
-		MagicSpells.getVolatileCodeHandler().setGravity(dropped, projectileHasGravity);
+		dropped.setGravity(projectileHasGravity);
 		playSpellEffects(EffectPosition.SPECIAL, dropped);
 		//target.getWorld().dropItem(target, item).setItemStack(item);
 		return true;

@@ -13,53 +13,6 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 
-/**
- * HasteSpell<br>
- * <table border=1>
- *     <tr>
- *         <th>
- *             Config Field
- *         </th>
- *         <th>
- *             Data Type
- *         </th>
- *         <th>
- *             Description
- *         </th>
- *         <th>
- *             Default
- *         </th>
- *     </tr>
- *     <tr>
- *         <td>
- *             effect-strength
- *         </td>
- *         <td>
- *             Integer
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             3
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             boost-duration
- *         </td>
- *         <td>
- *             Integer
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             300
- *         </td>
- *     </tr>
- * </table>
- */
 // TODO should this have an option to set the potion effects used?
 public class HasteSpell extends BuffSpell {
 

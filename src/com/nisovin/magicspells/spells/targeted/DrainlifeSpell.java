@@ -1,5 +1,6 @@
 package com.nisovin.magicspells.spells.targeted;
 
+import com.nisovin.magicspells.util.Util;
 import org.bukkit.Effect;
 import org.bukkit.EntityEffect;
 import org.bukkit.Location;
@@ -23,22 +24,6 @@ import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellAnimation;
 import com.nisovin.magicspells.util.TargetInfo;
 
-/**
- * public class DrainlifeSpell extends {@link TargetedSpell} implements {@link TargetedEntitySpell}, {@link SpellDamageSpell}
- * Configuration fields:
- * <ul>
- * <li>take-type: "health"</li>
- * <li>take-amt: 2<br>Affected by spell power</li>
- * <li>give-type: "health"</li>
- * <li>give-amt: 2<br>Affected by spell power</li>
- * <li>spell-damage-type: ""</li>
- * <li>show-spell-effect: true</li>
- * <li>animation-speed: 2</li>
- * <li>instant: true</li>
- * <li>ignore-armor: false</li>
- * <li>check-plugins: true</li>
- * </ul>
- */
 public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell, SpellDamageSpell {
 	
 	public static final int MAX_FOOD_LEVEL = 20;
@@ -120,10 +105,11 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 			take = event.getFinalDamage();
 			if (ignoreArmor) {
 				double health = target.getHealth();
-				if (health > target.getMaxHealth()) health = target.getMaxHealth();
+				if (health > Util.getMaxHealth(target)) health = Util.getMaxHealth(target);
 				health -= take;
 				if (health < MIN_HEALTH) health = MIN_HEALTH;
-				if (health > target.getMaxHealth()) health = target.getMaxHealth();
+				if (health > Util.getMaxHealth(target)) health = Util.getMaxHealth(target);
+				// TODO non volatile
 				if (health == MIN_HEALTH && player != null) MagicSpells.getVolatileCodeHandler().setKiller(target, player);
 				target.setHealth(health);
 				target.playEffect(EntityEffect.HURT);
@@ -170,7 +156,7 @@ public class DrainlifeSpell extends TargetedSpell implements TargetedEntitySpell
 	void giveToCaster(Player player, double give) {
 		if (giveType.equals(STR_GIVE_TAKE_TYPE_HEALTH)) {
 			double h = player.getHealth() + give;
-			if (h > player.getMaxHealth()) h = player.getMaxHealth();
+			if (h > Util.getMaxHealth(player)) h = Util.getMaxHealth(player);
 			player.setHealth(h);
 		} else if (giveType.equals(STR_GIVE_TAKE_TYPE_MANA)) {
 			MagicSpells.getManaHandler().addMana(player, (int)give, ManaChangeReason.OTHER);

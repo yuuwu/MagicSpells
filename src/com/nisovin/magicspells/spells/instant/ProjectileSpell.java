@@ -161,7 +161,7 @@ public class ProjectileSpell extends InstantSpell {
 				playSpellEffects(EffectPosition.PROJECTILE, projectile);
 				playTrackingLinePatterns(EffectPosition.DYNAMIC_CASTER_PROJECTILE_LINE, player.getLocation(), projectile.getLocation(), player, projectile);
 				projectile.setBounce(false);
-				MagicSpells.getVolatileCodeHandler().setGravity(projectile, this.projectileHasGravity);
+				projectile.setGravity(this.projectileHasGravity);
 				if (this.velocity > 0) {
 					projectile.setVelocity(player.getLocation().getDirection().multiply(this.velocity));
 				}
@@ -178,7 +178,7 @@ public class ProjectileSpell extends InstantSpell {
 				playSpellEffects(EffectPosition.CASTER, projectile);
 			} else if (this.projectileItem != null) {
 				Item item = player.getWorld().dropItem(player.getEyeLocation(), this.projectileItem.clone());
-				MagicSpells.getVolatileCodeHandler().setGravity(item, this.projectileHasGravity);
+				item.setGravity(this.projectileHasGravity);
 				Vector v = player.getLocation().getDirection().multiply(this.velocity > 0 ? this.velocity : 1);
 				if (this.horizSpread > 0 || this.vertSpread > 0) {
 					v.add(new Vector((this.random.nextDouble() - .5) * this.horizSpread, (this.random.nextDouble() - .5) * this.vertSpread, (this.random.nextDouble() - .5) * this.horizSpread));

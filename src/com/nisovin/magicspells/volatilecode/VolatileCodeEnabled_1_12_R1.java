@@ -17,7 +17,6 @@ import net.minecraft.server.v1_12_R1.EntityFallingBlock;
 import net.minecraft.server.v1_12_R1.EntityFireworks;
 import net.minecraft.server.v1_12_R1.EntityHuman;
 import net.minecraft.server.v1_12_R1.EntityInsentient;
-import net.minecraft.server.v1_12_R1.EntityLiving;
 import net.minecraft.server.v1_12_R1.EntitySmallFireball;
 import net.minecraft.server.v1_12_R1.EntityTNTPrimed;
 import net.minecraft.server.v1_12_R1.EnumParticle;
@@ -30,7 +29,6 @@ import net.minecraft.server.v1_12_R1.PacketPlayOutEntityStatus;
 import net.minecraft.server.v1_12_R1.PacketPlayOutEntityVelocity;
 import net.minecraft.server.v1_12_R1.PacketPlayOutExperience;
 import net.minecraft.server.v1_12_R1.PacketPlayOutExplosion;
-import net.minecraft.server.v1_12_R1.PacketPlayOutPlayerListHeaderFooter;
 import net.minecraft.server.v1_12_R1.PacketPlayOutSetCooldown;
 import net.minecraft.server.v1_12_R1.PacketPlayOutSetSlot;
 import net.minecraft.server.v1_12_R1.PacketPlayOutSpawnEntityLiving;
@@ -58,8 +56,6 @@ import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftTNTPrimed;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Creature;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.LivingEntity;
@@ -76,7 +72,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -335,37 +330,6 @@ public class VolatileCodeEnabled_1_12_R1 implements VolatileCodeHandle {
 	}
 
 	@Override
-	public void playEntityAnimation(final Location location, final EntityType entityType, final int animationId, boolean instant) {
-		/*final EntityLiving entity;
-		if (entityType == EntityType.VILLAGER) {
-			entity = new EntityVillager(((CraftWorld)location.getWorld()).getHandle());
-		} else if (entityType == EntityType.WITCH) {
-			entity = new EntityWitch(((CraftWorld)location.getWorld()).getHandle());
-		} else if (entityType == EntityType.OCELOT) {
-			entity = new EntityOcelot(((CraftWorld)location.getWorld()).getHandle());
-		} else {
-			entity = null;
-		}
-		if (entity == null) return;
-
-		entity.setPosition(location.getX(), instant ? location.getY() : -5, location.getZ());
-		((CraftWorld)location.getWorld()).getHandle().addEntity(entity);
-		entity.addEffect(new MobEffect(14, 40));
-		if (instant) {
-			((CraftWorld)location.getWorld()).getHandle().broadcastEntityEffect(entity, (byte)animationId);
-			entity.getBukkitEntity().remove();
-		} else {
-			entity.setPosition(location.getX(), location.getY(), location.getZ());
-			MagicSpells.scheduleDelayedTask(new Runnable() {
-				public void run() {
-					((CraftWorld)location.getWorld()).getHandle().broadcastEntityEffect(entity, (byte)animationId);
-					entity.getBukkitEntity().remove();
-				}
-			}, 8);
-		}*/
-	}
-
-	@Override
 	public void createFireworksExplosion(Location location, boolean flicker, boolean trail, int type, int[] colors, int[] fadeColors, int flightDuration) {
 		// Create item
 		net.minecraft.server.v1_12_R1.ItemStack item = new net.minecraft.server.v1_12_R1.ItemStack(Item.getById(401), 1, 0);
@@ -600,37 +564,6 @@ public class VolatileCodeEnabled_1_12_R1 implements VolatileCodeHandle {
 	}
 
 	@Override
-	public void resetEntityAttributes(LivingEntity entity) {
-		try {
-			EntityLiving e = ((CraftLivingEntity)entity).getHandle();
-			// TODO this field should be calculated only once
-			Field field = EntityLiving.class.getDeclaredField("bp");
-			field.setAccessible(true);
-			field.set(e, null);
-			e.getAttributeMap();
-			Method method = null;
-			Class<?> clazz = e.getClass();
-			while (clazz != null) {
-				try {
-					method = clazz.getDeclaredMethod("initAttributes");
-					break;
-				} catch (NoSuchMethodException e1) {
-				    clazz = clazz.getSuperclass();
-				}
-			}
-			if (method != null) {
-				method.setAccessible(true);
-				method.invoke(e);
-			} else {
-				// FIXME shouldn't catch our own exception
-				throw new Exception("No method initAttributes found on " + e.getClass().getName());
-			}
-		} catch (Exception e) {
-			MagicSpells.handleException(e);
-		}
-	}
-
-	@Override
 	public void removeAI(LivingEntity entity) {
         try {
         	EntityInsentient ev = (EntityInsentient)((CraftLivingEntity)entity).getHandle();
@@ -671,39 +604,6 @@ public class VolatileCodeEnabled_1_12_R1 implements VolatileCodeHandle {
         }
 	}
 
-	@Override
-	public void setBossBar(Player player, String title, double percent) {
-		/*updateBossBarEntity(player, title, percent);
-
-		PacketPlayOutEntityDestroy packetDestroy = new PacketPlayOutEntityDestroy(bossBarEntity.getId());
-		((CraftPlayer)player).getHandle().playerConnection.sendPacket(packetDestroy);
-
-		PacketPlayOutSpawnEntityLiving packetSpawn = new PacketPlayOutSpawnEntityLiving(bossBarEntity);
-		((CraftPlayer)player).getHandle().playerConnection.sendPacket(packetSpawn);
-
-		PacketPlayOutEntityTeleport packetTeleport = new PacketPlayOutEntityTeleport(bossBarEntity);
-		((CraftPlayer)player).getHandle().playerConnection.sendPacket(packetTeleport);*/
-
-		//PacketPlayOutEntityVelocity packetVelocity = new PacketPlayOutEntityVelocity(bossBarEntity.getId(), 1, 0, 1);
-		//((CraftPlayer)player).getHandle().playerConnection.sendPacket(packetVelocity);
-	}
-
-	@Override
-	public void updateBossBar(Player player, String title, double percent) {
-		/*updateBossBarEntity(player, title, percent);
-
-		if (title != null) {
-			PacketPlayOutEntityMetadata packetData = new PacketPlayOutEntityMetadata(bossBarEntity.getId(), bossBarEntity.getDataWatcher(), true);
-			((CraftPlayer)player).getHandle().playerConnection.sendPacket(packetData);
-		}
-
-		PacketPlayOutEntityTeleport packetTeleport = new PacketPlayOutEntityTeleport(bossBarEntity);
-		((CraftPlayer)player).getHandle().playerConnection.sendPacket(packetTeleport);*/
-
-		//PacketPlayOutEntityVelocity packetVelocity = new PacketPlayOutEntityVelocity(bossBarEntity.getId(), 1, 0, 1);
-		//((CraftPlayer)player).getHandle().playerConnection.sendPacket(packetVelocity);
-	}
-
 	/*private void updateBossBarEntity(Player player, String title, double percent) {
 		if (title != null) {
 			if (percent <= 0.01) percent = 0.01D;
@@ -718,12 +618,7 @@ public class VolatileCodeEnabled_1_12_R1 implements VolatileCodeHandle {
 		l.add(v);
 		bossBarEntity.setLocation(l.getX(), l.getY(), l.getZ(), 0, 0);
 	}*/
-
-	@Override
-	public void removeBossBar(Player player) {
-		//PacketPlayOutEntityDestroy packetDestroy = new PacketPlayOutEntityDestroy(bossBarEntity.getId());
-		//((CraftPlayer)player).getHandle().playerConnection.sendPacket(packetDestroy);
-	}
+	
 
 	@Override
 	public void saveSkinData(Player player, String name) {
@@ -764,11 +659,6 @@ public class VolatileCodeEnabled_1_12_R1 implements VolatileCodeHandle {
 	}
 
 	@Override
-	public void setArrowsStuck(LivingEntity entity, int count) {
-		//((CraftLivingEntity)entity).getHandle().set
-	}
-
-	@Override
 	public void sendTitleToPlayer(Player player, String title, String subtitle, int fadeIn, int stay, int fadeOut) {
 		PlayerConnection conn = ((CraftPlayer)player).getHandle().playerConnection;
 		PacketPlayOutTitle packet = new PacketPlayOutTitle(EnumTitleAction.TIMES, null, fadeIn, stay, fadeOut);
@@ -791,28 +681,6 @@ public class VolatileCodeEnabled_1_12_R1 implements VolatileCodeHandle {
 	}
 
 	@Override
-	public void setTabMenuHeaderFooter(Player player, String header, String footer) {
-		PlayerConnection conn = ((CraftPlayer)player).getHandle().playerConnection;
-		PacketPlayOutPlayerListHeaderFooter packet = new PacketPlayOutPlayerListHeaderFooter();
-		try {
-			Field field1 = PacketPlayOutPlayerListHeaderFooter.class.getDeclaredField("a");
-			Field field2 = PacketPlayOutPlayerListHeaderFooter.class.getDeclaredField("b");
-			field1.setAccessible(true);
-			field1.set(packet, new ChatComponentText(header));
-			field2.setAccessible(true);
-			field2.set(packet, new ChatComponentText(footer));
-			conn.sendPacket(packet);
-		} catch (Exception e) {
-			MagicSpells.handleException(e);
-		}
-	}
-
-	@Override
-	public void setNoAIFlag(LivingEntity entity) {
-		entity.setAI(false);
-	}
-
-	@Override
 	public void setClientVelocity(Player player, Vector velocity) {
 		PacketPlayOutEntityVelocity packet = new PacketPlayOutEntityVelocity(player.getEntityId(), velocity.getX(), velocity.getY(), velocity.getZ());
 		((CraftPlayer)player).getHandle().playerConnection.sendPacket(packet);
@@ -827,16 +695,6 @@ public class VolatileCodeEnabled_1_12_R1 implements VolatileCodeHandle {
 	public void showItemCooldown(Player player, ItemStack item, int duration) {
 		PacketPlayOutSetCooldown packet = new PacketPlayOutSetCooldown(Item.getById(item.getTypeId()), duration);
 		((CraftPlayer)player).getHandle().playerConnection.sendPacket(packet);
-	}
-
-	@Override
-	public boolean hasGravity(Entity entity) {
-		return entity.hasGravity();
-	}
-
-	@Override
-	public void setGravity(Entity entity, boolean gravity) {
-		entity.setGravity(gravity);
 	}
 
 	@Override

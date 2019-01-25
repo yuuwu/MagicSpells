@@ -1,62 +1,12 @@
 package com.nisovin.magicspells.spelleffects;
 
 import com.nisovin.magicspells.util.Util;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.MagicSpells;
 
-/**
- * SoundPersonalEffect<br>
- * <table border=1>
- *     <tr>
- *         <th>
- *             Config Field
- *         </th>
- *         <th>
- *             Data Type
- *         </th>
- *         <th>
- *             Description
- *         </th>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>sound</code>
- *         </td>
- *         <td>
- *             String
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>volume</code>
- *         </td>
- *         <td>
- *             Double
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>pitch</code>
- *         </td>
- *         <td>
- *             Double
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *     </tr>
- * </table>
- */
 public class SoundPersonalEffect extends SpellEffect {
 	
 	String sound = "random.pop";
@@ -95,12 +45,12 @@ public class SoundPersonalEffect extends SpellEffect {
 			Util.forEachPlayerOnline(this::send);
 		} else if (entity instanceof Player) {
 			send((Player) entity);
-			//SoundUtils.playSound((Player) entity, sound, volume, pitch);
 		}
 		return null;
 	}
 	
 	private void send(Player player) {
+		// TODO non volatile
 		MagicSpells.getVolatileCodeHandler().playSound(player, sound, volume, pitch);
 	}
 	

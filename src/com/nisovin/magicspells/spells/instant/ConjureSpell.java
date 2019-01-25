@@ -34,7 +34,6 @@ import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.command.ScrollSpell;
 import com.nisovin.magicspells.spells.command.TomeSpell;
-import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.InventoryUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.Util;
@@ -204,7 +203,7 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 				if (addToEnderChest) added = Util.addToInventory(player.getEnderChest(), item, stackExisting, ignoreMaxStackSize);
 				if (!added && addToInventory) {
 					if (offhand) {
-						HandHandler.setItemInOffHand(player, item);
+						player.getEquipment().setItemInOffHand(item);
 					} else if (requiredSlot >= 0) {
 						ItemStack old = inv.getItem(requiredSlot);
 						if (old != null && old.isSimilar(item)) {
@@ -231,7 +230,7 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 					Item i = player.getWorld().dropItem(loc, item);
 					i.setItemStack(item);
 					i.setPickupDelay(pickupDelay);
-					MagicSpells.getVolatileCodeHandler().setGravity(i, itemHasGravity);
+					i.setGravity(itemHasGravity);
 					playSpellEffects(EffectPosition.SPECIAL, i);
 					//player.getWorld().dropItem(loc, item).setItemStack(item);
 				}
@@ -306,7 +305,7 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 				v.normalize().multiply(randomVelocity);
 				dropped.setVelocity(v);
 			}
-			MagicSpells.getVolatileCodeHandler().setGravity(dropped, itemHasGravity);
+			dropped.setGravity(itemHasGravity);
 			playSpellEffects(EffectPosition.SPECIAL, dropped);
 		}
 		return true;
@@ -372,10 +371,10 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 		@EventHandler(priority = EventPriority.LOWEST)
 		void onRightClick(PlayerInteractEvent event) {
 			if (!event.hasItem()) return;
-			ItemStack item = HandHandler.getItemInMainHand(event.getPlayer());
+			ItemStack item = event.getPlayer().getEquipment().getItemInMainHand();
 			ExpirationResult result = updateExpiresLineIfNeeded(item);
 			if (result == ExpirationResult.EXPIRED) {
-				HandHandler.setItemInMainHand(event.getPlayer(), null);
+				event.getPlayer().getEquipment().setItemInMainHand(null);
 				event.setCancelled(true);
 			}
 		}

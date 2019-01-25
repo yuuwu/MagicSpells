@@ -21,30 +21,10 @@ import com.nisovin.magicspells.events.SpellLearnEvent.LearnSource;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.CommandSpell;
 import com.nisovin.magicspells.util.compat.EventUtil;
-import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.Util;
 
 // TODO this should not be hardcoded to use a book
-/**
- * Configuration fields:
- * <ul>
- * <li>cancel-read-on-learn: true</li>
- * <li>consume-book: false</li>
- * <li>allow-overwrite: false</li>
- * <li>default-uses: -1</li>
- * <li>max-uses: 5</li>
- * <li>require-teach-perm: true</li>
- * <li>str-usage: "Usage: While holding a book, /cast " + name + " <spell> [uses]"</li>
- * <li>str-no-spell: "You do not know a spell with that name."</li>
- * <li>str-cant-teach: "You cannot create a tome with that spell."</li>
- * <li>str-no-book: "You must be holding a book."</li>
- * <li>str-already-has-spell: "That book already contains a spell."</li>
- * <li>str-already-known: "You already know the %s spell."</li>
- * <li>str-cant-learn: "You cannot learn the spell in this tome."</li>
- * <li>str-learned: "You have learned the %s spell."</li>
- * </ul>
- */
 public class TomeSpell extends CommandSpell {
 
 	private static final Pattern INT_PATTERN = Pattern.compile("^[0-9]+$");
@@ -104,7 +84,7 @@ public class TomeSpell extends CommandSpell {
 				}
 			}
 			
-			ItemStack item = HandHandler.getItemInMainHand(player);
+			ItemStack item = player.getEquipment().getItemInMainHand();
 			if (item.getType() != Material.WRITTEN_BOOK) {
 				// Fail -- no book
 				sendMessage(this.strNoBook, player, args);
@@ -121,7 +101,7 @@ public class TomeSpell extends CommandSpell {
 					uses = Integer.parseInt(args[1]);
 				}
 				item = createTome(spell, uses, item);
-				HandHandler.setItemInMainHand(player, item);
+				player.getEquipment().setItemInMainHand(item);
 			}
 		}
 		return PostCastAction.HANDLE_NORMALLY;
@@ -189,7 +169,7 @@ public class TomeSpell extends CommandSpell {
 			sendMessage(formatMessage(this.strCantLearn, "%s", spell.getName()), event.getPlayer(), MagicSpells.NULL_ARGS);
 		} else {
 			// Call event
-			SpellLearnEvent learnEvent = new SpellLearnEvent(spell, event.getPlayer(), LearnSource.TOME, HandHandler.getItemInMainHand(event.getPlayer()));
+			SpellLearnEvent learnEvent = new SpellLearnEvent(spell, event.getPlayer(), LearnSource.TOME, event.getPlayer().getEquipment().getItemInMainHand());
 			EventUtil.call(learnEvent);
 			if (learnEvent.isCancelled()) {
 				// Fail -- plugin cancelled
@@ -212,7 +192,7 @@ public class TomeSpell extends CommandSpell {
 				}
 				// Consume
 				if (uses <= 0 && this.consumeBook) {
-					HandHandler.setItemInMainHand(event.getPlayer(), null);
+					event.getPlayer().getEquipment().setItemInMainHand(null);
 				}
 				playSpellEffects(EffectPosition.DELAYED, event.getPlayer());
 			}

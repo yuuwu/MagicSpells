@@ -21,7 +21,6 @@ import org.bukkit.inventory.ItemStack;
 import com.nisovin.magicspells.mana.ManaChangeReason;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
-import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.PlayerNameUtils;
 import com.nisovin.magicspells.util.RegexUtil;
 import com.nisovin.magicspells.util.Util;
@@ -311,13 +310,11 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 					Spellbook spellbook = MagicSpells.getSpellbook(player);
 					Spell spell = MagicSpells.getSpellByInGameName(args[0]);
 					if (spell != null && (!spell.isHelperSpell() || player.isOp()) && spell.canCastByCommand() && spellbook.hasSpell(spell)) {
-						if (spell.isValidItemForCastCommand(HandHandler.getItemInMainHand(player))) {
+						if (spell.isValidItemForCastCommand(player.getEquipment().getItemInMainHand())) {
 							String[] spellArgs = null;
 							if (args.length > 1) {
 								spellArgs = new String[args.length - 1];
-								for (int i = 1; i < args.length; i++) {
-									spellArgs[i - 1] = args[i];
-								}
+								System.arraycopy(args, 1, spellArgs, 0, args.length - 1);
 							}
 							spell.cast(player, spellArgs);
 						} else {
@@ -334,9 +331,7 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 						String[] spellArgs = null;
 						if (args.length > 1) {
 							spellArgs = new String[args.length - 1];
-							for (int i = 1; i < args.length; i++) {
-								spellArgs[i - 1] = args[i];
-							}
+							System.arraycopy(args, 1, spellArgs, 0, args.length - 1);
 						}
 						boolean casted = false;
 						if (sender instanceof BlockCommandSender) {

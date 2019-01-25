@@ -1,5 +1,6 @@
 package com.nisovin.magicspells.castmodifiers.conditions;
 
+import com.nisovin.magicspells.util.Util;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -27,7 +28,7 @@ public class TargetMaxHealthLessThanCondition extends Condition {
 
 	@Override
 	public boolean check(Player player, LivingEntity target) {
-		return target.getMaxHealth() > level;
+		return Util.getMaxHealth(target) > level;
 	}
 
 	@Override

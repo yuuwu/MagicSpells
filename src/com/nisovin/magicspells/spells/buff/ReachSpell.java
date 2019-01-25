@@ -23,7 +23,6 @@ import com.nisovin.magicspells.events.MagicSpellsBlockPlaceEvent;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.util.compat.EventUtil;
-import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 
 // TODO this needs exemptions for anticheat
@@ -121,7 +120,7 @@ public class ReachSpell extends BuffSpell {
 			// Place
 			
 			// Check for block in hand
-			ItemStack inHand = HandHandler.getItemInMainHand(player);
+			ItemStack inHand = player.getEquipment().getItemInMainHand();
 			if (inHand != null && inHand.getType() != Material.AIR && inHand.getType().isBlock()) {
 				
 				// Check for disallowed
@@ -146,9 +145,9 @@ public class ReachSpell extends BuffSpell {
 					if (consumeBlocks && player.getGameMode() != GameMode.CREATIVE) {
 						if (inHand.getAmount() > 1) {
 							inHand.setAmount(inHand.getAmount() - 1);
-							HandHandler.setItemInMainHand(player, inHand);
+							player.getEquipment().setItemInMainHand(inHand);
 						} else {
-							HandHandler.setItemInMainHand(player, null);
+							player.getEquipment().setItemInMainHand(null);
 						}
 					}
 					addUseAndChargeCost(player);

@@ -124,7 +124,7 @@ public class MarkSpell extends InstantSpell implements TargetedLocationSpell {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(new File(MagicSpells.plugin.getDataFolder(), "marks-" + this.internalName + ".txt"), false));
 			for (String name : this.marks.keySet()) {
 				MagicLocation loc = this.marks.get(name);
-				writer.append(name + ':' + loc.getWorld() + ':' + loc.getX() + ':' + loc.getY() + ':' + loc.getZ() + ':' + loc.getYaw() + ':' + loc.getPitch());
+				writer.append(name).append(String.valueOf(':')).append(loc.getWorld()).append(String.valueOf(':')).append(String.valueOf(loc.getX())).append(String.valueOf(':')).append(String.valueOf(loc.getY())).append(String.valueOf(':')).append(String.valueOf(loc.getZ())).append(String.valueOf(':')).append(String.valueOf(loc.getYaw())).append(String.valueOf(':')).append(String.valueOf(loc.getPitch()));
 				writer.newLine();
 			}
 			writer.close();

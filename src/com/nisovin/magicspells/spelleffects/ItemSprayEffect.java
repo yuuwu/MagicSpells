@@ -13,66 +13,6 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.materials.MagicUnknownMaterial;
 
-/**
- * ItemSprayEffect<br>
- * <table border=1>
- *     <tr>
- *         <th>
- *             Config Field
- *         </th>
- *         <th>
- *             Data Type
- *         </th>
- *         <th>
- *             Description
- *         </th>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>type</code>
- *         </td>
- *         <td>
- *             String
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>quantity</code>
- *         </td>
- *         <td>
- *             Integer
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>duration</code>
- *         </td>
- *         <td>
- *             Integer
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>force</code>
- *         </td>
- *         <td>
- *             Double
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *     </tr>
- * </table>
- */
 public class ItemSprayEffect extends SpellEffect {
 
 	MagicMaterial mat;

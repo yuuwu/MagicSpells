@@ -19,7 +19,6 @@ import org.bukkit.inventory.ItemStack;
 import org.spigotmc.event.entity.EntityDismountEvent;
 
 import com.nisovin.magicspells.DebugHandler;
-import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.util.MagicConfig;
@@ -87,7 +86,7 @@ public class SteedSpell extends InstantSpell {
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			Entity entity = player.getWorld().spawnEntity(player.getLocation(), this.type);
-			MagicSpells.getVolatileCodeHandler().setGravity(entity, this.gravity);
+			entity.setGravity(this.gravity);
 			if (this.type == EntityType.HORSE) {
 				((Horse)entity).setTamed(true);
 				((Horse)entity).setOwner(player);

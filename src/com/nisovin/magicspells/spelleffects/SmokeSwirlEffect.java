@@ -10,33 +10,6 @@ import org.bukkit.entity.Entity;
 import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 
-/**
- * SmokeSwirlEffect<br>
- * <table border=1>
- *     <tr>
- *         <th>
- *             Config Field
- *         </th>
- *         <th>
- *             Data Type
- *         </th>
- *         <th>
- *             Description
- *         </th>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>duration</code>
- *         </td>
- *         <td>
- *             Integer
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *     </tr>
- * </table>
- */
 public class SmokeSwirlEffect extends SpellEffect {
 
 	int duration = TimeUtil.TICKS_PER_SECOND;

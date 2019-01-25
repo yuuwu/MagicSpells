@@ -9,14 +9,8 @@ import de.slikey.effectlib.util.ParticleEffect.BlockData;
 import de.slikey.effectlib.util.ParticleEffect.ItemData;
 import de.slikey.effectlib.util.ParticleEffect.ParticleData;
 
+@Deprecated
 public class ParticleNameUtil {
-	
-	public static ParticleEffect findEffect(String name) {
-		ParticleEffect effect = null;
-		effect = ParticleEffect.fromName(name);
-		if (effect == null) throw new NullPointerException("No particle could be found from: \"" + name + '\"');
-		return effect;
-	}
 	
 	public static EffectPackage findEffectPackage(String name) {
 		ParticleData data = null;

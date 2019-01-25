@@ -15,33 +15,6 @@ import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
 
-/**
- * WaterwalkSpell<br>
- * <table border=1>
- *     <tr>
- *         <th>
- *             Config Field
- *         </th>
- *         <th>
- *             Data Type
- *         </th>
- *         <th>
- *             Description
- *         </th>
- *     </tr>
- *     <tr>
- *         <td>
- *             speed
- *         </td>
- *         <td>
- *             Float
- *         </td>
- *         <td>
- *             The speed for moving when walking on water.
- *         </td>
- *     </tr>
- * </table>
- */
 public class WaterwalkSpell extends BuffSpell {
 
 	float speed;

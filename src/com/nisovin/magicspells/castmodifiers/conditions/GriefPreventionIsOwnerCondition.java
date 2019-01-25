@@ -8,8 +8,6 @@ import com.nisovin.magicspells.castmodifiers.Condition;
 
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import me.ryanhamshire.GriefPrevention.Claim;
-import me.ryanhamshire.GriefPrevention.PlayerData;
-import me.ryanhamshire.GriefPrevention.DataStore;
 
 public class GriefPreventionIsOwnerCondition extends Condition {
 

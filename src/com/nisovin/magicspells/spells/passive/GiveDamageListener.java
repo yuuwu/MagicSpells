@@ -22,7 +22,6 @@ import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.materials.MagicItemWithNameMaterial;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spells.PassiveSpell;
-import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.OverridePriority;
 
 // Optional trigger variable that may contain a comma separated list
@@ -78,7 +77,7 @@ public class GiveDamageListener extends PassiveListener {
 		}
 		
 		if (!weapons.isEmpty()) {
-			ItemStack item = HandHandler.getItemInMainHand(player);
+			ItemStack item = player.getEquipment().getItemInMainHand();
 			if (item != null && item.getType() != Material.AIR) {
 				List<PassiveSpell> list = getSpells(item);
 				if (list != null) {

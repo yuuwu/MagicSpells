@@ -1,5 +1,6 @@
 package com.nisovin.magicspells.spells.targeted;
 
+import com.nisovin.magicspells.util.Util;
 import com.nisovin.magicspells.util.compat.CompatBasics;
 import org.bukkit.EntityEffect;
 import org.bukkit.entity.LivingEntity;
@@ -18,17 +19,7 @@ import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
 import com.nisovin.magicspells.util.expression.Expression;
 
-/**
- * public class PainSpell extends {@link TargetedSpell} implements {@link TargetedEntitySpell}, {@link SpellDamageSpell}
- * Configuration fields:
- * <ul>
- * <li>damage: 4<br>Affected by spell power</li>
- * <li>spell-damage-type: ""</li>
- * <li>ignore-armor: false</li>
- * <li>check-plugins: true</li>
- * <li>damage-type: "ENTITY_ATTACK"</li>
- * </ul>
- */
+// TODO rewrite this entirely
 public class PainSpell extends TargetedSpell implements TargetedEntitySpell, SpellDamageSpell {
 
 	private Expression damageExpression;
@@ -115,10 +106,10 @@ public class PainSpell extends TargetedSpell implements TargetedEntitySpell, Spe
 		localDamage = event.getFinalDamage();
 		if (ignoreArmor) {
 			double health = target.getHealth();
-			if (health > target.getMaxHealth()) health = target.getMaxHealth();
+			if (health > Util.getMaxHealth(target)) health = Util.getMaxHealth(target);
 			health = health - localDamage;
 			if (health < 0) health = 0;
-			if (health > target.getMaxHealth()) health = target.getMaxHealth();
+			if (health > Util.getMaxHealth(target)) health = Util.getMaxHealth(target);
 			if (health == 0) MagicSpells.getVolatileCodeHandler().setKiller(target, player);
 			target.setHealth(health);
 			target.playEffect(EntityEffect.HURT);

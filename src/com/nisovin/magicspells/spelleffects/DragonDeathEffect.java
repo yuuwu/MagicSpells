@@ -19,6 +19,7 @@ public class DragonDeathEffect extends SpellEffect {
 
 	@Override
 	public Runnable playEffectLocation(Location location) {
+		// TODO non volatile
 		MagicSpells.getVolatileCodeHandler().playDragonDeathEffect(location);
 		return null;
 	}

@@ -1,5 +1,6 @@
 package com.nisovin.magicspells.spells.targeted;
 
+import com.nisovin.magicspells.util.Util;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
@@ -35,12 +36,12 @@ public class SwitchHealthSpell extends TargetedSpell implements TargetedEntitySp
 	
 	boolean switchHealth(Player caster, LivingEntity target) {
 		if (caster.isDead() || target.isDead()) return false;
-		double casterPct = caster.getHealth() / caster.getMaxHealth();
-		double targetPct = target.getHealth() / target.getMaxHealth();
+		double casterPct = caster.getHealth() / Util.getMaxHealth(caster);
+		double targetPct = target.getHealth() / Util.getMaxHealth(target);
 		if (requireGreaterHealthPercent && casterPct < targetPct) return false;
 		if (requireLesserHealthPercent && casterPct > targetPct) return false;
-		caster.setHealth(targetPct * caster.getMaxHealth());
-		target.setHealth(casterPct * target.getMaxHealth());
+		caster.setHealth(targetPct * Util.getMaxHealth(caster));
+		target.setHealth(casterPct * Util.getMaxHealth(target));
 		playSpellEffects(caster, target);
 		return true;
 	}

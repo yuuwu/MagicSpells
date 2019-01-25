@@ -1,7 +1,6 @@
 package com.nisovin.magicspells.spelleffects;
 
 import com.nisovin.magicspells.util.Util;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
@@ -9,44 +8,6 @@ import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.MagicSpells;
 
-/**
- * ActionBarTextEffect<br>
- * <table border=1>
- *     <tr>
- *         <th>
- *             Config Field
- *         </th>
- *         <th>
- *             Data Type
- *         </th>
- *         <th>
- *             Description
- *         </th>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>message</code>
- *         </td>
- *         <td>
- *             String
- *         </td>
- *         <td>
- *             The message to display.
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>broadcast</code>
- *         </td>
- *         <td>
- *             boolean
- *         </td>
- *         <td>
- *             If true, the effect will be sent to everyone online. If false, it will only be sent to ???
- *         </td>
- *     </tr>
- * </table>
- */
 public class ActionBarTextEffect extends SpellEffect {
 
 	String message = "";
@@ -75,6 +36,7 @@ public class ActionBarTextEffect extends SpellEffect {
 	}
 	
 	private void send(Player player) {
+		// TODO non volatile
 		MagicSpells.getVolatileCodeHandler().sendActionBarMessage(player, message);
 	}
 	

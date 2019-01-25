@@ -13,11 +13,11 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import com.nisovin.magicspells.mana.ManaChangeReason;
-import com.nisovin.magicspells.util.HandHandler;
 
 public class CastListener implements Listener {
 
@@ -68,9 +68,9 @@ public class CastListener implements Listener {
 			if (!plugin.castOnAnimate) {
 				castSpell(event.getPlayer());
 			}
-		} else if ((event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) && (plugin.cycleSpellsOnOffhandAction || HandHandler.isMainHand(event))) {
+		} else if ((event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) && (plugin.cycleSpellsOnOffhandAction || event.getHand() == EquipmentSlot.HAND)) {
 			// Right click -- cycle spell and/or process mana pots
-			ItemStack inHand = HandHandler.getItemInMainHand(player);
+			ItemStack inHand = player.getEquipment().getItemInMainHand();
 			
 			if ((inHand != null && inHand.getType() != Material.AIR) || plugin.allowCastWithFist) {
 			
@@ -131,7 +131,7 @@ public class CastListener implements Listener {
 							} else {
 								inHand.setAmount(inHand.getAmount() - 1);
 							}
-							HandHandler.setItemInMainHand(player, inHand);
+							player.getEquipment().setItemInMainHand(inHand);
 							player.updateInventory();
 						}
 					}
@@ -167,7 +167,7 @@ public class CastListener implements Listener {
 	}
 	
 	private void castSpell(Player player) {		
-		ItemStack inHand = HandHandler.getItemInMainHand(player);
+		ItemStack inHand = player.getEquipment().getItemInMainHand();
 		if (!plugin.allowCastWithFist && (inHand == null || inHand.getType() == Material.AIR)) return;
 		
 		Spell spell = MagicSpells.getSpellbook(player).getActiveSpell(inHand);

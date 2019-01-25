@@ -131,9 +131,7 @@ public class MagicXpHandler implements Listener {
 					for (String school : xpGranted.keySet()) {
 						List<Spell> list = spellSchoolRequirements.get(school.toLowerCase());
 						if (list != null) {
-							for (Spell spell : list) {
-								toCheck.add(spell);
-							}
+							toCheck.addAll(list);
 						}
 					}
 					

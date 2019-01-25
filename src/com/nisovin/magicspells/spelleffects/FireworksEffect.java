@@ -7,18 +7,6 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.util.BooleanUtils;
 import com.nisovin.magicspells.util.ConfigData;
 
-/**
- * public class FireworksEffect<p>
- * Configuration fields:<br>
- * <ul>
- * <li>flicker</li>
- * <li>trail</li>
- * <li>type</li>
- * <li>flight</li>
- * <li>colors</li>
- * <li>fade-colors</li>
- * </ul>
- */
 public class FireworksEffect extends SpellEffect {
 
 	@ConfigData(field="flicker", dataType="boolean", defaultValue="false")
@@ -98,6 +86,7 @@ public class FireworksEffect extends SpellEffect {
 
 	@Override
 	public Runnable playEffectLocation(Location location) {
+		// TODO non volatile
 		MagicSpells.getVolatileCodeHandler().createFireworksExplosion(location, flicker, trail, type, colors, fadeColors, flightDuration);
 		return null;
 	}

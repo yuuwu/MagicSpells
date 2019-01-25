@@ -22,53 +22,6 @@ import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
 
-/**
- * InvisibilitySpell<br>
- * <table border=1>
- *     <tr>
- *         <th>
- *             Config Field
- *         </th>
- *         <th>
- *             Data Type
- *         </th>
- *         <th>
- *             Description
- *         </th>
- *         <th>
- *             Default
- *         </th>
- *     </tr>
- *     <tr>
- *         <td>
- *             prevent-pickups
- *         </td>
- *         <td>
- *             Boolean
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             true
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             cancel-on-spell-cast
- *         </td>
- *         <td>
- *             Boolean
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             false
- *         </td>
- *     </tr>
- * </table>
- */
 public class InvisibilitySpell extends BuffSpell {
 
 	private boolean preventPickups;

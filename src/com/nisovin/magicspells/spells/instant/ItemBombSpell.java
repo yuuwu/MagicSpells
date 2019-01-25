@@ -68,7 +68,7 @@ public class ItemBombSpell extends InstantSpell implements TargetedLocationSpell
 		final Item i = l.getWorld().dropItem(l, this.item);
 		i.teleport(l);
 		i.setVelocity(v);
-		MagicSpells.getVolatileCodeHandler().setGravity(i, this.itemHasGravity);
+		i.setGravity(this.itemHasGravity);
 		i.setPickupDelay(this.delay << 1);
 		if (this.itemName != null) {
 			MagicSpells.scheduleDelayedTask(() -> { i.setCustomName(itemName); i.setCustomNameVisible(true); }, this.itemNameDelay);

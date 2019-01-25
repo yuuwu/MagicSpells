@@ -2,8 +2,6 @@ package com.nisovin.magicspells.volatilecode;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.LivingEntity;
@@ -50,13 +48,7 @@ public interface VolatileCodeHandle {
 	
 	void setFallingBlockHurtEntities(FallingBlock block, float damage, int max);
 	
-	//void addPotionEffect(LivingEntity entity, PotionEffect effect, boolean ambient);
-	
-	void playEntityAnimation(Location location, EntityType entityType, int animationId, boolean instant);
-	
 	void createFireworksExplosion(Location location, boolean flicker, boolean trail, int type, int[] colors, int[] fadeColors, int flightDuration);
-	
-	//void setHeldItemSlot(Player player, int slot);
 	
 	void playParticleEffect(Location location, String name, float spreadHoriz, float spreadVert, float speed, int count, int radius, float yOffset);
 	
@@ -74,42 +66,24 @@ public interface VolatileCodeHandle {
 	
 	void addEntityAttribute(LivingEntity entity, String attribute, double amount, int operation);
 	
-	void resetEntityAttributes(LivingEntity entity);
-	
 	void removeAI(LivingEntity entity);
 	
-	void setNoAIFlag(LivingEntity entity);
-	
 	void addAILookAtPlayer(LivingEntity entity, int range);
-	
-	void setBossBar(Player player, String title, double percent);
-	
-	void updateBossBar(Player player, String title, double percent);
-	
-	void removeBossBar(Player player);
 	
 	void saveSkinData(Player player, String name);
 	
 	// TODO this should be moved to it's own handler
 	ItemStack setUnbreakable(ItemStack item);
 	
-	void setArrowsStuck(LivingEntity entity, int count);
-	
 	// TODO this should be moved to it's own handler
 	void sendTitleToPlayer(Player player, String title, String subtitle, int fadeIn, int stay, int fadeOut);
 	void sendActionBarMessage(Player player, String message);
-	
-	void setTabMenuHeaderFooter(Player player, String header, String footer);
 	
 	void setClientVelocity(Player player, Vector velocity);
 	
 	double getAbsorptionHearts(LivingEntity entity);
 	
 	void showItemCooldown(Player player, ItemStack item, int duration);
-	
-	// TODO this should be moved to it's own handler
-	boolean hasGravity(Entity entity);
-	void setGravity(Entity entity, boolean gravity);
 	
 	void setTexture(SkullMeta meta, String texture, String signature);
 	

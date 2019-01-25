@@ -53,7 +53,6 @@ import com.nisovin.magicspells.util.BlockUtils;
 import com.nisovin.magicspells.util.CastItem;
 import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.ExperienceUtils;
-import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.IntMap;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.MoneyHandler;
@@ -66,417 +65,6 @@ import com.nisovin.magicspells.variables.VariableManager;
 
 import de.slikey.effectlib.Effect;
 
-/**
- * Spell<br>
- * <table border=1>
- *     <tr>
- *         <th>
- *             Config Field
- *         </th>
- *         <th>
- *             Data Type
- *         </th>
- *         <th>
- *             Description
- *         </th>
- *         <th>
- *             Default
- *         </th>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>debug</code>
- *         </td>
- *         <td>
- *             Boolean
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             <code>false</code>
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>name</code>
- *         </td>
- *         <td>
- *             String
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             (internal name)
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>aliases</code>
- *         </td>
- *         <td>
- *             String List
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             <code>null</code>
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>helper-spell</code>
- *         </td>
- *         <td>
- *             Boolean
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             <code>false</code>
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>always-granted</code>
- *         </td>
- *         <td>
- *             Boolean
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             <code>false</code>
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>permission-name</code>
- *         </td>
- *         <td>
- *             String
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             (internal name)
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>incantations</code>
- *         </td>
- *         <td>
- *             String List
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             <code>null</code>
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>description</code>
- *         </td>
- *         <td>
- *             String
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             <code>null</code>
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>cast-item</code>
- *         </td>
- *         <td>
- *             String
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             <code>null</code>
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>cast-items</code>
- *         </td>
- *         <td>
- *             String List
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             <code>null</code>
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>right-click-cast-item</code>
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>right-click-cast-items</code>
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>consume-cast-item</code>
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>consume-cast-items</code>
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>left-click-cast-item</code>
- *         </td>
- *         <td>
- *             Boolean
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>right-click-cast-item</code>
- *         </td>
- *         <td>
- *             Boolean
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>bindable</code>
- *         </td>
- *         <td>
- *             Boolean
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             <code>true</code>
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>bindable-items</code>
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>experience</code>
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>min-range</code>
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>range</code>
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>beneficial</code>
- *         </td>
- *         <td>
- *             Boolean
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             <code>false</code>
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>target-damage-cause</code>
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>modifiers</code>
- *         </td>
- *         <td>
- *             String List
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             <code>null</code>
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>target-modifiers</code>
- *         </td>
- *         <td>
- *             String List
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             <code>null</code>
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>prerequisites</code>
- *         </td>
- *         <td>
- *             String List
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             <code>null</code>
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>replaces</code>
- *         </td>
- *         <td>
- *             String List
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             <code>null</code>
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             <code>precludes</code>
- *         </td>
- *         <td>
- *             String List
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *         <td>
- *             <code>null</code>
- *         </td>
- *     </tr>
- * </table>
- */
 public abstract class Spell implements Comparable<Spell>, Listener {
 
 	private MagicConfig config;
@@ -1558,7 +1146,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		// Durabilty costs
 		if (durabilityCost > 0) {
 			// Durability cost is charged from the main hand item
-			ItemStack inHand = HandHandler.getItemInMainHand(player);
+			ItemStack inHand = player.getEquipment().getItemInMainHand();
 			if (inHand == null || inHand.getDurability() >= inHand.getType().getMaxDurability()) {
 				return false;
 			}
@@ -1641,7 +1229,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		if (healthCost != 0) {
 			double h = player.getHealth() - healthCost;
 			if (h < 0) h = 0;
-			if (h > player.getMaxHealth()) h = player.getMaxHealth();
+			if (h > Util.getMaxHealth(player)) h = Util.getMaxHealth(player);
 			player.setHealth(h);
 		}
 		
@@ -1657,15 +1245,15 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		if (experienceCost != 0) ExperienceUtils.changeExp(player, -experienceCost);
 		
 		if (durabilityCost != 0) {
-			ItemStack inHand = HandHandler.getItemInMainHand(player);
+			ItemStack inHand = player.getEquipment().getItemInMainHand();
 			if (inHand != null && inHand.getType().getMaxDurability() > 0) {
 				short newDura = (short) (inHand.getDurability() + durabilityCost);
 				if (newDura < 0) newDura = 0;
 				if (newDura >= inHand.getType().getMaxDurability()) {
-					HandHandler.setItemInMainHand(player, null);
+					player.getEquipment().setItemInMainHand(null);
 				} else {
 					inHand.setDurability(newDura);
-					HandHandler.setItemInMainHand(player, inHand);
+					player.getEquipment().setItemInMainHand(inHand);
 				}
 			}
 		}
@@ -2145,7 +1733,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 			if (entity == ignore) continue;
 			for (String msg : msgs) {
 				if (msg.isEmpty()) continue;
-				((Player)entity).sendMessage(MagicSpells.plugin.textColor + msg);
+				entity.sendMessage(MagicSpells.plugin.textColor + msg);
 			}
 		}
 	}

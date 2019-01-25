@@ -12,6 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import com.nisovin.magicspells.MagicSpells;
@@ -19,7 +20,6 @@ import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.materials.MagicItemWithNameMaterial;
 import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spells.PassiveSpell;
-import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.OverridePriority;
 
 // Trigger variable of a comma separated list of items to accept
@@ -74,7 +74,7 @@ public class RightClickItemListener extends PassiveListener {
 		
 		ItemStack item = event.getItem();
 		if (item == null || item.getType() == Material.AIR) return;
-		List<PassiveSpell> list = getSpells(item, HandHandler.isMainHand(event));
+		List<PassiveSpell> list = getSpells(item, event.getHand() == EquipmentSlot.HAND);
 		if (list != null) {
 			Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());
 			for (PassiveSpell spell : list) {

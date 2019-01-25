@@ -608,11 +608,11 @@ public class Spellbook {
 					writer.append(spell.getInternalName());
 					if (customBindings.containsKey(spell)) {
 						Set<CastItem> items = customBindings.get(spell);
-						String s = "";
+						StringBuilder s = new StringBuilder();
 						for (CastItem i : items) {
-							s += (s.isEmpty() ? "" : ",") + i;
+							s.append((s.length() == 0) ? "" : ",").append(i);
 						}
-						writer.append(':' + s);
+						writer.append(String.valueOf(':')).append(s.toString());
 					}
 					writer.newLine();
 				}

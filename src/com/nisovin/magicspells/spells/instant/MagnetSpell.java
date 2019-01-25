@@ -11,7 +11,6 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
@@ -61,7 +60,7 @@ public class MagnetSpell extends InstantSpell implements TargetedLocationSpell {
 		
 		// Handle gravity removal
 		if (this.removeItemGravity) {
-			MagicSpells.getVolatileCodeHandler().setGravity(item, false);
+			item.setGravity(false);
 		}
 		
 		// Handle item entity movement

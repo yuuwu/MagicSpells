@@ -68,7 +68,7 @@ public class SpawnTntSpell extends TargetedSpell implements TargetedLocationSpel
 	void spawnTnt(Player caster, float power, Location loc) {
 		TNTPrimed tnt = loc.getWorld().spawn(loc, TNTPrimed.class);
 		if (cancelGravity) {
-			MagicSpells.getVolatileCodeHandler().setGravity(tnt, false);
+			tnt.setGravity(false);
 		}
 		playSpellEffects(EffectPosition.PROJECTILE, tnt);
 		playTrackingLinePatterns(EffectPosition.DYNAMIC_CASTER_PROJECTILE_LINE, caster.getLocation(), tnt.getLocation(), caster, tnt);

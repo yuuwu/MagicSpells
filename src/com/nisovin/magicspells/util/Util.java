@@ -25,10 +25,12 @@ import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -816,6 +818,14 @@ public class Util {
 		} catch (Exception e) {
 			return null;
 		}
+	}
+	
+	public static double getMaxHealth(LivingEntity entity) {
+		return entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+	}
+	
+	public static void setMaxHealth(LivingEntity entity, double maxHealth) {
+		entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(maxHealth);
 	}
 	
 }

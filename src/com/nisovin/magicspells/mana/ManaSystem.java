@@ -247,17 +247,17 @@ public class ManaSystem extends ManaHandler {
 	
 	private void showManaInChat(Player player, ManaBar bar) {
 		int segments = (int)(((double)bar.getMana()/(double)bar.getMaxMana()) * this.manaBarSize);
-		String text = MagicSpells.getTextColor() + bar.getPrefix() + " {" + bar.getColorFull();
+		StringBuilder text = new StringBuilder(MagicSpells.getTextColor() + bar.getPrefix() + " {" + bar.getColorFull());
 		int i = 0;
 		for (; i < segments; i++) {
-			text += "=";
+			text.append("=");
 		}
-		text += bar.getColorEmpty();
+		text.append(bar.getColorEmpty());
 		for (; i < this.manaBarSize; i++) {
-			text += "=";
+			text.append("=");
 		}
-		text += MagicSpells.getTextColor() + "} [" + bar.getMana() + '/' + bar.getMaxMana() + ']';
-		player.sendMessage(text);
+		text.append(MagicSpells.getTextColor()).append("} [").append(bar.getMana()).append('/').append(bar.getMaxMana()).append(']');
+		player.sendMessage(text.toString());
 	}
 	
 	private void showManaOnWoodTool(Player player, ManaBar bar) {

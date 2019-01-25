@@ -16,55 +16,6 @@ import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.spells.SpellDamageSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 
-/**
- * ResistSpell<br>
- * <table border=1>
- *     <tr>
- *         <th>
- *             Config Field
- *         </th>
- *         <th>
- *             Data Type
- *         </th>
- *         <th>
- *             Description
- *         </th>
- *     </tr>
- *     <tr>
- *         <td>
- *             spell-damage-types
- *         </td>
- *         <td>
- *             String List
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             normal-damage-types
- *         </td>
- *         <td>
- *             String List
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>
- *             multiplier
- *         </td>
- *         <td>
- *             Float
- *         </td>
- *         <td>
- *             ???
- *         </td>
- *     </tr>
- * </table>
- */
 public class ResistSpell extends BuffSpell {
 
 	List<String> spellDamageTypes;

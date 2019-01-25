@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Set;
 
 import com.nisovin.magicspells.Spell;
-import org.bukkit.configuration.ConfigurationSection;
 
 public class SpellFilter {
 

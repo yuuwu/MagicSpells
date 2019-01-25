@@ -20,7 +20,6 @@ import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.events.SpellCastedEvent;
 import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.compat.EventUtil;
-import com.nisovin.magicspells.util.HandHandler;
 import com.nisovin.magicspells.util.MagicConfig;
 
 public class BowSpell extends Spell {
@@ -104,7 +103,7 @@ public class BowSpell extends Spell {
 		public void onArrowLaunch(EntityShootBowEvent event) {
 			if (event.getEntity().getType() != EntityType.PLAYER) return;
 			Player shooter = (Player)event.getEntity();
-			ItemStack inHand = HandHandler.getItemInMainHand(shooter);
+			ItemStack inHand = shooter.getEquipment().getItemInMainHand();
 			if (inHand == null || inHand.getType() != Material.BOW) return;
 			String bowName = inHand.getItemMeta().getDisplayName();
 			if (bowName == null) return;

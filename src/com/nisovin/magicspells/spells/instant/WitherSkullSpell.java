@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.WitherSkull;
 import org.bukkit.util.Vector;
 
-import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.spells.TargetedEntityFromLocationSpell;
@@ -42,7 +41,7 @@ public class WitherSkullSpell extends InstantSpell implements TargetedEntityFrom
 				skull.setCustomName(this.skullName);
 				skull.setCustomNameVisible(true);
 			}
-			MagicSpells.getVolatileCodeHandler().setGravity(skull, this.projectileHasGravity);
+			skull.setGravity(this.projectileHasGravity);
 			playSpellEffects(EffectPosition.PROJECTILE, skull);
 			playTrackingLinePatterns(EffectPosition.DYNAMIC_CASTER_PROJECTILE_LINE, player.getLocation(), skull.getLocation(), player, skull);
 		}
@@ -57,7 +56,7 @@ public class WitherSkullSpell extends InstantSpell implements TargetedEntityFrom
 		skull.setCharged(this.charged);
 		skull.setVelocity(v);
 		skull.setDirection(v);
-		MagicSpells.getVolatileCodeHandler().setGravity(skull, this.projectileHasGravity);
+		skull.setGravity(this.projectileHasGravity);
 		if (caster != null) {
 			playSpellEffects(EffectPosition.CASTER, caster);
 		} else {

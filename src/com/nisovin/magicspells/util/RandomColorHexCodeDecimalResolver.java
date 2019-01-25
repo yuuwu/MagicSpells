@@ -13,11 +13,11 @@ public class RandomColorHexCodeDecimalResolver extends ValueResolver {
 	
 	@Override
 	public Number resolveValue(String playerName, Player player, Location loc1, Location loc2) {
-		String ret = "";
+		StringBuilder ret = new StringBuilder(6);
 		for (int i = 0; i < 6; i++) {
-			ret += Integer.toHexString(rand.nextInt(16));
+			ret.append(Integer.toHexString(rand.nextInt(16)));
 		}
-		return Integer.parseInt(ret, 16);
+		return Integer.parseInt(ret.toString(), 16);
 	}
 
 }

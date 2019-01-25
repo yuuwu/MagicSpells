@@ -69,6 +69,7 @@ public class DisguiseSpell extends TargetedSpell implements TargetedEntitySpell 
 		
 		if (manager == null) {
 			try {
+				// TODO non volatile
 				manager = MagicSpells.getVolatileCodeHandler().getDisguiseManager(config);
 			} catch (Exception e) {
 				manager = null;
