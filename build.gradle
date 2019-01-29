@@ -566,7 +566,9 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             groupId = 'com.github.TheComputerGeek2'
-            version = "MagicSpells-${msconfig.coreVersion}-${gitdata.getCommit()}"
+            afterEvaluate {
+              version = "MagicSpells-${msconfig.coreVersion}-${gitdata.getCommit()}"
+            }
             artifact magicspellsCoreJar
         }
     }
