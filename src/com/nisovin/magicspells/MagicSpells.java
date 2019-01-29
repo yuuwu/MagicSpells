@@ -1310,6 +1310,6 @@ public class MagicSpells extends JavaPlugin {
  * 
  * - Use MagicPlayer (Caster/PlayerCaster) across the entire plugin
  * - Allow spells to be cast by something other than players, like blocks and other entities
- * - Move NoMagicZoneWorldGuard and NoMagicZoneResidence outside of the core plugin
+ * - Move NoMagicZoneWorldGuard outside of the core plugin
  * 
  */

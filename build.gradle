@@ -105,7 +105,6 @@ public class MSConfig {
   def datestampString = "${-> new Date().format(datestampPattern)}"
 
   // Resource retrieving
-  def resourceResidenceUrl = 'http://nexus.hc.to/content/repositories/pub_releases/com/bekvon/bukkit/residence/Residence/4.5.3.0/Residence-4.5.3.0.jar'
   def resourceNcpUrl = 'https://ci.md-5.net/job/NoCheatPlus/lastSuccessfulBuild/artifact/target/NoCheatPlus.jar'
   def resourcePlaceholderapiUrl = 'http://repo.extendedclip.com/content/repositories/placeholderapi/me/clip/placeholderapi/2.8.2/placeholderapi-2.8.2.jar'
   def resourceGriefPreventionUrl = 'https://github.com/TechFortress/GriefPrevention/releases/download/16.8/GriefPrevention.jar'
@@ -135,9 +134,6 @@ def magicspellsGetResources() {
 
   File libFolder = project.file(project.ext.magicspellsData.libDir)
 
-  // Get Residence
-  downloadFile(new File(libFolder, 'Residence.jar'), new URL(project.ext.magicspellsData.resourceResidenceUrl))
-
   // Get NoCheatPlus
   downloadFile(new File(libFolder, 'NoCheatPlus.jar'), new URL(project.ext.magicspellsData.resourceNcpUrl))
 
@@ -150,19 +146,10 @@ def magicspellsGetResources() {
   println 'Finished running the get resources phase'
 }
 
-task getResidence(type: Download) {
-    dest new File(project.file(project.ext.magicspellsData.libDir), 'Residence.jar')
-    src 'http://ltcraft.lt/Residence/download.php?file=Residence4.5.3.0.jar'
-    overwrite false
-}
-
 // FIXME this should not be run at configuration time
 //magicspellsGetResources()
 task downloadDependencies() {
     group = 'Setup'
-    dependsOn = [
-        'getResidence'
-    ]
     doFirst {
         magicspellsGetResources()
     }
@@ -226,7 +213,6 @@ def magicspellsClasspathBase() {
     .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}WorldEdit.jar"))
     .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}WorldGuard.jar"))
     .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}LibsDisguises-9.0.9.jar"))
-    .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}Residence.jar"))
     .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}PlaceholderAPI.jar"))
     .plus(magicspellsClasspathVault())
 	.plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}GriefPrevention.jar"))
