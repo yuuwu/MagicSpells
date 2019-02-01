@@ -12,6 +12,10 @@
 // TODO make sure all builds can be cached where possible
 // TODO clean up dependency management
 
+wrapper {
+  gradleVersion = "5.1.1"
+}
+
 buildscript {
   repositories {
     jcenter()
@@ -65,27 +69,33 @@ dependencies {
 
 public class MSConfig {
   String coreVersion = '3.6'
-  String coreSrcDir = 'src'
+  String coreSrcDir = 'core/src/main/java'
+  String coreResourceDir = 'core/src/main/resources'
   String coreBuildDir = 'bin'
 
   String teamsVersion = '1.0'
-  String teamsSrcDir = 'src_teams'
+  String teamsSrcDir = 'teams/src/main/java'
+  String teamsResourceDir = 'teams/src/main/resources'
   String teamsBuildDir = 'bin_teams'
 
   String memoryVersion = '1.2'
-  String memorySrcDir = 'src_memory'
+  String memorySrcDir = 'memory/src/main/java'
+  String memoryResourceDir = 'memory/src/main/resources'
   String memoryBuildDir = 'bin_memory'
 
   String shopVersion = '1.6'
-  String shopSrcDir = 'src_shop'
+  String shopSrcDir = 'shop/src/main/java'
+  String shopResourceDir = 'shop/src/main/resources'
   String shopBuildDir = 'bin_shop'
 
   String townyVersion = '1.3'
-  String townySrcDir = 'src_towny'
+  String townySrcDir = 'towny/src/main/java'
+  String townyResourceDir = 'towny/src/main/resources'
   String townyBuildDir = 'bin_towny'
 
   String factionsVersion = '1.0'
-  String factionsSrcDir = 'src_factions'
+  String factionsSrcDir = 'factions/src/main/java'
+  String factionsResourceDir = 'factions/src/main/resources'
   String factionsBuildDir = 'bin_factions'
 
   String distDir = 'dist'
@@ -277,7 +287,7 @@ task magicspellsCopyResourcesClean(type: Delete) {
 // FIXME fix up this task
 task magicspellsCoreCopyResources(type: Copy) {
   description = 'Copy yml resources for MagicSpells'
-  from(msconfig.coreSrcDir) {
+  from(msconfig.coreResourceDir) {
     include "**${File.separator}*.yml"
   }
   expand(project.properties)
@@ -327,7 +337,7 @@ task magicspellsTeamsCompile(type: JavaCompile) {
 // FIXME fix up this task
 task magicspellsTeamsCopyResources(type: Copy) {
   description = 'Copy yml resources for MagicSpellsTeams'
-  from(msconfig.teamsSrcDir) {
+  from(msconfig.teamsResourceDir) {
     include "**${File.separator}*.yml"
   }
   expand(project.properties)
@@ -366,7 +376,7 @@ task magicspellsMemoryCompile(type: JavaCompile) {
 
 task magicspellsMemoryCopyResources(type: Copy) {
   description = 'Copy yml resources for MagicSpellsMemory'
-  from(msconfig.memorySrcDir) {
+  from(msconfig.memoryResourceDir) {
     include "**${File.separator}*.yml"
   }
   expand(project.properties)
@@ -408,7 +418,7 @@ task magicspellsShopCompile(type: JavaCompile) {
 
 task magicspellsShopCopyResources(type: Copy) {
   description = 'Copy yml resources for MagicSpellsShop'
-  from(msconfig.shopSrcDir) {
+  from(msconfig.shopResourceDir) {
     include "**${File.separator}*.yml"
   }
   expand(project.properties)
@@ -448,7 +458,7 @@ task magicspellsTownyCompile(type: JavaCompile) {
 
 task magicspellsTownyCopyResources(type: Copy) {
   description = 'Copy yml resources for MagicSpellsTowny'
-  from(msconfig.townySrcDir) {
+  from(msconfig.townyResourceDir) {
     include "**${File.separator}*.yml"
   }
   expand(project.properties)
@@ -487,7 +497,7 @@ task magicspellsFactionsCompile(type: JavaCompile) {
 
 task magicspellsFactionsCopyResources(type: Copy) {
   description = 'Copy yml resources for MagicSpellsFactions'
-  from(msconfig.factionsSrcDir) {
+  from(msconfig.factionsResourceDir) {
     include "**${File.separator}*.yml"
   }
   expand(project.properties)
