@@ -31,6 +31,12 @@ buildscript {
   }
 }
 
+repositories {
+  flatDir {
+    dirs 'lib'
+  }
+}
+
 apply plugin: 'java'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'de.undercouch.download'
@@ -55,16 +61,26 @@ ext {
 
 dependencies {
   compile group: 'org.apache.commons', name: 'commons-math3', version: '3.0'
-  spigot magicspellsClasspathSpigot()
-  mscore magicspellsClasspathBase()
-  factions magicspellsClasspathFactions()
+  spigot ':spigot-1.12'
+  mscore ':spigot-1.12'
+  mscore ':EffectLib-4.0'
+  mscore ':Vault'
+  mscore ':ProtocolLib'
+  mscore ':NoCheatPlus'
+  mscore ':WorldEdit'
+  mscore ':WorldGuard'
+  mscore ':LibsDisguises-9.0.9'
+  mscore ':PlaceholderAPI'
+  mscore ':GriefPrevention'
+  factions ':MassiveCore'
+  factions ':Factions'
   factions configurations.mscore.artifacts.getFiles()
   teams configurations.mscore.artifacts.getFiles()
   memory configurations.mscore.artifacts.getFiles()
   towny configurations.mscore.artifacts.getFiles()
-  towny magicspellsClasspathTowny()
+  towny ':Towny'
   shop configurations.mscore.artifacts.getFiles()
-  shop magicspellsClasspathVault()
+  shop ':Vault'
 }
 
 public class MSConfig {
@@ -214,40 +230,6 @@ def cleanDistFolder() {
 //magicspellsClean()
 cleanDistFolder()
 cleanYmlFiles()
-
-def magicspellsClasspathBase() {
-  return magicspellsClasspathSpigot()
-    .plus(magicspellsClasspathEffectlib())
-    .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}ProtocolLib.jar"))
-    .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}NoCheatPlus.jar"))
-    .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}WorldEdit.jar"))
-    .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}WorldGuard.jar"))
-    .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}LibsDisguises-9.0.9.jar"))
-    .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}PlaceholderAPI.jar"))
-    .plus(magicspellsClasspathVault())
-	.plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}GriefPrevention.jar"))
-}
-
-def magicspellsClasspathVault() {
-    return project.files("${-> project.ext.magicspellsData.libDir}${File.separator}Vault.jar")
-}
-
-def magicspellsClasspathEffectlib() {
-    return project.files("${-> project.ext.magicspellsData.libDir}${File.separator}EffectLib-4.0.jar")
-}
-
-def magicspellsClasspathSpigot() {
-    return project.files("${-> project.ext.magicspellsData.libDir}${File.separator}spigot-1.12.jar")
-}
-
-def magicspellsClasspathTowny() {
-  return project.files("${-> project.ext.magicspellsData.libDir}${File.separator}Towny.jar")
-}
-
-def magicspellsClasspathFactions() {
-  return project.files("${-> project.ext.magicspellsData.libDir}${File.separator}MassiveCore.jar")
-    .plus(project.files("${-> project.ext.magicspellsData.libDir}${File.separator}Factions.jar"))
-}
 
 // FIXME fix up this task
 // FIXME do more of this at build time, not config time
