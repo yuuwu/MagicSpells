@@ -147,7 +147,7 @@ public class MSConfig {
 
 MSConfig msconfig = ext.magicspellsData
 
-def downloadFile(File file, URL url) {
+static def downloadFile(File file, URL url) {
   if (!file.exists()) {
     url.withInputStream{ i -> file.withOutputStream{ it << i }}
   }
@@ -283,9 +283,9 @@ task magicspellsCoreJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.S
     'magicspellsCoreCompile',
     'magicspellsCoreCopyResources'
   ]
-  archiveName = "MagicSpells-${msconfig.stringVersionCore}.jar"
-  if (project.hasProperty("${OPTION_DEPLOYMENT_NAMING}")) archiveName = 'MagicSpells.jar'
-  destinationDir = project.file(msconfig.distDir)
+  archiveFileName = "MagicSpells-${msconfig.stringVersionCore}.jar"
+  if (project.hasProperty("${OPTION_DEPLOYMENT_NAMING}")) archiveFileName = 'MagicSpells.jar'
+  destinationDirectory = project.file(msconfig.distDir)
   from("${msconfig.coreBuildDir}")
   dependencies {
     repositories {
@@ -333,9 +333,9 @@ task magicspellsTeamsJar(type: Jar) {
     'magicspellsTeamsCompile',
     'magicspellsTeamsCopyResources'
   ]
-  archiveName = "MagicSpellsTeams-${msconfig.teamsVersion}-${msconfig.versionSuffix}.jar"
-  if (project.hasProperty("${OPTION_DEPLOYMENT_NAMING}")) archiveName = 'MagicSpellsTeams.jar'
-  destinationDir = project.file(msconfig.distDir)
+  archiveFileName = "MagicSpellsTeams-${msconfig.teamsVersion}-${msconfig.versionSuffix}.jar"
+  if (project.hasProperty("${OPTION_DEPLOYMENT_NAMING}")) archiveFileName = 'MagicSpellsTeams.jar'
+  destinationDirectory = project.file(msconfig.distDir)
   from("${msconfig.teamsBuildDir}")
 }
 
@@ -373,9 +373,9 @@ task magicspellsMemoryJar(type: Jar) {
     'magicspellsMemoryCompile',
     'magicspellsMemoryCopyResources'
   ]
-  archiveName = "MagicSpellsMemory-${msconfig.stringVersionMemory}.jar"
-  if (project.hasProperty("${OPTION_DEPLOYMENT_NAMING}")) archiveName = 'MagicSpellsMemory.jar'
-  destinationDir = project.file(msconfig.distDir)
+  archiveFileName = "MagicSpellsMemory-${msconfig.stringVersionMemory}.jar"
+  if (project.hasProperty("${OPTION_DEPLOYMENT_NAMING}")) archiveFileName = 'MagicSpellsMemory.jar'
+  destinationDirectory = project.file(msconfig.distDir)
   from("${msconfig.memoryBuildDir}")
 }
 
@@ -414,9 +414,9 @@ task magicspellsShopJar(type: Jar) {
     'magicspellsShopCompile',
     'magicspellsShopCopyResources'
   ]
-  archiveName = "MagicSpellsShop-${msconfig.shopVersion}-${msconfig.versionSuffix}.jar"
-  if (project.hasProperty("${OPTION_DEPLOYMENT_NAMING}")) archiveName = 'MagicSpellsShop.jar'
-  destinationDir = project.file(msconfig.distDir)
+  archiveFileName = "MagicSpellsShop-${msconfig.shopVersion}-${msconfig.versionSuffix}.jar"
+  if (project.hasProperty("${OPTION_DEPLOYMENT_NAMING}")) archiveFileName = 'MagicSpellsShop.jar'
+  destinationDirectory = project.file(msconfig.distDir)
   from("${msconfig.shopBuildDir}")
 }
 
@@ -431,7 +431,7 @@ task magicspellsTownyCompile(type: JavaCompile) {
   File buildDir = project.file(msconfig.townyBuildDir)
   buildDir.mkdir()
   destinationDir = buildDir
-  source(msconfig.townySrcDir)
+  setSource(msconfig.townySrcDir)
 
   classpath = configurations.towny
 
@@ -454,9 +454,9 @@ task magicspellsTownyJar(type: Jar) {
     'magicspellsTownyCompile',
     'magicspellsTownyCopyResources'
   ]
-  archiveName = "MagicSpellsTowny-${msconfig.townyVersion}-${msconfig.versionSuffix}.jar"
-  if (project.hasProperty("${OPTION_DEPLOYMENT_NAMING}")) archiveName = 'MagicSpellsTowny.jar'
-  destinationDir = project.file(msconfig.distDir)
+  archiveFileName = "MagicSpellsTowny-${msconfig.townyVersion}-${msconfig.versionSuffix}.jar"
+  if (project.hasProperty("${OPTION_DEPLOYMENT_NAMING}")) archiveFileName = 'MagicSpellsTowny.jar'
+  destinationDirectory = project.file(msconfig.distDir)
   from("${msconfig.townyBuildDir}")
 }
 
@@ -494,10 +494,10 @@ task magicspellsFactionsJar(type: Jar) {
     'magicspellsFactionsCopyResources'
   ]
 
-  archiveName = "MagicSpellsFactions-${msconfig.factionsVersion}-${msconfig.versionSuffix}.jar"
-  if (project.hasProperty("${OPTION_DEPLOYMENT_NAMING}")) archiveName = 'MagicSpellsFactions.jar'
+  archiveFileName = "MagicSpellsFactions-${msconfig.factionsVersion}-${msconfig.versionSuffix}.jar"
+  if (project.hasProperty("${OPTION_DEPLOYMENT_NAMING}")) archiveFileName = 'MagicSpellsFactions.jar'
 
-  destinationDir = project.file(msconfig.distDir)
+  destinationDirectory = project.file(msconfig.distDir)
   from("${msconfig.factionsBuildDir}")
 }
 
