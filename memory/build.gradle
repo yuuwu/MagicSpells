@@ -1,0 +1,7 @@
+dependencies {
+    compile project(":core")
+    compile ":spigot-1.12"
+}
+jar {
+    archiveFileName = "MagicSpellsMemory.jar"
+}

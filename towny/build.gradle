@@ -1,0 +1,8 @@
+dependencies {
+    compile project(":core")
+    compile ":spigot-1.12"
+    compile ":Towny"
+}
+jar {
+    archiveFileName = "MagicSpellsTowny.jar"
+}

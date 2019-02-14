@@ -1,0 +1,11 @@
+
+dependencies {
+    compile project(":core")
+    compile ":spigot-1.12"
+    compile ":MassiveCore"
+    compile ":Factions"
+}
+
+jar {
+    archiveFileName = "MagicSpellsFactions.jar"
+}

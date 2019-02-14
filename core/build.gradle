@@ -1,0 +1,18 @@
+
+dependencies {
+    implementation group: "org.apache.commons", name: "commons-math3", version: "3.0"
+    compile ":spigot-1.12"
+    compile ":EffectLib-4.0"
+    compile ":Vault"
+    compile ":ProtocolLib"
+    compile ":NoCheatPlus"
+    compile ":WorldEdit"
+    compile ":WorldGuard"
+    compile ":LibsDisguises-9.0.9"
+    compile ":PlaceholderAPI"
+    compile ":GriefPrevention"
+}
+
+jar {
+    archiveFileName = "MagicSpells.jar"
+}
