@@ -194,6 +194,11 @@ subprojects {
     jcenter()
     mavenCentral()
   }
+  it.version = "4.0-SNAPSHOT"
+  
+  processResources {
+    expand(["version": "4.0-SNAPSHOT"])
+  }
 }
 
 // FIXME fix up this task
