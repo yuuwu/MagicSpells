@@ -6,3 +6,5 @@ include("memory")
 include("shop")
 include("teams")
 include("towny")
+
+startParameter.isParallelProjectExecutionEnabled = true

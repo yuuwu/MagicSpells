@@ -13,7 +13,8 @@
 // TODO clean up dependency management
 
 wrapper {
-  gradleVersion = "5.1.1"
+  gradleVersion = "5.2.1"
+  setDistributionType(Wrapper.DistributionType.ALL)
 }
 
 buildscript {
@@ -37,10 +38,10 @@ repositories {
   }
 }
 
-apply plugin: "java"
-apply plugin: "com.github.johnrengelman.shadow"
-apply plugin: "de.undercouch.download"
-apply plugin: "com.sarhanm.versioner"
+//apply plugin: "java"
+//apply plugin: "com.github.johnrengelman.shadow"
+//apply plugin: "de.undercouch.download"
+//apply plugin: "com.sarhanm.versioner"
 
 final String OPTION_DEPLOYMENT_NAMING = "DeploymentNaming"
 final String OPTION_RELEASE = "release"
@@ -59,7 +60,7 @@ ext {
   magicspellsData = new MSConfig()
 }
 
-dependencies {
+/*dependencies {
   compile group: "org.apache.commons", name: "commons-math3", version: "3.0"
   spigot ":spigot-1.12"
   mscore ":spigot-1.12"
@@ -81,7 +82,7 @@ dependencies {
   towny ":Towny"
   shop configurations.mscore.artifacts.getFiles()
   shop ":Vault"
-}
+}*/
 
 public class MSConfig {
   String distDir = "dist"
