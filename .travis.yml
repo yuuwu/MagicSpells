@@ -21,3 +21,4 @@ deploy:
     - "dist/MagicSpellsTowny.jar"
   on:
     repo: TheComputerGeek2/MagicSpells
+    branch: master
