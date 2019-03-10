@@ -1,6 +1,6 @@
 
 dependencies {
-    implementation group: "org.apache.commons", name: "commons-math3", version: "3.0"
+    shadow group: "org.apache.commons", name: "commons-math3", version: "3.0"
     compile ":spigot-1.12"
     compile ":EffectLib-4.0"
     compile ":Vault"
@@ -13,6 +13,7 @@ dependencies {
     compile ":GriefPrevention"
 }
 
-jar {
-    archiveFileName = "MagicSpells.jar"
+shadowJar {
+    setArchivesBaseName("MagicSpells")
+    relocate("org.apache.commons.math3", "com.nisovin.magicspells.shaded.org.apache.commons")
 }
