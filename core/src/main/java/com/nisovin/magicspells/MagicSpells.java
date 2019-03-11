@@ -27,6 +27,7 @@ import com.nisovin.magicspells.util.Metrics;
 import com.nisovin.magicspells.util.TxtUtil;
 import com.nisovin.magicspells.util.compat.CompatBasics;
 import com.nisovin.magicspells.util.compat.EventUtil;
+import com.nisovin.magicspells.volatilecode.VolatileCodeDisabled;
 import com.nisovin.magicspells.volatilecode.VolatileCodeEnabled_1_12_R1;
 import de.slikey.effectlib.util.ParticleEffect;
 import org.bukkit.Bukkit;
@@ -195,6 +196,7 @@ public class MagicSpells extends JavaPlugin {
 		effectManager = new EffectManager(this);
 		effectManager.enableDebug(debug);
 		try {
+			// FIXME
 			Class<?> particleEffectClass = ParticleEffect.class;
 			Method setEffectManagerMethod = particleEffectClass.getMethod("setEffectManager", EffectManager.class);
 			setEffectManagerMethod.invoke(null, effectManager);
@@ -228,7 +230,12 @@ public class MagicSpells extends JavaPlugin {
 		}
 		
 		// This is where the volatile handlers were selected
-		volatileCodeHandle = new VolatileCodeEnabled_1_12_R1(config);
+		// FIXME
+		try {
+			volatileCodeHandle = new VolatileCodeEnabled_1_12_R1(config);
+		} catch (Throwable ignored) {
+			volatileCodeHandle = new VolatileCodeDisabled();
+		}
 		
 		debug = config.getBoolean("general.debug", false);
 		debugNull = config.getBoolean("general.debug-null", true);
@@ -308,6 +315,7 @@ public class MagicSpells extends JavaPlugin {
 		noMagicZones = new NoMagicZoneManager();
 		buffManager = new BuffManager(config.getInt("general.buff-check-interval", 0));
 		expBarManager = new ExperienceBarManager();
+		// FIXME
 		bossBarManager = new BossBarManager_V1_9();
 		itemNameResolver = new MagicItemNameResolver();
 		if (CompatBasics.pluginEnabled("Vault")) moneyHandler = new MoneyHandler();
