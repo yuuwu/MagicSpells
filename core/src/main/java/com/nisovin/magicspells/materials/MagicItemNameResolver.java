@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.regex.Pattern;
 
+import com.nisovin.magicspells.util.MaterialHelper;
 import com.nisovin.magicspells.util.RegexUtil;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
@@ -69,11 +70,11 @@ public class MagicItemNameResolver implements ItemNameResolver {
 		if (string.contains(":")) {
 			String[] split = string.split(":");
 			if (RegexUtil.matches(DIGITS, split[0])) {
-				item.id = Integer.parseInt(split[0]);
+				item.material = MaterialHelper.getFromNumericalId(Integer.parseInt(split[0]));
 			} else {
 				Material mat = Material.getMaterial(split[0].toUpperCase());
 				if (mat == null) return null;
-				item.id = mat.getId();
+				item.material = mat;
 			}
 			if (RegexUtil.matches(DIGITS, split[1])) {
 				item.data = Short.parseShort(split[1]);
@@ -82,11 +83,11 @@ public class MagicItemNameResolver implements ItemNameResolver {
 			}
 		} else {
 			if (RegexUtil.matches(DIGITS, string)) {
-				item.id = Integer.parseInt(string);
+				item.material = MaterialHelper.getFromNumericalId(Integer.parseInt(string));
 			} else {
 				Material mat = Material.getMaterial(string.toUpperCase());
 				if (mat == null) return null;
-				item.id = mat.getId();
+				item.material = mat;
 			}
 		}
 		return item;
@@ -190,7 +191,7 @@ public class MagicItemNameResolver implements ItemNameResolver {
 		} else if (type == Material.WOOL) {
 			return getWool(sdata);
 		} else if (RegexUtil.matches(BLOCK_BYTE_DATA_PATTERN, sdata)) {
-			return new MaterialData(type, Byte.parseByte(sdata));
+			return type.getNewData(Byte.parseByte(sdata));
 		} else {
 			return new MaterialData(type);
 		}

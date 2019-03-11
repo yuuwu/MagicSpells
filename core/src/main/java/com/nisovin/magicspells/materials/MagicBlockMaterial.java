@@ -36,7 +36,7 @@ public class MagicBlockMaterial extends MagicMaterial {
 	
 	@Override
 	public FallingBlock spawnFallingBlock(Location location) {
-		return location.getWorld().spawnFallingBlock(location, getMaterial(), getMaterialData().getData());
+		return location.getWorld().spawnFallingBlock(location, getMaterialData());
 	}
 
 	@Override

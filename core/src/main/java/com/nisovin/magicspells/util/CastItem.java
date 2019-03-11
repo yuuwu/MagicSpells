@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.Map;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -13,7 +14,7 @@ import com.nisovin.magicspells.MagicSpells;
 
 public class CastItem {
 	
-	private int type = 0;
+	private Material materialType = Material.AIR;
 	private short data = 0;
 	private String name = "";
 	private int[][] enchants = null;
@@ -23,12 +24,12 @@ public class CastItem {
 	}
 	
 	public CastItem(int type) {
-		this.type = type;
+		this.materialType = MaterialHelper.getFromNumericalId(type);
 	}
 	
 	public CastItem(int type, short data) {
-		this.type = type;
-		if (MagicSpells.ignoreCastItemDurability(type)) {
+		this.materialType = MaterialHelper.getFromNumericalId(type);
+		if (MagicSpells.ignoreCastItemDurability(this.materialType)) {
 			this.data = 0;
 		} else {
 			this.data = data;
@@ -37,16 +38,16 @@ public class CastItem {
 	
 	public CastItem(ItemStack item) {
 		if (item == null) {
-			this.type = 0;
+			this.materialType = Material.AIR;
 			this.data = 0;
 		} else {
-			this.type = item.getTypeId();
-			if (this.type == 0 || MagicSpells.ignoreCastItemDurability(this.type)) {
+			this.materialType = item.getType();
+			if (this.materialType == Material.AIR || MagicSpells.ignoreCastItemDurability(this.materialType)) {
 				this.data = 0;
 			} else {
 				this.data = item.getDurability();
 			}
-			if (this.type > 0 && !MagicSpells.ignoreCastItemNames() && item.hasItemMeta()) {
+			if (this.materialType != Material.AIR && !MagicSpells.ignoreCastItemNames() && item.hasItemMeta()) {
 				ItemMeta meta = item.getItemMeta();
 				if (meta.hasDisplayName()) {
 					if (MagicSpells.ignoreCastItemNameColors()) {
@@ -56,7 +57,7 @@ public class CastItem {
 					}
 				}
 			}
-			if (this.type > 0 && !MagicSpells.ignoreCastItemEnchants()) {
+			if (this.materialType != Material.AIR && !MagicSpells.ignoreCastItemEnchants()) {
 				this.enchants = getEnchants(item);
 			}
 		}
@@ -90,32 +91,32 @@ public class CastItem {
 		}
 		if (s.contains(":")) {
 			String[] split = s.split(":");
-			this.type = Integer.parseInt(split[0]);
-			if (MagicSpells.ignoreCastItemDurability(this.type)) {
+			this.materialType = MaterialHelper.getFromNumericalId(Integer.parseInt(split[0]));
+			if (MagicSpells.ignoreCastItemDurability(this.materialType)) {
 				this.data = 0;
 			} else {
 				this.data = Short.parseShort(split[1]);
 			}
 		} else {
-			this.type = Integer.parseInt(s);
+			this.materialType = MaterialHelper.getFromNumericalId(Integer.parseInt(s));
 			this.data = 0;
 		}
 	}
 	
-	public int getItemTypeId() {
-		return this.type;
+	public Material getItemType() {
+		return this.materialType;
 	}
 	
 	public boolean equals(CastItem i) {
 		if (i == null) return false;
-		if (i.type != this.type) return false;
+		if (i.materialType != this.materialType) return false;
 		if (i.data != this.data) return false;
 		if (!(MagicSpells.ignoreCastItemNames() || i.name.equals(this.name))) return false;
 		return MagicSpells.ignoreCastItemEnchants() || compareEnchants(this.enchants, i.enchants);
 	}
 	
 	public boolean equals(ItemStack i) {
-		if (i.getTypeId() != this.type) return false;
+		if (i.getType() != this.materialType) return false;
 		if (i.getDurability() != this.data) return false;
 		if (!(MagicSpells.ignoreCastItemNames() || namesEqual(i))) return false;
 		return MagicSpells.ignoreCastItemEnchants() || compareEnchants(this.enchants, getEnchants(i));
@@ -154,9 +155,9 @@ public class CastItem {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		if (this.data == 0) {
-			builder.append(this.type);
+			builder.append(this.materialType);
 		} else {
-			builder.append(this.type);
+			builder.append(this.materialType);
 			builder.append(':');
 			builder.append(this.data);
 		}

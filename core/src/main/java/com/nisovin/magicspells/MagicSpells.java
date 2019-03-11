@@ -23,6 +23,7 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.nisovin.magicspells.util.MaterialHelper;
 import com.nisovin.magicspells.util.Metrics;
 import com.nisovin.magicspells.util.TxtUtil;
 import com.nisovin.magicspells.util.compat.CompatBasics;
@@ -114,7 +115,7 @@ public class MagicSpells extends JavaPlugin {
 	boolean ignoreDefaultBindings;
 	boolean showStrCostOnMissingReagents;
 	HashSet<Material> losTransparentBlocks; // TODO: fix
-	List<Integer> ignoreCastItemDurability; // TODO: fix
+	List<Material> ignoreCastItemDurability; // TODO: fix
 	HashMap<EntityType, String> entityNames;
 	int globalCooldown;
 	boolean castOnAnimate;
@@ -272,7 +273,7 @@ public class MagicSpells extends JavaPlugin {
 		showStrCostOnMissingReagents = config.getBoolean("general.show-str-cost-on-missing-reagents", true);
 		losTransparentBlocks = Util.getMaterialList(config.getStringList("general.los-transparent-blocks", new ArrayList<>()), HashSet::new);
 		if (losTransparentBlocks.isEmpty()) losTransparentBlocks.add(Material.AIR);
-		ignoreCastItemDurability = config.getIntList("general.ignore-cast-item-durability", new ArrayList<>());
+		ignoreCastItemDurability = Util.getMaterialList(config.getStringList("general.ignore-cast-item-durability", new ArrayList<>()), ArrayList::new);
 		globalCooldown = config.getInt("general.global-cooldown", 500);
 		castOnAnimate = config.getBoolean("general.cast-on-animate", false);
 		useExpBarAsCastTimeBar = config.getBoolean("general.use-exp-bar-as-cast-time-bar", true);
@@ -753,7 +754,17 @@ public class MagicSpells extends JavaPlugin {
 	 * @param type the type to check
 	 * @return whether to ignore durability
 	 */
+	@Deprecated
 	public static boolean ignoreCastItemDurability(int type) {
+		return ignoreCastItemDurability(MaterialHelper.getFromNumericalId(type));
+	}
+	
+	/**
+	 * Checks whether to ignore the durability on the given type when using it as a cast item.
+	 * @param type the type to check
+	 * @return whether to ignore durability
+	 */
+	public static boolean ignoreCastItemDurability(Material type) {
 		return plugin.ignoreCastItemDurability != null && plugin.ignoreCastItemDurability.contains(type);
 	}
 	
