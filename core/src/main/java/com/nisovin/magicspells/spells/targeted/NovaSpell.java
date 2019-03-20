@@ -217,14 +217,14 @@ public class NovaSpell extends TargetedSpell implements TargetedLocationSpell, T
 					if (Math.abs(x - bx) != temp && Math.abs(z - bz) != temp) continue;
 					
 					Block b = center.getWorld().getBlockAt(x, y, z);
-					if (b.getType() == Material.AIR || b.getType() == Material.LONG_GRASS) {
+					if (b.getType() == Material.AIR || b.getType() == Material.LEGACY_LONG_GRASS) {
 						Block under = b.getRelative(BlockFace.DOWN);
-						if (under.getType() == Material.AIR || under.getType() == Material.LONG_GRASS) b = under;
-					} else if (b.getRelative(BlockFace.UP).getType() == Material.AIR || b.getRelative(BlockFace.UP).getType() == Material.LONG_GRASS) {
+						if (under.getType() == Material.AIR || under.getType() == Material.LEGACY_LONG_GRASS) b = under;
+					} else if (b.getRelative(BlockFace.UP).getType() == Material.AIR || b.getRelative(BlockFace.UP).getType() == Material.LEGACY_LONG_GRASS) {
 						b = b.getRelative(BlockFace.UP);
 					}
 					
-					if (b.getType() != Material.AIR && b.getType() != Material.LONG_GRASS) continue;
+					if (b.getType() != Material.AIR && b.getType() != Material.LEGACY_LONG_GRASS) continue;
 					
 					if (blocks.contains(b)) continue;
 					for (Player p : nearby) Util.sendFakeBlockChange(p, b, matNova);
@@ -306,14 +306,14 @@ public class NovaSpell extends TargetedSpell implements TargetedLocationSpell, T
 			if (startRadius == 0 && temp == 0) {
 				b = centerLocation.getWorld().getBlockAt(centerLocation);
 				
-				if (b.getType() == Material.AIR || b.getType() == Material.LONG_GRASS) {
+				if (b.getType() == Material.AIR || b.getType() == Material.LEGACY_LONG_GRASS) {
 					Block under = b.getRelative(BlockFace.DOWN);
-					if (under.getType() == Material.AIR || under.getType() == Material.LONG_GRASS) b = under;
-				} else if (b.getRelative(BlockFace.UP).getType() == Material.AIR || b.getRelative(BlockFace.UP).getType() == Material.LONG_GRASS) {
+					if (under.getType() == Material.AIR || under.getType() == Material.LEGACY_LONG_GRASS) b = under;
+				} else if (b.getRelative(BlockFace.UP).getType() == Material.AIR || b.getRelative(BlockFace.UP).getType() == Material.LEGACY_LONG_GRASS) {
 					b = b.getRelative(BlockFace.UP);
 				}
 				
-				if (b.getType() != Material.AIR && b.getType() != Material.LONG_GRASS) return;
+				if (b.getType() != Material.AIR && b.getType() != Material.LEGACY_LONG_GRASS) return;
 				
 				if (blocks.contains(b)) return;
 				for (Player p : nearby) Util.sendFakeBlockChange(p, b, matNova);
@@ -334,14 +334,14 @@ public class NovaSpell extends TargetedSpell implements TargetedLocationSpell, T
 				b = center.getWorld().getBlockAt(centerLocation.add(v));
 				centerLocation.subtract(v);
 				
-				if (b.getType() == Material.AIR || b.getType() == Material.LONG_GRASS) {
+				if (b.getType() == Material.AIR || b.getType() == Material.LEGACY_LONG_GRASS) {
 					Block under = b.getRelative(BlockFace.DOWN);
-					if (under.getType() == Material.AIR || under.getType() == Material.LONG_GRASS) b = under;
-				} else if (b.getRelative(BlockFace.UP).getType() == Material.AIR || b.getRelative(BlockFace.UP).getType() == Material.LONG_GRASS) {
+					if (under.getType() == Material.AIR || under.getType() == Material.LEGACY_LONG_GRASS) b = under;
+				} else if (b.getRelative(BlockFace.UP).getType() == Material.AIR || b.getRelative(BlockFace.UP).getType() == Material.LEGACY_LONG_GRASS) {
 					b = b.getRelative(BlockFace.UP);
 				}
 				
-				if (b.getType() != Material.AIR && b.getType() != Material.LONG_GRASS) continue;
+				if (b.getType() != Material.AIR && b.getType() != Material.LEGACY_LONG_GRASS) continue;
 				
 				if (blocks.contains(b)) continue;
 				for (Player p : nearby) Util.sendFakeBlockChange(p, b, matNova);

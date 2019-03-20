@@ -48,7 +48,7 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 	
 	@Override
 	public void toggleLeverOrButton(Block block) {
-		if (block.getType() == Material.STONE_BUTTON || block.getType() == Material.WOOD_BUTTON) {
+		if (block.getType() == Material.STONE_BUTTON || block.getType() == Material.LEGACY_WOOD_BUTTON) {
 			BlockState state = block.getState();
 			Button button = (Button)state.getData();
 			button.setPowered(true);
@@ -63,7 +63,7 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 
 	@Override
 	public void pressPressurePlate(Block block) {
-		block.setData((byte) (block.getData() ^ 0x1));
+		//block.setData((byte) (block.getData() ^ 0x1));
 	}
 
 	@Override

@@ -103,8 +103,8 @@ public class MSConfig {
 
   // Resource retrieving
   def resourceNcpUrl = "https://ci.md-5.net/job/NoCheatPlus/lastSuccessfulBuild/artifact/target/NoCheatPlus.jar"
-  def resourcePlaceholderapiUrl = "http://repo.extendedclip.com/content/repositories/placeholderapi/me/clip/placeholderapi/2.8.2/placeholderapi-2.8.2.jar"
-  def resourceGriefPreventionUrl = "https://github.com/TechFortress/GriefPrevention/releases/download/16.8/GriefPrevention.jar"
+  //def resourcePlaceholderapiUrl = "http://repo.extendedclip.com/content/repositories/placeholderapi/me/clip/placeholderapi/2.8.2/placeholderapi-2.8.2.jar"
+  //def resourceGriefPreventionUrl = "https://github.com/TechFortress/GriefPrevention/releases/download/16.8/GriefPrevention.jar"
 
   def versionSuffix
 
@@ -135,10 +135,10 @@ def magicspellsGetResources() {
   downloadFile(new File(libFolder, "NoCheatPlus.jar"), new URL(project.ext.magicspellsData.resourceNcpUrl))
 
   // Get PlaceholderAPI
-  downloadFile(new File(libFolder, "PlaceholderAPI.jar"), new URL(project.ext.magicspellsData.resourcePlaceholderapiUrl))
+  //downloadFile(new File(libFolder, "PlaceholderAPI.jar"), new URL(project.ext.magicspellsData.resourcePlaceholderapiUrl))
 
   // Get GriefPrevention
-  downloadFile(new File(libFolder, "GriefPrevention.jar"), new URL(project.ext.magicspellsData.resourceGriefPreventionUrl))
+  //downloadFile(new File(libFolder, "GriefPrevention.jar"), new URL(project.ext.magicspellsData.resourceGriefPreventionUrl))
 
   println "Finished running the get resources phase"
 }
@@ -165,6 +165,24 @@ subprojects {
     }
     jcenter()
     mavenCentral()
+    maven {
+      url "https://hub.spigotmc.org/nexus/content/repositories/snapshots"
+    }
+    maven {
+      url "https://oss.sonatype.org/content/repositories/snapshots"
+    }
+    maven {
+      url "http://repo.bstats.org/content/repositories/releases/"
+    }
+    maven {
+      url "https://cdn.rawgit.com/Rayzr522/maven-repo/master/"
+    }
+    maven {
+        url "http://maven.sk89q.com/repo/"
+    }
+    maven {
+      url = "https://jitpack.io"
+    }
   }
   it.version = "4.0-SNAPSHOT"
   

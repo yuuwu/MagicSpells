@@ -278,13 +278,13 @@ public class DisguiseManagerLibsDisguises implements Listener, IDisguiseManager 
 				case 0: // No armor, already null
 					break;
 				case 1: // Iron armor
-					horseArmor = new ItemStack(Material.IRON_BARDING, 1);
+					horseArmor = new ItemStack(Material.LEGACY_IRON_BARDING, 1);
 					break;
 				case 2:
-					horseArmor = new ItemStack(Material.GOLD_BARDING, 1);
+					horseArmor = new ItemStack(Material.LEGACY_GOLD_BARDING, 1);
 					break;
 				case 3:
-					horseArmor = new ItemStack(Material.DIAMOND_BARDING, 1);
+					horseArmor = new ItemStack(Material.LEGACY_DIAMOND_BARDING, 1);
 					break;
 				}
 				

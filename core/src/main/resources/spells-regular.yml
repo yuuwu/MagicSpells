@@ -53,7 +53,7 @@ armor:
 blind:
     spell-class: ".targeted.PotionEffectSpell"
     name: blind
-    spell-icon: ink_sack:0
+    spell-icon: ink_sack # :0
     description: Blind your target.
     cast-item: blaze_rod
     cooldown: 15
@@ -240,7 +240,7 @@ cripple:
 disarm:
     spell-class: ".targeted.DisarmSpell"
     name: disarm
-    spell-icon: stone_sword:130
+    spell-icon: stone_sword # :130
     description: Disarm your opponent.
     cast-item: blaze_rod
     cooldown: 15
@@ -569,7 +569,7 @@ flamewalk:
     duration: 120
     cost:
         - mana 25
-        - 263 2
+        - coal 2
     use-cost:
         - mana 10
     use-cost-interval: 10
@@ -919,7 +919,7 @@ levitate:
 lifewalk:
     spell-class: ".buff.LifewalkSpell"
     name: lifewalk
-    spell-icon: sapling:2
+    spell-icon: sapling # :2
     description: Flowers grow in your footsteps!
     cast-item: book
     tick-interval: 15
@@ -964,7 +964,7 @@ lightwalk:
     name: lightwalk
     spell-icon: glowstone
     description: Light your path.
-    cast-item: 317
+    cast-item: GOLD_BOOTS
     cost:
         - mana 25
         - torch 3
@@ -996,7 +996,7 @@ lilywalk:
 mana:
     spell-class: ".instant.ManaSpell"
     name: lifetap
-    spell-icon: potion:8193
+    spell-icon: potion # :8193
     description: Restores mana at the cost of life.
     cast-item: bone
     cooldown: 3
@@ -1024,7 +1024,7 @@ mark:
 minion:
     spell-class: ".buff.MinionSpell"
     name: minion
-    spell-icon: monster_egg:54
+    spell-icon: monster_egg # :54
     description: Summons an undead minion to aid you.
     cast-item: bone
     cooldown: 60
@@ -1111,7 +1111,7 @@ prayer:
 purge:
     spell-class: ".instant.PurgeSpell"
     name: purge
-    spell-icon: potion:16396
+    spell-icon: potion # :16396
     description: Kill all monsters and animals around you.
     cast-item: bone
     cooldown: 60
@@ -1235,7 +1235,7 @@ safefall:
     cost:
         - mana 20
     use-cost:
-        - 288 1
+        - feather 1
     use-cost-interval: 1
     str-cost: 20 mana, plus 1 feather each time you fall
     str-cast-self: You feel lighter.
@@ -1282,7 +1282,7 @@ silence:
 spellhaste:
     spell-class: ".buff.SpellHasteSpell"
     name: spellhaste
-    spell-icon: ink_sack:4
+    spell-icon: ink_sack # :4
     description: Reduces the cast time and cooldown of your spells.
     cast-item: book
     cooldown: 60
@@ -1691,7 +1691,7 @@ zap:
 gianttree:
     spell-class: ".ExternalCommandSpell"
     name: gianttree
-    spell-icon: sapling:3
+    spell-icon: sapling # :3
     enabled: false
     description: Create a giant tree!
     cooldown: 300

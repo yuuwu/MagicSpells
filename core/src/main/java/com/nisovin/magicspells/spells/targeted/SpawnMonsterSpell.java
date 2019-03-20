@@ -244,7 +244,7 @@ public class SpawnMonsterSpell extends TargetedSpell implements TargetedLocation
 			z = location.getBlockZ() + random.nextInt(range << 1) - range;
 			
 			block = world.getBlockAt(x, y, z);
-			if (block.getType() == Material.STATIONARY_WATER || block.getType() == Material.WATER) return block.getLocation();
+			if (block.getType() == Material.LEGACY_STATIONARY_WATER || block.getType() == Material.WATER) return block.getLocation();
 			if (BlockUtils.isPathable(block)) {
 				if (allowSpawnInMidair) return block.getLocation();
 				int c = 0;

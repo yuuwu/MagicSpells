@@ -38,7 +38,7 @@ public class ConjureFireworkSpell extends InstantSpell implements TargetedLocati
 		pickupDelay = getConfigInt("pickup-delay", 0);
 		pickupDelay = Math.max(pickupDelay, 0);
 		itemHasGravity = getConfigBoolean("gravity", true);
-		firework = new ItemStack(Material.FIREWORK, getConfigInt("count", 1));
+		firework = new ItemStack(Material.LEGACY_FIREWORK, getConfigInt("count", 1));
 		FireworkMeta meta = (FireworkMeta)firework.getItemMeta();
 		
 		meta.setPower(getConfigInt("flight", 2));

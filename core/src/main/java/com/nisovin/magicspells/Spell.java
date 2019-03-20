@@ -1931,8 +1931,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		
 	}
 	
-	// TODO move this to its own class
-	public class SpellCastResult {
+	public static class SpellCastResult {
 		
 		public SpellCastState state;
 		public PostCastAction action;

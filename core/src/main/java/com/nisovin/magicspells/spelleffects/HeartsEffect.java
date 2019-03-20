@@ -1,16 +1,16 @@
 package com.nisovin.magicspells.spelleffects;
 
+import com.nisovin.magicspells.MagicSpells;
 import org.bukkit.EntityEffect;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Tameable;
 
-import de.slikey.effectlib.util.ParticleEffect;
-
 public class HeartsEffect extends SpellEffect {
 	
-	private ParticleEffect effect = ParticleEffect.HEART;
+	private Particle effect = Particle.HEART;
 	
 	private float yOffset = 2F;
 	
@@ -22,7 +22,7 @@ public class HeartsEffect extends SpellEffect {
 	
 	@Override
 	public void loadFromString(String string) {
-		// No current string loading schema
+		// lol nope
 	}
 
 	@Override
@@ -45,7 +45,8 @@ public class HeartsEffect extends SpellEffect {
 		//MagicSpells.getVolatileCodeHandler().playParticleEffect(location, "heart", .3F, .2F, .2F, 4, 32, 2F);
 		//Location location, String name, float spreadHoriz, float spreadVert, float speed, int count, int radius, float yOffset
 		
-		effect.display(null, location.clone().add(0, yOffset, 0), null, range, spreadHoriz, spreadVert, spreadHoriz, speed, count);
+		//effect.display(null, location.clone().add(0, yOffset, 0), null, range, spreadHoriz, spreadVert, spreadHoriz, speed, count);
+		MagicSpells.getInstance().effectManager.display(effect, location.clone().add(0, yOffset, 0), spreadHoriz, spreadVert, spreadHoriz, speed, count, 1.0f, null, null, (byte) 0, range, null);
 		//ParticleData data, Location center, Color color, double range, float offsetX, float offsetY, float offsetZ, float speed, int amount
 		return null;
 	}

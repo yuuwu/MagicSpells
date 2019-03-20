@@ -1,9 +1,9 @@
 package com.nisovin.magicspells.materials;
 
-import com.nisovin.magicspells.util.MaterialHelper;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
@@ -12,12 +12,11 @@ import java.util.Objects;
 
 public class MagicUnknownMaterial extends MagicMaterial {
 	
-	@Deprecated int type;
 	Material material;
 	short data;
 	
-	public MagicUnknownMaterial(int type, short data) {
-		this.material = MaterialHelper.getFromNumericalId(type);
+	public MagicUnknownMaterial(Material type, short data) {
+		this.material = type;
 		this.data = data;
 	}
 	
@@ -33,7 +32,11 @@ public class MagicUnknownMaterial extends MagicMaterial {
 	
 	@Override
 	public void setBlock(Block block, boolean applyPhysics) {
-		if (this.data < 16) block.setTypeIdAndData(this.type, (byte)this.data, applyPhysics);
+		//if (this.data < 16) block.setTypeIdAndData(this.type, (byte)this.data, applyPhysics);
+		if (this.data < 16) {
+			block.setType(material);
+			block.setBlockData((BlockData) material.getNewData((byte) this.data));
+		}
 	}
 	
 	@Override
@@ -43,7 +46,7 @@ public class MagicUnknownMaterial extends MagicMaterial {
 	
 	@Override
 	public ItemStack toItemStack(int quantity) {
-		return new ItemStack(this.type, quantity, this.data);
+		return new ItemStack(this.material, quantity, this.data);
 	}
 	
 	@Override

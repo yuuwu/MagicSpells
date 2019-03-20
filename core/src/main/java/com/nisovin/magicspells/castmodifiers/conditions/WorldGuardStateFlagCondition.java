@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.sk89q.worldguard.LocalPlayer;
-import com.sk89q.worldguard.protection.flags.DefaultFlag;
-import com.sk89q.worldguard.protection.flags.Flag;
+//import com.sk89q.worldguard.protection.flags.DefaultFlag;
+//import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
@@ -17,11 +17,12 @@ public class WorldGuardStateFlagCondition extends AbstractWorldGuardFlagConditio
 	
 	static {
 		nameMap = new HashMap<>();
-		for (Flag<?> f: DefaultFlag.getFlags()) {
+		/*for (Flag<?> f: DefaultFlag.getFlags()) {
 			if (f instanceof StateFlag) {
 				nameMap.put(f.getName(), (StateFlag)f);
 			}
-		}
+		}*/
+		// FIXME get this setup
 	}
 	
 	@Override

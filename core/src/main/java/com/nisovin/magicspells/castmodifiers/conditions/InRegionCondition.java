@@ -1,16 +1,16 @@
 package com.nisovin.magicspells.castmodifiers.conditions;
 
 import com.nisovin.magicspells.util.compat.CompatBasics;
-import org.bukkit.Bukkit;
+//import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
+//import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.castmodifiers.Condition;
-import com.sk89q.worldedit.Vector;
+//import com.sk89q.worldedit.Vector;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.managers.RegionManager;
+//import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 public class InRegionCondition extends Condition {
@@ -48,7 +48,7 @@ public class InRegionCondition extends Condition {
 
 	@Override
 	public boolean check(Player player, Location location) {
-		if (region == null) {
+		/*if (region == null) {
 			World world = Bukkit.getWorld(worldName);
 			if (world == null) return false;
 			if (!world.equals(location.getWorld())) return false;
@@ -57,7 +57,9 @@ public class InRegionCondition extends Condition {
 			region = regionManager.getRegion(regionName);
 		}
 		if (region == null) return false;
-		return region.contains(new Vector(location.getX(), location.getY(), location.getZ()));
+		return region.contains(new Vector(location.getX(), location.getY(), location.getZ()));*/
+		// FIXME update this
+		return false;
 	}
 
 }

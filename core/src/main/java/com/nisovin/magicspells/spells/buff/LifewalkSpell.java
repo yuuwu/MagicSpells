@@ -14,7 +14,6 @@ import org.bukkit.material.LongGrass;
 
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spells.BuffSpell;
-import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
 
@@ -24,22 +23,16 @@ public class LifewalkSpell extends BuffSpell {
 	private Grower grower;
 	Random random;
 	
-	@ConfigData(field="tick-interval", dataType="int", defaultValue="15")
 	int tickInterval;
 	
-	@ConfigData(field="red-flower-chance", dataType="int", defaultValue="15")
 	int redFlowerChance;
 	
-	@ConfigData(field="yellow-flower-chance", dataType="int", defaultValue="15")
 	int yellowFlowerChance;
 	
-	@ConfigData(field="sapling-chance", dataType="int", defaultValue="5")
 	int saplingChance;
 	
-	@ConfigData(field="tallgrass-chance", dataType="int", defaultValue="25")
 	int tallgrassChance;
 	
-	@ConfigData(field="fern-chance", dataType="int", defaultValue="15")
 	int fernChance;
 	
 	public LifewalkSpell(MagicConfig config, String spellName) {
@@ -112,26 +105,26 @@ public class LifewalkSpell extends BuffSpell {
 						}
 						int rand = random.nextInt(100);
 						if (rand < redFlowerChance) {
-							feet.setType(Material.RED_ROSE);
+							feet.setType(Material.LEGACY_RED_ROSE);
 							addUse(player);
 							chargeUseCost(player);
 						} else {
 							rand -= redFlowerChance;
 							if (rand < yellowFlowerChance) {
-								feet.setType(Material.YELLOW_FLOWER);
+								feet.setType(Material.LEGACY_YELLOW_FLOWER);
 								addUse(player);
 								chargeUseCost(player);
 							} else {
 								rand -= yellowFlowerChance;
 								if (rand < saplingChance) {
-									feet.setType(Material.SAPLING);
+									feet.setType(Material.LEGACY_SAPLING);
 									addUse(player);
 									chargeUseCost(player);
 								} else {
 									rand -= saplingChance;
 									if (rand < tallgrassChance) {
 										BlockState state = feet.getState();
-										state.setType(Material.LONG_GRASS);
+										state.setType(Material.LEGACY_LONG_GRASS);
 										state.setData(new LongGrass(GrassSpecies.NORMAL));
 										state.update(true);
 										addUse(player);
@@ -140,7 +133,7 @@ public class LifewalkSpell extends BuffSpell {
 										rand -= tallgrassChance;
 										if (rand < fernChance) {
 											BlockState state = feet.getState();
-											state.setType(Material.LONG_GRASS);
+											state.setType(Material.LEGACY_LONG_GRASS);
 											state.setData(new LongGrass(GrassSpecies.FERN_LIKE));
 											state.update(true);
 											addUse(player);

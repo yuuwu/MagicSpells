@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.NetherWartsState;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.material.NetherWarts;
@@ -57,11 +58,18 @@ public class BlockUtils {
 	}
 	
 	public static void setTypeAndData(Block block, Material material, byte data, boolean physics) {
-		block.setTypeIdAndData(material.getId(), data, physics);
+		//block.setTypeIdAndData(material.getId(), data, physics);
+		block.setType(material);
+		block.setBlockData((BlockData) material.getNewData(data));
+		// TODO see if the physics thing can be applied still
 	}
 	
 	public static void setBlockFromFallingBlock(Block block, FallingBlock fallingBlock, boolean physics) {
-		block.setTypeIdAndData(fallingBlock.getBlockId(), fallingBlock.getBlockData(), physics);
+		//block.setTypeIdAndData(fallingBlock.getBlockId(), fallingBlock.getBlockData(), physics);
+		// TODO test and figure out physics
+		BlockData blockData = fallingBlock.getBlockData();
+		block.setType(blockData.getMaterial());
+		block.setBlockData(blockData);
 	}
 	
 	public static int getWaterLevel(Block block) {
@@ -73,7 +81,8 @@ public class BlockUtils {
 	}
 	
 	public static void setGrowthLevel(Block block, int level) {
-		block.setData((byte)level);
+		//block.setData((byte)level);
+		block.setBlockData((BlockData) block.getBlockData().getMaterial().getNewData((byte) level));
 	}
 	
 	public static boolean growWarts(NetherWarts wart, int stagesToGrow) {
@@ -97,37 +106,37 @@ public class BlockUtils {
 	public static boolean isPathable(Material material) {
 		return
 				material == Material.AIR ||
-				material == Material.SAPLING ||
+				material == Material.LEGACY_SAPLING ||
 				material == Material.WATER ||
-				material == Material.STATIONARY_WATER ||
+				material == Material.LEGACY_STATIONARY_WATER ||
 				material == Material.POWERED_RAIL ||
 				material == Material.DETECTOR_RAIL ||
-				material == Material.LONG_GRASS ||
+				material == Material.LEGACY_LONG_GRASS ||
 				material == Material.DEAD_BUSH ||
-				material == Material.YELLOW_FLOWER ||
-				material == Material.RED_ROSE ||
+				material == Material.LEGACY_YELLOW_FLOWER ||
+				material == Material.LEGACY_RED_ROSE ||
 				material == Material.BROWN_MUSHROOM ||
 				material == Material.RED_MUSHROOM ||
 				material == Material.TORCH ||
 				material == Material.FIRE ||
 				material == Material.REDSTONE_WIRE ||
-				material == Material.CROPS ||
-				material == Material.SIGN_POST ||
+				material == Material.LEGACY_CROPS ||
+				material == Material.LEGACY_SIGN_POST ||
 				material == Material.LADDER ||
-				material == Material.RAILS ||
+				material == Material.LEGACY_RAILS ||
 				material == Material.WALL_SIGN ||
 				material == Material.LEVER ||
-				material == Material.STONE_PLATE ||
-				material == Material.WOOD_PLATE ||
-				material == Material.REDSTONE_TORCH_OFF ||
-				material == Material.REDSTONE_TORCH_ON ||
+				material == Material.LEGACY_STONE_PLATE ||
+				material == Material.LEGACY_WOOD_PLATE ||
+				material == Material.LEGACY_REDSTONE_TORCH_OFF ||
+				material == Material.LEGACY_REDSTONE_TORCH_ON ||
 				material == Material.STONE_BUTTON ||
 				material == Material.SNOW ||
-				material == Material.SUGAR_CANE_BLOCK ||
+				material == Material.LEGACY_SUGAR_CANE_BLOCK ||
 				material == Material.VINE ||
-				material == Material.WATER_LILY ||
-				material == Material.NETHER_STALK ||
-				material == Material.CARPET;
+				material == Material.LEGACY_WATER_LILY ||
+				material == Material.LEGACY_NETHER_STALK ||
+				material == Material.LEGACY_CARPET;
 	}
 	
 	public static boolean isSafeToStand(Location location) {

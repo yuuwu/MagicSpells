@@ -29,12 +29,12 @@ public class TelekinesisSpell extends TargetedSpell implements TargetedLocationS
 		
 		losTransparentBlocks = new HashSet<>(losTransparentBlocks);
 		losTransparentBlocks.remove(Material.LEVER);
-		losTransparentBlocks.remove(Material.STONE_PLATE);
-		losTransparentBlocks.remove(Material.WOOD_PLATE);
-		losTransparentBlocks.remove(Material.IRON_PLATE);
-		losTransparentBlocks.remove(Material.GOLD_PLATE);
+		losTransparentBlocks.remove(Material.LEGACY_STONE_PLATE);
+		losTransparentBlocks.remove(Material.LEGACY_WOOD_PLATE);
+		losTransparentBlocks.remove(Material.LEGACY_IRON_PLATE);
+		losTransparentBlocks.remove(Material.LEGACY_GOLD_PLATE);
 		losTransparentBlocks.remove(Material.STONE_BUTTON);
-		losTransparentBlocks.remove(Material.WOOD_BUTTON);
+		losTransparentBlocks.remove(Material.LEGACY_WOOD_BUTTON);
 	}
 	
 	@Override
@@ -64,12 +64,12 @@ public class TelekinesisSpell extends TargetedSpell implements TargetedLocationS
 	
 	private boolean activate(Player caster, Block target) {
 		Material targetType = target.getType();
-		if (targetType == Material.LEVER || targetType == Material.STONE_BUTTON || targetType == Material.WOOD_BUTTON) {
+		if (targetType == Material.LEVER || targetType == Material.STONE_BUTTON || targetType == Material.LEGACY_WOOD_BUTTON) {
 			if (checkPlugins(caster, target)) {
 				MagicSpells.getVolatileCodeHandler().toggleLeverOrButton(target);
 				return true;
 			}
-		} else if (targetType == Material.WOOD_PLATE || targetType == Material.STONE_PLATE || targetType == Material.IRON_PLATE || targetType == Material.GOLD_PLATE) {
+		} else if (targetType == Material.LEGACY_WOOD_PLATE || targetType == Material.LEGACY_STONE_PLATE || targetType == Material.LEGACY_IRON_PLATE || targetType == Material.LEGACY_GOLD_PLATE) {
 			if (checkPlugins(caster, target)) {
 				MagicSpells.getVolatileCodeHandler().pressPressurePlate(target);
 				return true;

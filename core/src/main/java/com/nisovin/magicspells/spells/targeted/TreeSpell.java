@@ -12,6 +12,7 @@ import org.bukkit.TreeType;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.events.SpellTargetLocationEvent;
@@ -132,7 +133,7 @@ public class TreeSpell extends TargetedSpell implements TargetedLocationSpell {
 		
 	}
 	
-	private class TreeWatch implements BlockChangeDelegate {
+	private static class TreeWatch implements BlockChangeDelegate {
 
 		private Location loc;
 		private List<BlockState> blockStates;
@@ -147,41 +148,52 @@ public class TreeSpell extends TargetedSpell implements TargetedLocationSpell {
 			return loc.getWorld().getMaxHeight();
 		}
 
-		@Override
+		/*@Override
 		public int getTypeId(int x, int y, int z) {
 			return loc.getWorld().getBlockTypeIdAt(x, y, z);
-		}
+		}*/
 
 		@Override
 		public boolean isEmpty(int x, int y, int z) {
-			return getTypeId(x, y, z) == 0;
+			return loc.getWorld().getBlockAt(x, y, z).getType() == Material.AIR;
+			//return getTypeId(x, y, z) == 0;
 		}
 
-		@Override
+		/*@Override
 		public boolean setRawTypeId(int x, int y, int z, int id) {
 			BlockState state = loc.getWorld().getBlockAt(x, y, z).getState();
 			state.setTypeId(id);
 			blockStates.add(state);
 			return true;
-		}
+		}*/
 
-		@Override
-		public boolean setRawTypeIdAndData(int x, int y, int z, int id, int data) {
+		/*@Override
+		public boolean setRawTypeIdAndData(int x, int y, int z, int id, BlockData data) {
 			BlockState state = loc.getWorld().getBlockAt(x, y, z).getState();
 			state.setTypeId(id);
 			state.setRawData((byte)data);
 			blockStates.add(state);
 			return true;
-		}
+		}*/
 
-		@Override
+		/*@Override
 		public boolean setTypeId(int x, int y, int z, int id) {
 			return setRawTypeId(x, y, z, id);
-		}
+		}*/
 
 		@Override
-		public boolean setTypeIdAndData(int x, int y, int z, int id, int data) {
-			return setRawTypeIdAndData(x, y, z, id, data);
+		public boolean setBlockData(int x, int y, int z, BlockData data) {
+			BlockState state = loc.getWorld().getBlockAt(x, y, z).getState();
+			state.setBlockData(data);
+			blockStates.add(state);
+			//return setRawTypeIdAndData(x, y, z, data);
+			return true;
+		}
+		
+		@Override
+		public BlockData getBlockData(int x, int y, int z)
+		{
+			return loc.getWorld().getBlockAt(x, y, z).getBlockData();
 		}
 		
 	}

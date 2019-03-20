@@ -19,7 +19,6 @@ public interface ItemNameResolver {
 	class ItemTypeAndData {
 		
 		public Material material = Material.AIR;
-		@Deprecated public int id = 0;
 		public short data = 0;
 		
 	}

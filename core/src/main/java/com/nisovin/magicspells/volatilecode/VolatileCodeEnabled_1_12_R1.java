@@ -693,7 +693,8 @@ public class VolatileCodeEnabled_1_12_R1 implements VolatileCodeHandle {
 
 	@Override
 	public void showItemCooldown(Player player, ItemStack item, int duration) {
-		PacketPlayOutSetCooldown packet = new PacketPlayOutSetCooldown(Item.getById(item.getTypeId()), duration);
+		// TODO see if this works as the item id
+		PacketPlayOutSetCooldown packet = new PacketPlayOutSetCooldown(Item.getById(item.getType().ordinal()), duration);
 		((CraftPlayer)player).getHandle().playerConnection.sendPacket(packet);
 	}
 

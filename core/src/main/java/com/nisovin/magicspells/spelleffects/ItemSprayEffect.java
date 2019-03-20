@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Item;
 import org.bukkit.util.Vector;
@@ -27,20 +28,20 @@ public class ItemSprayEffect extends SpellEffect {
 	public void loadFromString(String string) {
 		if (string != null) {
 			String[] data = string.split(" ");
-			int type = 331;
+			Material type = Material.LEGACY_REDSTONE;
 			short dura = 0;
 			if (data.length >= 1) {
 				if (data[0].contains(":")) {
 					try {
 						String[] typeData = data[0].split(":");
-						type = Integer.parseInt(typeData[0]);
+						type = Material.matchMaterial(typeData[0], true);
 						dura = Short.parseShort(typeData[1]);
 					} catch (NumberFormatException e) {
 						DebugHandler.debugNumberFormat(e);
 					}
 				} else {
 					try {
-						type = Integer.parseInt(data[0]);
+						type = Material.matchMaterial(data[0], true);
 					} catch (NumberFormatException e) {
 						DebugHandler.debugNumberFormat(e);
 					}

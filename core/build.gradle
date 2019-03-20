@@ -1,27 +1,38 @@
-
-repositories {
-    maven {
-        url = 'https://jitpack.io'
-    }
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.3.21'
 }
 
 dependencies {
     shadow group: "org.apache.commons", name: "commons-math3", version: "3.0"
     shadow "com.github.Slikey:EffectLib:d0537d1519"
+    compile "org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT"
     compile ":spigot-1.12"
-    //compile ":EffectLib-4.0"
-    compile ":Vault"
+    compile "com.github.MilkBowl:VaultAPI:68f14eca20"
     compile ":ProtocolLib"
     compile ":NoCheatPlus"
-    compile ":WorldEdit"
-    compile ":WorldGuard"
+    //compile ":WorldEdit"
+    compile "com.github.EngineHub.WorldEdit:worldedit-bukkit:d186cce393"
+    //compile ":WorldGuard"
+    compile "com.github.EngineHub.WorldGuard:worldguard-legacy:ea47e93323"
     compile ":LibsDisguises-9.0.9"
-    compile ":PlaceholderAPI"
-    compile ":GriefPrevention"
+    compile "com.github.PlaceholderAPI:PlaceholderAPI:e53cad219e"
+    compile "com.github.TechFortress:GriefPrevention:832ec7ed86"
+    shadow "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 
 shadowJar {
     setArchivesBaseName("MagicSpells")
     relocate("org.apache.commons.math3", "com.nisovin.magicspells.shaded.org.apache.commons")
     relocate("de.slikey.effectlib", "com.nisovin.magicspells.shaded.effectlib")
+    relocate("kotlin", "com.nisovin.magicspells.shaded.kotlin")
+}
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }

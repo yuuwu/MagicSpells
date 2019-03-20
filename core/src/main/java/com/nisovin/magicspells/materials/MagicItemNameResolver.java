@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.regex.Pattern;
 
-import com.nisovin.magicspells.util.MaterialHelper;
 import com.nisovin.magicspells.util.RegexUtil;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
@@ -70,20 +69,22 @@ public class MagicItemNameResolver implements ItemNameResolver {
 		if (string.contains(":")) {
 			String[] split = string.split(":");
 			if (RegexUtil.matches(DIGITS, split[0])) {
-				item.material = MaterialHelper.getFromNumericalId(Integer.parseInt(split[0]));
+				throw new RuntimeException("Numerical ids are no longer supported");
 			} else {
 				Material mat = Material.getMaterial(split[0].toUpperCase());
 				if (mat == null) return null;
 				item.material = mat;
 			}
 			if (RegexUtil.matches(DIGITS, split[1])) {
-				item.data = Short.parseShort(split[1]);
+				throw new RuntimeException("Numerical ids are no longer supported");
+				//item.data = Short.parseShort(split[1]);
 			} else {
 				return null;
 			}
 		} else {
 			if (RegexUtil.matches(DIGITS, string)) {
-				item.material = MaterialHelper.getFromNumericalId(Integer.parseInt(string));
+				throw new RuntimeException("Numerical ids are no longer supported");
+				//item.material = MaterialHelper.getFromNumericalId(Integer.parseInt(string));
 			} else {
 				Material mat = Material.getMaterial(string.toUpperCase());
 				if (mat == null) return null;
@@ -184,11 +185,11 @@ public class MagicItemNameResolver implements ItemNameResolver {
 	}
 	
 	private MaterialData resolveBlockData(Material type, String sdata) {
-		if (type == Material.LOG || type == Material.SAPLING || type == Material.WOOD) {
+		if (type == Material.LEGACY_LOG || type == Material.LEGACY_SAPLING || type == Material.LEGACY_WOOD) {
 			return getTree(sdata);
-		} else if (type == Material.LEAVES) {
+		} else if (type == Material.LEGACY_LEAVES) {
 			return getLeaves(sdata);
-		} else if (type == Material.WOOL) {
+		} else if (type == Material.LEGACY_WOOL) {
 			return getWool(sdata);
 		} else if (RegexUtil.matches(BLOCK_BYTE_DATA_PATTERN, sdata)) {
 			return type.getNewData(Byte.parseByte(sdata));
@@ -198,7 +199,7 @@ public class MagicItemNameResolver implements ItemNameResolver {
 	}
 	
 	private MaterialData resolveItemData(Material type, String sdata) {
-		if (type == Material.INK_SACK) {
+		if (type == Material.LEGACY_INK_SACK) {
 			return getDye(sdata);
 		} else {
 			return null;
@@ -207,12 +208,12 @@ public class MagicItemNameResolver implements ItemNameResolver {
 	
 	private MagicMaterial resolveUnknown(String stype, String sdata) {
 		try {
-			int type = Integer.parseInt(stype);
+			Material material = Material.matchMaterial(stype, true);
 			if (sdata.equals("*")) {
-				return new MagicUnknownAnyDataMaterial(type);
+				return new MagicUnknownAnyDataMaterial(material);
 			} else {
 				short data = sdata.isEmpty() ? 0 : Short.parseShort(sdata);
-				return new MagicUnknownMaterial(type, data);
+				return new MagicUnknownMaterial(material, data);
 			}
 		} catch (NumberFormatException e) {
 			DebugHandler.debugNumberFormat(e);

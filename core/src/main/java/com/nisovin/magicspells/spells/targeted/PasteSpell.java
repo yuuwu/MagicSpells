@@ -1,13 +1,19 @@
 package com.nisovin.magicspells.spells.targeted;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.nisovin.magicspells.util.TimeUtil;
-import org.bukkit.Effect;
+import com.sk89q.worldedit.LocalSession;
+import com.sk89q.worldedit.extent.clipboard.Clipboard;
+import com.sk89q.worldedit.extent.clipboard.io.BuiltInClipboardFormat;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
+import com.sk89q.worldedit.session.ClipboardHolder;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
@@ -17,12 +23,12 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
-import com.sk89q.worldedit.CuboidClipboard;
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.Vector;
-import com.sk89q.worldedit.blocks.BaseBlock;
-import com.sk89q.worldedit.bukkit.BukkitWorld;
-import com.sk89q.worldedit.schematic.SchematicFormat;
+//import com.sk89q.worldedit.CuboidClipboard;
+//import com.sk89q.worldedit.EditSession;
+//import com.sk89q.worldedit.Vector;
+//import com.sk89q.worldedit.blocks.BaseBlock;
+//import com.sk89q.worldedit.bukkit.BukkitWorld;
+//import com.sk89q.worldedit.schematic.SchematicFormat;
 
 public class PasteSpell extends TargetedSpell implements TargetedLocationSpell {
 
@@ -112,7 +118,7 @@ public class PasteSpell extends TargetedSpell implements TargetedLocationSpell {
 	}
 	
 	private boolean pasteInstant(Location target) {
-		try {
+		/*try {
 			CuboidClipboard cuboid = SchematicFormat.MCEDIT.load(file);
 			final EditSession session = new EditSession(new BukkitWorld(target.getWorld()), maxBlocks);
 			cuboid.paste(session, new Vector(target.getX(), target.getY(), target.getZ()), !pasteAir, pasteEntities);
@@ -123,7 +129,8 @@ public class PasteSpell extends TargetedSpell implements TargetedLocationSpell {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
-		}
+		}*/
+		return false;
 	}
 	
 	private boolean pasteOverTime(Location target) {
@@ -148,7 +155,17 @@ public class PasteSpell extends TargetedSpell implements TargetedLocationSpell {
 		public Builder(Location target) throws Exception {
 			this.center = target.getBlock();
 			
-			CuboidClipboard clipboard = SchematicFormat.MCEDIT.load(file);
+			LocalSession session = new LocalSession();
+			ClipboardFormat format = BuiltInClipboardFormat.MCEDIT_SCHEMATIC;
+			FileInputStream fis = new FileInputStream(file);
+			BufferedInputStream bis = new BufferedInputStream(fis);
+			ClipboardReader reader = format.getReader(bis);
+			Clipboard clipboard = reader.read();
+			
+			session.setClipboard(new ClipboardHolder(clipboard));
+			
+			
+			/*CuboidClipboard clipboard = SchematicFormat.MCEDIT.load(file);
 			Vector size = clipboard.getSize();
 			Vector offset = clipboard.getOffset();
 
@@ -181,11 +198,11 @@ public class PasteSpell extends TargetedSpell implements TargetedLocationSpell {
 			
 			blocks.addAll(air);
 			blocks.addAll(solids);
-			blocks.addAll(nonsolids);
+			blocks.addAll(nonsolids);*/
 		}
 		
 		public void build() {
-			taskId = MagicSpells.scheduleRepeatingTask(new Runnable() {
+			/*taskId = MagicSpells.scheduleRepeatingTask(new Runnable() {
 				@Override
 				public void run() {
 					if (current >= blocks.size()) {
@@ -205,13 +222,14 @@ public class PasteSpell extends TargetedSpell implements TargetedLocationSpell {
 						}
 					}
 				}
-			}, 1, tickInterval);
+			}, 1, tickInterval);*/
 		}
 		
-		private void setBlockStateFromWorldEditBlock(BlockState state, BaseBlock block) {
-			state.setTypeId(block.getId());
-			state.setRawData((byte)block.getData());
-		}
+		/*private void setBlockStateFromWorldEditBlock(BlockState state, BaseBlock block) {
+			// TODO fix this, (and update worldedit dependency)
+			//state.setTypeId(block.getId());
+			//state.setRawData((byte)block.getData());
+		}*/
 		
 	}
 

@@ -5,8 +5,8 @@ import java.util.Map;
 
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.protection.flags.BooleanFlag;
-import com.sk89q.worldguard.protection.flags.DefaultFlag;
-import com.sk89q.worldguard.protection.flags.Flag;
+//import com.sk89q.worldguard.protection.flags.DefaultFlag;
+//import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 public class WorldGuardBooleanFlagCondition extends AbstractWorldGuardFlagCondition {
@@ -16,11 +16,12 @@ public class WorldGuardBooleanFlagCondition extends AbstractWorldGuardFlagCondit
 	static Map<String, BooleanFlag> nameMap;
 	static {
 		nameMap = new HashMap<>();
-		for (Flag<?> f: DefaultFlag.getFlags()) {
+		/*for (Flag<?> f: DefaultFlag.getFlags()) {
 			if (f instanceof BooleanFlag) {
 				nameMap.put(f.getName().toLowerCase(), (BooleanFlag)f);
 			}
-		}
+		}*/
+		// FIXME set this up
 	}
 	
 	@Override

@@ -69,15 +69,17 @@ public class ParticleCloudSpell extends TargetedSpell implements TargetedLocatio
 	}
 	
 	private static PotionEffect getPotionEffectFromString(String s) {
-		//type durationTicks amplifier ambient particles? hexColor
+		//type durationTicks amplifier ambient particles? icon
 		String[] splits = s.split(" ");
 		PotionEffectType type = Util.getPotionEffectType(splits[0]);
 		int durationTicks = Integer.parseInt(splits[1]);
 		int amplifier = Integer.parseInt(splits[2]);
 		boolean ambient = Boolean.parseBoolean(splits[3]);
 		boolean particles = Boolean.parseBoolean(splits[4]);
-		int color = Integer.parseInt(splits[5], 16);
-		return new PotionEffect(type, durationTicks, amplifier, ambient, particles, Color.fromRGB(color));
+		//int color = Integer.parseInt(splits[5], 16);
+		boolean icon = Boolean.parseBoolean(splits[5]);
+		//return new PotionEffect(type, durationTicks, amplifier, ambient, particles, Color.fromRGB(color));
+		return new PotionEffect(type, durationTicks, amplifier, ambient, particles, icon);
 	}
 
 	@Override

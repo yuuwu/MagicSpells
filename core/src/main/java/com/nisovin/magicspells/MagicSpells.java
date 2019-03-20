@@ -23,7 +23,6 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.nisovin.magicspells.util.MaterialHelper;
 import com.nisovin.magicspells.util.Metrics;
 import com.nisovin.magicspells.util.TxtUtil;
 import com.nisovin.magicspells.util.compat.CompatBasics;
@@ -747,16 +746,6 @@ public class MagicSpells extends JavaPlugin {
 	 */
 	public static HashMap<EntityType, String> getEntityNames() {
 		return plugin.entityNames;
-	}
-	
-	/**
-	 * Checks whether to ignore the durability on the given type when using it as a cast item.
-	 * @param type the type to check
-	 * @return whether to ignore durability
-	 */
-	@Deprecated
-	public static boolean ignoreCastItemDurability(int type) {
-		return ignoreCastItemDurability(MaterialHelper.getFromNumericalId(type));
 	}
 	
 	/**

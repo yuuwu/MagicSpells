@@ -8,7 +8,7 @@ public class EnderSignalEffect extends SpellEffect {
 
 	@Override
 	public void loadFromString(String string) {
-		// TODO make a string loading schema
+		// lol nope
 	}
 
 	@Override

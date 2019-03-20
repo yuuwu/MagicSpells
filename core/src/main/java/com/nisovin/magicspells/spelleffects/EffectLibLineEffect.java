@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 
+// TODO use non deprecated methods
 public class EffectLibLineEffect extends EffectLibEffect {
 	
 	//force static origin location

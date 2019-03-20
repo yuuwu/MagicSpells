@@ -63,15 +63,15 @@ public class LightwalkSpell extends BuffSpell {
 			mat == Material.GRAVEL ||
 			mat == Material.STONE ||
 			mat == Material.COBBLESTONE ||
-			mat == Material.WOOD || 
-			mat == Material.LOG || 
+			mat == Material.LEGACY_WOOD ||
+			mat == Material.LEGACY_LOG ||
 			mat == Material.NETHERRACK ||
 			mat == Material.SOUL_SAND ||
 			mat == Material.SAND ||
 			mat == Material.SANDSTONE ||
 			mat == Material.GLASS ||
-			mat == Material.WOOL ||
-			mat == Material.DOUBLE_STEP ||
+			mat == Material.LEGACY_WOOL ||
+			mat == Material.LEGACY_DOUBLE_STEP ||
 			mat == Material.BRICK ||
 			mat == Material.OBSIDIAN;
 	}

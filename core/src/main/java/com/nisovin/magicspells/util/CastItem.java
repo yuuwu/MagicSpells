@@ -14,6 +14,8 @@ import com.nisovin.magicspells.MagicSpells;
 
 public class CastItem {
 	
+	public static final Material MATERIAL_CAST_ITEM_NOTHING = null;
+	
 	private Material materialType = Material.AIR;
 	private short data = 0;
 	private String name = "";
@@ -23,12 +25,12 @@ public class CastItem {
 		// No op
 	}
 	
-	public CastItem(int type) {
-		this.materialType = MaterialHelper.getFromNumericalId(type);
+	public CastItem(Material type) {
+		this.materialType = type;
 	}
 	
-	public CastItem(int type, short data) {
-		this.materialType = MaterialHelper.getFromNumericalId(type);
+	public CastItem(Material type, short data) {
+		this.materialType = type;
 		if (MagicSpells.ignoreCastItemDurability(this.materialType)) {
 			this.data = 0;
 		} else {
@@ -42,12 +44,12 @@ public class CastItem {
 			this.data = 0;
 		} else {
 			this.materialType = item.getType();
-			if (this.materialType == Material.AIR || MagicSpells.ignoreCastItemDurability(this.materialType)) {
+			if (isCastItemMaterialAirOrNothing(this.materialType) || MagicSpells.ignoreCastItemDurability(this.materialType)) {
 				this.data = 0;
 			} else {
 				this.data = item.getDurability();
 			}
-			if (this.materialType != Material.AIR && !MagicSpells.ignoreCastItemNames() && item.hasItemMeta()) {
+			if (!isCastItemMaterialAirOrNothing(this.materialType) && !MagicSpells.ignoreCastItemNames() && item.hasItemMeta()) {
 				ItemMeta meta = item.getItemMeta();
 				if (meta.hasDisplayName()) {
 					if (MagicSpells.ignoreCastItemNameColors()) {
@@ -57,7 +59,7 @@ public class CastItem {
 					}
 				}
 			}
-			if (this.materialType != Material.AIR && !MagicSpells.ignoreCastItemEnchants()) {
+			if (!isCastItemMaterialAirOrNothing(this.materialType) && !MagicSpells.ignoreCastItemEnchants()) {
 				this.enchants = getEnchants(item);
 			}
 		}
@@ -91,14 +93,14 @@ public class CastItem {
 		}
 		if (s.contains(":")) {
 			String[] split = s.split(":");
-			this.materialType = MaterialHelper.getFromNumericalId(Integer.parseInt(split[0]));
+			this.materialType = Material.matchMaterial(split[0], true);
 			if (MagicSpells.ignoreCastItemDurability(this.materialType)) {
 				this.data = 0;
 			} else {
 				this.data = Short.parseShort(split[1]);
 			}
 		} else {
-			this.materialType = MaterialHelper.getFromNumericalId(Integer.parseInt(s));
+			this.materialType = Material.matchMaterial(s, true);
 			this.data = 0;
 		}
 	}
@@ -205,6 +207,10 @@ public class CastItem {
 			if (o1[i][1] != o2[i][1]) return false;
 		}
 		return true;
+	}
+	
+	private static boolean isCastItemMaterialAirOrNothing(Material material) {
+		return material == Material.AIR || material == MATERIAL_CAST_ITEM_NOTHING;
 	}
 	
 }

@@ -1,20 +1,18 @@
 package com.nisovin.magicspells.spelleffects;
 
+import com.nisovin.magicspells.MagicSpells;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.configuration.ConfigurationSection;
-
-import de.slikey.effectlib.util.ParticleEffect;
 
 public class AngryEffect extends SpellEffect {
 
-	private ParticleEffect effect = ParticleEffect.VILLAGER_ANGRY;
+	private Particle effect = Particle.VILLAGER_ANGRY;
 	
 	private double range = 32;
 	
 	// These are location shifts made to the center point
-	private float xOffset = 0;
 	private float yOffset = 2;
-	private float zOffset = 0;
 	
 	// These are about how far particles can be from the center
 	private float offsetX = 0;
@@ -26,7 +24,7 @@ public class AngryEffect extends SpellEffect {
 	
 	@Override
 	public void loadFromString(String string) {
-		// TODO make a string loading schema
+		// nope
 	}
 
 	@Override
@@ -40,7 +38,8 @@ public class AngryEffect extends SpellEffect {
 		//Location location, String name, float spreadHoriz, float spreadVert, float speed, int count, int radius, float yOffset
 		
 		//ParticleData data, Location center, Color color, double range, float offsetX, float offsetY, float offsetZ, float speed, int amount
-		effect.display(null, location.clone().add(xOffset, yOffset, zOffset), null, range, offsetX, offsetY, offsetZ, speed, count);
+		MagicSpells.getInstance().effectManager.display(effect, location.clone().add(0, yOffset, 0), offsetX, offsetY, offsetZ, speed, count, 1.0f, null, null, (byte) 0, range, null);
+		//effect.display(null, location.clone().add(xOffset, yOffset, zOffset), null, range, offsetX, offsetY, offsetZ, speed, count);
 		return null;
 	}
 	
