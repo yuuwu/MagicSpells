@@ -66,12 +66,12 @@ public class TotemSpell extends TargetedSpell implements TargetedLocationSpell {
     public TotemSpell(MagicConfig config, String spellName) {
         super(config, spellName);
 
-        helmet = Util.getItemStackFromString(getConfigString("helmet", "0"));
-        chestplate = Util.getItemStackFromString(getConfigString("chestplate", "0"));
-        leggings = Util.getItemStackFromString(getConfigString("leggings", "0"));
-        boots = Util.getItemStackFromString(getConfigString("boots", "0"));
-        hand = Util.getItemStackFromString(getConfigString("hand", "0"));
-        mainHand = Util.getItemStackFromString(getConfigString("main-hand", "0"));
+        helmet = Util.getItemStackFromString(getConfigString("helmet", "AIR"));
+        chestplate = Util.getItemStackFromString(getConfigString("chestplate", "AIR"));
+        leggings = Util.getItemStackFromString(getConfigString("leggings", "AIR"));
+        boots = Util.getItemStackFromString(getConfigString("boots", "AIR"));
+        hand = Util.getItemStackFromString(getConfigString("hand", "AIR"));
+        mainHand = Util.getItemStackFromString(getConfigString("main-hand", "AIR"));
 
         if (helmet != null && helmet.getType() != Material.AIR) helmet.setAmount(1);
         if (chestplate != null && chestplate.getType() != Material.AIR) chestplate.setAmount(1);

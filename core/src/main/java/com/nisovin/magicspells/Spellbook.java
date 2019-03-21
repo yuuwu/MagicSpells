@@ -547,7 +547,7 @@ public class Spellbook {
 		Set<CastItem> bindings = customBindings.get(spell);
 		if (bindings != null) {
 			removed = bindings.remove(castItem);
-			if (bindings.isEmpty()) bindings.add(new CastItem(-1));
+			if (bindings.isEmpty()) bindings.add(new CastItem((Material) null));
 		}
 		
 		// Remove from active bindings

@@ -17,12 +17,10 @@ import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
-import com.nisovin.magicspells.util.expression.Expression;
 
 // TODO rewrite this entirely
 public class PainSpell extends TargetedSpell implements TargetedEntitySpell, SpellDamageSpell {
-
-	private Expression damageExpression;
+	
 	private double damage;
 	private String spellDamageType;
 	private boolean ignoreArmor;
@@ -35,13 +33,6 @@ public class PainSpell extends TargetedSpell implements TargetedEntitySpell, Spe
 		super(config, spellName);
 		
 		damage = getConfigFloat("damage", 4);
-		
-		String damageExpressionString = getConfigString("damage-expression", null);
-		if (damageExpressionString == null) {
-			damageExpression = new Expression("0 + " + damage);
-		} else {
-			damageExpression = new Expression(damageExpressionString);
-		}
 		
 		spellDamageType = getConfigString("spell-damage-type", "");
 		ignoreArmor = getConfigBoolean("ignore-armor", false);
@@ -88,8 +79,7 @@ public class PainSpell extends TargetedSpell implements TargetedEntitySpell, Spe
 	
 	private boolean causePain(Player player, LivingEntity target, float power) {
 		if (target.isDead()) return false;
-		double resolvedValue = damageExpression.resolveValue(null, player, player.getLocation(), target.getLocation()).doubleValue();
-		MagicSpells.log(MagicSpells.DEVELOPER_DEBUG_LEVEL, "Damage resolver resolved value of " + resolvedValue);
+		double resolvedValue = this.damage;
 		double localDamage = resolvedValue * power;
 		//double dam = damage * power;
 		if (target instanceof Player && checkPlugins) {

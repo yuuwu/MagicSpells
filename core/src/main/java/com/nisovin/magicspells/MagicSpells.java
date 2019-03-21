@@ -957,59 +957,59 @@ public class MagicSpells extends JavaPlugin {
 	public static void registerEvents(final Listener listener) {
 		registerEvents(listener, EventPriority.NORMAL);
 	}
-	
+
 	public static void registerEvents(final Listener listener, EventPriority customPriority) {
 		if (customPriority == null) customPriority = EventPriority.NORMAL;
 		Method[] methods;
-        try {
-            methods = listener.getClass().getDeclaredMethods();
-        } catch (NoClassDefFoundError e) {
-        	DebugHandler.debugNoClassDefFoundError(e);
-            return;
-        }
-        for (int i = 0; i < methods.length; i++) {
-            final Method method = methods[i];
-            final EventHandler eh = method.getAnnotation(EventHandler.class);
-            if (eh == null) continue;
-            EventPriority priority = eh.priority();
-            
-            if (hasAnnotation(method, OverridePriority.class)) priority = customPriority;
-            
-            final Class<?> checkClass = method.getParameterTypes()[0];
-            if (!Event.class.isAssignableFrom(checkClass) || method.getParameterTypes().length != 1) {
-                plugin.getLogger().severe("Wrong method arguments used for event type registered");
-                continue;
-            }
-            final Class<? extends Event> eventClass = checkClass.asSubclass(Event.class);
-            method.setAccessible(true);
-            EventExecutor executor = new EventExecutor() {
-            	final String eventKey = plugin.enableProfiling ? "Event:" + listener.getClass().getName().replace("com.nisovin.magicspells.","") + '.' + method.getName() + '(' + eventClass.getSimpleName() + ')' : null;
-                
-            	@Override
-            	public void execute(Listener listener, Event event) {
-                    try {
-                        if (!eventClass.isAssignableFrom(event.getClass())) {
-                            return;
-                        }
-                        long start = System.nanoTime();
-                        method.invoke(listener, event);
-                        if (plugin.enableProfiling) {
-                        	Long total = plugin.profilingTotalTime.get(eventKey);
-                        	if (total == null) total = (long)0;
-                        	total += System.nanoTime() - start;
-                        	plugin.profilingTotalTime.put(eventKey, total);
-                        	Integer runs = plugin.profilingRuns.get(eventKey);
-                        	if (runs == null) runs = 0;
-                        	runs += 1;
-                        	plugin.profilingRuns.put(eventKey, runs);
-                        }
-                    } catch (Exception ex) {
-                    	handleException(ex);
-                    }
-                }
-            };
-            plugin.getServer().getPluginManager().registerEvent(eventClass, listener, priority, executor, plugin, eh.ignoreCancelled());
-        }
+		try {
+			methods = listener.getClass().getDeclaredMethods();
+		} catch (NoClassDefFoundError e) {
+			DebugHandler.debugNoClassDefFoundError(e);
+			return;
+		}
+		for (int i = 0; i < methods.length; i++) {
+			final Method method = methods[i];
+			final EventHandler eh = method.getAnnotation(EventHandler.class);
+			if (eh == null) continue;
+			EventPriority priority = eh.priority();
+
+			if (hasAnnotation(method, OverridePriority.class)) priority = customPriority;
+
+			final Class<?> checkClass = method.getParameterTypes()[0];
+			if (!Event.class.isAssignableFrom(checkClass) || method.getParameterTypes().length != 1) {
+				plugin.getLogger().severe("Wrong method arguments used for event type registered");
+				continue;
+			}
+			final Class<? extends Event> eventClass = checkClass.asSubclass(Event.class);
+			method.setAccessible(true);
+			EventExecutor executor = new EventExecutor() {
+				final String eventKey = plugin.enableProfiling ? "Event:" + listener.getClass().getName().replace("com.nisovin.magicspells.","") + '.' + method.getName() + '(' + eventClass.getSimpleName() + ')' : null;
+
+				@Override
+				public void execute(Listener listener, Event event) {
+					try {
+						if (!eventClass.isAssignableFrom(event.getClass())) {
+							return;
+						}
+						long start = System.nanoTime();
+						method.invoke(listener, event);
+						if (plugin.enableProfiling) {
+							Long total = plugin.profilingTotalTime.get(eventKey);
+							if (total == null) total = (long)0;
+							total += System.nanoTime() - start;
+							plugin.profilingTotalTime.put(eventKey, total);
+							Integer runs = plugin.profilingRuns.get(eventKey);
+							if (runs == null) runs = 0;
+							runs += 1;
+							plugin.profilingRuns.put(eventKey, runs);
+						}
+					} catch (Exception ex) {
+						handleException(ex);
+					}
+				}
+			};
+			plugin.getServer().getPluginManager().registerEvent(eventClass, listener, priority, executor, plugin, eh.ignoreCancelled());
+		}
 	}
 	
 	private static boolean hasAnnotation(Method m, Class<? extends Annotation> clazz) {
@@ -1144,16 +1144,16 @@ public class MagicSpells extends JavaPlugin {
 	}
 	
 	public static void addProfile(String key, long time) {
-        if (plugin.enableProfiling) {
-        	Long total = plugin.profilingTotalTime.get(key);
-        	if (total == null) total = (long)0;
-        	total += time;
-        	plugin.profilingTotalTime.put(key, total);
-        	Integer runs = plugin.profilingRuns.get(key);
-        	if (runs == null) runs = 0;
-        	runs += 1;
-        	plugin.profilingRuns.put(key, runs);
-        }
+		if (plugin.enableProfiling) {
+			Long total = plugin.profilingTotalTime.get(key);
+			if (total == null) total = (long)0;
+			total += time;
+			plugin.profilingTotalTime.put(key, total);
+			Integer runs = plugin.profilingRuns.get(key);
+			if (runs == null) runs = 0;
+			runs += 1;
+			plugin.profilingRuns.put(key, runs);
+		}
 	}
 	
 	/**
@@ -1299,7 +1299,7 @@ public class MagicSpells extends JavaPlugin {
 	}
 	
 	@Override
-	public void onDisable() {	
+	public void onDisable() {
 		unload();
 	}
 	

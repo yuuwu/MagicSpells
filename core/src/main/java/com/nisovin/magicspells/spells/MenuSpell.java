@@ -28,38 +28,27 @@ import com.nisovin.magicspells.Subspell;
 import com.nisovin.magicspells.castmodifiers.ModifierSet;
 import com.nisovin.magicspells.events.MagicSpellsGenericPlayerEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
-import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
-import com.nisovin.magicspells.util.SpellType;
-import com.nisovin.magicspells.util.SpellTypes;
 import com.nisovin.magicspells.util.TargetInfo;
 import com.nisovin.magicspells.util.Util;
 
-@SpellType(types={SpellTypes.TARGETED_ENTITY_SPELL, SpellTypes.TARGETED_LOCATION_SPELL})
 public class MenuSpell extends TargetedSpell implements TargetedEntitySpell, TargetedLocationSpell {
 
 	Random random = new Random();
 	
-	@ConfigData(field="title", dataType="String", defaultValue="Window Title  + <spellName>")
 	String title;
 	
-	@ConfigData(field="delay", dataType="int", defaultValue="0")
 	int delay;
 	
-	@ConfigData(field="require-entity-target", dataType="boolean", defaultValue="false")
 	boolean requireEntityTarget;
 	
-	@ConfigData(field="require-location-target", dataType="boolean", defaultValue="false")
 	boolean requireLocationTarget;
 	
-	@ConfigData(field="target-opens-menu-instead", dataType="boolean", defaultValue="false")
 	boolean targetOpensMenuInstead;
 	
-	@ConfigData(field="bypass-normal-cast", dataType="boolean", defaultValue="true")
 	boolean bypassNormalCast;
 	
-	@ConfigData(field="unique-names", dataType="boolean", defaultValue="false")
 	boolean uniqueNames;
 	
 	Map<String, MenuOption> options = new LinkedHashMap<>();

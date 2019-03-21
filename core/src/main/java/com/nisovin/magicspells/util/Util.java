@@ -735,12 +735,12 @@ public class Util {
 	public static boolean downloadFile(String url, File file) {
 		try {
 			URL website = new URL(url);
-		    ReadableByteChannel rbc = Channels.newChannel(website.openStream());
-		    FileOutputStream fos = new FileOutputStream(file);
-		    fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-		    fos.close();
-		    rbc.close();
-		    return true;
+			ReadableByteChannel rbc = Channels.newChannel(website.openStream());
+			FileOutputStream fos = new FileOutputStream(file);
+			fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+			fos.close();
+			rbc.close();
+			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;

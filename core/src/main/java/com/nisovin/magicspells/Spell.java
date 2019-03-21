@@ -861,14 +861,14 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		}
 		PostCastAction action = castSpell(player, state, power, args);
 		if (MagicSpells.plugin.enableProfiling) {
-        	Long total = MagicSpells.plugin.profilingTotalTime.get(this.profilingKey);
-        	if (total == null) total = (long)0;
-        	total += System.nanoTime() - start;
-        	MagicSpells.plugin.profilingTotalTime.put(this.profilingKey, total);
-        	Integer runs = MagicSpells.plugin.profilingRuns.get(this.profilingKey);
-        	if (runs == null) runs = 0;
-        	runs += 1;
-        	MagicSpells.plugin.profilingRuns.put(this.profilingKey, runs);
+			Long total = MagicSpells.plugin.profilingTotalTime.get(this.profilingKey);
+			if (total == null) total = (long)0;
+			total += System.nanoTime() - start;
+			MagicSpells.plugin.profilingTotalTime.put(this.profilingKey, total);
+			Integer runs = MagicSpells.plugin.profilingRuns.get(this.profilingKey);
+			if (runs == null) runs = 0;
+			runs += 1;
+			MagicSpells.plugin.profilingRuns.put(this.profilingKey, runs);
 		}
 		postCast(spellCast, action);
 		return action;

@@ -20,7 +20,6 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.passive.PassiveManager;
 import com.nisovin.magicspells.spells.passive.PassiveTrigger;
 import com.nisovin.magicspells.util.CastItem;
-import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.Util;
@@ -32,34 +31,28 @@ public class PassiveSpell extends Spell {
 	private Random random = new Random();
 	private boolean disabled = false;
 	
-	@ConfigData(field="triggers", dataType="String[]", defaultValue="null")
 	private List<String> triggers;
 	
-	@ConfigData(field="chance", dataType="float", defaultValue="100")
 	private float chance;
 	
-	@ConfigData(field="cast-without-target", dataType="boolean", defaultValue="false")
 	private boolean castWithoutTarget;
 	
-	@ConfigData(field="delay", dataType="int", defaultValue="-1")
 	private int delay;
 	
-	@ConfigData(field="cancel-default-action", dataType="boolean", defaultValue="false", description="Cancel if the cast is successful")
+	// Cancel if the cast is successful
 	private boolean cancelDefaultAction;
 	
-	@ConfigData(field="cancel-default-action-when-cast-fails", dataType="boolean", defaultValue="false", description="An addition to the cancel-default-action field. Also cancels the default action when the trigger tried casting the spell but the spell was unsuccessful.")
+	// An addition to the cancel-default-action field. Also cancels the default action when the trigger tried casting the spell but the spell was unsuccessful.
 	private boolean cancelDefaultActionWhenCastFails;
 	
-	@ConfigData(field="ignore-cancelled", dataType="boolean", defaultValue="true", description="Don't cast if the event has been canceled")
+	// Don't cast if the event has been canceled
 	private boolean ignoreCancelled;
 	
-	@ConfigData(field="require-cancelled-event", dataType="boolean", defaultValue="false", description="Don't cast if the event hasn't been cancelled.")
+	// Don't cast if the event hasn't been cancelled.
 	private boolean requireCancelledEvent;
 	
-	@ConfigData(field="send-failure-messages", dataType="boolean", defaultValue="false")
 	private boolean sendFailureMessages;
 	
-	@ConfigData(field="spells", dataType="String[]", defaultValue="null")
 	private List<String> spellNames;
 	
 	private List<Subspell> spells;

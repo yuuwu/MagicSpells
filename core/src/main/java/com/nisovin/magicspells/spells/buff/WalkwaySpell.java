@@ -37,6 +37,7 @@ public class WalkwaySpell extends BuffSpell {
 	public WalkwaySpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
+		// FIXME use the new wood material type
 		this.material = MagicSpells.getItemNameResolver().resolveBlock(getConfigString("platform-type", "wood")).getMaterial();
 		this.size = getConfigInt("size", 6);
 		this.cancelOnTeleport = getConfigBoolean("cancel-on-teleport", true);

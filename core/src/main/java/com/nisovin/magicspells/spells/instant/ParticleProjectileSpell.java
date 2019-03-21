@@ -184,6 +184,7 @@ public class ParticleProjectileSpell extends InstantSpell implements TargetedLoc
 		if (this.hitNonPlayers) this.targetList.enforce(ValidTargetList.TargetingElement.TARGET_NONPLAYERS, true);
 
 		// Compatibility
+		// TODO consider changing the default to something else, or perhaps to nothing?
 		this.defaultSpellName = getConfigString("spell", "explode");
 		this.airSpellName = getConfigString("spell-on-hit-air", defaultSpellName);
 		this.selfSpellName = getConfigString("spell-on-hit-self", defaultSpellName);

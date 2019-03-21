@@ -18,7 +18,6 @@ import com.nisovin.magicspells.Spell.PostCastAction;
 import com.nisovin.magicspells.Spell.SpellCastResult;
 import com.nisovin.magicspells.Spell.SpellCastState;
 import com.nisovin.magicspells.util.CastItem;
-import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
 import com.nisovin.magicspells.util.Util;

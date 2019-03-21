@@ -38,27 +38,27 @@ public class RightClickListener implements Listener {
 	
 	@EventHandler
 	public void onRightClick(final PlayerInteractEvent event) {
-	    if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
-	    if (!event.hasItem()) return;
+		if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+		if (!event.hasItem()) return;
 
-	    CastItem castItem = new CastItem(event.getItem());
-	    final Spell spell = this.rightClickCastItems.get(castItem);
-	    if (spell == null) return;
+		CastItem castItem = new CastItem(event.getItem());
+		final Spell spell = this.rightClickCastItems.get(castItem);
+		if (spell == null) return;
 
-	    Player player = event.getPlayer();
-	    Spellbook spellbook = MagicSpells.getSpellbook(player);
-	    
-	    if (spellbook.hasSpell(spell) && spellbook.canCast(spell)) {
-	    	
-	    	if (!spell.ignoreGlobalCooldown) {
+		Player player = event.getPlayer();
+		Spellbook spellbook = MagicSpells.getSpellbook(player);
+
+		if (spellbook.hasSpell(spell) && spellbook.canCast(spell)) {
+			
+			if (!spell.ignoreGlobalCooldown) {
 				Long lastCastTime = lastCast.get(player.getName());
 				if (lastCastTime != null && lastCastTime + plugin.globalCooldown > System.currentTimeMillis()) return;
 				lastCast.put(player.getName(), System.currentTimeMillis());
-	    	}
+			}
 			
-	    	MagicSpells.scheduleDelayedTask(() -> spell.cast(event.getPlayer()), 0);
-	    	event.setCancelled(true);
-	    }
+			MagicSpells.scheduleDelayedTask(() -> spell.cast(event.getPlayer()), 0);
+			event.setCancelled(true);
+		}
 	}
 	
 }

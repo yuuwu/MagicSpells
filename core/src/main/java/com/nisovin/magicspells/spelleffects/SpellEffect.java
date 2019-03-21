@@ -15,7 +15,6 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.util.TimeUtil;
 import com.nisovin.magicspells.castmodifiers.ModifierSet;
-import com.nisovin.magicspells.util.expression.Expression;
 
 /**
  * Represents a graphical effect that can be used with the 'effects' option of a spell.<p>
@@ -25,11 +24,7 @@ public abstract class SpellEffect {
 	// for normal/line
 	double heightOffset = 0;
 	
-	Expression heightOffsetExpression = null;
-	
 	double forwardOffset = 0;
-	
-	Expression forwardOffsetExpression = null;
 
 	double zOffset = 0;
 	
@@ -78,20 +73,8 @@ public abstract class SpellEffect {
 	
 	public final void loadFromConfiguration(ConfigurationSection config) {
 		heightOffset = config.getDouble("height-offset", heightOffset);
-		String heightOffsetExpressionString = config.getString("height-offset-expression", null);
-		if (heightOffsetExpressionString == null) {
-			heightOffsetExpression = new Expression("0 + " + heightOffset);
-		} else {
-			heightOffsetExpression = new Expression(heightOffsetExpressionString);
-		}
 		
 		forwardOffset = config.getDouble("forward-offset", forwardOffset);
-		String forwardOffsetExpressionString = config.getString("forward-offset-expression", null);
-		if (forwardOffsetExpressionString == null) {
-			forwardOffsetExpression = new Expression("0 + " + forwardOffset);
-		} else {
-			forwardOffsetExpression = new Expression(forwardOffsetExpressionString);
-		}
 
 		zOffset = config.getDouble("z-offset", zOffset);
 		

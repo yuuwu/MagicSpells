@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
@@ -14,7 +15,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
-import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.InstantSpell;
@@ -115,16 +115,28 @@ public class MarkSpell extends InstantSpell implements TargetedLocationSpell {
 			}
 			scanner.close();
 		} catch (Exception e) {
-			DebugHandler.debugGeneral(e);
+			MagicSpells.debug("Failed to load marks file (does it exist?) " + e.getCause() + " " + e.getMessage());
 		}
 	}
 	
 	private void saveMarks() {
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(new File(MagicSpells.plugin.getDataFolder(), "marks-" + this.internalName + ".txt"), false));
-			for (String name : this.marks.keySet()) {
-				MagicLocation loc = this.marks.get(name);
-				writer.append(name).append(String.valueOf(':')).append(loc.getWorld()).append(String.valueOf(':')).append(String.valueOf(loc.getX())).append(String.valueOf(':')).append(String.valueOf(loc.getY())).append(String.valueOf(':')).append(String.valueOf(loc.getZ())).append(String.valueOf(':')).append(String.valueOf(loc.getYaw())).append(String.valueOf(':')).append(String.valueOf(loc.getPitch()));
+			for (Map.Entry<String, MagicLocation> stringMagicLocationEntry : this.marks.entrySet()) {
+				MagicLocation loc = stringMagicLocationEntry.getValue();
+				writer.append(stringMagicLocationEntry.getKey())
+					.append(String.valueOf(':'))
+					.append(loc.getWorld())
+					.append(String.valueOf(':'))
+					.append(String.valueOf(loc.getX()))
+					.append(String.valueOf(':'))
+					.append(String.valueOf(loc.getY()))
+					.append(String.valueOf(':'))
+					.append(String.valueOf(loc.getZ()))
+					.append(String.valueOf(':'))
+					.append(String.valueOf(loc.getYaw()))
+					.append(String.valueOf(':'))
+					.append(String.valueOf(loc.getPitch()));
 				writer.newLine();
 			}
 			writer.close();

@@ -19,6 +19,7 @@ import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 
+// TODO setup a system for registering "CleanseProvider"s
 public class CleanseSpell extends TargetedSpell implements TargetedEntitySpell {
 
 	boolean targetPlayers;
@@ -40,6 +41,7 @@ public class CleanseSpell extends TargetedSpell implements TargetedEntitySpell {
 		potionEffectTypes = new ArrayList<>();
 		buffSpells = new ArrayList<>();
 		fire = false;
+		// FIXME avoid using the magic numbers
 		toCleanse = getConfigStringList("remove", Arrays.asList("fire", "17", "19", "20"));
 
 	}

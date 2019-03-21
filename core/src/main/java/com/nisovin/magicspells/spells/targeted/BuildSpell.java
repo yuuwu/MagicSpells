@@ -35,6 +35,7 @@ public class BuildSpell extends TargetedSpell implements TargetedLocationSpell {
 		
 		slot = getConfigInt("slot", 0);
 		consumeBlock = getConfigBoolean("consume-block", true);
+		// FIXME don't use the magic numbers
 		String[] allowed = getConfigString("allowed-types", "1,2,3,4,5,12,13,17,20,22,24,35,41,42,43,44,45,47,48,49,50,53,57,65,67,80,85,87,88,89,91,92").split(",");
 		allowedTypes = new Material[allowed.length];
 		for (int i = 0; i < allowed.length; i++) {

@@ -13,13 +13,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import com.nisovin.magicspells.spells.BuffSpell;
-import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
 
 public class GillsSpell extends BuffSpell {
-
-	@ConfigData(field="glass-head-effect", dataType="boolean", defaultValue="true")
+	
 	private boolean glassHeadEffect;
 	
 	private HashSet<String> fishes;

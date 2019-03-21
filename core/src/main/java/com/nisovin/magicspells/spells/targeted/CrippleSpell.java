@@ -8,25 +8,22 @@ import org.bukkit.potion.PotionEffectType;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.util.ConfigData;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
 
 public class CrippleSpell extends TargetedSpell implements TargetedEntitySpell {
 
-	@ConfigData(field="use-slowness-effect", dataType="boolean", defaultValue="true", description="When set to true, the target will receive a slowness effect.")
+	// When set to true, the target will receive a slowness effect.
 	private boolean useSlownessEffect;
 	
-	@ConfigData(field="effect-strength", dataType="int", defaultValue="5")
 	private int strength;
 	
-	@ConfigData(field="effect-duration", dataType="int", defaultValue="100")
 	private int duration;
 	
-	@ConfigData(field="apply-portal-cooldown", defaultValue="false", dataType="boolean", description="When set to true, this spell will set the portal cooldown field of the target, if the duration of the new cooldown is longer than the existing cooldown.")
+	// When set to true, this spell will set the portal cooldown field of the target, if the duration of the new cooldown is longer than the existing cooldown.
 	private boolean applyPortalCooldown;
 	
-	@ConfigData(field="portal-cooldown-ticks", dataType="int", defaultValue="100", description="The number of ticks to set the target entity's portal cooldown to. This will not be used if it is less than the target's existing portal cooldown.")
+	// The number of ticks to set the target entity's portal cooldown to. This will not be used if it is less than the target's existing portal cooldown.
 	private int portalCooldown;
 	
 	public CrippleSpell(MagicConfig config, String spellName) {
