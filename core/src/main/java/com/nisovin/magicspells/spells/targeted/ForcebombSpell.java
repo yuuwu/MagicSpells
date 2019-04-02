@@ -78,7 +78,7 @@ public class ForcebombSpell extends TargetedSpell implements TargetedLocationSpe
 	
 	public void knockback(Player player, Location location, float basePower) {
 		location = location.clone().add(0D, yOffset, 0D);
-	    Vector t = location.toVector();
+		Vector t = location.toVector();
 		Collection<Entity> entities = location.getWorld().getEntitiesByClasses(LivingEntity.class);
 		Vector e;
 		Vector v;
@@ -103,7 +103,7 @@ public class ForcebombSpell extends TargetedSpell implements TargetedLocationSpe
 				else entity.setVelocity(entity.getVelocity().add(v));
 				playSpellEffects(EffectPosition.TARGET, entity);
 			}
-	    }
+		}
 		playSpellEffects(EffectPosition.SPECIAL, location);
 		if (player != null) {
 			playSpellEffects(EffectPosition.CASTER, player);

@@ -94,7 +94,7 @@ public class TreeSpell extends TargetedSpell implements TargetedLocationSpell {
 		return false;
 	}
 	
-	private class GrowAnimation extends SpellAnimation {
+	private static class GrowAnimation extends SpellAnimation {
 		
 		List<BlockState> blockStates;
 		int blocksPerTick;

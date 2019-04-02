@@ -236,11 +236,11 @@ public class VolatileCodeEnabled_1_12_R1 implements VolatileCodeHandle {
 
 	@Override
 	public boolean simulateTnt(Location target, LivingEntity source, float explosionSize, boolean fire) {
-        EntityTNTPrimed e = new EntityTNTPrimed(((CraftWorld)target.getWorld()).getHandle(), target.getX(), target.getY(), target.getZ(), ((CraftLivingEntity)source).getHandle());
-        CraftTNTPrimed c = new CraftTNTPrimed((CraftServer)Bukkit.getServer(), e);
-        ExplosionPrimeEvent event = new ExplosionPrimeEvent(c, explosionSize, fire);
+		EntityTNTPrimed e = new EntityTNTPrimed(((CraftWorld)target.getWorld()).getHandle(), target.getX(), target.getY(), target.getZ(), ((CraftLivingEntity)source).getHandle());
+		CraftTNTPrimed c = new CraftTNTPrimed((CraftServer)Bukkit.getServer(), e);
+		ExplosionPrimeEvent event = new ExplosionPrimeEvent(c, explosionSize, fire);
 		EventUtil.call(event);
-        return event.isCancelled();
+		return event.isCancelled();
 	}
 
 	@Override
@@ -271,14 +271,14 @@ public class VolatileCodeEnabled_1_12_R1 implements VolatileCodeHandle {
 		Vector loc = player.getEyeLocation().toVector().add(player.getLocation().getDirection().multiply(10));
 
 		double d0 = loc.getX() - playerLoc.getX();
-        double d1 = loc.getY() - (playerLoc.getY() + 1.5);
-        double d2 = loc.getZ() - playerLoc.getZ();
+		double d1 = loc.getY() - (playerLoc.getY() + 1.5);
+		double d2 = loc.getZ() - playerLoc.getZ();
 		EntitySmallFireball entitysmallfireball = new EntitySmallFireball(w, ((CraftPlayer)player).getHandle(), d0, d1, d2);
 
-        entitysmallfireball.locY = playerLoc.getY() + 1.5;
-        w.addEntity(entitysmallfireball);
+		entitysmallfireball.locY = playerLoc.getY() + 1.5;
+		w.addEntity(entitysmallfireball);
 
-        return (Fireball)entitysmallfireball.getBukkitEntity();
+		return (Fireball)entitysmallfireball.getBukkitEntity();
 	}
 
 	@Override
@@ -565,43 +565,43 @@ public class VolatileCodeEnabled_1_12_R1 implements VolatileCodeHandle {
 
 	@Override
 	public void removeAI(LivingEntity entity) {
-        try {
-        	EntityInsentient ev = (EntityInsentient)((CraftLivingEntity)entity).getHandle();
+		try {
+			EntityInsentient ev = (EntityInsentient)((CraftLivingEntity)entity).getHandle();
 
 			// TODO this field should be calculated only once
-            Field goalsField = EntityInsentient.class.getDeclaredField("goalSelector");
-            goalsField.setAccessible(true);
-            PathfinderGoalSelector goals = (PathfinderGoalSelector) goalsField.get(ev);
+			Field goalsField = EntityInsentient.class.getDeclaredField("goalSelector");
+			goalsField.setAccessible(true);
+			PathfinderGoalSelector goals = (PathfinderGoalSelector) goalsField.get(ev);
 
 			// TODO this field should be calculated only once
-            Field listField = PathfinderGoalSelector.class.getDeclaredField("b");
-            listField.setAccessible(true);
-            Set list = (Set)listField.get(goals);
-            list.clear();
-            listField = PathfinderGoalSelector.class.getDeclaredField("c");
-            listField.setAccessible(true);
-            list = (Set)listField.get(goals);
-            list.clear();
+			Field listField = PathfinderGoalSelector.class.getDeclaredField("b");
+			listField.setAccessible(true);
+			Set list = (Set)listField.get(goals);
+			list.clear();
+			listField = PathfinderGoalSelector.class.getDeclaredField("c");
+			listField.setAccessible(true);
+			list = (Set)listField.get(goals);
+			list.clear();
 
-            goals.a(0, new PathfinderGoalFloat(ev));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+			goals.a(0, new PathfinderGoalFloat(ev));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void addAILookAtPlayer(LivingEntity entity, int range) {
-        try {
-        	EntityInsentient ev = (EntityInsentient)((CraftLivingEntity)entity).getHandle();
+		try {
+			EntityInsentient ev = (EntityInsentient)((CraftLivingEntity)entity).getHandle();
 
-            Field goalsField = EntityInsentient.class.getDeclaredField("goalSelector");
-            goalsField.setAccessible(true);
-            PathfinderGoalSelector goals = (PathfinderGoalSelector) goalsField.get(ev);
+			Field goalsField = EntityInsentient.class.getDeclaredField("goalSelector");
+			goalsField.setAccessible(true);
+			PathfinderGoalSelector goals = (PathfinderGoalSelector) goalsField.get(ev);
 
-            goals.a(1, new PathfinderGoalLookAtPlayer(ev, EntityHuman.class, range, 1.0F));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+			goals.a(1, new PathfinderGoalLookAtPlayer(ev, EntityHuman.class, range, 1.0F));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/*private void updateBossBarEntity(Player player, String title, double percent) {

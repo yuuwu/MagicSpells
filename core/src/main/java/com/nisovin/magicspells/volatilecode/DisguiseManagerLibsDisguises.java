@@ -300,7 +300,7 @@ public class DisguiseManagerLibsDisguises implements Listener, IDisguiseManager 
 		ret.setViewSelfDisguise(dis.disguiseSelf());
 		
 		/*
-		 * EntityType entityType = disguise.getEntityType();
+		* EntityType entityType = disguise.getEntityType();
 		String name = disguise.getNameplateText();
 		if (name == null || name.isEmpty()) name = player.getName();
 		if (entityType == EntityType.PLAYER) {
@@ -308,7 +308,7 @@ public class DisguiseManagerLibsDisguises implements Listener, IDisguiseManager 
 			};
 		}
 		
-		 */
+		*/
 		return ret;
 	}
 	

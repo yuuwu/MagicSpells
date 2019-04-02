@@ -53,7 +53,7 @@ public class ParseSpell extends TargetedSpell {
 			// Change the actual variable to the requested value.
 			String receivedValue = MagicSpells.getVariableManager().getStringValue(variableToParse, target);
 
-		    // Do the values match?
+			// Do the values match?
 			if (receivedValue.equals(expectedValue)) {
 				MagicSpells.getVariableManager().set(parseToVariable, target, parseTo);
 

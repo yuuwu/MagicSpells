@@ -38,19 +38,19 @@ public class ConsumeListener implements Listener {
 	
 	@EventHandler
 	public void onConsume(final PlayerItemConsumeEvent event) {
-	    CastItem castItem = new CastItem(event.getItem());
-	    final Spell spell = this.consumeCastItems.get(castItem);
-	    if (spell == null) return;
+		CastItem castItem = new CastItem(event.getItem());
+		final Spell spell = this.consumeCastItems.get(castItem);
+		if (spell == null) return;
 
-	    Player player = event.getPlayer();
+		Player player = event.getPlayer();
 		Long lastCastTime = lastCast.get(player.getName());
 		if (lastCastTime != null && lastCastTime + plugin.globalCooldown > System.currentTimeMillis()) return;
 		lastCast.put(player.getName(), System.currentTimeMillis());
-	    
-	    if (MagicSpells.getSpellbook(player).canCast(spell)) {
-	    	SpellCastResult result = spell.cast(event.getPlayer());
-	    	if (result.state != SpellCastState.NORMAL) event.setCancelled(true);
-	    }
+
+		if (MagicSpells.getSpellbook(player).canCast(spell)) {
+			SpellCastResult result = spell.cast(event.getPlayer());
+			if (result.state != SpellCastState.NORMAL) event.setCancelled(true);
+		}
 	}
-	
+
 }

@@ -183,7 +183,7 @@ public class DowseSpell extends InstantSpell {
 		return PostCastAction.HANDLE_NORMALLY;
 	}
 	
-	class NearbyEntity implements Comparable<NearbyEntity> {
+	static class NearbyEntity implements Comparable<NearbyEntity> {
 
 		Entity entity;
 		double distanceSquared;

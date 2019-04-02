@@ -410,7 +410,7 @@ public class ProjectileSpell extends InstantSpell {
 				&& Math.abs(loc1.getZ() - loc2.getZ()) < 0.1;
 	}
 	
-	private class ProjectileInfo {
+	private static class ProjectileInfo {
 		
 		Player player;
 		Location start;

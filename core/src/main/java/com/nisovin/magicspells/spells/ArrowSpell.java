@@ -209,7 +209,7 @@ public class ArrowSpell extends Spell {
 		
 	}
 	
-	class ArrowSpellData {
+	static class ArrowSpellData {
 		
 		ArrowSpell spell;
 		boolean casted = false;

@@ -136,7 +136,7 @@ public class HomingArrowSpell extends TargetedSpell implements TargetedEntitySpe
 		}
 	}
 	
-	class HomingArrow {
+	static class HomingArrow {
 		
 		Player shooter;
 		Projectile arrow;

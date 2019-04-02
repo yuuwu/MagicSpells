@@ -135,7 +135,7 @@ public class WalkwaySpell extends BuffSpell {
 		unregisterListener();
 	}
 	
-	private class Platform {
+	private static class Platform {
 		
 		private Player player;
 		private Material materialPlatform;

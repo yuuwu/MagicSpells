@@ -164,7 +164,7 @@ public class SeeHealthSpell extends BuffSpell {
 		return ChatColor.getByChar(this.colors.charAt(this.random.nextInt(this.colors.length())));
 	}
 	
-	class AttackListener implements Listener {
+	static class AttackListener implements Listener {
 		
 		@EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
 		public void onAttack(EntityDamageByEntityEvent event) {

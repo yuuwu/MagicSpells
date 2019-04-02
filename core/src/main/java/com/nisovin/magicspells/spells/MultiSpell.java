@@ -254,7 +254,7 @@ public final class MultiSpell extends InstantSpell {
 		
 	}
 
-	private class DelayedSpell implements Runnable {
+	private static class DelayedSpell implements Runnable {
 		
 		private Subspell spell;
 		private String playerName;
@@ -276,7 +276,7 @@ public final class MultiSpell extends InstantSpell {
 		
 	}
 
-	class ActionChance {
+	static class ActionChance {
 		
 		private MultiSpell.Action action;
 		private double chance;

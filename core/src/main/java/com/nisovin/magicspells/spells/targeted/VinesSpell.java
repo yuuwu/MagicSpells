@@ -126,7 +126,7 @@ public class VinesSpell extends TargetedSpell {
 		}
 	}
 	
-	class VineBlock implements Comparable<VineBlock> {
+	static class VineBlock implements Comparable<VineBlock> {
 		
 		Block block;
 		double distanceSquared;

@@ -40,7 +40,7 @@ public class ForcepushSpell extends InstantSpell {
 	}
 	
 	public void knockback(Player player, int castingRange, float basePower) {
-	    Vector p = player.getLocation().toVector();
+		Vector p = player.getLocation().toVector();
 		List<Entity> entities = player.getNearbyEntities(castingRange, castingRange, castingRange);
 		Vector e;
 		Vector v;
@@ -69,7 +69,7 @@ public class ForcepushSpell extends InstantSpell {
 			if (!addVelocityInstead) target.setVelocity(v);
 			else target.setVelocity(target.getVelocity().add(v));
 			playSpellEffects(EffectPosition.TARGET, target);
-	    }
+		}
 		playSpellEffects(EffectPosition.CASTER, player);
 	}
 

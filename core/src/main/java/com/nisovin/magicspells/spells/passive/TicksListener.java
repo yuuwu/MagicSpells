@@ -119,7 +119,7 @@ public class TicksListener extends PassiveListener {
 		}
 	}
 	
-	class Ticker implements Runnable {
+	static class Ticker implements Runnable {
 
 		int taskId;
 		Map<PassiveSpell, Collection<Player>> spells = new HashMap<>();

@@ -217,7 +217,7 @@ public final class TargetedMultiSpell extends TargetedSpell implements TargetedE
 		return success;
 	}
 	
-	private class Action {
+	private static class Action {
 		
 		private Subspell spell;
 		private int delay;

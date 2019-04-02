@@ -25,7 +25,7 @@ public class WindwalkSpell extends BuffSpell {
 	private float flySpeed;
 	int maxY;
 	int maxAltitude;
-    private boolean cancelOnLand;
+	private boolean cancelOnLand;
 	
 	HashSet<String> flyers;
 	private HashMap<String, Integer> tasks;
@@ -38,7 +38,7 @@ public class WindwalkSpell extends BuffSpell {
 		this.flySpeed = getConfigFloat("fly-speed", 0.1F);
 		this.maxY = getConfigInt("max-y", 260);
 		this.maxAltitude = getConfigInt("max-altitude", 100);
-        this.cancelOnLand = getConfigBoolean("cancel-on-land", true);
+		this.cancelOnLand = getConfigBoolean("cancel-on-land", true);
 		
 		this.flyers = new HashSet<>();
 		if (this.useCostInterval > 0) this.tasks = new HashMap<>();
@@ -76,18 +76,18 @@ public class WindwalkSpell extends BuffSpell {
 		}
 		return true;
 	}
-    
+
 	public class SneakListener implements Listener {
 		
-	    @EventHandler(priority=EventPriority.MONITOR)
-	    public void onPlayerToggleSneak(PlayerToggleSneakEvent event) {
-	    	Player player = event.getPlayer();
-	    	String playerName = player.getName();
-	        if (!flyers.contains(playerName)) return;
-	        if (player.getLocation().subtract(0, 1, 0).getBlock().getType() == Material.AIR) return;
-	        turnOff(player);
-	    }
-	    
+		@EventHandler(priority=EventPriority.MONITOR)
+		public void onPlayerToggleSneak(PlayerToggleSneakEvent event) {
+			Player player = event.getPlayer();
+			String playerName = player.getName();
+			if (!flyers.contains(playerName)) return;
+			if (player.getLocation().subtract(0, 1, 0).getBlock().getType() == Material.AIR) return;
+			turnOff(player);
+		}
+
 	}
 	
 	public class HeightMonitor implements Runnable {

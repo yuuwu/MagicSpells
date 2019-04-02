@@ -100,7 +100,7 @@ public class LilywalkSpell extends BuffSpell {
 		
 	}
 	
-	public class Lilies {
+	public static class Lilies {
 		
 		private Block center = null;
 		private HashSet<Block> blocks = new HashSet<>();

@@ -53,7 +53,7 @@ public class RegrowSpell extends TargetedSpell implements TargetedEntitySpell {
 	public boolean parseSpell() {
 		if (forceWoolColor && requestedColor != null) {
 			try {
-			  	dye = DyeColor.valueOf(requestedColor);
+				dye = DyeColor.valueOf(requestedColor);
 			} catch (IllegalArgumentException e) {
 				MagicSpells.error("Invalid wool color defined. Will use sheep's color instead.");
 				return false;

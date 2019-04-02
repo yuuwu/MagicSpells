@@ -82,7 +82,7 @@ public class RandomSpell extends InstantSpell {
 		return PostCastAction.HANDLE_NORMALLY;
 	}
 
-	class SpellOption {
+	static class SpellOption {
 		
 		Subspell spell;
 		int weight;

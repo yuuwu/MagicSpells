@@ -135,7 +135,7 @@ public class FlightPathSpell extends InstantSpell {
 		
 	}
 	
-	class ActiveFlight {
+	static class ActiveFlight {
 		
 		Player player;
 		EntityType mountType;

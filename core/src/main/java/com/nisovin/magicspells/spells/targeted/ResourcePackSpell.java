@@ -8,7 +8,7 @@ import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
 
 public class ResourcePackSpell extends TargetedSpell {
-	
+
 	public static final int HASH_LENGTH = 20;
 
 	private String url = null;
@@ -23,7 +23,7 @@ public class ResourcePackSpell extends TargetedSpell {
 			if (hash.length != HASH_LENGTH) {
 				// Send the message
 				MagicSpells.error("Incorrect length for resource pack hash: " + hash.length);
-				
+
 				MagicSpells.error("Avoiding use of the hash to avoid further problems.");
 				// Null it to prevent further errors
 				hash = null;
@@ -31,7 +31,7 @@ public class ResourcePackSpell extends TargetedSpell {
 		}
 		
 	}
-	
+
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
@@ -57,7 +57,7 @@ public class ResourcePackSpell extends TargetedSpell {
 		byte[] data = new byte[len / 2];
 		for (int i = 0; i < len; i += 2) {
 			data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
-									  + Character.digit(s.charAt(i+1), 16));
+									+ Character.digit(s.charAt(i+1), 16));
 		}
 		return data;
 	}

@@ -331,7 +331,7 @@ public class ConjureSpell extends InstantSpell implements TargetedEntitySpell, T
 		expirationHandler = null;
 	}
 	
-	class ExpirationHandler implements Listener {
+	static class ExpirationHandler implements Listener {
 		
 		private final String expPrefix =  ChatColor.BLACK.toString() + ChatColor.MAGIC.toString() + "MSExp:";
 		

@@ -76,15 +76,15 @@ public class LeapSpell extends InstantSpell {
 		return PostCastAction.HANDLE_NORMALLY;
 	}
 
-    @EventHandler
-    public void onEntityDamage(EntityDamageEvent e) {
-        if (e.getCause() != EntityDamageEvent.DamageCause.FALL || !(e.getEntity() instanceof Player)) return;
-        Player pl = (Player)e.getEntity();
-        if (jumping.isEmpty()) return;
-        if (!jumping.remove(pl)) return;
-        if (landSpell != null) landSpell.cast(pl, 1);
-        playSpellEffects(EffectPosition.TARGET, pl.getLocation());
-        if (cancelDamage) e.setCancelled(true);
-    }
+	@EventHandler
+	public void onEntityDamage(EntityDamageEvent e) {
+		if (e.getCause() != EntityDamageEvent.DamageCause.FALL || !(e.getEntity() instanceof Player)) return;
+		Player pl = (Player)e.getEntity();
+		if (jumping.isEmpty()) return;
+		if (!jumping.remove(pl)) return;
+		if (landSpell != null) landSpell.cast(pl, 1);
+		playSpellEffects(EffectPosition.TARGET, pl.getLocation());
+		if (cancelDamage) e.setCancelled(true);
+	}
 
 }

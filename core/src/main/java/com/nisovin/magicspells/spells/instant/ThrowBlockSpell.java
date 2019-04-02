@@ -342,7 +342,7 @@ public class ThrowBlockSpell extends InstantSpell implements TargetedLocationSpe
 		if (fallingBlocks != null) fallingBlocks.clear();
 	}
 	
-	class FallingBlockInfo {
+	static class FallingBlockInfo {
 		
 		Player player;
 		float power;

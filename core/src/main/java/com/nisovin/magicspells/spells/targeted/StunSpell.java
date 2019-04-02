@@ -105,7 +105,7 @@ public class StunSpell extends TargetedSpell implements TargetedEntitySpell {
 		stunnedLivingEntities.remove(entity.getUniqueId());
 	}
 	
-	private class StunnedInfo {
+	private static class StunnedInfo {
 		
 		private Long until;
 		private Player caster;
