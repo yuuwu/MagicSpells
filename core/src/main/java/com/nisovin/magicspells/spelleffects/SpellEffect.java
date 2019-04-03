@@ -69,7 +69,9 @@ public abstract class SpellEffect {
 	
 	int taskId = -1;
 	
-	public abstract void loadFromString(String string);
+	public void loadFromString(String string) {
+		MagicSpells.plugin.getLogger().warning("Warning: single line effects are being removed, usage encountered: " + string);
+	}
 	
 	public final void loadFromConfiguration(ConfigurationSection config) {
 		heightOffset = config.getDouble("height-offset", heightOffset);

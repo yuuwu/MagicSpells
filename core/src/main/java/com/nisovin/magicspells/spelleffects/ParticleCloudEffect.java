@@ -18,11 +18,6 @@ class ParticleCloudEffect extends SpellEffect {
 	float yOffset = 0F;
 
 	@Override
-	public void loadFromString(String string) {
-		// No current string format
-	}
-
-	@Override
 	public void loadFromConfig(ConfigurationSection config) {
 		particle = Util_1_9.getParticleFromName(config.getString("particle-name", "explode"));
 		radius = (float)config.getDouble("radius", radius);

@@ -18,10 +18,6 @@ class BlueSparkleEffect : SpellEffect() {
     private val yOffset = 2f
     private val zOffset = 0f
 
-    override fun loadFromString(string: String) {
-        // lol nope
-    }
-
     public override fun loadFromConfig(config: ConfigurationSection) {
         // TODO make a config loading schema
     }

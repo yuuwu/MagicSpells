@@ -27,11 +27,6 @@ public class EffectLibParticlesEffect extends SpellEffect {
 	private ParticleData data = null;
 
 	@Override
-	public void loadFromString(String string) {
-		// nope
-	}
-
-	@Override
 	public void loadFromConfig(ConfigurationSection config) {
 		//name
 		//float offsetX

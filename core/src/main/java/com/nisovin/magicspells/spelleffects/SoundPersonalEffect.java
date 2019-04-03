@@ -18,6 +18,7 @@ public class SoundPersonalEffect extends SpellEffect {
 
 	@Override
 	public void loadFromString(String string) {
+		super.loadFromString(string);
 		if (string != null && !string.isEmpty()) {
 			String[] data = string.split(" ");
 			sound = data[0];

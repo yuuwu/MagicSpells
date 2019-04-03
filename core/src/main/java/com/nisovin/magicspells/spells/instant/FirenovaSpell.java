@@ -68,7 +68,7 @@ public class FirenovaSpell extends InstantSpell implements TargetedLocationSpell
 		checkPlugins = getConfigBoolean("check-plugins", true);
 		
 		// FIXME avoid magic numbers
-		mat = MagicSpells.getItemNameResolver().resolveBlock(getConfigString("block-type", "51:15"));
+		mat = MagicSpells.getItemNameResolver().resolveBlock(getConfigString("block-type", "FIRE"));
 		
 		expandRate = getConfigInt("expanding-radius-change", expandRate);
 		if (expandRate < 1) expandRate = 1;

@@ -23,11 +23,6 @@ public class TitleEffect extends SpellEffect {
 	boolean broadcast = false;
 	
 	@Override
-	public void loadFromString(String string) {
-		// No string format
-	}
-
-	@Override
 	protected void loadFromConfig(ConfigurationSection config) {
 		title = config.getString("title", title);
 		if (title != null) title = ChatColor.translateAlternateColorCodes('&', title);

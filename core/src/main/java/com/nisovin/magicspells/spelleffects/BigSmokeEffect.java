@@ -8,11 +8,6 @@ import org.bukkit.configuration.ConfigurationSection;
 public class BigSmokeEffect extends SpellEffect {
 
 	@Override
-	public void loadFromString(String string) {
-		// nope
-	}
-
-	@Override
 	public void loadFromConfig(ConfigurationSection config) {
 		// TODO make a config loading schema
 	}

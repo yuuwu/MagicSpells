@@ -16,6 +16,7 @@ public class SmokeTrailEffect extends SpellEffect {
 	
 	@Override
 	public void loadFromString(String string) {
+		super.loadFromString(string);
 		if (string != null) {
 			try {
 				interval = Integer.parseInt(string);

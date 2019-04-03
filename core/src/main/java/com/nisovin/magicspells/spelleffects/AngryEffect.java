@@ -23,11 +23,6 @@ public class AngryEffect extends SpellEffect {
 	private int count = 1;
 	
 	@Override
-	public void loadFromString(String string) {
-		// nope
-	}
-
-	@Override
 	public void loadFromConfig(ConfigurationSection config) {
 		range = config.getDouble("range", range);
 	}

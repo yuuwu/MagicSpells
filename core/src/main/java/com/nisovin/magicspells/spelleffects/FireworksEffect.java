@@ -22,6 +22,7 @@ public class FireworksEffect extends SpellEffect {
 	
 	@Override
 	public void loadFromString(String string) {
+		super.loadFromString(string);
 		if (string != null && !string.isEmpty()) {
 			String[] data = string.split(" ");
 			if (data.length >= 1 && BooleanUtils.isYes(data[0])) flicker = true;

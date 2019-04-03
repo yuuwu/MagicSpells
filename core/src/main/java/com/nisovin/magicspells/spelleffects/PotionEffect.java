@@ -15,6 +15,7 @@ public class PotionEffect extends SpellEffect {
 	
 	@Override
 	public void loadFromString(String string) {
+		super.loadFromString(string);
 		if (string != null && !string.isEmpty()) {
 			String[] data = string.split(" ");
 			try {

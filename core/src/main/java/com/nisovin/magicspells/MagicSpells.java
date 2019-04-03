@@ -27,8 +27,8 @@ import com.nisovin.magicspells.util.Metrics;
 import com.nisovin.magicspells.util.TxtUtil;
 import com.nisovin.magicspells.util.compat.CompatBasics;
 import com.nisovin.magicspells.util.compat.EventUtil;
+import com.nisovin.magicspells.volatilecode.ManagerVolatile;
 import com.nisovin.magicspells.volatilecode.VolatileCodeDisabled;
-import com.nisovin.magicspells.volatilecode.VolatileCodeEnabled_1_12_R1;
 import de.slikey.effectlib.util.ParticleEffect;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -229,11 +229,10 @@ public class MagicSpells extends JavaPlugin {
 			return;
 		}
 		
-		// This is where the volatile handlers were selected
-		// FIXME
+		// Construct volatile handler
 		try {
-			volatileCodeHandle = new VolatileCodeEnabled_1_12_R1(config);
-		} catch (Throwable ignored) {
+			volatileCodeHandle = ManagerVolatile.INSTANCE.constructVolatileCodeHandler();
+		} catch (Throwable t) {
 			volatileCodeHandle = new VolatileCodeDisabled();
 		}
 		

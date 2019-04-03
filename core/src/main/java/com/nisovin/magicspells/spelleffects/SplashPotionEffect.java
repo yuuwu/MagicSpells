@@ -12,6 +12,7 @@ public class SplashPotionEffect extends SpellEffect {
 
 	@Override
 	public void loadFromString(String string) {
+		super.loadFromString(string);
 		if (string != null && !string.isEmpty()) {
 			try {
 				pot = Integer.parseInt(string);

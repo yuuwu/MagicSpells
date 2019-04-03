@@ -39,6 +39,7 @@ public class NovaEffect extends SpellEffect {
 	
 	@Override
 	public void loadFromString(String string) {
+		super.loadFromString(string);
 		if (string != null && !string.isEmpty()) {
 			
 			String[] params = string.split(" ");
@@ -49,8 +50,7 @@ public class NovaEffect extends SpellEffect {
 				try {
 					type = Material.matchMaterial(params[0], true);
 				} catch (NumberFormatException e) {
-					// FIXME this isn't a NFE anymore
-					DebugHandler.debugNumberFormat(e);
+					// No op
 				}
 			}
 			

@@ -26,6 +26,7 @@ public class ItemSprayEffect extends SpellEffect {
 
 	@Override
 	public void loadFromString(String string) {
+		super.loadFromString(string);
 		if (string != null) {
 			String[] data = string.split(" ");
 			Material type = Material.LEGACY_REDSTONE;

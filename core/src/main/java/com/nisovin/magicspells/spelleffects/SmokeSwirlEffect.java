@@ -16,6 +16,7 @@ public class SmokeSwirlEffect extends SpellEffect {
 	
 	@Override
 	public void loadFromString(String string) {
+		super.loadFromString(string);
 		if (string != null && !string.isEmpty()) {
 			try {
 				duration = Integer.parseInt(string);

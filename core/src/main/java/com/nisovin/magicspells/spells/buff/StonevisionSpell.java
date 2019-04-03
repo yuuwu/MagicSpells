@@ -42,7 +42,8 @@ public class StonevisionSpell extends BuffSpell {
 		this.unobfuscate = getConfigBoolean("unobfuscate", false);
 		
 		this.transparentTypes = EnumSet.noneOf(Material.class);
-		MagicMaterial type = MagicSpells.getItemNameResolver().resolveBlock(getConfigString("transparent-type", "stone"));
+		// TODO expand the transparent types
+		MagicMaterial type = MagicSpells.getItemNameResolver().resolveBlock(getConfigString("transparent-type", "DIORITE"));
 		if (type != null) {
 			this.transparentTypes.add(type.getMaterial());
 		}

@@ -8,11 +8,6 @@ import com.nisovin.magicspells.MagicSpells;
 public class DragonDeathEffect extends SpellEffect {
 
 	@Override
-	public void loadFromString(String string) {
-		// lol nope
-	}
-
-	@Override
 	protected void loadFromConfig(ConfigurationSection config) {
 		//TODO make a config loading schema
 	}

@@ -21,11 +21,6 @@ public class GreenSparkleEffect extends SpellEffect {
 	private float spreadVert = .3F;
 	
 	@Override
-	public void loadFromString(String string) {
-		// nope
-	}
-
-	@Override
 	public void loadFromConfig(ConfigurationSection config) {
 		// TODO make a config loading schema
 	}

@@ -16,6 +16,7 @@ public class ActionBarTextEffect extends SpellEffect {
 	
 	@Override
 	public void loadFromString(String string) {
+		super.loadFromString(string);
 		message = ChatColor.translateAlternateColorCodes('&', string);
 	}
 

@@ -14,11 +14,6 @@ public class EffectLibEffect extends SpellEffect {
 	String className;
 	
 	@Override
-	public void loadFromString(String string) {
-		// nope
-	}
-
-	@Override
 	protected void loadFromConfig(ConfigurationSection config) {
 		effectLibSection = config.getConfigurationSection("effectlib");
 		className = effectLibSection.getString("class");

@@ -7,11 +7,6 @@ import org.bukkit.configuration.ConfigurationSection;
 public class MobSpawnerEffect extends SpellEffect {
 
 	@Override
-	public void loadFromString(String string) {
-		// No current string loading schema
-	}
-
-	@Override
 	public void loadFromConfig(ConfigurationSection config) {
 		//TODO make a config schema for this effect
 	}

@@ -16,6 +16,7 @@ public class ItemCooldownEffect extends SpellEffect {
 	
 	@Override
 	public void loadFromString(String string) {
+		super.loadFromString(string);
 		String[] split = Util.splitParams(string);
 		item = Util.getItemStackFromString(split[0]);
 		duration = Integer.parseInt(split[1]);

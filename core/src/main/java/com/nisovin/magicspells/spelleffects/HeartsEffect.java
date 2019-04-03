@@ -21,11 +21,6 @@ public class HeartsEffect extends SpellEffect {
 	private float spreadVert = .2F;
 	
 	@Override
-	public void loadFromString(String string) {
-		// lol nope
-	}
-
-	@Override
 	public void loadFromConfig(ConfigurationSection config) {
 		// TODO make a config loading schema
 	}

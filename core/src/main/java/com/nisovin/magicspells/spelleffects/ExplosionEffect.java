@@ -6,11 +6,6 @@ import org.bukkit.configuration.ConfigurationSection;
 public class ExplosionEffect extends SpellEffect {
 
 	@Override
-	public void loadFromString(String string) {
-		// lol nope
-	}
-
-	@Override
 	public void loadFromConfig(ConfigurationSection config) {
 		// TODO make a config loading schema
 	}
