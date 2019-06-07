@@ -1,30 +1,31 @@
 package com.nisovin.magicspells.castmodifiers;
 
+import java.util.Map;
 import java.util.HashMap;
 
 import org.bukkit.Location;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.LivingEntity;
 
 import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.castmodifiers.conditions.*;
 
 public abstract class Condition {
-	
+
 	public abstract boolean setVar(String var);
 
 	public abstract boolean check(Player player);
-	
+
 	public abstract boolean check(Player player, LivingEntity target);
-	
+
 	public abstract boolean check(Player player, Location location);
-	
-	private static HashMap<String, Class<? extends Condition>> conditions = new HashMap<>();
-	
+
+	private static Map<String, Class<? extends Condition>> conditions = new HashMap<>();
+
 	public static void addCondition(String name, Class<? extends Condition> condition) {
 		conditions.put(name.toLowerCase(), condition);
 	}
-	
+
 	static Condition getConditionByName(String name) {
 		Class<? extends Condition> clazz = conditions.get(name.toLowerCase());
 		if (clazz == null) {
@@ -41,7 +42,7 @@ public abstract class Condition {
 			return null;
 		}
 	}
-	
+
 	static {
 		conditions.put("disguised", DisguisedCondition.class);
 		conditions.put("day", DayCondition.class);
@@ -65,6 +66,7 @@ public abstract class Condition {
 		conditions.put("elevationbelow", ElevationBelowCondition.class);
 		conditions.put("biome", BiomeCondition.class);
 		conditions.put("sneaking", SneakingCondition.class);
+		conditions.put("swimming", SwimmingCondition.class);
 		conditions.put("sprinting", SprintingCondition.class);
 		conditions.put("flying", FlyingCondition.class);
 		conditions.put("falling", FallingCondition.class);
@@ -168,5 +170,5 @@ public abstract class Condition {
 		conditions.put("onleash", OnLeashCondition.class);
 		conditions.put("griefpreventionisowner", GriefPreventionIsOwnerCondition.class);
 	}
-	
+
 }

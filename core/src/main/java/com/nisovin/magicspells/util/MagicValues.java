@@ -36,62 +36,65 @@ public class MagicValues {
 		GLOWING(24, "glow"),
 		LEVITATION(25),
 		LUCK(26, "lucky"),
-		UNLUCK(27, "badluck", "unlucky")
-		
+		UNLUCK(27, "badluck", "unlucky"),
+		SLOW_FALLING(28, "slowfalling", "slowfall"),
+		CONDUIT_POWER(29, "conduit", "conduitpower"),
+		DOLPHINS_GRACE(30, "dolphingrace", "dolphinsgrace", "dolphin");
+
 		;
-		
+
 		private int id;
 		private String[] names;
-		
+
 		PotionEffect(int id, String... names) {
 			this.id = id;
 			this.names = names;
 		}
-		
-		
+
+
 		private static Map<String, PotionEffectType> namesToType = null;
 		private static Map<PotionEffectType, Integer> potionEffectToId = null;
 		private static boolean initialized = false;
-		
+
 		private static void initialize() {
 			if (initialized) return;
-			
+
 			namesToType = new HashMap<>();
 			potionEffectToId = new HashMap<>();
-			
+
 			for (PotionEffect pe: PotionEffect.values()) {
 				PotionEffectType type = PotionEffectType.getByName(pe.name());
 				if (type == null) continue;
-				
+
 				// handle the names
 				namesToType.put(pe.name().toLowerCase().replace("_", ""), type);
 				namesToType.put(pe.id + "", type);
 				for (String s: pe.names) {
 					namesToType.put(s.toLowerCase().replace("_", ""), type);
 				}
-				
+
 				// handle the type to id mappings
 				potionEffectToId.put(type, pe.id);
 			}
-			
+
 			initialized = true;
 		}
-		
+
 		public static PotionEffectType getPotionEffectType(String identification) {
 			initialize();
 			return namesToType.get(identification.toLowerCase().replace("_", ""));
 		}
-		
+
 		public static int getId(PotionEffectType type) {
 			initialize();
 			return potionEffectToId.get(type);
 		}
 	}
-	
+
 	public enum Villager {
 		// Profession
 	}
-	
+
 	public enum Enchantments {
 		PROTECTION_ENVIRONMENTAL(0, "prot", "protection"),
 		PROTECTION_FIRE(1, "fireprot" , "fireprotection"),
@@ -124,10 +127,10 @@ public class MagicValues {
 		MENDING(70, new String[]{}),
 		VANISHING_CURSE(71, "vanishing"),
 		;
-		
+
 		private String[] names;
 		private int id;
-		
+
 		Enchantments(int id, String... labels) {
 			this.id = id;
 			this.names = labels;
@@ -135,54 +138,54 @@ public class MagicValues {
 		private static Map<String, Enchantment> namesToType = null;
 		private static Map<Enchantment, Integer> enchantToId = null;
 		private static boolean initialized = false;
-		
+
 		private static void initialize() {
 			if (initialized) return;
-			
+
 			namesToType = new HashMap<String, Enchantment>();
 			enchantToId = new HashMap<Enchantment, Integer>();
-			
+
 			for (Enchantments pe: Enchantments.values()) {
 				Enchantment type = Enchantment.getByName(pe.name());
 				if (type == null) continue;
-				
+
 				// deal with the names
 				namesToType.put(pe.name().toLowerCase().replace("_", ""), type);
 				namesToType.put(pe.id + "", type);
 				for (String s: pe.names) {
 					namesToType.put(s.toLowerCase().replace("_", ""), type);
 				}
-				
+
 				// deal with the enchant to id
 				enchantToId.put(type, pe.id);
 			}
-			
+
 			initialized = true;
 		}
-		
+
 		public static Enchantment getEnchantmentType(String identification) {
 			initialize();
 			return namesToType.get(identification.toLowerCase().replace("_", ""));
 		}
-		
+
 		public static int getId(Enchantment enchant) {
 			initialize();
 			return enchantToId.get(enchant);
 		}
 	}
-	
+
 	public enum Materials {
 		//TODO map the materials to ids and such
 	}
-	
+
 	public enum Projectile {
 		;
-		
-		
-		
+
+
+
 		private Projectile() {
-			
+
 		}
 	}
-	
+
 }
