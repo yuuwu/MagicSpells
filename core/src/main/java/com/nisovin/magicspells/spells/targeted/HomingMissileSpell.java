@@ -7,6 +7,11 @@ import org.bukkit.entity.LivingEntity;
 
 import com.nisovin.magicspells.Subspell;
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.util.TimeUtil;
+import com.nisovin.magicspells.util.TargetInfo;
+import com.nisovin.magicspells.util.BlockUtils;
+import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.BoundingBox;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
@@ -14,16 +19,6 @@ import com.nisovin.magicspells.events.SpellPreImpactEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedEntityFromLocationSpell;
 
-import de.slikey.effectlib.util.ParticleEffect;
-import de.slikey.effectlib.util.ParticleEffect.ParticleData;
-
-import com.nisovin.magicspells.util.TimeUtil;
-import com.nisovin.magicspells.util.TargetInfo;
-import com.nisovin.magicspells.util.BlockUtils;
-import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.BoundingBox;
-import com.nisovin.magicspells.util.EffectPackage;
-import com.nisovin.magicspells.util.ParticleNameUtil;
 
 public class HomingMissileSpell extends TargetedSpell implements TargetedEntitySpell, TargetedEntityFromLocationSpell {
 
@@ -52,12 +47,6 @@ public class HomingMissileSpell extends TargetedSpell implements TargetedEntityS
 	float velocityPerTick;
 	int specialEffectInterval;
 
-	String particleName;
-	float particleSpeed;
-	int particleCount;
-	float particleHorizontalSpread;
-	float particleVerticalSpread;
-
 	int maxDuration;
 	float hitRadius;
 	float yOffset;
@@ -67,14 +56,7 @@ public class HomingMissileSpell extends TargetedSpell implements TargetedEntityS
 
 	HomingMissileSpell thisSpell;
 
-	ParticleEffect effect;
-	ParticleData data;
-
-	boolean useParticles = false;
-
 	int intermediateSpecialEffects = 0;
-
-	boolean canRender;
 
 	public HomingMissileSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -103,27 +85,15 @@ public class HomingMissileSpell extends TargetedSpell implements TargetedEntityS
 		ticksPerSecond = 20F / (float)tickInterval;
 		velocityPerTick = projectileVelocity / ticksPerSecond;
 		specialEffectInterval = getConfigInt("special-effect-interval", 0);
-		particleName = getConfigString("particle-name", "reddust");
-		particleSpeed = getConfigFloat("particle-speed", 0.3F);
-		particleCount = getConfigInt("particle-count", 15);
-		particleHorizontalSpread = getConfigFloat("particle-horizontal-spread", 0.3F);
-		particleVerticalSpread = getConfigFloat("particle-vertical-spread", 0.3F);
 		maxDuration = getConfigInt("max-duration", 20) * (int)TimeUtil.MILLISECONDS_PER_SECOND;
 		hitRadius = getConfigFloat("hit-radius", 1.5F);
 		renderDistance = getConfigInt("render-distance", 32);
 		hitSpellName = getConfigString("spell", "");
-		useParticles = getConfigBoolean("use-particles", false);
 		changeCasterOnReflect = getConfigBoolean("change-caster-on-reflect", true);
 
 		intermediateSpecialEffects = getConfigInt("intermediate-special-effect-locations", 0);
 		if (intermediateSpecialEffects < 0) intermediateSpecialEffects = 0;
 
-		EffectPackage pkg = ParticleNameUtil.findEffectPackage(this.particleName);
-		canRender = pkg.canRender();
-		if (canRender) {
-			data = pkg.data;
-			effect = pkg.effect;
-		}
 	}
 
 	@Override
@@ -340,15 +310,7 @@ public class HomingMissileSpell extends TargetedSpell implements TargetedEntityS
 		}
 
 		private void playMissileEffect(Location loc) {
-			// Show particle
-			if (useParticles && canRender) {
-				//MagicSpells.getVolatileCodeHandler().playParticleEffect(currentLocation, particleName, particleHorizontalSpread, particleVerticalSpread, particleSpeed, particleCount, renderDistance, 0F);
-
-				effect.display(data, loc, null, renderDistance, particleHorizontalSpread, particleVerticalSpread, particleHorizontalSpread, particleSpeed, particleCount);
-				//ParticleData data, Location center, Color color, double range, float offsetX, float offsetY, float offsetZ, float speed, int amount
-			} else {
-				playSpellEffects(EffectPosition.SPECIAL, loc);
-			}
+			playSpellEffects(EffectPosition.SPECIAL, loc);
 		}
 
 		private void redirect() {

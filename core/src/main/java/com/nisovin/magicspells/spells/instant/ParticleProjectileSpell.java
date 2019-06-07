@@ -19,9 +19,7 @@ import com.nisovin.magicspells.util.TimeUtil;
 import com.nisovin.magicspells.util.BlockUtils;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.BoundingBox;
-import com.nisovin.magicspells.util.EffectPackage;
 import com.nisovin.magicspells.util.ValidTargetList;
-import com.nisovin.magicspells.util.ParticleNameUtil;
 import com.nisovin.magicspells.util.compat.EventUtil;
 
 import com.nisovin.magicspells.Subspell;
@@ -30,9 +28,6 @@ import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.events.SpellTargetEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
-
-import de.slikey.effectlib.util.ParticleEffect;
-import de.slikey.effectlib.util.ParticleEffect.ParticleData;
 
 public class ParticleProjectileSpell extends InstantSpell implements TargetedLocationSpell {
 
@@ -55,14 +50,6 @@ public class ParticleProjectileSpell extends InstantSpell implements TargetedLoc
 	float ticksPerSecond;
 	int specialEffectInterval;
 	int spellInterval;
-
-	String particleName;
-	int particleCount;
-	int renderDistance;
-	float particleSpeed;
-	float particleXSpread;
-	float particleYSpread;
-	float particleZSpread;
 
 	int maxEntitiesHit;
 	float hitRadius;
@@ -104,11 +91,6 @@ public class ParticleProjectileSpell extends InstantSpell implements TargetedLoc
 	Random rand;
 	ParticleProjectileSpell thisSpell;
 
-	ParticleEffect effect;
-	ParticleData data;
-
-	boolean canRender;
-
 	public ParticleProjectileSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 
@@ -145,23 +127,12 @@ public class ParticleProjectileSpell extends InstantSpell implements TargetedLoc
 		this.specialEffectInterval = getConfigInt("special-effect-interval", 0);
 		this.spellInterval = getConfigInt("spell-interval", 20);
 
-		this.particleName = getConfigString("particle-name", "reddust");
-		this.particleSpeed = getConfigFloat("particle-speed", 0.3F);
-		this.particleCount = getConfigInt("particle-count", 15);
-		this.particleXSpread = getConfigFloat("particle-horizontal-spread", 0.3F);
-		this.particleYSpread = getConfigFloat("particle-vertical-spread", 0.3F);
-		this.particleZSpread = this.particleXSpread;
-		this.particleXSpread = getConfigFloat("particle-red", this.particleXSpread);
-		this.particleYSpread = getConfigFloat("particle-green", this.particleYSpread);
-		this.particleZSpread = getConfigFloat("particle-blue", this.particleZSpread);
-
 		this.maxDistanceSquared = getConfigInt("max-distance", 15);
 		this.maxDistanceSquared *= this.maxDistanceSquared;
 		this.maxDuration = (int)(getConfigInt("max-duration", 0) * TimeUtil.MILLISECONDS_PER_SECOND);
 		this.hitRadius = getConfigFloat("hit-radius", 1.5F);
 		this.maxEntitiesHit = getConfigInt("max-entities-hit", 0);
 		this.verticalHitRadius = getConfigFloat("vertical-hit-radius", this.hitRadius);
-		this.renderDistance = getConfigInt("render-distance", 32);
 
 		this.hugSurface = getConfigBoolean("hug-surface", false);
 		if (this.hugSurface) this.heightFromSurface = getConfigFloat("height-from-surface", 0.6F);
@@ -193,12 +164,6 @@ public class ParticleProjectileSpell extends InstantSpell implements TargetedLoc
 		this.entitySpellName = getConfigString("spell-on-hit-entity", defaultSpellName);
 		this.durationSpellName = getConfigString("spell-on-duration-end", defaultSpellName);
 
-		EffectPackage pkg = ParticleNameUtil.findEffectPackage(this.particleName);
-		canRender = pkg.canRender();
-		if (canRender) {
-			data = pkg.data;
-			effect = pkg.effect;
-		}
 	}
 
 	@Override
@@ -379,9 +344,6 @@ public class ParticleProjectileSpell extends InstantSpell implements TargetedLoc
 
 			// Rotate effects properly
 			if (projectileHorizGravity != 0 || projectileVertGravity != 0) this.currentLocation.setDirection(currentVelocity);
-
-			// Show particle
-			if (canRender) effect.display(data, this.currentLocation, null, renderDistance, particleXSpread, particleYSpread, particleZSpread, particleSpeed, particleCount);
 
 			// Play effects
 			if (specialEffectInterval > 0 && this.counter % specialEffectInterval == 0) playSpellEffects(EffectPosition.SPECIAL, this.currentLocation);

@@ -8,11 +8,14 @@ import java.util.Set;
 import com.nisovin.magicspells.util.TimeUtil;
 import org.bukkit.Color;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -23,9 +26,29 @@ import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
 import com.nisovin.magicspells.util.Util;
-import com.nisovin.magicspells.util.Util_1_9;
 
 public class ParticleCloudSpell extends TargetedSpell implements TargetedLocationSpell, TargetedEntitySpell {
+
+	Particle particle;
+	String particleName;
+
+	Material material;
+	String materialName;
+
+	BlockData blockData;
+	ItemStack itemStack;
+
+	float dustSize;
+	int colorRed;
+	int colorGreen;
+	int colorBlue;
+	Color dustColor;
+	Particle.DustOptions dustOptions;
+
+	boolean none = true;
+	boolean item = false;
+	boolean dust = false;
+	boolean block = false;
 
 	private int color = 0xFF0000;
 	private int ticksDuration = 3 * TimeUtil.TICKS_PER_SECOND;
@@ -35,14 +58,52 @@ public class ParticleCloudSpell extends TargetedSpell implements TargetedLocatio
 	private float radiusPerTick = 0F;
 	private int reapplicationDelay = 3 * TimeUtil.TICKS_PER_SECOND;
 	private int waitTime = 10;
-	private Particle particle;
 	private Set<PotionEffect> potionEffects;
 	private boolean useGravity = false;
 	private boolean canTargetEntities = true;
 	private boolean canTargetLocation = true;
-	
+
 	public ParticleCloudSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
+
+		particleName = config.getString("particle-name", "EXPLOSION_NORMAL");
+		particle = Util.getParticle(particleName);
+
+		materialName = config.getString("material", "").toUpperCase();
+		material = Material.getMaterial(materialName);
+
+		dustSize = (float) config.getDouble("size", 1);
+		colorRed = config.getInt("red", 255);
+		colorGreen = config.getInt("green", 0);
+		colorBlue = config.getInt("blue", 0);
+		dustColor = Color.fromRGB(colorRed, colorGreen, colorBlue);
+		dustOptions = new Particle.DustOptions(dustColor, dustSize);
+
+		if ((particle == Particle.BLOCK_CRACK || particle == Particle.BLOCK_DUST || particle == Particle.FALLING_DUST) && material != null && material.isBlock()) {
+			block = true;
+			blockData = material.createBlockData();
+			none = false;
+		} else if (particle == Particle.ITEM_CRACK && material != null && material.isItem()) {
+			item = true;
+			itemStack = new ItemStack(material);
+			none = false;
+		} else if (particle == Particle.REDSTONE && dustOptions != null) {
+			dust = true;
+			none = false;
+		}
+
+		if (particle == null) MagicSpells.error("Wrong particle-name defined! '" + particleName + "'");
+
+		if ((particle == Particle.BLOCK_CRACK || particle == Particle.BLOCK_DUST || particle == Particle.FALLING_DUST) && (material == null || !material.isBlock())) {
+			particle = null;
+			MagicSpells.error("Wrong material defined! '" + materialName + "'");
+		}
+
+		if (particle == Particle.ITEM_CRACK && (material == null || !material.isItem())) {
+			particle = null;
+			MagicSpells.error("Wrong material defined! '" + materialName + "'");
+		}
+
 		color = getConfigInt("color", color);
 		ticksDuration = getConfigInt("duration-ticks", ticksDuration);
 		durationOnUse = getConfigInt("duration-ticks-on-use", durationOnUse);
@@ -52,22 +113,19 @@ public class ParticleCloudSpell extends TargetedSpell implements TargetedLocatio
 		reapplicationDelay = getConfigInt("reapplication-delay-ticks", reapplicationDelay);
 		waitTime = getConfigInt("wait-time-ticks", waitTime);
 		useGravity = getConfigBoolean("use-gravity", useGravity);
-		String particleName = getConfigString("particle", "fireworksspark");
 		canTargetEntities = getConfigBoolean("can-target-entities", canTargetEntities);
 		canTargetLocation = getConfigBoolean("can-target-location", canTargetLocation);
-		particle = Util_1_9.getParticleFromName(particleName);
-		if (particle == null) MagicSpells.error("could not determine particle from '" + particleName + '\'');
-		
+
 		List<String> potionEffectStrings = getConfigStringList("potion-effects", null);
 		if (potionEffectStrings == null) potionEffectStrings = new ArrayList<>();
-		
+
 		this.potionEffects = new HashSet<>();
-		
+
 		for (String effect: potionEffectStrings) {
 			this.potionEffects.add(getPotionEffectFromString(effect));
 		}
 	}
-	
+
 	private static PotionEffect getPotionEffectFromString(String s) {
 		//type durationTicks amplifier ambient particles? icon
 		String[] splits = s.split(" ");
@@ -94,9 +152,9 @@ public class ParticleCloudSpell extends TargetedSpell implements TargetedLocatio
 				Block targetBlock = getTargetedBlock(player, power);
 				if (targetBlock != null) locToSpawn = targetBlock.getLocation();
 			}
-			
+
 			if (locToSpawn == null) return noTarget(player);
-			
+
 			AreaEffectCloud cloud = spawnCloud(locToSpawn);
 			cloud.setSource(player);
 		}
@@ -115,13 +173,16 @@ public class ParticleCloudSpell extends TargetedSpell implements TargetedLocatio
 	public boolean castAtLocation(Location target, float power) {
 		return castAtLocation(null, target, power);
 	}
-	
+
 	private AreaEffectCloud spawnCloud(Location loc) {
 		AreaEffectCloud cloud = loc.getWorld().spawn(loc, AreaEffectCloud.class);
+		if (block) cloud.setParticle(particle, blockData);
+		else if (item) cloud.setParticle(particle, itemStack);
+		else if (dust) cloud.setParticle(particle, dustOptions);
+		else if (none) cloud.setParticle(particle);
 		cloud.setColor(Color.fromRGB(color));
 		cloud.setDuration(ticksDuration); //ticks
 		cloud.setDurationOnUse(durationOnUse); //ticks
-		cloud.setParticle(null); //particle
 		cloud.setRadius(radius);
 		cloud.setRadiusOnUse(radiusOnUse);
 		cloud.setRadiusPerTick(radiusPerTick);

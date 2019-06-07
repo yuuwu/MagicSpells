@@ -1,10 +1,9 @@
 package com.nisovin.magicspells.spells.targeted;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+import java.util.List;
+import java.util.HashSet;
 
-import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 import org.bukkit.entity.Player;
@@ -22,13 +21,8 @@ import com.nisovin.magicspells.util.TimeUtil;
 import com.nisovin.magicspells.util.TargetInfo;
 import com.nisovin.magicspells.util.BoundingBox;
 import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.EffectPackage;
-import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.ValidTargetList;
-import com.nisovin.magicspells.util.ParticleNameUtil;
-
-import de.slikey.effectlib.util.ParticleEffect;
-import de.slikey.effectlib.util.ParticleEffect.ParticleData;
+import com.nisovin.magicspells.util.compat.EventUtil;
 
 public class OrbitSpell extends TargetedSpell implements TargetedEntitySpell {
 
@@ -45,12 +39,6 @@ public class OrbitSpell extends TargetedSpell implements TargetedEntitySpell {
 	float orbitRadius;
 	float secondsPerRevolution;
 	boolean counterClockwise;
-
-	String particleName;
-	float particleSpeed;
-	int particleCount;
-	float particleHorizontalSpread;
-	float particleVerticalSpread;
 
 	int tickInterval;
 	float ticksPerSecond;
@@ -73,12 +61,6 @@ public class OrbitSpell extends TargetedSpell implements TargetedEntitySpell {
 	Subspell entitySpell;
 	Subspell orbitSpell;
 
-	Color particleColor = null;
-	ParticleEffect effect;
-	ParticleData data;
-
-	boolean canRender;
-
 	public OrbitSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 
@@ -96,12 +78,6 @@ public class OrbitSpell extends TargetedSpell implements TargetedEntitySpell {
 		secondsPerRevolution = getConfigFloat("seconds-per-revolution", 3F);
 		counterClockwise = getConfigBoolean("counter-clockwise", false);
 
-		particleName = getConfigString("particle-name", "reddust");
-		particleSpeed = getConfigFloat("particle-speed", 0.3F);
-		particleCount = getConfigInt("particle-count", 15);
-		particleHorizontalSpread = getConfigFloat("particle-horizontal-spread", 0.3F);
-		particleVerticalSpread = getConfigFloat("particle-vertical-spread", 0.3F);
-
 		horizOffset = getConfigFloat("start-horiz-offset", 0);
 		tickInterval = getConfigInt("tick-interval", 2);
 		ticksPerSecond = 20F / (float)tickInterval;
@@ -115,13 +91,6 @@ public class OrbitSpell extends TargetedSpell implements TargetedEntitySpell {
 		targetNonPlayers = getConfigBoolean("target-non-players", false);
 		stopOnHitEntity = getConfigBoolean("stop-on-hit-entity", false);
 		stopOnHitGround = getConfigBoolean("stop-on-hit-ground", false);
-		//TODO add color config
-		EffectPackage pkg = ParticleNameUtil.findEffectPackage(this.particleName);
-		canRender = pkg.canRender();
-		if (canRender) {
-			data = pkg.data;
-			effect = pkg.effect;
-		}
 
 		groundSpellName = getConfigString("spell-on-hit-ground", "");
 		entitySpellName = getConfigString("spell-on-hit-entity", "");
@@ -251,15 +220,11 @@ public class OrbitSpell extends TargetedSpell implements TargetedEntitySpell {
 				}
 			}
 
-			// Show particle
-			//MagicSpells.getVolatileCodeHandler().playParticleEffect(loc, particleName, particleHorizontalSpread, particleVerticalSpread, particleSpeed, particleCount, renderDistance, 0F);
-
+			// Play effects
 			playSpellEffects(EffectPosition.SPECIAL, loc);
-			if (canRender) effect.display(data, loc, particleColor, renderDistance, particleHorizontalSpread, particleVerticalSpread, particleHorizontalSpread, particleSpeed, particleCount);
 
 			// Cast the spell at the location if it isn't null
 			if (orbitSpell != null) orbitSpell.castAtLocation(caster, loc, power);
-			//ParticleData data, Location center, Color color, double range, float offsetX, float offsetY, float offsetZ, float speed, int amount
 
 			box = new BoundingBox(loc, hitRadius, verticalHitRadius);
 

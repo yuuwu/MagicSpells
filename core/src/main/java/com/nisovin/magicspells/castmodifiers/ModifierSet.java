@@ -1,29 +1,30 @@
 package com.nisovin.magicspells.castmodifiers;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 
 import org.bukkit.entity.Player;
+import org.bukkit.entity.LivingEntity;
 
-import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spell;
 import com.nisovin.magicspells.events.*;
+import com.nisovin.magicspells.MagicSpells;
 
 public class ModifierSet {
 
 	public static CastListener castListener = null;
 	public static TargetListener targetListener = null;
 	public static ManaListener manaListener = null;
-	
+
 	public static void initializeModifierListeners() {
 		boolean modifiers = false;
-		boolean targetModifiers = false;		
+		boolean targetModifiers = false;
 		for (Spell spell : MagicSpells.spells()) {
 			if (spell.getModifiers() != null) modifiers = true;
 			if (spell.getTargetModifiers() != null) targetModifiers = true;
 			if (modifiers && targetModifiers) break;
 		}
-		
+
 		if (modifiers) {
 			castListener = new CastListener();
 			MagicSpells.registerEvents(castListener);
@@ -37,7 +38,7 @@ public class ModifierSet {
 			MagicSpells.registerEvents(manaListener);
 		}
 	}
-	
+
 	public static void unload() {
 		if (castListener != null) {
 			castListener.unload();
@@ -47,7 +48,7 @@ public class ModifierSet {
 			targetListener.unload();
 			targetListener = null;
 		}
-		
+
 		if (manaListener != null) {
 			manaListener.unload();
 			manaListener = null;
@@ -55,7 +56,7 @@ public class ModifierSet {
 	}
 
 	private List<Modifier> modifiers;
-	
+
 	public ModifierSet(List<String> data) {
 		modifiers = new ArrayList<>();
 		for (String s : data) {
@@ -68,7 +69,7 @@ public class ModifierSet {
 			}
 		}
 	}
-	
+
 	public void apply(SpellCastEvent event) {
 		for (Modifier modifier : modifiers) {
 			boolean cont = modifier.apply(event);
@@ -79,14 +80,14 @@ public class ModifierSet {
 			}
 		}
 	}
-	
+
 	public void apply(ManaChangeEvent event) {
 		for (Modifier modifier : modifiers) {
 			boolean cont = modifier.apply(event);
 			if (!cont) break;
 		}
 	}
-	
+
 	public void apply(SpellTargetEvent event) {
 		for (Modifier modifier : modifiers) {
 			boolean cont = modifier.apply(event);
@@ -96,21 +97,21 @@ public class ModifierSet {
 			}
 		}
 	}
-	
+
 	public void apply(MagicSpellsGenericPlayerEvent event) {
 		for (Modifier modifier : modifiers) {
 			boolean cont = modifier.apply(event);
 			if (!cont) break;
 		}
 	}
-	
+
 	public void apply(SpellTargetLocationEvent event) {
 		for (Modifier modifier : modifiers) {
 			boolean cont = modifier.apply(event);
 			if (!cont) break;
 		}
 	}
-	
+
 	public boolean check(Player player) {
 		for (Modifier modifier : modifiers) {
 			boolean pass = modifier.check(player);
@@ -118,5 +119,13 @@ public class ModifierSet {
 		}
 		return true;
 	}
-	
+
+	public boolean check(Player pl, LivingEntity entity) {
+		for (Modifier modifier : modifiers) {
+			boolean pass = modifier.check(pl, entity);
+			if (!pass) return false;
+		}
+		return true;
+	}
+
 }

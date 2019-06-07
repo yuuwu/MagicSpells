@@ -12,6 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.DebugHandler;
@@ -31,7 +32,7 @@ public class MaterializeSpell extends TargetedSpell implements TargetedLocationS
 	Thank You! Shadoward12!*/
 
 	//Normal Features
-	MagicMaterial material;
+	Material material;
 	Set<Material> materials;
 	private int resetDelay;
 	private boolean falling;
@@ -39,11 +40,11 @@ public class MaterializeSpell extends TargetedSpell implements TargetedLocationS
 	private boolean checkPlugins;
 	boolean playBreakEffect;
 	private String strFailed;
-	
+
 	//Pattern Configuration
 	private boolean usePattern;
 	private List<String> patterns;
-	private MagicMaterial[][] rowPatterns;
+	private Material[][] rowPatterns;
 	private boolean restartPatternEachRow;
 	private boolean randomizePattern;
 	private boolean stretchPattern;
@@ -67,7 +68,7 @@ public class MaterializeSpell extends TargetedSpell implements TargetedLocationS
 		super(config, spellName);
 
 		String blockType = getConfigString("block-type", "stone");
-		material = MagicSpells.getItemNameResolver().resolveBlock(blockType);
+		material = Material.getMaterial(blockType.toUpperCase());
 		if (material == null) MagicSpells.error("Invalid block-type on materialize spell '" + internalName + '\'');
 		resetDelay = getConfigInt("reset-delay", 0);
 		falling = getConfigBoolean("falling", false);
@@ -121,9 +122,9 @@ public class MaterializeSpell extends TargetedSpell implements TargetedLocationS
 
 		//If the parser failed, we'll have to force a string inside;
 		if (!ready) {
-			rowPatterns = new MagicMaterial[1][1];
+			rowPatterns = new Material[1][1];
 			rowPatterns[0][0] = material;
-			materials.add(material.getMaterial());
+			materials.add(material);
 		}
 	}
 
@@ -193,7 +194,7 @@ public class MaterializeSpell extends TargetedSpell implements TargetedLocationS
 
 								//Doesn't really become a pattern if you randomize it but ok!
 								if (!stretchPattern || y < 1) material = blockGenerator(randomizePattern, patternPosition, rowPosition);
-								else material = MagicMaterial.fromBlock(ground);
+								else material = Material.getMaterial(ground.getType().toString().toUpperCase());
 
 								//Add one to the row position so that it will move to the next block.
 								rowPosition++;
@@ -233,7 +234,7 @@ public class MaterializeSpell extends TargetedSpell implements TargetedLocationS
 		int patternSize = patternList.size();
 		int iteration = 0;
 
-		rowPatterns = new MagicMaterial[patternSize][];
+		rowPatterns = new Material[patternSize][];
 
 		//Lets parse all the rows within patternList
 		for (String list : patternList) {
@@ -241,14 +242,14 @@ public class MaterializeSpell extends TargetedSpell implements TargetedLocationS
 			int arraySize = split.length;
 			int blockPosition = 0;
 
-			rowPatterns[iteration] = new MagicMaterial[arraySize];
+			rowPatterns[iteration] = new Material[arraySize];
 
 			for (String block : split) {
-				MagicMaterial mat = MagicSpells.getItemNameResolver().resolveBlock(block);
-				if (mat == null) mat = MagicSpells.getItemNameResolver().resolveBlock("stone");
+				Material mat = Material.getMaterial(block.toUpperCase());
+				if (mat == null) mat = Material.STONE;
 
-				if (mat.getMaterial() != null) {
-					materials.add(mat.getMaterial());
+				if (mat != null) {
+					materials.add(mat);
 					rowPatterns[iteration][blockPosition] = mat;
 				}
 				blockPosition++;
@@ -259,9 +260,9 @@ public class MaterializeSpell extends TargetedSpell implements TargetedLocationS
 		return true;
 	}
 
-	private MagicMaterial blockGenerator(boolean randomize, int patternPosition, int rowPosition) {
+	private Material blockGenerator(boolean randomize, int patternPosition, int rowPosition) {
 
-		MagicMaterial mat;
+		Material mat;
 
 		int randomIndex = rand.nextInt(getRowLength(patternPosition));
 
@@ -275,16 +276,18 @@ public class MaterializeSpell extends TargetedSpell implements TargetedLocationS
 		BlockState blockState = block.getState();
 
 		if (checkPlugins && player != null) {
-			material.setBlock(block, false);
+			block.setType(material, false);
+			//material.setBlock(block, false);
 			MagicSpellsBlockPlaceEvent event = new MagicSpellsBlockPlaceEvent(block, blockState, against, player.getEquipment().getItemInMainHand(), player, true);
 			EventUtil.call(event);
 			blockState.update(true);
 			if (event.isCancelled()) return false;
 		}
 		if (!falling) {
-			material.setBlock(block, applyPhysics);
+			block.setType(material, applyPhysics);
 		} else {
-			material.spawnFallingBlock(block.getLocation().add(0.5, fallheight, 0.5));
+			//material.spawnFallingBlock(block.getLocation().add(0.5, fallheight, 0.5));
+			block.getLocation().getWorld().spawnFallingBlock(block.getLocation().add(0.5, fallheight, 0.5), material.createBlockData());
 		}
 
 		if (player != null) {
@@ -296,23 +299,18 @@ public class MaterializeSpell extends TargetedSpell implements TargetedLocationS
 		if (playBreakEffect) block.getWorld().playEffect(block.getLocation(), Effect.STEP_SOUND, block.getType());
 
 		if (resetDelay > 0 && !falling) {
-			Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
-				
-				@Override
-				public void run() {
-					if (materials.contains(block.getType())) {
-						block.setType(Material.AIR);
-						playSpellEffects(EffectPosition.DELAYED, block.getLocation());
-						playSpellEffects(EffectPosition.BLOCK_DESTRUCTION, block.getLocation());
-						if (playBreakEffect) block.getWorld().playEffect(block.getLocation(), Effect.STEP_SOUND, block.getType());
-					}
+			Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, () -> {
+				if (materials.contains(block.getType())) {
+					block.setType(Material.AIR);
+					playSpellEffects(EffectPosition.DELAYED, block.getLocation());
+					playSpellEffects(EffectPosition.BLOCK_DESTRUCTION, block.getLocation());
+					if (playBreakEffect) block.getWorld().playEffect(block.getLocation(), Effect.STEP_SOUND, block.getType());
 				}
-				
 			}, resetDelay);
 		}
 		return true;
 	}
-	
+
 	@Override
 	public boolean castAtLocation(Player caster, Location target, float power) {
 		Block block = target.getBlock();
