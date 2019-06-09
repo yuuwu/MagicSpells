@@ -1,51 +1,45 @@
 package com.nisovin.magicspells.spelleffects;
 
-import com.nisovin.magicspells.util.Util;
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.configuration.ConfigurationSection;
 
+import com.nisovin.magicspells.util.Util;
 import com.nisovin.magicspells.MagicSpells;
 
 public class TitleEffect extends SpellEffect {
 
-	String title = null;
-	
-	String subtitle = null;
-	
-	int fadeIn = 10;
-	
-	int stay = 40;
-	
-	int fadeOut = 10;
-	
-	boolean broadcast = false;
+	String title;
+	String subtitle;
+
+	int stay;
+	int fadeIn;
+	int fadeOut;
+
+	boolean broadcast;
 	
 	@Override
 	protected void loadFromConfig(ConfigurationSection config) {
-		title = config.getString("title", title);
-		if (title != null) title = ChatColor.translateAlternateColorCodes('&', title);
-		subtitle = config.getString("subtitle", subtitle);
-		if (subtitle != null) subtitle = ChatColor.translateAlternateColorCodes('&', subtitle);
-		fadeIn = config.getInt("fade-in", fadeIn);
-		stay = config.getInt("stay", stay);
-		fadeOut = config.getInt("fade-out", fadeOut);
-		broadcast = config.getBoolean("broadcast", broadcast);
+		title = config.getString("title", "");
+		subtitle = config.getString("subtitle", "");
+		if (!title.isEmpty()) title = ChatColor.translateAlternateColorCodes('&', title);
+		if (!title.isEmpty()) subtitle = ChatColor.translateAlternateColorCodes('&', subtitle);
+
+		stay = config.getInt("stay", 40);
+		fadeIn = config.getInt("fade-in", 10);
+		fadeOut = config.getInt("fade-out", 10);
+		broadcast = config.getBoolean("broadcast", false);
 	}
 	
 	@Override
 	protected Runnable playEffectEntity(Entity entity) {
-		if (broadcast) {
-			Util.forEachPlayerOnline(this::send);
-		} else if (entity instanceof Player) {
-			send((Player) entity);
-		}
+		if (broadcast) Util.forEachPlayerOnline(this::send);
+		else if (entity instanceof Player) send((Player) entity);
 		return null;
 	}
 	
 	private void send(Player player) {
-		// TODO non volatile
 		MagicSpells.getVolatileCodeHandler().sendTitleToPlayer(player, title, subtitle, fadeIn, stay, fadeOut);
 	}
 

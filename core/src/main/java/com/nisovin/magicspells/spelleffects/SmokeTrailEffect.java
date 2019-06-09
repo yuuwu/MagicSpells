@@ -1,44 +1,29 @@
 package com.nisovin.magicspells.spelleffects;
 
+import java.util.List;
 import java.util.ArrayList;
 
+import org.bukkit.World;
 import org.bukkit.Effect;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 
-import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 
 public class SmokeTrailEffect extends SpellEffect {
 
-	int interval = 0;
-	
-	@Override
-	public void loadFromString(String string) {
-		super.loadFromString(string);
-		if (string != null) {
-			try {
-				interval = Integer.parseInt(string);
-			} catch (NumberFormatException e) {
-				DebugHandler.debugNumberFormat(e);
-			}
-		}
-	}
+	int interval;
 
 	@Override
 	public void loadFromConfig(ConfigurationSection config) {
-		interval = config.getInt("interval", interval);
+		interval = config.getInt("interval", 0);
 	}
 
 	@Override
 	public Runnable playEffect(Location location1, Location location2) {		
 		SmokeStreamEffect effect = new SmokeStreamEffect(location1, location2);
-		if (interval > 0) {
-			effect.start(interval);
-		} else {
-			effect.showNoAnimation();
-		}
+		if (interval > 0) effect.start(interval);
+		else effect.showNoAnimation();
 		return null;
 	}
 	
@@ -47,7 +32,7 @@ public class SmokeTrailEffect extends SpellEffect {
 		
 		private Location startLoc;
 		private Location endLoc;
-		private ArrayList<Location> locationsForProjection;
+		private List<Location> locationsForProjection;
 		private World world;
 
 		private int i;
@@ -57,7 +42,6 @@ public class SmokeTrailEffect extends SpellEffect {
 			this.startLoc = loc1;
 			this.endLoc = loc2;
 			this.world = startLoc.getWorld();
-
 			this.locationsForProjection = calculateLocsForProjection();
 			this.i = 0;
 		}
@@ -85,7 +69,7 @@ public class SmokeTrailEffect extends SpellEffect {
 			i++;			
 		}
 		
-		private ArrayList<Location> calculateLocsForProjection() {
+		private List<Location> calculateLocsForProjection() {
 			double x1;
 			double y1;
 			double z1;
@@ -105,7 +89,7 @@ public class SmokeTrailEffect extends SpellEffect {
 			yVect = y2 - y1;
 			zVect = z2 - z1;
 			double distance = startLoc.distance(endLoc);
-			ArrayList<Location> tmp = new ArrayList<>((int)Math.floor(distance));
+			List<Location> tmp = new ArrayList<>((int)Math.floor(distance));
 			
 			for (double t = 0; t <= 1; t += 1/distance) {
 				tmp.add(new Location(world, x2 - (xVect * t), y2 - (yVect * t) + 1, z2 - (zVect * t)));

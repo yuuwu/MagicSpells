@@ -1,33 +1,22 @@
 package com.nisovin.magicspells.spelleffects;
 
-import com.nisovin.magicspells.util.TimeUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
+import org.bukkit.configuration.ConfigurationSection;
 
-import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.util.TimeUtil;
 
 public class SmokeSwirlEffect extends SpellEffect {
 
+	int interval;
 	int duration = TimeUtil.TICKS_PER_SECOND;
-	
-	@Override
-	public void loadFromString(String string) {
-		super.loadFromString(string);
-		if (string != null && !string.isEmpty()) {
-			try {
-				duration = Integer.parseInt(string);
-			} catch (NumberFormatException e) {
-				DebugHandler.debugNumberFormat(e);
-			}
-		}
-	}
 
 	@Override
 	public void loadFromConfig(ConfigurationSection config) {
+		interval = config.getInt("interval", 1);
 		duration = config.getInt("duration", duration);
 	}
 
@@ -37,13 +26,13 @@ public class SmokeSwirlEffect extends SpellEffect {
 	
 	@Override
 	public Runnable playEffectLocation(Location location) {		
-		new Animator(location, 1, duration);
+		new Animator(location, interval, duration);
 		return null;
 	}
 	
 	@Override
 	public Runnable playEffectEntity(Entity entity) {
-		new Animator(entity, 1, duration);
+		new Animator(entity, interval, duration);
 		return null;
 	}
 	

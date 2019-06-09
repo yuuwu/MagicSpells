@@ -40,7 +40,7 @@ public class TemporaryBlockSet implements Runnable {
 				MagicSpellsBlockPlaceEvent event = new MagicSpellsBlockPlaceEvent(block, state, block, this.player.getEquipment().getItemInMainHand(), this.player, true);
 				Bukkit.getPluginManager().callEvent(event);
 				if (event.isCancelled()) {
-					BlockUtils.setTypeAndData(block, this.original, (byte)0, false);
+					BlockUtils.setTypeAndData(block, this.original, this.original.createBlockData(), false);
 				} else {
 					this.blocks.add(block);
 				}

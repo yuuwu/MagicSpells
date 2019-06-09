@@ -1,10 +1,10 @@
 package com.nisovin.magicspells.util;
 
-import com.nisovin.magicspells.util.bounds.Space;
-import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
+import com.nisovin.magicspells.util.bounds.Space;
 
 public class BoundingBox implements Space {
 

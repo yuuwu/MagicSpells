@@ -1,37 +1,17 @@
 package com.nisovin.magicspells.spelleffects;
 
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.configuration.ConfigurationSection;
 
-import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.DebugHandler;
 
 public class PotionEffect extends SpellEffect {
 	
 	int color = 0xFF0000;
 	
-	int duration = 30;
-	
-	@Override
-	public void loadFromString(String string) {
-		super.loadFromString(string);
-		if (string != null && !string.isEmpty()) {
-			String[] data = string.split(" ");
-			try {
-				color = Integer.parseInt(data[0], 16);
-			} catch (NumberFormatException e) {
-				DebugHandler.debugNumberFormat(e);
-			}
-			if (data.length > 1) {
-				try {
-					duration = Integer.parseInt(data[1]);
-				} catch (NumberFormatException e) {
-					DebugHandler.debugNumberFormat(e);
-				}
-			}
-		}
-	}
+	int duration;
 	
 	@Override
 	public void loadFromConfig(ConfigurationSection config) {
@@ -43,15 +23,13 @@ public class PotionEffect extends SpellEffect {
 				DebugHandler.debugNumberFormat(e);
 			}
 		}
-		duration = config.getInt("duration", duration);
+		duration = config.getInt("duration", 30);
 	}
 
 	@Override
 	public Runnable playEffectEntity(Entity entity) {
 		if (!(entity instanceof LivingEntity)) return null;
-		LivingEntity le = (LivingEntity)entity;
-		// TODO non volatile
-		MagicSpells.getVolatileCodeHandler().addPotionGraphicalEffect(le, color, duration);
+		MagicSpells.getVolatileCodeHandler().addPotionGraphicalEffect((LivingEntity) entity, color, duration);
 		return null;
 	}
 	

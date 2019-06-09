@@ -1,24 +1,20 @@
 package com.nisovin.magicspells.spelleffects;
 
 import org.bukkit.Location;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
+import org.bukkit.configuration.ConfigurationSection;
 
 // TODO use non deprecated methods
 public class EffectLibLineEffect extends EffectLibEffect {
 	
-	//force static origin location
-	boolean forceStaticOriginLocation = true;
-	
-	//force static target location
-	boolean forceStaticTargetLocation = false;
-	
+	boolean forceStaticOriginLocation;
+	boolean forceStaticTargetLocation;
 	
 	@Override
 	public void loadFromConfig(ConfigurationSection section) {
 		super.loadFromConfig(section);
-		forceStaticOriginLocation = section.getBoolean("static-origin-location", forceStaticOriginLocation);
-		forceStaticTargetLocation = section.getBoolean("static-target-location", forceStaticTargetLocation);
+		forceStaticOriginLocation = section.getBoolean("static-origin-location", true);
+		forceStaticTargetLocation = section.getBoolean("static-target-location", false);
 	}
 	
 	@Override
@@ -28,8 +24,7 @@ public class EffectLibLineEffect extends EffectLibEffect {
 	}
 	
 	@Override
-	public void playTrackingLinePatterns(Location origin, Location target, Entity originEntity,
-			Entity targetEntity) {
+	public void playTrackingLinePatterns(Location origin, Location target, Entity originEntity, Entity targetEntity) {
 		if (forceStaticOriginLocation) {
 			if (origin == null && originEntity != null) origin = originEntity.getLocation();
 			originEntity = null;

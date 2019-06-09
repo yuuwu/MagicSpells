@@ -7,29 +7,22 @@ import com.nisovin.magicspells.MagicSpells;
 
 public class FireworksEffect extends SpellEffect {
 
-	boolean flicker = false;
+	int type;
+	int flightDuration;
 
-	boolean trail = false;
-
-	int type = 0;
+	boolean trail;
+	boolean flicker;
 
 	int[] colors = new int[] { 0xFF0000 };
-
 	int[] fadeColors = new int[] { 0xFF0000 };
-
-	int flightDuration = 0;
-
-	@Override
-	public void loadFromString(String string) {
-		super.loadFromString(string);
-	}
 
 	@Override
 	public void loadFromConfig(ConfigurationSection config) {
-		flicker = config.getBoolean("flicker", false);
+		type = config.getInt("type", 0);
+		flightDuration = config.getInt("flight", 0);
+
 		trail = config.getBoolean("trail", false);
-		type = config.getInt("type", type);
-		flightDuration = config.getInt("flight", flightDuration);
+		flicker = config.getBoolean("flicker", false);
 
 		String[] c = config.getString("colors", "FF0000").replace(" ", "").split(",");
 		if (c.length > 0) {
