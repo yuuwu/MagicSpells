@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.nisovin.magicspells.util.TimeUtil;
+import com.nisovin.magicspells.util.*;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -17,15 +17,13 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.Particle.DustOptions;
 import org.bukkit.potion.PotionEffectType;
 
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.TargetInfo;
-import com.nisovin.magicspells.util.Util;
 
 public class ParticleCloudSpell extends TargetedSpell implements TargetedLocationSpell, TargetedEntitySpell {
 
@@ -39,11 +37,9 @@ public class ParticleCloudSpell extends TargetedSpell implements TargetedLocatio
 	ItemStack itemStack;
 
 	float dustSize;
-	int colorRed;
-	int colorGreen;
-	int colorBlue;
+	String colorHex;
 	Color dustColor;
-	Particle.DustOptions dustOptions;
+	DustOptions dustOptions;
 
 	boolean none = true;
 	boolean item = false;
@@ -73,11 +69,9 @@ public class ParticleCloudSpell extends TargetedSpell implements TargetedLocatio
 		material = Material.getMaterial(materialName);
 
 		dustSize = (float) config.getDouble("size", 1);
-		colorRed = config.getInt("red", 255);
-		colorGreen = config.getInt("green", 0);
-		colorBlue = config.getInt("blue", 0);
-		dustColor = Color.fromRGB(colorRed, colorGreen, colorBlue);
-		dustOptions = new Particle.DustOptions(dustColor, dustSize);
+		colorHex = config.getString("dust-color", "FF0000");
+		dustColor = ColorUtil.getColorFromHexString(colorHex);
+		if (dustColor != null) dustOptions = new DustOptions(dustColor, dustSize);
 
 		if ((particle == Particle.BLOCK_CRACK || particle == Particle.BLOCK_DUST || particle == Particle.FALLING_DUST) && material != null && material.isBlock()) {
 			block = true;
@@ -102,6 +96,11 @@ public class ParticleCloudSpell extends TargetedSpell implements TargetedLocatio
 		if (particle == Particle.ITEM_CRACK && (material == null || !material.isItem())) {
 			particle = null;
 			MagicSpells.error("Wrong material defined! '" + materialName + "'");
+		}
+
+		if (particle == Particle.REDSTONE && dustColor == null) {
+			particle = null;
+			MagicSpells.error("Wrong dust-color defined! '" + colorHex + "'");
 		}
 
 		color = getConfigInt("color", color);

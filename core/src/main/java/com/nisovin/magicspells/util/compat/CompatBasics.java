@@ -1,14 +1,15 @@
 package com.nisovin.magicspells.util.compat;
 
-import com.nisovin.magicspells.MagicSpells;
-import com.nisovin.magicspells.util.compat.nocheatplus.NoCheatPlusExemptionAid;
+import java.util.Collection;
+import java.util.function.Supplier;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-import java.util.Collection;
-import java.util.function.Supplier;
+import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.util.compat.nocheatplus.NoCheatPlusExemptionAid;
 
 public class CompatBasics {
 	

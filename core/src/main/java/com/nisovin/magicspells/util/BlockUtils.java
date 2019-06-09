@@ -1,26 +1,29 @@
 package com.nisovin.magicspells.util;
 
-import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
+import java.util.HashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.NetherWartsState;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
-import org.bukkit.block.data.BlockData;
+import org.bukkit.NetherWartsState;
+import org.bukkit.block.data.Ageable;
+import org.bukkit.block.data.Levelled;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.material.NetherWarts;
+import org.bukkit.block.data.BlockData;
 
-import com.nisovin.magicspells.DebugHandler;
-import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spell;
+import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.DebugHandler;
 
 public class BlockUtils {
 
-	private static HashMap<NetherWartsState, Integer> wartStateToInt = new HashMap<>();
-	private static HashMap<Integer, NetherWartsState> intToWartState = new HashMap<>();
+	private static Map<NetherWartsState, Integer> wartStateToInt = new HashMap<>();
+	private static Map<Integer, NetherWartsState> intToWartState = new HashMap<>();
 
 	static {
 		wartStateToInt.put(NetherWartsState.SEEDED, 1);
@@ -57,45 +60,42 @@ public class BlockUtils {
 		}
 	}
 
-	public static void setTypeAndData(Block block, Material material, byte data, boolean physics) {
-		//block.setTypeIdAndData(material.getId(), data, physics);
+	public static void setTypeAndData(Block block, Material material, BlockData data, boolean physics) {
 		block.setType(material);
-		block.setBlockData((BlockData) material.getNewData(data));
-		// TODO see if the physics thing can be applied still
+		block.setBlockData(data, physics);
 	}
 
 	public static void setBlockFromFallingBlock(Block block, FallingBlock fallingBlock, boolean physics) {
-		//block.setTypeIdAndData(fallingBlock.getBlockId(), fallingBlock.getBlockData(), physics);
-		// TODO test and figure out physics
 		BlockData blockData = fallingBlock.getBlockData();
 		block.setType(blockData.getMaterial());
-		block.setBlockData(blockData);
+		block.setBlockData(blockData, physics);
 	}
 
 	public static int getWaterLevel(Block block) {
-		return block.getData();
+		return ((Levelled) block.getBlockData()).getLevel();
 	}
 
 	public static int getGrowthLevel(Block block) {
-		return block.getData();
+		return ((Ageable) block.getBlockData()).getAge();
 	}
 
 	public static void setGrowthLevel(Block block, int level) {
-		//block.setData((byte)level);
-		block.setBlockData((BlockData) block.getBlockData().getMaterial().getNewData((byte) level));
+		Ageable age = ((Ageable) block.getBlockData());
+		age.setAge(level);
+		block.setBlockData(age);
 	}
 
 	public static boolean growWarts(NetherWarts wart, int stagesToGrow) {
 		if (wart.getState() == NetherWartsState.RIPE) return false;
 		int state = wartStateToInt.get(wart.getState());
-		state= Math.min(state+stagesToGrow, 4);
+		state= Math.min(state + stagesToGrow, 4);
 		wart.setState(intToWartState.get(state));
 		return true;
 
 	}
 
 	public static int getWaterLevel(BlockState blockState) {
-		return blockState.getRawData();
+		return ((Levelled) blockState.getBlockData()).getLevel();
 	}
 
 	public static boolean isPathable(Block block) {

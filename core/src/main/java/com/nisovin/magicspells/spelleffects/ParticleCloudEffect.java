@@ -1,16 +1,18 @@
 package com.nisovin.magicspells.spelleffects;
 
-import com.nisovin.magicspells.MagicSpells;
-import com.nisovin.magicspells.util.Util;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.block.data.BlockData;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.AreaEffectCloud;
-
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.Particle.DustOptions;
+import org.bukkit.entity.AreaEffectCloud;
+import org.bukkit.configuration.ConfigurationSection;
+
+import com.nisovin.magicspells.util.Util;
+import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.util.ColorUtil;
 
 class ParticleCloudEffect extends SpellEffect {
 
@@ -24,21 +26,20 @@ class ParticleCloudEffect extends SpellEffect {
 	ItemStack itemStack;
 
 	float dustSize;
-	int colorRed;
-	int colorGreen;
-	int colorBlue;
+	String colorHex;
 	Color dustColor;
-	Particle.DustOptions dustOptions;
+	DustOptions dustOptions;
 
 	boolean none = true;
 	boolean item = false;
 	boolean dust = false;
 	boolean block = false;
 
+	int color = 0xFF0000;
+	int duration = 60;
+
 	float radius = 5f;
 	float radiusPerTick = 0f;
-	int duration = 60;
-	int color = 0xFF0000;
 	float yOffset = 0F;
 
 	@Override
@@ -51,11 +52,9 @@ class ParticleCloudEffect extends SpellEffect {
 		material = Material.getMaterial(materialName);
 
 		dustSize = (float) config.getDouble("size", 1);
-		colorRed = config.getInt("red", 255);
-		colorGreen = config.getInt("green", 0);
-		colorBlue = config.getInt("blue", 0);
-		dustColor = Color.fromRGB(colorRed, colorGreen, colorBlue);
-		dustOptions = new Particle.DustOptions(dustColor, dustSize);
+		colorHex = config.getString("color", "FF0000");
+		dustColor = ColorUtil.getColorFromHexString(colorHex);
+		if (dustColor != null) dustOptions = new DustOptions(dustColor, dustSize);
 
 		if ((particle == Particle.BLOCK_CRACK || particle == Particle.BLOCK_DUST || particle == Particle.FALLING_DUST) && material != null && material.isBlock()) {
 			block = true;
@@ -80,6 +79,11 @@ class ParticleCloudEffect extends SpellEffect {
 		if (particle == Particle.ITEM_CRACK && (material == null || !material.isItem())) {
 			particle = null;
 			MagicSpells.error("Wrong material defined! '" + materialName + "'");
+		}
+
+		if (particle == Particle.REDSTONE && dustColor == null) {
+			particle = null;
+			MagicSpells.error("Wrong color defined! '" + colorHex + "'");
 		}
 
 		radius = (float) config.getDouble("radius", radius);

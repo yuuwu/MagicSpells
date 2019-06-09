@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.bukkit.DyeColor;
 import org.bukkit.block.banner.Pattern;
-import org.bukkit.block.banner.PatternType;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.block.banner.PatternType;
+import org.bukkit.inventory.meta.BannerMeta;
+import org.bukkit.configuration.ConfigurationSection;
 
 public class BannerHandler {
 
@@ -22,6 +22,8 @@ public class BannerHandler {
 				// TODO use objects.equals
 				if (c != null && c.name().replace("_", "").toLowerCase().equals(s)) {
 					bmeta.setBaseColor(c);
+					//Pattern pattern = new Pattern(c, PatternType.BASE);
+					//bmeta.setPattern(0, pattern);
 					break;
 				}
 			}

@@ -1,5 +1,6 @@
 package com.nisovin.magicspells.util;
 
+import java.util.Map;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -10,7 +11,7 @@ import com.nisovin.magicspells.MagicSpells;
 
 public class ExperienceBarManager {
 
-	private HashMap<Player, Object> locks = new HashMap<>();
+	private Map<Player, Object> locks = new HashMap<>();
 	
 	public void update(Player player, int level, float percent) {
 		update(player, level, percent, null);

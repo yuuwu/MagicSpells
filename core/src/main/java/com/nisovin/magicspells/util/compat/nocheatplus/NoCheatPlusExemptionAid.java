@@ -1,19 +1,22 @@
 package com.nisovin.magicspells.util.compat.nocheatplus;
 
-import com.nisovin.magicspells.util.compat.ExemptionAssistant;
-import fr.neatmonster.nocheatplus.checks.CheckType;
-import fr.neatmonster.nocheatplus.hooks.NCPExemptionManager;
-import org.bukkit.entity.Player;
-
+import java.util.Map;
+import java.util.Set;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.Collection;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
+import org.bukkit.entity.Player;
+
+import com.nisovin.magicspells.util.compat.ExemptionAssistant;
+
+import fr.neatmonster.nocheatplus.checks.CheckType;
+import fr.neatmonster.nocheatplus.hooks.NCPExemptionManager;
+
 
 public class NoCheatPlusExemptionAid implements ExemptionAssistant{
 	
@@ -59,7 +62,7 @@ public class NoCheatPlusExemptionAid implements ExemptionAssistant{
 	}
 	
 	private boolean doesntHaveYet(Player player, CheckType checkType) {
-		return !NCPExemptionManager.isExempted(player, checkType, false);
+		return !NCPExemptionManager.isExempted(player, checkType);
 	}
 	
 	@Override

@@ -23,11 +23,6 @@ public class ItemSprayEffect extends SpellEffect {
 	float force;
 
 	@Override
-	public void loadFromString(String string) {
-		super.loadFromString(string);
-	}
-
-	@Override
 	public void loadFromConfig(ConfigurationSection config) {
 		materialName = config.getString("type", "").toUpperCase();
 		material = Material.getMaterial(materialName);
@@ -50,7 +45,6 @@ public class ItemSprayEffect extends SpellEffect {
 	public Runnable playEffectLocation(Location location) {
 		if (itemStack == null) return null;
 
-		// Spawn items
 		Random rand = new Random();
 		Location loc = location.clone().add(0, 1, 0);
 		final Item[] items = new Item[amount];
@@ -60,7 +54,6 @@ public class ItemSprayEffect extends SpellEffect {
 			items[i].setPickupDelay(duration << 1);
 		}
 
-		// Schedule item deletion
 		MagicSpells.scheduleDelayedTask(() -> Arrays.stream(items).forEach(Item::remove), duration);
 		return null;
 	}

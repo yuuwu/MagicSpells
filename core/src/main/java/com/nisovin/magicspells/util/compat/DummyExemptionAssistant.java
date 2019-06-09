@@ -1,9 +1,9 @@
 package com.nisovin.magicspells.util.compat;
 
-import org.bukkit.entity.Player;
-
 import java.util.Collection;
 import java.util.function.Supplier;
+
+import org.bukkit.entity.Player;
 
 public class DummyExemptionAssistant implements ExemptionAssistant {
 	

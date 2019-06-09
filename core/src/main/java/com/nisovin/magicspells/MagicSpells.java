@@ -59,7 +59,6 @@ import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.prompt.PromptType;
 import com.nisovin.magicspells.events.SpellLearnEvent;
 import com.nisovin.magicspells.util.compat.CompatBasics;
-import com.nisovin.magicspells.util.BossBarManager_V1_9;
 import com.nisovin.magicspells.zones.NoMagicZoneManager;
 import com.nisovin.magicspells.castmodifiers.ModifierSet;
 import com.nisovin.magicspells.variables.VariableManager;
@@ -322,7 +321,7 @@ public class MagicSpells extends JavaPlugin {
 		buffManager = new BuffManager(config.getInt("general.buff-check-interval", 0));
 		expBarManager = new ExperienceBarManager();
 		// FIXME
-		bossBarManager = new BossBarManager_V1_9();
+		bossBarManager = new BossBarManager();
 		itemNameResolver = new MagicItemNameResolver();
 		if (CompatBasics.pluginEnabled("Vault")) moneyHandler = new MoneyHandler();
 		lifeLengthTracker = new LifeLengthTracker();

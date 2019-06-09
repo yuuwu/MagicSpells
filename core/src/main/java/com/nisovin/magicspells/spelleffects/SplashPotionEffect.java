@@ -4,27 +4,13 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 
-import com.nisovin.magicspells.DebugHandler;
-
 public class SplashPotionEffect extends SpellEffect {
 	
-	int pot = 0;
-
-	@Override
-	public void loadFromString(String string) {
-		super.loadFromString(string);
-		if (string != null && !string.isEmpty()) {
-			try {
-				pot = Integer.parseInt(string);
-			} catch (NumberFormatException e) {
-				DebugHandler.debugNumberFormat(e);
-			}
-		}
-	}
+	int pot;
 
 	@Override
 	public void loadFromConfig(ConfigurationSection config) {
-		pot = config.getInt("potion", pot);
+		pot = config.getInt("potion", 0);
 	}
 
 	@Override

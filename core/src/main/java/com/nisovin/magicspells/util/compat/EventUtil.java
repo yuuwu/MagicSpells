@@ -1,10 +1,11 @@
 package com.nisovin.magicspells.util.compat;
 
-import com.nisovin.magicspells.MagicSpells;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
-import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.event.Listener;
+
+import com.nisovin.magicspells.MagicSpells;
 
 // TODO add a utility to wrap operations in anticheat systems exemption
 public class EventUtil {
