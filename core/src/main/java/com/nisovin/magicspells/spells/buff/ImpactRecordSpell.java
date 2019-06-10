@@ -1,104 +1,86 @@
 package com.nisovin.magicspells.spells.buff;
 
-import com.nisovin.magicspells.MagicSpells;
-import com.nisovin.magicspells.Spell;
-import com.nisovin.magicspells.events.SpellTargetEvent;
-import com.nisovin.magicspells.spells.BuffSpell;
-import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.SpellFilter;
-import org.bukkit.entity.LivingEntity;
+import java.util.Set;
+import java.util.UUID;
+import java.util.HashSet;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.entity.LivingEntity;
 
-import java.util.HashSet;
+import com.nisovin.magicspells.Spell;
+import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.spells.BuffSpell;
+import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.SpellFilter;
+import com.nisovin.magicspells.events.SpellTargetEvent;
 
 public class ImpactRecordSpell extends BuffSpell {
 	
-	// The names of the players currently buffed
-	private HashSet<String> recorders;
-	
-	// Should it also record hits that were cancelled?
-	private boolean recordCancelled = false;
-	
-	// The name of the variable to save the hits to
+	private Set<UUID> recorders;
+
 	private String variableName;
-	
-	// Filter the spells that can be recorded
 	private SpellFilter recordFilter;
+
+	private boolean recordCancelled;
 	
 	public ImpactRecordSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
-		
-		recordCancelled = getConfigBoolean("record-cancelled", false);
+
 		variableName = getConfigString("variable-name", null);
-		recordFilter = SpellFilter.fromConfig(config, "spells." + this.internalName + ".filter");
-		
+		recordFilter = SpellFilter.fromConfig(config, "spells." + internalName + ".filter");
+		recordCancelled = getConfigBoolean("record-cancelled", false);
+
 		recorders = new HashSet<>();
 	}
 	
 	@Override
 	public void initialize() {
-		// Super
 		super.initialize();
 		
-		// Variable name non null?
-		if (this.variableName == null) {
+		if (variableName == null || MagicSpells.getVariableManager().getVariable(variableName) == null) {
 			MagicSpells.error("invalid variable-name on ImpactRecordSpell");
-			return;
-		}
-		
-		// Make sure the variable exists
-		if (MagicSpells.getVariableManager().getVariable(this.variableName) == null) {
-			MagicSpells.error("invalid variable-name on ImpactRecordSpell");
-			this.variableName = null;
+			variableName = null;
 		}
 	}
 
 	@Override
-	public boolean castBuff(Player player, float power, String[] args) {
-		recorders.add(player.getName());
+	public boolean castBuff(LivingEntity entity, float power, String[] args) {
+		recorders.add(entity.getUniqueId());
 		return true;
 	}
 
-	
-	@EventHandler(priority = EventPriority.MONITOR)
-	public void onSpellTargeted(SpellTargetEvent event) {
-		// Is cancel state acceptable
-		if (event.isCancelled() && !this.recordCancelled) return;
-		
-		// Is it a player?
-		LivingEntity target = event.getTarget();
-		if (!(target instanceof Player)) return;
-		
-		// Do they have the buff?
-		Player playerTarget = (Player) target;
-		if (!recorders.contains(target.getName())) return;
-		
-		// Check the spell filter
-		Spell spell = event.getSpell();
-		if (!recordFilter.check(spell)) return;
-		
-		// Charge cost
-		addUseAndChargeCost(playerTarget);
-		
-		// Save to the variable
-		MagicSpells.getVariableManager().set(this.variableName, playerTarget, spell.getInternalName());
+	@Override
+	public boolean isActive(LivingEntity entity) {
+		return recorders.contains(entity.getUniqueId());
 	}
 
 	@Override
-	public void turnOffBuff(Player player) {
-		recorders.remove(player.getName());
+	public void turnOffBuff(LivingEntity entity) {
+		recorders.remove(entity.getUniqueId());
 	}
-	
+
 	@Override
 	protected void turnOff() {
 		recorders.clear();
 	}
+	
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onSpellTarget(SpellTargetEvent event) {
+		if (event.isCancelled() && !recordCancelled) return;
+		
+		LivingEntity target = event.getTarget();
+		if (!(target instanceof Player)) return;
 
-	@Override
-	public boolean isActive(Player player) {
-		return recorders.contains(player.getName());
+		Player playerTarget = (Player) target;
+		if (!isActive(playerTarget)) return;
+		
+		Spell spell = event.getSpell();
+		if (!recordFilter.check(spell)) return;
+		
+		addUseAndChargeCost(playerTarget);
+		MagicSpells.getVariableManager().set(variableName, playerTarget, spell.getInternalName());
 	}
 
 }

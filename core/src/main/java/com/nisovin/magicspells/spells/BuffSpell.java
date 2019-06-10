@@ -1,465 +1,491 @@
 package com.nisovin.magicspells.spells;
 
+import java.util.Map;
+import java.util.List;
 import java.util.HashMap;
 
-import com.nisovin.magicspells.Spell;
-import com.nisovin.magicspells.util.TimeUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityTeleportEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
+import com.nisovin.magicspells.Subspell;
 import com.nisovin.magicspells.BuffManager;
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.util.TimeUtil;
+import com.nisovin.magicspells.util.TargetInfo;
+import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.SpellFilter;
+import com.nisovin.magicspells.util.LocationUtil;
+import com.nisovin.magicspells.util.SpellReagents;
+import com.nisovin.magicspells.util.ValidTargetList;
 import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
-import com.nisovin.magicspells.util.LocationUtil;
-import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.PlayerNameUtils;
-import com.nisovin.magicspells.util.SpellReagents;
-import com.nisovin.magicspells.util.TargetInfo;
 
 public abstract class BuffSpell extends TargetedSpell implements TargetedEntitySpell {
-	
-	BuffSpell thisSpell;
-	
+
+	protected BuffSpell thisSpell;
+
+	protected Map<LivingEntity, Integer> useCounter;
+	protected Map<LivingEntity, Long> durationEndTime;
+
+	protected ValidTargetList targetList;
+
 	protected boolean targeted;
-	
 	protected boolean toggle;
-	
-	protected int healthCost = 0;
-	protected int manaCost = 0;
-	protected int hungerCost = 0;
-	protected int experienceCost = 0;
-	protected int levelsCost = 0;
-	
+
 	protected SpellReagents reagents;
-	
 	protected int useCostInterval;
-	
 	protected int numUses;
-	
 	protected float duration;
-	
+
 	protected boolean powerAffectsDuration;
+	protected boolean cancelOnChangeWorld;
 	protected boolean cancelOnGiveDamage;
 	protected boolean cancelOnTakeDamage;
-	protected boolean cancelOnDeath;
-	protected boolean cancelOnTeleport;
-	protected boolean cancelOnChangeWorld;
 	protected boolean cancelOnSpellCast;
+	protected boolean cancelOnTeleport;
 	protected boolean cancelOnLogout;
+	protected boolean cancelOnDeath;
+	protected boolean cancelOnJoin;
 	protected String strFade;
-	private boolean castWithItem;
-	private boolean castByCommand;
-	
-	private HashMap<String,Integer> useCounter;
-	private HashMap<String,Long> durationEndTime;
-	
-	private String spellOnUseIncrementName = null;
-	private Spell spellOnUseIncrement = null;
-	
-	private String spellOnCostName = null;
-	private Spell spellOnCost = null;
-	
-	
+
+	protected SpellFilter filter;
+	protected boolean castWithItem;
+	protected boolean castByCommand;
+
+	protected String spellOnEndName;
+	protected String spellOnCostName;
+	protected String spellOnUseIncrementName;
+
+	protected Subspell spellOnEnd;
+	protected Subspell spellOnCost;
+	protected Subspell spellOnUseIncrement;
+
 	public BuffSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
-		this.thisSpell = this;
-		
-		this.targeted = getConfigBoolean("targeted", false);
-		this.toggle = getConfigBoolean("toggle", true);
-		this.reagents = getConfigReagents("use-cost");
-		this.useCostInterval = getConfigInt("use-cost-interval", 0);
-		this.numUses = getConfigInt("num-uses", 0);
-		this.duration = getConfigFloat("duration", 0);
-		this.powerAffectsDuration = getConfigBoolean("power-affects-duration", true);
-		this.cancelOnGiveDamage = getConfigBoolean("cancel-on-give-damage", false);
-		this.cancelOnTakeDamage = getConfigBoolean("cancel-on-take-damage", false);
-		this.cancelOnDeath = getConfigBoolean("cancel-on-death", false);
-		this.cancelOnTeleport = getConfigBoolean("cancel-on-teleport", false);
-		this.cancelOnChangeWorld = getConfigBoolean("cancel-on-change-world", false);
-		this.cancelOnSpellCast = getConfigBoolean("cancel-on-spell-cast", false);
-		this.cancelOnLogout = getConfigBoolean("cancel-on-logout", false);
-		this.spellOnUseIncrementName = getConfigString("spell-on-use-increment", null);
-		this.spellOnCostName = getConfigString("spell-on-cost", null);
-		if (this.cancelOnGiveDamage || this.cancelOnTakeDamage) registerEvents(new DamageListener());
-		if (this.cancelOnDeath) registerEvents(new DeathListener());
-		if (this.cancelOnTeleport) registerEvents(new TeleportListener());
-		if (this.cancelOnChangeWorld) registerEvents(new ChangeWorldListener());
-		if (this.cancelOnSpellCast) registerEvents(new SpellCastListener());
-		if (this.cancelOnLogout) registerEvents(new QuitListener());
-		
-		this.strFade = getConfigString("str-fade", "");
-		
-		if (this.numUses > 0 || (this.reagents != null && this.useCostInterval > 0)) {
-			this.useCounter = new HashMap<>();
-		}
-		if (this.duration > 0) this.durationEndTime = new HashMap<>();
-		
-		this.castWithItem = getConfigBoolean("can-cast-with-item", true);
-		this.castByCommand = getConfigBoolean("can-cast-by-command", true);
+
+		thisSpell = this;
+
+		targetList = new ValidTargetList(this, getConfigStringList("can-target", null));
+		// add players by default
+		targetList.enforce(ValidTargetList.TargetingElement.TARGET_PLAYERS, true);
+
+		targeted = getConfigBoolean("targeted", false);
+		toggle = getConfigBoolean("toggle", true);
+		reagents = getConfigReagents("use-cost");
+		useCostInterval = getConfigInt("use-cost-interval", 0);
+		numUses = getConfigInt("num-uses", 0);
+		duration = getConfigFloat("duration", 0);
+		powerAffectsDuration = getConfigBoolean("power-affects-duration", true);
+		cancelOnGiveDamage = getConfigBoolean("cancel-on-give-damage", false);
+		cancelOnTakeDamage = getConfigBoolean("cancel-on-take-damage", false);
+		cancelOnDeath = getConfigBoolean("cancel-on-death", false);
+		cancelOnTeleport = getConfigBoolean("cancel-on-teleport", false);
+		cancelOnChangeWorld = getConfigBoolean("cancel-on-change-world", false);
+		cancelOnSpellCast = getConfigBoolean("cancel-on-spell-cast", false);
+		cancelOnLogout = getConfigBoolean("cancel-on-logout", false);
+		cancelOnJoin = getConfigBoolean("cancel-on-join", false);
+		spellOnUseIncrementName = getConfigString("spell-on-use-increment", "");
+		spellOnCostName = getConfigString("spell-on-cost", "");
+		spellOnEndName = getConfigString("spell-on-end", "");
+		strFade = getConfigString("str-fade", "");
+		castWithItem = getConfigBoolean("can-cast-with-item", true);
+		castByCommand = getConfigBoolean("can-cast-by-command", true);
+
+		List<String> spells = getConfigStringList("spells", null);
+		List<String> deniedSpells = getConfigStringList("denied-spells", null);
+		List<String> tagList = getConfigStringList("spell-tags", null);
+		List<String> deniedTagList = getConfigStringList("denied-spell-tags", null);
+		filter = new SpellFilter(spells, deniedSpells, tagList, deniedTagList);
+
+		if (cancelOnGiveDamage || cancelOnTakeDamage) registerEvents(new DamageListener());
+		if (cancelOnDeath) registerEvents(new DeathListener());
+		if (cancelOnTeleport) registerEvents(new TeleportListener());
+		if (cancelOnChangeWorld) registerEvents(new ChangeWorldListener());
+		if (cancelOnSpellCast) registerEvents(new SpellCastListener());
+		if (cancelOnLogout) registerEvents(new QuitListener());
+		if (cancelOnJoin) registerEvents(new JoinListener());
+		registerEvents(new EntityListener());
+
+		if (numUses > 0 || (reagents != null && useCostInterval > 0)) useCounter = new HashMap<>();
+		if (duration > 0) durationEndTime = new HashMap<>();
+
 	}
-	
+
 	@Override
 	public void initialize() {
-		// Super
 		super.initialize();
-		
+
 		// Check spell on use increment
-		if (this.spellOnUseIncrementName != null) {
-			this.spellOnUseIncrement = MagicSpells.getSpellByInternalName(this.spellOnUseIncrementName);
-			if (this.spellOnUseIncrement == null) {
-				MagicSpells.error("Invalid spell-on-use-increment defined for " + this.internalName);
-			}
+		spellOnUseIncrement = new Subspell(spellOnUseIncrementName);
+		if (!spellOnUseIncrement.process()) {
+			if (!spellOnUseIncrementName.isEmpty()) MagicSpells.error("BuffSpell '" + internalName + "' has an invalid spell-on-use-increment defined!");
+			spellOnUseIncrement = null;
 		}
-		
+
 		// Check spell on cost
-		if (this.spellOnCostName != null) {
-			this.spellOnCost = MagicSpells.getSpellByInternalName(this.spellOnCostName);
-			if (this.spellOnCost == null) {
-				MagicSpells.error("Invalid spell-on-cost defined for " + this.internalName);
-			}
+		spellOnCost = new Subspell(spellOnCostName);
+		if (!spellOnCost.process()) {
+			if (!spellOnCostName.isEmpty()) MagicSpells.error("BuffSpell '" + internalName + "' has an invalid spell-on-cost defined!");
+			spellOnCost = null;
 		}
+
+		// Check spell on end
+		spellOnEnd = new Subspell(spellOnEndName);
+		if (!spellOnEnd.process()) {
+			if (!spellOnEndName.isEmpty()) MagicSpells.error("BuffSpell '" + internalName + "' has an invalid spell-on-end defined!");
+			spellOnEnd = null;
+		}
+
 	}
-	
+
 	@Override
 	public boolean canCastWithItem() {
-		return this.castWithItem;
+		return castWithItem;
 	}
-	
+
 	@Override
 	public boolean canCastByCommand() {
-		return this.castByCommand;
+		return castByCommand;
 	}
-	
+
 	@Override
 	public final PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
-		Player target;
-		if (this.targeted) {
-			TargetInfo<Player> targetInfo = getTargetedPlayer(player, power);
+		LivingEntity target;
+
+		if (targeted) {
+			TargetInfo<LivingEntity> targetInfo = getTargetedEntity(player, power);
 			if (targetInfo == null) return noTarget(player);
+			if (!targetList.canTarget(targetInfo.getTarget())) return noTarget(player);
+
 			target = targetInfo.getTarget();
 			power = targetInfo.getPower();
 		} else {
 			target = player;
 		}
+
 		PostCastAction action = activate(player, target, power, args, state == SpellCastState.NORMAL);
-		if (this.targeted && action == PostCastAction.HANDLE_NORMALLY) {
+		if (targeted && action == PostCastAction.HANDLE_NORMALLY) {
 			sendMessages(player, target);
 			return PostCastAction.NO_MESSAGES;
 		}
+
 		return action;
 	}
 
 	@Override
 	public boolean castAtEntity(Player caster, LivingEntity target, float power) {
-		if (!(target instanceof Player)) return false;
-		return activate(caster, (Player)target, power, MagicSpells.NULL_ARGS, true) == PostCastAction.HANDLE_NORMALLY;
+		return activate(caster, target, power, MagicSpells.NULL_ARGS, true) == PostCastAction.HANDLE_NORMALLY;
 	}
-	
+
 	@Override
 	public boolean castAtEntity(LivingEntity target, float power) {
-		if (!(target instanceof Player)) return false;
-		return activate(null, (Player)target, power, MagicSpells.NULL_ARGS, true) == PostCastAction.HANDLE_NORMALLY;
+		return activate(null, target, power, MagicSpells.NULL_ARGS, true) == PostCastAction.HANDLE_NORMALLY;
 	}
-	
-	private PostCastAction activate(Player caster, Player target, float power, String[] args, boolean normal) {
-		if (isActive(target)) {
-			if (this.toggle) {
-				turnOff(target);
-				return PostCastAction.ALREADY_HANDLED;
-			}
-			if (normal) {
-				boolean ok = recastBuff(target, power, args);
-				if (ok) {
-					startSpellDuration(target, power);
-					if (caster == null) {
-						playSpellEffects(EffectPosition.TARGET, target);
-					} else {
-						playSpellEffects(caster, target);
-					}
-				}
-			}
-			return PostCastAction.HANDLE_NORMALLY;
+
+	private PostCastAction activate(Player caster, LivingEntity target, float power, String[] args, boolean normal) {
+		if (isActive(target) && toggle) {
+			turnOff(target);
+			return PostCastAction.ALREADY_HANDLED;
 		}
-		if (normal) {
-			boolean ok = castBuff(target, power, args);
-			if (ok) {
-				startSpellDuration(target, power);
-				if (caster == null) {
-					playSpellEffects(EffectPosition.TARGET, target);
-				} else {
-					playSpellEffects(caster, target);
-				}
-			}
-		}
+
+		if (!normal) return PostCastAction.HANDLE_NORMALLY;
+
+		boolean ok;
+		if (isActive(target)) ok = recastBuff(target, power, args);
+		else ok = castBuff(target, power, args);
+		if (!ok) return PostCastAction.HANDLE_NORMALLY;
+
+		startSpellDuration(target, power);
+		if (caster != null) playSpellEffects(caster, target);
+		else playSpellEffects(EffectPosition.TARGET, target);
+
 		return PostCastAction.HANDLE_NORMALLY;
 	}
-	
-	public abstract boolean castBuff(Player player, float power, String[] args);
-	
-	public boolean recastBuff(Player player, float power, String[] args) {
+
+	public abstract boolean castBuff(LivingEntity entity, float power, String[] args);
+
+	public boolean recastBuff(LivingEntity entity, float power, String[] args) {
 		return true;
 	}
-	
+
 	public void setAsEverlasting() {
-		this.duration = 0;
-		this.numUses = 0;
-		this.useCostInterval = 0;
+		duration = 0;
+		numUses = 0;
+		useCostInterval = 0;
 	}
-	
+
 	/**
 	 * Begins counting the spell duration for a player
-	 * @param player the player to begin counting duration
+	 * @param livingEntity the player to begin counting duration
 	 */
-	private void startSpellDuration(final Player player, float power) {
-		if (this.duration > 0 && this.durationEndTime != null) {
-			float dur = this.duration;
-			if (this.powerAffectsDuration) dur *= power;
-			this.durationEndTime.put(player.getName(), System.currentTimeMillis() + Math.round(dur * TimeUtil.MILLISECONDS_PER_SECOND));
-			final String name = player.getName();
-			// TODO convert this to lambda
-			Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, new Runnable() {
-				@Override
-				public void run() {
-					Player p = PlayerNameUtils.getPlayerExact(name);
-					if (p == null) p = player;
-					if (isExpired(p)) turnOff(p);
-				}
-			}, Math.round(dur * TimeUtil.TICKS_PER_SECOND) + 20); // overestimate ticks, since the duration is real-time ms based
+	private void startSpellDuration(final LivingEntity livingEntity, float power) {
+		if (duration > 0 && durationEndTime != null) {
+
+			float dur = duration;
+			if (powerAffectsDuration) dur *= power;
+			durationEndTime.put(livingEntity, System.currentTimeMillis() + Math.round(dur * TimeUtil.MILLISECONDS_PER_SECOND));
+
+			MagicSpells.scheduleDelayedTask(() -> {
+				if (isExpired(livingEntity)) turnOff(livingEntity);
+			}, Math.round(dur * TimeUtil.TICKS_PER_SECOND) + 1); // overestimate ticks, since the duration is real-time ms based
 		}
-		
-		playSpellEffectsBuff(player, entity -> thisSpell.isActiveAndNotExpired((Player)entity));
-		
-		BuffManager buffman = MagicSpells.getBuffManager();
-		if (buffman != null) buffman.addBuff(player, this);
+
+		playSpellEffectsBuff(livingEntity, entity -> thisSpell.isActiveAndNotExpired((LivingEntity) entity));
+
+		BuffManager manager = MagicSpells.getBuffManager();
+		if (manager != null) manager.addBuff(livingEntity, this);
 	}
-	
+
 	/**
 	 * Checks whether the spell's duration has expired for a player
-	 * @param player the player to check
+	 * @param entity the player to check
 	 * @return true if the spell has expired, false otherwise
 	 */
-	protected boolean isExpired(Player player) {
-		if (this.duration <= 0 || this.durationEndTime == null) return false;
-		Long endTime = this.durationEndTime.get(player.getName());
+	protected boolean isExpired(LivingEntity entity) {
+		if (duration <= 0 || durationEndTime == null) return false;
+		if (entity == null) return false;
+		Long endTime = durationEndTime.get(entity);
 		if (endTime == null) return false;
-		if (endTime > System.currentTimeMillis()) return false;
-		return true;
+		return endTime <= System.currentTimeMillis();
 	}
-	
-	public boolean isActiveAndNotExpired(Player player) {
-		if (this.duration > 0 && isExpired(player)) return false;
-		return isActive(player);
+
+	public boolean isActiveAndNotExpired(LivingEntity entity) {
+		if (duration > 0 && isExpired(entity)) return false;
+		return isActive(entity);
 	}
-	
+
 	/**
 	 * Checks if this buff spell is active for the specified player
-	 * @param player the player to check
+	 * @param entity the player to check
 	 * @return true if the spell is active, false otherwise
 	 */
-	public abstract boolean isActive(Player player);
-	
+	public abstract boolean isActive(LivingEntity entity);
+
 	/**
 	 * Adds a use to the spell for the player. If the number of uses exceeds the amount allowed, the spell will immediately expire.
 	 * This does not automatically charge the use cost.
-	 * @param player the player to add the use for
+	 * @param entity the player to add the use for
 	 * @return the player's current number of uses (returns 0 if the use counting feature is disabled)
 	 */
-	protected int addUse(Player player) {
+	protected int addUse(LivingEntity entity) {
 		// Run spell on use increment first thing in case we want to intervene
-		if (this.spellOnUseIncrement != null) this.spellOnUseIncrement.cast(player, 1F, null);
-		
-		if (this.numUses > 0 || (this.reagents != null && this.useCostInterval > 0)) {
-			String playerName = player.getName();
-			Integer uses = this.useCounter.get(playerName);
-			if (uses == null) {
-				uses = 1;
-			} else {
-				uses++;
-			}
-			
-			if (this.numUses > 0 && uses >= this.numUses) {
-				turnOff(player);
-			} else {
-				this.useCounter.put(playerName, uses);
-			}
+		if (spellOnUseIncrement != null && entity instanceof Player) spellOnUseIncrement.cast((Player) entity, 1f);
+
+		if (numUses > 0 || (reagents != null && useCostInterval > 0)) {
+
+			Integer uses = useCounter.get(entity);
+
+			if (uses == null) uses = 1;
+			else uses++;
+
+			if (numUses > 0 && uses >= numUses) turnOff(entity);
+			else useCounter.put(entity, uses);
+
 			return uses;
 		}
+
 		return 0;
+
 	}
-	
+
 	/**
 	 * Removes this spell's use cost from the player's inventory. If the reagents aren't available, the spell will expire.
-	 * @param player the player to remove the cost from
+	 * @param entity the player to remove the cost from
 	 * @return true if the reagents were removed, or if the use cost is disabled, false otherwise
 	 */
-	protected boolean chargeUseCost(Player player) {
+	protected boolean chargeUseCost(LivingEntity entity) {
 		// Run spell on cost first thing to dodge the early returns and allow intervention
-		if (this.spellOnCost != null) this.spellOnCost.cast(player, 1F, null);
-		
-		if (this.reagents == null) return true;
-		if (this.useCostInterval <= 0) return true;
-		if (this.useCounter == null) return true;
-		
-		String playerName = player.getName();
-		Integer uses = this.useCounter.get(playerName);
+		if (spellOnCost != null && entity instanceof Player) spellOnCost.cast((Player) entity, 1f);
+
+		if (reagents == null) return true;
+		if (useCostInterval <= 0) return true;
+		if (useCounter == null) return true;
+
+		Integer uses = useCounter.get(entity);
 		if (uses == null) return true;
-		
-		if (uses % this.useCostInterval == 0) {
-			if (hasReagents(player, this.reagents)) {
-				removeReagents(player, this.reagents);
-				return true;
-			}
-			turnOff(player);
+		if (uses % useCostInterval != 0) return true;
+
+		if (entity instanceof Player && hasReagents((Player) entity, reagents)) {
+			removeReagents((Player) entity, reagents);
+			return true;
+		}
+
+		if (entity instanceof Player && !hasReagents((Player) entity, reagents)) {
+			turnOff(entity);
 			return false;
 		}
+
 		return true;
+
 	}
-	
+
 	/**
 	 * Adds a use to the spell for the player. If the number of uses exceeds the amount allowed, the spell will immediately expire.
 	 * Removes this spell's use cost from the player's inventory. This does not return anything, to get useful return values, use
 	 * addUse() and chargeUseCost().
-	 * @param player the player to add a use and charge cost to
+	 * @param entity the player to add a use and charge cost to
 	 */
-	protected void addUseAndChargeCost(Player player) {
-		addUse(player);
-		chargeUseCost(player);
+	protected void addUseAndChargeCost(LivingEntity entity) {
+		addUse(entity);
+		chargeUseCost(entity);
 	}
-	
+
 	/**
 	 * Turns off this spell for the specified player. This can be called from many situations, including when the spell expires or the uses run out.
 	 * When overriding this function, you should always be sure to call super.turnOff(player).
-	 * @param player
+	 * @param entity
 	 */
-	public final void turnOff(Player player) {
-		if (!isActive(player)) return;
-		String playerName = player.getName();
-		if (this.useCounter != null) this.useCounter.remove(playerName);
-		if (this.durationEndTime != null) this.durationEndTime.remove(playerName);
-		BuffManager buffman = MagicSpells.getBuffManager();
-		if (buffman != null) buffman.removeBuff(player, this);
-		sendMessage(this.strFade, player, null);
-		playSpellEffects(EffectPosition.DISABLED, player);
-		turnOffBuff(player);
-		cancelEffects(EffectPosition.CASTER, player.getUniqueId().toString());
+	public final void turnOff(LivingEntity entity) {
+		if (!isActive(entity)) return;
+
+		if (useCounter != null) useCounter.remove(entity);
+		if (durationEndTime != null) durationEndTime.remove(entity);
+
+		BuffManager manager = MagicSpells.getBuffManager();
+		if (manager != null) manager.removeBuff(entity, this);
+
+		turnOffBuff(entity);
+		playSpellEffects(EffectPosition.DISABLED, entity);
+		cancelEffects(EffectPosition.CASTER, entity.getUniqueId().toString());
+
+		if (!(entity instanceof Player)) return;
+		sendMessage(strFade, (Player) entity, null);
+		if (spellOnEnd != null) spellOnEnd.cast((Player) entity, 1f);
 	}
-	
-	protected abstract void turnOffBuff(Player player);
-	
+
+	protected abstract void turnOffBuff(LivingEntity entity);
+
 	@Override
 	protected abstract void turnOff();
-	
+
 	@Override
 	public boolean isBeneficialDefault() {
 		return true;
 	}
-	
+
 	public boolean isTargeted() {
-		return this.targeted;
+		return targeted;
 	}
-	
-	@EventHandler
-	public void onJoin(PlayerJoinEvent event) {
-		Player player = event.getPlayer();
-		if (!isActive(player)) return;
-		if (!isExpired(player)) return;
-		turnOff(player);
-	}
-	
+
 	public class DamageListener implements Listener {
-		
+
 		@EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
-		public void onPlayerDamage(EntityDamageEvent event) {
-			Entity eventEntity = event.getEntity();
-			if (cancelOnTakeDamage && eventEntity instanceof Player && isActive((Player)eventEntity)) {
-				turnOff((Player)eventEntity);
-			} else if (cancelOnGiveDamage && event instanceof EntityDamageByEntityEvent) {
-				EntityDamageByEntityEvent evt = (EntityDamageByEntityEvent)event;
-				Entity evtDamager = evt.getDamager();
-				if (evtDamager instanceof Player && isActive((Player)evtDamager)) {
-					turnOff((Player)evtDamager);
-				} else if (evtDamager instanceof Projectile && ((Projectile)evtDamager).getShooter() instanceof LivingEntity) {
-					LivingEntity shooter = (LivingEntity)((Projectile)evtDamager).getShooter();
-					if (shooter instanceof Player && isActive((Player)shooter)) turnOff((Player)shooter);
+		public void onPlayerDamage(EntityDamageEvent e) {
+			Entity entity = e.getEntity();
+			if (cancelOnTakeDamage && entity instanceof LivingEntity && isActiveAndNotExpired((LivingEntity) entity)) {
+				turnOff((LivingEntity) entity);
+			} else if (cancelOnGiveDamage && e instanceof EntityDamageByEntityEvent) {
+				EntityDamageByEntityEvent evt = (EntityDamageByEntityEvent) e;
+				Entity damager = evt.getDamager();
+				if (damager instanceof LivingEntity && isActiveAndNotExpired((LivingEntity) damager)) {
+					turnOff((LivingEntity) damager);
+				} else if (damager instanceof Projectile && ((Projectile) damager).getShooter() instanceof LivingEntity) {
+					LivingEntity shooter = (LivingEntity) ((Projectile) damager).getShooter();
+					if (isActiveAndNotExpired(shooter)) turnOff(shooter);
 				}
 			}
 		}
-		
+
 	}
-	
+
+	public class EntityListener implements Listener {
+
+		@EventHandler
+		public void onEntityDeath(EntityDeathEvent event) {
+			LivingEntity entity = event.getEntity();
+			if (entity instanceof Player) return;
+			if (!isActiveAndNotExpired(entity)) return;
+			turnOff(entity);
+		}
+
+	}
+
 	public class DeathListener implements Listener {
-		
+
 		@EventHandler
 		public void onPlayerDeath(PlayerDeathEvent event) {
-			Player player = event.getEntity();
-			if (!isActive(player)) return;
-			turnOff(player);
+			Player pl = event.getEntity();
+			if (!isActiveAndNotExpired(pl)) return;
+			turnOff(pl);
 		}
-		
+
 	}
-	
+
 	public class TeleportListener implements Listener {
-		
+
 		@EventHandler(priority=EventPriority.LOWEST)
-		public void onTeleport(PlayerTeleportEvent event) {
-			Player player = event.getPlayer();
-			if (isActive(player)) {
-				Location locationFrom = event.getFrom();
-				Location locationTo = event.getTo();
-				if (LocationUtil.differentWorldDistanceGreaterThan(locationFrom, locationTo, 5)) {
-					turnOff(player);
-				}
+		public void onTeleport(EntityTeleportEvent e) {
+			if (!(e.getEntity() instanceof LivingEntity)) return;
+			LivingEntity entity = (LivingEntity) e.getEntity();
+			if (!isActiveAndNotExpired(entity)) return;
+
+			Location locationFrom = e.getFrom();
+			Location locationTo = e.getTo();
+
+			if (LocationUtil.differentWorldDistanceGreaterThan(locationFrom, locationTo, 5)) {
+				turnOff(entity);
 			}
+
 		}
-		
+
 	}
-	
+
 	public class ChangeWorldListener implements Listener {
-		
+
 		@EventHandler(priority=EventPriority.LOWEST)
-		public void onChangeWorld(PlayerChangedWorldEvent event) {
-			if (isActive(event.getPlayer())) {
-				turnOff(event.getPlayer());
-			}
+		public void onChangeWorld(PlayerChangedWorldEvent e) {
+			Player pl = e.getPlayer();
+			if (pl == null) return;
+			if (isActiveAndNotExpired(pl)) turnOff(pl);
 		}
-		
+
 	}
-	
+
 	public class SpellCastListener implements Listener {
-		
+
 		@EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
-		public void onChangeWorld(SpellCastEvent event) {
-			if (thisSpell != event.getSpell() && event.getSpellCastState() == SpellCastState.NORMAL && isActive(event.getCaster())) {
-				turnOff(event.getCaster());
+		public void onSpellCast(SpellCastEvent e) {
+			if (thisSpell != e.getSpell() && e.getSpellCastState() == SpellCastState.NORMAL && isActiveAndNotExpired(e.getCaster())) {
+				if (filter.check(e.getSpell())) turnOff(e.getCaster());
 			}
 		}
-		
+
 	}
 
 	public class QuitListener implements Listener {
-		
+
 		@EventHandler(priority=EventPriority.MONITOR)
-		public void onPlayerQuit(PlayerQuitEvent event) {
-			if (isActive(event.getPlayer())) {
-				turnOff(event.getPlayer());
-			}
+		public void onPlayerQuit(PlayerQuitEvent e) {
+			Player pl = e.getPlayer();
+			if (pl == null) return;
+			if (isActiveAndNotExpired(pl)) turnOff(pl);
 		}
-		
+
 	}
-	
+
+	public class JoinListener implements Listener {
+
+		@EventHandler
+		public void onJoin(PlayerJoinEvent e) {
+			Player pl = e.getPlayer();
+			if (pl == null) return;
+			if (isActiveAndNotExpired(pl)) turnOff(pl);
+		}
+
+	}
+
 }

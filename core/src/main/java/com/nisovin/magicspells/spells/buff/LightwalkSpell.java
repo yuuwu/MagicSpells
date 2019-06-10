@@ -1,105 +1,124 @@
 package com.nisovin.magicspells.spells.buff;
 
-import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.List;
 import java.util.Objects;
+import java.util.HashMap;
+import java.util.HashSet;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.material.MaterialData;
 
-import com.nisovin.magicspells.materials.MagicBlockMaterial;
-import com.nisovin.magicspells.materials.MagicMaterial;
+import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.util.BlockUtils;
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.PlayerNameUtils;
-import com.nisovin.magicspells.util.Util;
 
 public class LightwalkSpell extends BuffSpell {
 	
-	private HashMap<String, Block> lightwalkers;
-	private MagicMaterial mat = new MagicBlockMaterial(new MaterialData(Material.GLOWSTONE));
+	private Map<UUID, Block> lightwalkers;
+	private Set<Material> allowedTypes;
+	private Material material;
 
 	public LightwalkSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
-		
-		this.lightwalkers = new HashMap<>();
+
+		String materialName = getConfigString("material", "GLOWSTONE").toUpperCase();
+		material = Material.getMaterial(materialName);
+		if (material == null) {
+			MagicSpells.error("LightwalkSpell " + internalName + " has an invalid material defined");
+			material = Material.GLOWSTONE;
+		}
+
+		lightwalkers = new HashMap<>();
+		allowedTypes = new HashSet<>();
+
+		List<String> blockList = getConfigStringList("allowed-types", null);
+		if (blockList != null) {
+			for (String str : blockList) {
+				Material material = Material.getMaterial(str);
+				if (material == null) MagicSpells.error("LightwalkSpell " + internalName + " has an invalid block defined " + str);
+				else allowedTypes.add(material);
+			}
+		} else {
+			allowedTypes.add(Material.GRASS);
+			allowedTypes.add(Material.DIRT);
+			allowedTypes.add(Material.GRAVEL);
+			allowedTypes.add(Material.STONE);
+			allowedTypes.add(Material.NETHERRACK);
+			allowedTypes.add(Material.SOUL_SAND);
+			allowedTypes.add(Material.SAND);
+			allowedTypes.add(Material.SANDSTONE);
+			allowedTypes.add(Material.GLASS);
+			allowedTypes.add(Material.WHITE_WOOL);
+			allowedTypes.add(Material.BRICK);
+			allowedTypes.add(Material.OBSIDIAN);
+			allowedTypes.add(Material.OAK_WOOD);
+			allowedTypes.add(Material.OAK_LOG);
+		}
 	}
 
 	@Override
-	public boolean castBuff(Player player, float power, String[] args) {
-		this.lightwalkers.put(player.getName(), null);
+	public boolean castBuff(LivingEntity entity, float power, String[] args) {
+		lightwalkers.put(entity.getUniqueId(), null);
 		return true;
 	}
-	
-	@EventHandler(priority=EventPriority.MONITOR)
-	public void onPlayerMove(PlayerMoveEvent event) {
-		Player p = event.getPlayer();
-		String playerName = p.getName();
-		if (this.lightwalkers.containsKey(playerName)) {
-			Block oldBlock = this.lightwalkers.get(playerName);
-			Block newBlock = p.getLocation().getBlock().getRelative(BlockFace.DOWN);
-			if (!Objects.equals(oldBlock, newBlock) && allowedType(newBlock.getType()) && newBlock.getType() != Material.AIR) {
-				if (isExpired(p)) {
-					turnOff(p);
-				} else {
-					if (oldBlock != null) Util.restoreFakeBlockChange(p, oldBlock);
-					Util.sendFakeBlockChange(p, newBlock, mat);
-					this.lightwalkers.put(playerName, newBlock);
-					addUse(p);
-					chargeUseCost(p);
-				}
-			}
-		}
-	}
-	
-	private boolean allowedType(Material mat) {
-		return mat == Material.DIRT || 
-			mat == Material.GRASS ||
-			mat == Material.GRAVEL ||
-			mat == Material.STONE ||
-			mat == Material.COBBLESTONE ||
-			mat == Material.LEGACY_WOOD ||
-			mat == Material.LEGACY_LOG ||
-			mat == Material.NETHERRACK ||
-			mat == Material.SOUL_SAND ||
-			mat == Material.SAND ||
-			mat == Material.SANDSTONE ||
-			mat == Material.GLASS ||
-			mat == Material.LEGACY_WOOL ||
-			mat == Material.LEGACY_DOUBLE_STEP ||
-			mat == Material.BRICK ||
-			mat == Material.OBSIDIAN;
-	}
-	
+
 	@Override
-	public void turnOffBuff(Player player) {
-		Block b = this.lightwalkers.remove(player.getName());
+	public boolean isActive(LivingEntity entity) {
+		return lightwalkers.containsKey(entity.getUniqueId());
+	}
+
+	@Override
+	public void turnOffBuff(LivingEntity entity) {
+		Block b = lightwalkers.remove(entity.getUniqueId());
 		if (b == null) return;
-		Util.restoreFakeBlockChange(player, b);
+		if (!(entity instanceof Player)) return;
+		((Player) entity).sendBlockChange(b.getLocation(), b.getBlockData());
 	}
 
 	@Override
 	protected void turnOff() {
-		for (String s : this.lightwalkers.keySet()) {
-			Player p = PlayerNameUtils.getPlayer(s);
-			if (p == null) continue;
-			
-			Block b = this.lightwalkers.get(s);
-			if (b == null) continue;
-			
-			Util.restoreFakeBlockChange(p, b);
+		for (UUID id : lightwalkers.keySet()) {
+			Entity entity = Bukkit.getEntity(id);
+			if (!(entity instanceof Player)) continue;
+			Block b = lightwalkers.get(id);
+			((Player) entity).sendBlockChange(b.getLocation(), b.getBlockData());
 		}
-		this.lightwalkers.clear();
+
+		lightwalkers.clear();
 	}
 
-	@Override
-	public boolean isActive(Player player) {
-		return this.lightwalkers.containsKey(player.getName());
+	@EventHandler(priority=EventPriority.MONITOR)
+	public void onPlayerMove(PlayerMoveEvent event) {
+		Player player = event.getPlayer();
+		if (!isActive(player)) return;
+
+		Block oldBlock = lightwalkers.get(player.getUniqueId());
+		Block newBlock = player.getLocation().getBlock().getRelative(BlockFace.DOWN);
+
+		if (Objects.equals(oldBlock, newBlock)) return;
+		if (!allowedTypes.contains(newBlock.getType())) return;
+		if (BlockUtils.isAir(newBlock.getType())) return;
+		if (isExpired(player)) {
+			turnOff(player);
+			return;
+		}
+
+		addUseAndChargeCost(player);
+		lightwalkers.put(player.getUniqueId(), newBlock);
+		player.sendBlockChange(newBlock.getLocation(), material.createBlockData());
+		if (oldBlock != null) player.sendBlockChange(oldBlock.getLocation(), oldBlock.getBlockData());
 	}
 
 }

@@ -53,7 +53,7 @@ armor:
 blind:
     spell-class: ".targeted.PotionEffectSpell"
     name: blind
-    spell-icon: ink_sack # :0
+    spell-icon: ink_sac # :0
     description: Blind your target.
     cast-item: blaze_rod
     cooldown: 15
@@ -113,7 +113,7 @@ build:
 carpet:
     spell-class: ".buff.CarpetSpell"
     name: carpet
-    spell-icon: thin_glass
+    spell-icon: glass_pane
     description: Lets you walk on a platform of glass.
     cast-item: book
     cooldown: 30
@@ -155,10 +155,10 @@ cleanse:
     cast-item: book
     cooldown: 60
     remove:
-      - fire
-      - 17
-      - 19
-      - 20
+        - fire
+        - 17
+        - 19
+        - 20
     target-self: true
     beneficial: true
     cost:
@@ -223,7 +223,7 @@ conjure:
 cripple:
     spell-class: ".targeted.CrippleSpell"
     name: cripple
-    spell-icon: web
+    spell-icon: cobweb
     description: Slow down a targeted enemy.
     cast-item: blaze_rod
     cooldown: 15
@@ -397,7 +397,7 @@ explode:
     ignore-canceled: false
     cost:
         - mana 40
-        - sulphur 1
+        - gunpowder 1
     str-cost: 40 mana and 1 gunpowder
     str-no-target: You cannot create an explosion there.
     str-cast-self: Boom!
@@ -419,7 +419,7 @@ explosivearrow:
     spells: [explode]
     cost:
         - mana 25
-        - sulphur 1
+        - gunpowder 1
         - arrow 1
     str-cost: 25 mana, 1 gunpowder, and 1 arrow
     str-cast-self: You fire an explosive arrow.
@@ -427,7 +427,7 @@ explosivearrow:
 farm:
     spell-class: ".targeted.FarmSpell"
     name: farm
-    spell-icon: seeds
+    spell-icon: wheat_seeds
     cast-item: book
     description: Make crops grow nearby.
     cooldown: 10
@@ -436,8 +436,8 @@ farm:
     targeted: false
     cost:
         - mana 75
-        - seeds 2
-    str-cost: 75 mana and 2 seeds
+        - wheat_seeds 2
+    str-cost: 75 mana and 2 wheat seeds
     str-cast-self: The crops around you grow quickly.
     str-no-target: There are no crops nearby.
 
@@ -651,7 +651,7 @@ forcetoss:
 freeze:
     spell-class: ".instant.FreezeSpell"
     name: freeze
-    spell-icon: snow_ball
+    spell-icon: snowball
     description: Spray your enemies with cold snowballs.
     cast-item: blaze_rod
     snowballs: 25
@@ -664,7 +664,7 @@ freeze:
     cooldown: 5
     cost:
         - mana 10
-        - snow_ball 1
+        - snowball 1
     str-cost: 10 mana and 1 snowball
     effects:
         projectile:
@@ -692,7 +692,7 @@ frostwalk:
     cost:
         - mana 50
     use-cost:
-        - snow_ball 1
+        - snowball 1
     use-cost-interval: 25
     str-cost: 50 mana, plus 1 snowball every 25 blocks
     str-cast-self: You can now walk on water!
@@ -798,7 +798,7 @@ haze:
 heal:
     spell-class: ".targeted.HealSpell"
     name: heal
-    spell-icon: red_rose
+    spell-icon: poppy
     description: Heals a target player.
     cast-item: stick
     heal-amount: 10
@@ -919,7 +919,7 @@ levitate:
 lifewalk:
     spell-class: ".buff.LifewalkSpell"
     name: lifewalk
-    spell-icon: sapling # :2
+    spell-icon: oak_sapling # :2
     description: Flowers grow in your footsteps!
     cast-item: book
     tick-interval: 15
@@ -930,10 +930,10 @@ lifewalk:
     fern-chance: 15
     cost:
         - mana 25
-        - red_rose 1
-        - yellow_flower 1
+        - poppy 1
+        - dandelion 1
     use-cost:
-        - yellow_flower 1
+        - dandelion 1
     use-cost-interval: 25
     str-cost: 25 mana, 1 rose, 1 yellow flower, plus 1 flower every so often
     str-cast-self: Flowers grow in your footsteps!
@@ -978,15 +978,15 @@ lightwalk:
 lilywalk:
     spell-class: ".buff.LilywalkSpell"
     name: lilywalk
-    spell-icon: water_lily
+    spell-icon: lily_pad
     description: Lets you walk on water on lily pads.
     cast-item: book
     cooldown: 30
     cost:
         - mana 40
-        - water_lily 1
+        - lily_pad 1
     use-cost:
-        - water_lily 1
+        - lily_pad 1
     use-cost-interval: 25
     str-cost: 40 mana and 1 lilypad, plus 1 lilypad every 50 blocks
     str-cast-self: You can now walk on water!
@@ -1097,7 +1097,7 @@ poison:
 prayer:
     spell-class: ".instant.PrayerSpell"
     name: prayer
-    spell-icon: yellow_flower
+    spell-icon: dandelion
     description: Heals yourself for five hearts.
     cast-item: stick
     cooldown: 15
@@ -1166,7 +1166,7 @@ recall:
 reflect:
     spell-class: ".buff.ReflectSpell"
     name: reflect
-    spell-icon: thin_glass
+    spell-icon: glass_pane
     description: Reflect spells cast at you.
     cooldown: 30
     num-uses: 3
@@ -1441,14 +1441,14 @@ summon:
 sun:
     spell-class: ".instant.TimeSpell"
     name: sun
-    spell-icon: watch
+    spell-icon: clock
     description: Changes the time to morning.
     cast-item: book
     cooldown: 1800
     cost:
         - mana 75
         - redstone 8
-        - watch 1
+        - clock 1
     str-cost: 75 mana, 5 redstone dust and a clock
     time-to-set: 0
     str-announce: The sun has suddenly appeared in the sky!
@@ -1485,15 +1485,15 @@ telekinesis:
 tree:
     spell-class: ".targeted.TreeSpell"
     name: tree
-    spell-icon: sapling
+    spell-icon: oak_sapling
     range: 15
     cooldown: 5
     tree-type: tree
     animation-speed: 20
     cost:
         - mana 10
-        - sapling 1
-    str-cost: 10 mana and 1 sapling
+        - oak_sapling 1
+    str-cost: 10 mana and 1 oak sapling
     str-no-target: You cannot grow a tree there.
 
 volley:
@@ -1565,7 +1565,7 @@ fire-volley:
 walkway:
     spell-class: ".buff.WalkwaySpell"
     name: walkway
-    spell-icon: wood_stairs
+    spell-icon: oak_stairs
     description: Summon a moving magical walkway to take you places.
     cast-item: book
     cooldown: 60
@@ -1575,12 +1575,12 @@ walkway:
     cancel-on-teleport: true
     cost:
         - mana 50
-        - wood 1
+        - oak_wood 1
     use-cost:
         - mana 15
-        - wood 1 
+        - oak_wood 1
     use-cost-interval: 15
-    str-cost: 50 mana, plus 15 mana and 1 wood every 15 blocks
+    str-cost: 50 mana, plus 15 mana and 1 oak wood every 15 blocks
     str-cast-self: You summon a magical walkway.
     str-fade: Your magical walkway disappears.
 
@@ -1623,7 +1623,7 @@ water:
 waterwalk:
     spell-class: ".buff.WaterwalkSpell"
     name: waterwalk
-    spell-icon: boat
+    spell-icon: oak_boat
     description: Walk across the water.
     cast-item: book
     speed: 0.05
@@ -1632,11 +1632,11 @@ waterwalk:
     cancel-on-teleport: true
     cost:
         - mana 25
-        - boat 1
+        - oak_boat 1
     use-cost:
-        - water_lily 1
+        - lily_pad 1
     use-cost-interval: 50
-    str-cost: 25 mana and 1 boat, plus 1 water lily every 50 blocks moved
+    str-cost: 25 mana and 1 oak boat, plus 1 water lily every 50 blocks moved
     str-cast-self: You can now walk on water!
     str-fade: You can no longer walk on water.
 

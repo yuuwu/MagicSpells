@@ -1,11 +1,12 @@
 package com.nisovin.magicspells.spells.buff;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.List;
+import java.util.UUID;
+import java.util.HashSet;
+import java.util.HashMap;
+import java.util.ArrayList;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -14,130 +15,131 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.material.MaterialData;
 
+import com.nisovin.magicspells.util.Util;
 import com.nisovin.magicspells.MagicSpells;
-import com.nisovin.magicspells.materials.MagicBlockMaterial;
-import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.PlayerNameUtils;
-import com.nisovin.magicspells.util.Util;
 
 public class StonevisionSpell extends BuffSpell {
-	
-	private int range;
+
+	private Map<UUID, TransparentBlockSet> seers;
 	private Set<Material> transparentTypes;
-	boolean unobfuscate;
-	
-	MagicMaterial glass = new MagicBlockMaterial(new MaterialData(Material.GLASS));
-	
-	private HashMap<String, TransparentBlockSet> seers;
+
+	private int range;
+	private boolean unobfuscate;
+
+	private Material material;
 
 	public StonevisionSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		this.range = getConfigInt("range", 4);
-		this.unobfuscate = getConfigBoolean("unobfuscate", false);
+		range = getConfigInt("range", 4);
+		unobfuscate = getConfigBoolean("unobfuscate", false);
 		
-		this.transparentTypes = EnumSet.noneOf(Material.class);
-		// TODO expand the transparent types
-		MagicMaterial type = MagicSpells.getItemNameResolver().resolveBlock(getConfigString("transparent-type", "DIORITE"));
-		if (type != null) {
-			this.transparentTypes.add(type.getMaterial());
+		transparentTypes = new HashSet<>();
+
+		String replaceMaterialName = getConfigString("material", "BARRIER").toUpperCase();
+		material = Material.getMaterial(replaceMaterialName);
+		if (material == null || !material.isBlock()) {
+			MagicSpells.error("StonevisionSpell '" + internalName + "' has an invalid material defined!");
+			material = null;
 		}
+
 		List<String> types = getConfigStringList("transparent-types", null);
 		if (types != null) {
-			for (String typeString : types) {
-				type = MagicSpells.getItemNameResolver().resolveBlock(typeString);
-				if (type != null) this.transparentTypes.add(type.getMaterial());
+			for (String str : types) {
+				Material material = Material.getMaterial(str.toUpperCase());
+				if (material != null && material.isBlock()) transparentTypes.add(material);
 			}
 		}
-		if (this.transparentTypes.isEmpty()) {
-			MagicSpells.error("Spell '" + this.internalName + "' does not define any transparent types");
-		}
-		
-		String s = getConfigString("glass", "");
-		if (!s.isEmpty()) this.glass = MagicSpells.getItemNameResolver().resolveBlock(s);
-		if (this.glass == null) this.glass = new MagicBlockMaterial(new MaterialData(Material.GLASS));
-		
-		this.seers = new HashMap<>();
+
+		if (transparentTypes.isEmpty()) MagicSpells.error("StonevisionSpell '" + internalName + "' does not define any transparent types");
+
+		seers = new HashMap<>();
 	}
 
 	@Override
-	public boolean castBuff(Player player, float power, String[] args) {
-		this.seers.put(player.getName(), new TransparentBlockSet(player, this.range, this.transparentTypes));
+	public boolean castBuff(LivingEntity entity, float power, String[] args) {
+		if (!(entity instanceof Player)) return true;
+		seers.put(entity.getUniqueId(), new TransparentBlockSet((Player) entity, range, transparentTypes));
 		return true;
 	}
-	
-	@EventHandler(priority=EventPriority.MONITOR)
-	public void onPlayerMove(PlayerMoveEvent event) {
-		Player p = event.getPlayer();
-		String playerName = p.getName();
-		if (!this.seers.containsKey(playerName)) return;
-		if (isExpired(p)) {
-			turnOff(p);
-		} else {
-			boolean moved = this.seers.get(playerName).moveTransparency();
-			if (moved) {
-				addUse(p);
-				chargeUseCost(p);
-			}
-		}
-	}
-	
+
 	@Override
-	public void turnOffBuff(Player player) {
-		TransparentBlockSet t = this.seers.remove(player.getName());
+	public boolean isActive(LivingEntity entity) {
+		return seers.containsKey(entity.getUniqueId());
+	}
+
+	@Override
+	public void turnOffBuff(LivingEntity entity) {
+		TransparentBlockSet t = seers.remove(entity.getUniqueId());
 		if (t != null) t.removeTransparency();
 	}
 
 	@Override
 	protected void turnOff() {
-		for (TransparentBlockSet tbs : this.seers.values()) {
+		for (TransparentBlockSet tbs : seers.values()) {
 			tbs.removeTransparency();
 		}
-		this.seers.clear();
+
+		seers.clear();
 	}
-	
+
+	@EventHandler(priority=EventPriority.MONITOR)
+	public void onPlayerMove(PlayerMoveEvent event) {
+		Player pl = event.getPlayer();
+		if (!isActive(pl)) return;
+		if (isExpired(pl)) {
+			turnOff(pl);
+			return;
+		}
+
+		boolean moved = seers.get(pl.getUniqueId()).moveTransparency();
+		if (!moved) return;
+		addUseAndChargeCost(pl);
+	}
+
 	private class TransparentBlockSet {
-		
+
 		Player player;
 		Block center;
 		int range;
 		Set<Material> types;
 		List<Block> blocks;
 		Set<Chunk> chunks;
-		
+
 		public TransparentBlockSet(Player player, int range, Set<Material> types) {
 			this.player = player;
 			this.center = player.getLocation().getBlock();
 			this.range = range;
 			this.types = types;
-			
+
 			this.blocks = new ArrayList<>();
 			if (unobfuscate) this.chunks = new HashSet<>();
-			
+
 			setTransparency();
 		}
-		
+
 		public void setTransparency() {
 			List<Block> newBlocks = new ArrayList<>();
-			
+
 			// Get blocks to set to transparent
-			int px = this.center.getX();
-			int py = this.center.getY();
-			int pz = this.center.getZ();
+			int px = center.getX();
+			int py = center.getY();
+			int pz = center.getZ();
 			Block block;
 			if (!unobfuscate) {
 				// Handle normally
-				for (int x = px - this.range; x <= px + this.range; x++) {
-					for (int y = py - this.range; y <= py + this.range; y++) {
-						for (int z = pz - this.range; z <= pz + this.range; z++) {
-							block = this.center.getWorld().getBlockAt(x,y,z);
-							if (this.types.contains(block.getType())) {
-								Util.sendFakeBlockChange(this.player, block, glass);
+				for (int x = px - range; x <= px + range; x++) {
+					for (int y = py - range; y <= py + range; y++) {
+						for (int z = pz - range; z <= pz + range; z++) {
+							block = center.getWorld().getBlockAt(x,y,z);
+							if (types.contains(block.getType())) {
+								player.sendBlockChange(block.getLocation(), material.createBlockData());
 								newBlocks.add(block);
 							}
 						}
@@ -148,59 +150,53 @@ public class StonevisionSpell extends BuffSpell {
 				int dx;
 				int dy;
 				int dz;
-				for (int x = px - this.range - 1; x <= px + this.range + 1; x++) {
-					for (int y = py - this.range - 1; y <= py + this.range + 1; y++) {
-						for (int z = pz - this.range - 1; z <= pz + this.range + 1; z++) {
+				for (int x = px - range - 1; x <= px + range + 1; x++) {
+					for (int y = py - range - 1; y <= py + range + 1; y++) {
+						for (int z = pz - range - 1; z <= pz + range + 1; z++) {
 							dx = Math.abs(x - px);
 							dy = Math.abs(y - py);
 							dz = Math.abs(z - pz);
-							block = this.center.getWorld().getBlockAt(x, y, z);
-							if (this.types.contains(block.getType()) && dx <= this.range && dy <= this.range && dz <= this.range) {
-								Util.sendFakeBlockChange(this.player, block, glass);
+							block = center.getWorld().getBlockAt(x, y, z);
+							if (types.contains(block.getType()) && dx <= range && dy <= range && dz <= range) {
+								player.sendBlockChange(block.getLocation(), material.createBlockData());
 								newBlocks.add(block);
 							} else if (block.getType() != Material.AIR) {
-								Util.restoreFakeBlockChange(this.player, block);
+								player.sendBlockChange(block.getLocation(), block.getType().createBlockData());
 							}
-							
+
 							// Save chunk for resending after spell ends
 							Chunk c = block.getChunk();
-							this.chunks.add(c);
+							chunks.add(c);
 						}
 					}
 				}
 			}
-			
+
 			// Remove old transparent blocks
-			this.blocks.stream().filter(b -> !newBlocks.contains(b)).forEachOrdered(b -> Util.restoreFakeBlockChange(this.player, b));
-			
+			blocks.stream().filter(b -> !newBlocks.contains(b)).forEachOrdered(b -> player.sendBlockChange(b.getLocation(), b.getType().createBlockData()));
 			// Update block set
-			this.blocks = newBlocks;
+			blocks = newBlocks;
 		}
-		
+
 		public boolean moveTransparency() {
-			if (this.player.isDead()) {
-				this.player = PlayerNameUtils.getPlayer(this.player.getName());
+			if (player.isDead()) {
+				player = PlayerNameUtils.getPlayer(player.getName());
 			}
 			Location loc = this.player.getLocation();
-			if (!this.center.getWorld().equals(loc.getWorld()) || this.center.getX() != loc.getBlockX() || this.center.getY() != loc.getBlockY() || this.center.getZ() != loc.getBlockZ()) {
+			if (!center.getWorld().equals(loc.getWorld()) || center.getX() != loc.getBlockX() || center.getY() != loc.getBlockY() || center.getZ() != loc.getBlockZ()) {
 				// Moved
-				this.center = loc.getBlock();
+				center = loc.getBlock();
 				setTransparency();
 				return true;
 			}
 			return false;
 		}
-		
-		public void removeTransparency() {
-			Util.forEachOrdered(this.blocks, b -> Util.restoreFakeBlockChange(player, b));
-			this.blocks = null;
-		}
-		
-	}
 
-	@Override
-	public boolean isActive(Player player) {
-		return this.seers.containsKey(player.getName());
+		public void removeTransparency() {
+			Util.forEachOrdered(blocks, b -> player.sendBlockChange(b.getLocation(), b.getType().createBlockData()));
+			blocks = null;
+		}
+
 	}
 
 }

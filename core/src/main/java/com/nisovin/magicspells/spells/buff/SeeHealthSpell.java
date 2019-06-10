@@ -1,209 +1,132 @@
 package com.nisovin.magicspells.spells.buff;
 
-import java.util.HashMap;
+import java.util.Set;
+import java.util.UUID;
 import java.util.Random;
+import java.util.HashSet;
 
-import com.nisovin.magicspells.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.player.PlayerItemHeldEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.entity.LivingEntity;
 
+import com.nisovin.magicspells.util.Util;
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.util.TargetInfo;
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.PlayerNameUtils;
-import com.nisovin.magicspells.util.TargetInfo;
 
 public class SeeHealthSpell extends BuffSpell {
 
-	private String mode;
-	int interval;
-	
-	private String symbol = "=";
-	private int barSize = 20;
-	private boolean colorBlind = false;
-	
-	HashMap<String, Integer> bars;
+	private Set<UUID> bars;
+
+	private String colors = "01234567890abcdef";
+	private Random random = new Random();
+
+	private int barSize;
+	private int interval;
+	private String symbol;
+
 	private Updater updater;
-	
+
 	public SeeHealthSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
-		
-		this.mode = getConfigString("mode", "always");
-		this.interval = getConfigInt("update-interval", 5);
-		
-		if (!this.mode.equals("attack") && !this.mode.equals("always")) this.mode = "attack";
-		
-		this.bars = new HashMap<>();
-	}
-	
-	@Override
-	public void initialize() {
-		super.initialize();
-		
-		if (this.mode.equals("attack")) {
-			registerEvents(new AttackListener());
-		}
+
+		barSize = getConfigInt("bar-size", 20);
+		interval = getConfigInt("update-interval", 5);
+		symbol = getConfigString("symbol", "=");
+
+		bars = new HashSet<>();
 	}
 
 	@Override
-	public boolean castBuff(Player player, float power, String[] args) {
-		bars.put(player.getName(), player.getInventory().getHeldItemSlot());
-		if (this.updater == null && this.mode.equals("always")) this.updater = new Updater();
+	public boolean castBuff(LivingEntity entity, float power, String[] args) {
+		if (!(entity instanceof Player)) return true;
+		bars.add(entity.getUniqueId());
+		updater = new Updater();
 		return true;
 	}
 
 	@Override
-	public boolean isActive(Player player) {
-		return this.bars.containsKey(player.getName());
+	public boolean isActive(LivingEntity entity) {
+		return bars.contains(entity.getUniqueId());
 	}
-	
-	void showHealthBar(Player player, LivingEntity entity) {
-		int slot = player.getInventory().getHeldItemSlot();
-		// Get item
-		ItemStack item = player.getEquipment().getItemInMainHand();
-		if (item == null || item.getType() == Material.AIR) {
-			item = new ItemStack(Material.LEGACY_PISTON_MOVING_PIECE, 0);
-		} else {
-			item = item.clone();
-		}
-		// Get pct health
-		double pct = (double)entity.getHealth() / (double) Util.getMaxHealth(entity);
-		// Get bar color
-		ChatColor color = ChatColor.WHITE;
-		if (pct <= .2) {
-			color = ChatColor.DARK_RED;
-		} else if (pct <= .4) {
-			color = ChatColor.RED;
-		} else if (pct <= .6) {
-			color = ChatColor.GOLD;
-		} else if (pct <= .8) {
-			color = ChatColor.YELLOW;
-		} else if (!this.colorBlind) {
-			color = ChatColor.GREEN;
-		}
-		// Get health bar string
-		StringBuilder sb = new StringBuilder(this.barSize + 9);
-		sb.append(getRandomColor().toString());
-		int remain = (int)Math.round(this.barSize * pct);
-		sb.append(color.toString());
-		for (int i = 0; i < remain; i++) {
-			sb.append(this.symbol);
-		}
-		if (remain < this.barSize) {
-			sb.append(ChatColor.DARK_GRAY.toString());
-			for (int i = 0; i < this.barSize - remain; i++) {
-				sb.append(this.symbol);
-			}
-		}
-		// Set health bar string
-		ItemMeta meta = item.getItemMeta();
-		meta.setDisplayName(sb.toString());
-		item.setItemMeta(meta);
-		// Send update
-		MagicSpells.getVolatileCodeHandler().sendFakeSlotUpdate(player, slot, item);
-	}
-	
-	//private void resetHealthBar(Player player) {
-	//	resetHealthBar(player, player.getInventory().getHeldItemSlot());
-	//}
-	
-	private void resetHealthBar(Player player, int slot) {
-		MagicSpells.getVolatileCodeHandler().sendFakeSlotUpdate(player, slot, player.getEquipment().getItemInMainHand());
-	}
-	
-	@EventHandler
-	public void onItemHeldChange(PlayerItemHeldEvent event) {
-		if (isActive(event.getPlayer())) {
-			resetHealthBar(event.getPlayer(), event.getPreviousSlot());
-		}
-	}
-	
+
 	@Override
-	public void turnOffBuff(Player player) {
-		Integer i = this.bars.remove(player.getName());
-		if (i != null) {
-			player.updateInventory();
-			if (this.updater != null && this.bars.isEmpty()) {
-				this.updater.stop();
-				this.updater = null;
-			}
+	public void turnOffBuff(LivingEntity entity) {
+		bars.remove(entity.getUniqueId());
+
+		if (updater != null && bars.isEmpty()) {
+			updater.stop();
+			updater = null;
 		}
 	}
 
 	@Override
 	protected void turnOff() {
-		for (String playerName : this.bars.keySet()) {
-			Player player = Bukkit.getPlayerExact(playerName);
+		for (UUID id : bars) {
+			Player player = Bukkit.getPlayer(id);
 			if (player == null) continue;
 			if (!player.isValid()) continue;
 			player.updateInventory();
 		}
-		this.bars.clear();
-		if (this.updater != null) {
-			this.updater.stop();
-			this.updater = null;
+
+		bars.clear();
+		if (updater != null) {
+			updater.stop();
+			updater = null;
 		}
 	}
-	
-	private final String colors = "01234567890abcdef";
-	private final Random random = new Random();
-	
+
 	private ChatColor getRandomColor() {
-		return ChatColor.getByChar(this.colors.charAt(this.random.nextInt(this.colors.length())));
+		return ChatColor.getByChar(colors.charAt(random.nextInt(colors.length())));
 	}
 	
-	static class AttackListener implements Listener {
-		
-		@EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
-		public void onAttack(EntityDamageByEntityEvent event) {
-			if (event.getEntity() instanceof LivingEntity) {
-				Entity damager = event.getDamager();
-				if (damager instanceof Projectile && ((Projectile)damager).getShooter() != null) {
-					damager = (LivingEntity)((Projectile)damager).getShooter();
-				}
-				// Update bar?
-			}
+	private void showHealthBar(Player player, LivingEntity entity) {
+		double pct = entity.getHealth() / Util.getMaxHealth(entity);
+
+		ChatColor color = ChatColor.GREEN;
+		if (pct <= 0.2) color = ChatColor.DARK_RED;
+		else if (pct <= 0.4) color = ChatColor.RED;
+		else if (pct <= 0.6) color = ChatColor.GOLD;
+		else if (pct <= 0.8) color = ChatColor.YELLOW;
+
+		StringBuilder sb = new StringBuilder(barSize);
+		sb.append(getRandomColor().toString());
+		int remain = (int) Math.round(barSize * pct);
+		sb.append(color.toString());
+
+		for (int i = 0; i < remain; i++) sb.append(symbol);
+
+		if (remain < barSize) {
+			sb.append(ChatColor.DARK_GRAY.toString());
+			for (int i = 0; i < barSize - remain; i++) sb.append(symbol);
 		}
-		
+
+		MagicSpells.getVolatileCodeHandler().sendActionBarMessage(player, sb.toString());
 	}
 	
 	class Updater implements Runnable {
 		
-		private int taskId;
+		int taskId;
 		
 		public Updater() {
-			this.taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(MagicSpells.plugin, this, 0, interval);
+			taskId = MagicSpells.scheduleRepeatingTask(this, 0, interval);
 		}
 		
 		@Override
 		public void run() {
-			for (String playerName : bars.keySet()) {
-				Player player = PlayerNameUtils.getPlayerExact(playerName);
+			for (UUID id : bars) {
+				Player player = Bukkit.getPlayer(id);
 				if (player == null) continue;
 				if (!player.isValid()) continue;
 				TargetInfo<LivingEntity> target = getTargetedEntity(player, 1F);
-				if (target != null) {
-					showHealthBar(player, target.getTarget());
-				} else {
-					//resetHealthBar(player);
-				}
+				if (target != null) showHealthBar(player, target.getTarget());
 			}
 		}
 		
 		public void stop() {
-			Bukkit.getScheduler().cancelTask(this.taskId);
+			MagicSpells.cancelTask(taskId);
 		}
 		
 	}

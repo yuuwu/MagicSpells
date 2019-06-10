@@ -1,5 +1,7 @@
 package com.nisovin.magicspells.spells.buff;
 
+import java.util.Set;
+import java.util.UUID;
 import java.util.HashSet;
 
 import org.bukkit.Bukkit;
@@ -7,126 +9,136 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+import org.bukkit.block.BlockFace;
+import org.bukkit.entity.LivingEntity;
 
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.util.BlockUtils;
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.PlayerNameUtils;
 
 public class WaterwalkSpell extends BuffSpell {
 
-	float speed;
+	private Set<UUID> waterwalking;
+
+	private float speed;
 	
-	HashSet<String> waterwalking;
-	private Ticker ticker = null;
+	private Ticker ticker;
 	
 	public WaterwalkSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		this.speed = getConfigFloat("speed", 0.05F);
+		speed = getConfigFloat("speed", 0.05F);
 		
-		this.waterwalking = new HashSet<>();
+		waterwalking = new HashSet<>();
 	}
 
 	@Override
-	public boolean castBuff(Player player, float power, String[] args) {
-		this.waterwalking.add(player.getName());
+	public boolean castBuff(LivingEntity entity, float power, String[] args) {
+		if (!(entity instanceof Player)) return true;
+		waterwalking.add(entity.getUniqueId());
 		startTicker();
 		return true;
 	}
 
 	@Override
-	public boolean isActive(Player player) {
-		return this.waterwalking.contains(player.getName());
+	public boolean isActive(LivingEntity entity) {
+		return waterwalking.contains(entity.getUniqueId());
 	}
 
 	@Override
-	public void turnOffBuff(Player player) {
-		if (this.waterwalking.remove(player.getName())) {
-			player.setFlying(false);
-			if (player.getGameMode() != GameMode.CREATIVE) player.setAllowFlight(false);
-		}
-		if (this.waterwalking.isEmpty()) stopTicker();
+	public void turnOffBuff(LivingEntity entity) {
+		waterwalking.remove(entity.getUniqueId());
+		((Player) entity).setFlying(false);
+		if (((Player) entity).getGameMode() != GameMode.CREATIVE) ((Player) entity).setAllowFlight(false);
+
+		if (waterwalking.isEmpty()) stopTicker();
 	}
 	
 	@Override
 	protected void turnOff() {
-		for (String playerName : this.waterwalking) {
-			Player player = PlayerNameUtils.getPlayerExact(playerName);
-			if (player == null) continue;
-			if (!player.isValid()) continue;
-			
-			player.setFlying(false);
-			if (player.getGameMode() != GameMode.CREATIVE) player.setAllowFlight(false);
+		for (UUID id : waterwalking) {
+			Player pl = Bukkit.getPlayer(id);
+			if (pl == null) continue;
+			if (!pl.isValid()) continue;
+
+			pl.setFlying(false);
+			if (pl.getGameMode() != GameMode.CREATIVE) pl.setAllowFlight(false);
 		}
-		this.waterwalking.clear();
+
+		waterwalking.clear();
 		stopTicker();
 	}
 	
 	private void startTicker() {
-		if (this.ticker != null) return;
-		this.ticker = new Ticker();
+		if (ticker != null) return;
+		ticker = new Ticker();
 	}
 	
 	private void stopTicker() {
-		if (this.ticker == null) return;
-		this.ticker.stop();
-		this.ticker = null;
+		if (ticker == null) return;
+		ticker.stop();
+		ticker = null;
 	}
 	
-	private class Ticker implements Runnable {
+	class Ticker implements Runnable {
 		
-		private int taskId = 0;
+		private int taskId;
 		
 		private int count = 0;
 		
 		public Ticker() {
-			this.taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(MagicSpells.plugin, this, 5, 5);
+			taskId = MagicSpells.scheduleRepeatingTask(this, 5, 5);
 		}
 		
 		@Override
 		public void run() {
-			this.count += 1;
-			if (this.count >= 4) this.count = 0;
-			Location loc;
+			count++;
+			if (count >= 4) count = 0;
+
 			Block feet;
 			Block underfeet;
-			for (String n : waterwalking) {
-				Player p = PlayerNameUtils.getPlayerExact(n);
-				if (p == null) continue;
-				if (!p.isOnline()) continue;
-				if (!p.isValid()) continue;
-				loc = p.getLocation();
+			Location loc;
+
+			for (UUID id : waterwalking) {
+				Player pl = Bukkit.getPlayer(id);
+				if (pl == null) continue;
+				if (!pl.isValid()) continue;
+				if (!pl.isOnline()) continue;
+
+				loc = pl.getLocation();
 				feet = loc.getBlock();
 				underfeet = feet.getRelative(BlockFace.DOWN);
-				if (feet.getType() == Material.LEGACY_STATIONARY_WATER) {
+
+				if (feet.getType() == Material.WATER) {
 					loc.setY(Math.floor(loc.getY() + 1) + 0.1);
-					p.teleport(loc);
-				} else if (p.isFlying() && underfeet.getType() == Material.AIR) {
+					pl.teleport(loc);
+				} else if (pl.isFlying() && BlockUtils.isAir(underfeet.getType())) {
 					loc.setY(Math.floor(loc.getY() - 1) + 0.1);
-					p.teleport(loc);
+					pl.teleport(loc);
 				}
-				feet = p.getLocation().getBlock();
+
+				feet = pl.getLocation().getBlock();
 				underfeet = feet.getRelative(BlockFace.DOWN);
-				if (feet.getType() == Material.AIR && underfeet.getType() == Material.LEGACY_STATIONARY_WATER) {
-					if (!p.isFlying()) {
-						p.setAllowFlight(true);
-						p.setFlying(true);
-						p.setFlySpeed(speed);
+
+				if (BlockUtils.isAir(feet.getType()) && underfeet.getType() == Material.WATER) {
+					if (!pl.isFlying()) {
+						pl.setAllowFlight(true);
+						pl.setFlying(true);
+						pl.setFlySpeed(speed);
 					}
-					if (this.count == 0) addUseAndChargeCost(p);
-				} else if (p.isFlying()) {
-					p.setFlying(false);
-					if (p.getGameMode() != GameMode.CREATIVE) p.setAllowFlight(false);
-					p.setFlySpeed(0.1F);
+					if (count == 0) addUseAndChargeCost(pl);
+				} else if (pl.isFlying()) {
+					pl.setFlying(false);
+					if (pl.getGameMode() != GameMode.CREATIVE) pl.setAllowFlight(false);
+					pl.setFlySpeed(0.1F);
 				}
 			}
 		}
 		
 		public void stop() {
-			Bukkit.getScheduler().cancelTask(this.taskId);
+			MagicSpells.cancelTask(taskId);
 		}
 		
 	}

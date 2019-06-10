@@ -1,69 +1,114 @@
 package com.nisovin.magicspells;
 
+import java.util.Set;
+import java.util.Map;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.LivingEntity;
 
 import com.nisovin.magicspells.spells.BuffSpell;
-import com.nisovin.magicspells.util.PlayerNameUtils;
 import com.nisovin.magicspells.zones.NoMagicZoneManager;
 
 public class BuffManager {
-	
-	HashMap<String,HashSet<BuffSpell>> activeBuffs;
-	int taskId = -1;
-	
+
+	private Map<LivingEntity, Set<BuffSpell>> activeBuffs;
+	private Map<LivingEntity, Set<BuffSpell>> toRemove;
+
+	private int interval;
+	private Monitor monitor;
+
 	public BuffManager(int interval) {
 		this.activeBuffs = new HashMap<>();
-		if (interval > 0) this.taskId = MagicSpells.scheduleRepeatingTask(new Monitor(), interval, interval);
+		this.toRemove = new HashMap<>();
+		this.interval = interval;
+		this.monitor = new Monitor();
 	}
-	
-	public void addBuff(Player player, BuffSpell spell) {
-		HashSet<BuffSpell> buffs = this.activeBuffs.computeIfAbsent(player.getName(), s -> new HashSet<>());
+
+	public void addBuff(LivingEntity entity, BuffSpell spell) {
+		Set<BuffSpell> buffs = activeBuffs.computeIfAbsent(entity, s -> new HashSet<>());
 		// Sanity Check
 		if (buffs == null) throw new IllegalStateException("buffs should not be null here");
 		buffs.add(spell);
+
+		monitor.run();
 	}
-	
-	public void removeBuff(Player player, BuffSpell spell) {
-		HashSet<BuffSpell> buffs = this.activeBuffs.get(player.getName());
+
+	public void removeBuff(LivingEntity entity, BuffSpell spell) {
+		Set<BuffSpell> buffs = activeBuffs.get(entity);
 		if (buffs == null) return;
 		buffs.remove(spell);
-		if (buffs.isEmpty()) this.activeBuffs.remove(player.getName());
+		if (buffs.isEmpty()) activeBuffs.remove(entity);
 	}
-	
-	public HashSet<BuffSpell> getActiveBuffs(Player player) {
-		return this.activeBuffs.get(player.getName());
+
+	public Map<LivingEntity, Set<BuffSpell>> getActiveBuffs() {
+		return activeBuffs;
 	}
-	
+
+	public Set<BuffSpell> getActiveBuffs(LivingEntity entity) {
+		return activeBuffs.get(entity);
+	}
+
 	public void turnOff() {
-		if (this.taskId > 0) Bukkit.getScheduler().cancelTask(this.taskId);
-		this.activeBuffs.clear();
-		this.activeBuffs = null;
+		MagicSpells.cancelTask(monitor.taskId);
+		monitor = null;
+		activeBuffs.clear();
+		toRemove.clear();
+		toRemove = null;
+		activeBuffs = null;
 	}
-	
+
 	class Monitor implements Runnable {
-		
+
+		private int taskId;
+
+		public Monitor() {
+			this.taskId = MagicSpells.scheduleRepeatingTask(this, interval, interval);
+		}
+
 		@Override
 		public void run() {
-			NoMagicZoneManager noMagicZones = MagicSpells.getNoMagicZoneManager();
-			if (noMagicZones != null) {
-				for (String playerName : activeBuffs.keySet()) {
-					Player p = PlayerNameUtils.getPlayerExact(playerName);
-					if (p == null) continue;
-					HashSet<BuffSpell> buffs = new HashSet<>(activeBuffs.get(playerName));
+
+			NoMagicZoneManager zoneManager = MagicSpells.getNoMagicZoneManager();
+			if (zoneManager == null) return;
+
+			for (LivingEntity entity : activeBuffs.keySet()) {
+				if (entity == null) continue;
+				if (entity instanceof Player) {
+					Set<BuffSpell> buffs = new HashSet<>(activeBuffs.get(entity));
+					Set<BuffSpell> removeBuffs = new HashSet<>();
 					for (BuffSpell spell : buffs) {
-						if (noMagicZones.willFizzle(p, spell)) spell.turnOff(p);
+						if (zoneManager.willFizzle((Player) entity, spell)) {
+							removeBuffs.add(spell);
+						}
 					}
+					toRemove.put(entity, removeBuffs);
+					continue;
 				}
-			} else {
-				Bukkit.getScheduler().cancelTask(taskId);
-				taskId = -1;
+
+				if (entity.isValid()) continue;
+				if (!entity.isDead()) continue;
+				Set<BuffSpell> buffs = new HashSet<>(activeBuffs.get(entity));
+				Set<BuffSpell> removeBuffs = new HashSet<>(buffs);
+				toRemove.put(entity, removeBuffs);
 			}
+
+			for (LivingEntity entity : toRemove.keySet()) {
+				Set<BuffSpell> removeBuffs = toRemove.get(entity);
+				for (BuffSpell spell : removeBuffs) {
+					spell.turnOff(entity);
+				}
+			}
+
+			toRemove.clear();
+
 		}
-		
+
+		public void stop() {
+			MagicSpells.cancelTask(taskId);
+		}
+
 	}
-	
+
 }
