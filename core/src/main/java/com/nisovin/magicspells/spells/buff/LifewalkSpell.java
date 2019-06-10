@@ -1,157 +1,146 @@
 package com.nisovin.magicspells.spells.buff;
 
-import java.util.HashSet;
+import java.util.Set;
+import java.util.Map;
+import java.util.UUID;
+import java.util.List;
 import java.util.Random;
+import java.util.HashSet;
+import java.util.HashMap;
 
 import org.bukkit.Bukkit;
-import org.bukkit.GrassSpecies;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.entity.Player;
-import org.bukkit.material.LongGrass;
+import org.bukkit.entity.LivingEntity;
 
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.util.BlockUtils;
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.PlayerNameUtils;
 
 public class LifewalkSpell extends BuffSpell {
 	
-	HashSet<String> lifewalkers;
+	private Set<UUID> lifewalkers;
+	private Map<Material, Integer> blocks;
+
 	private Grower grower;
-	Random random;
-	
-	int tickInterval;
-	
-	int redFlowerChance;
-	
-	int yellowFlowerChance;
-	
-	int saplingChance;
-	
-	int tallgrassChance;
-	
-	int fernChance;
+	private Random random;
+
+	private int tickInterval;
 	
 	public LifewalkSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
-		
-		this.lifewalkers = new HashSet<>();
-		this.random = new Random();
-		
-		this.tickInterval = getConfigInt("tick-interval", 15);
-		this.redFlowerChance = getConfigInt("red-flower-chance", 15);
-		this.yellowFlowerChance = getConfigInt("yellow-flower-chance", 15);
-		this.saplingChance = getConfigInt("sapling-chance", 5);
-		this.tallgrassChance = getConfigInt("tallgrass-chance", 25);
-		this.fernChance = getConfigInt("fern-chance", 15);
+
+		tickInterval = getConfigInt("tick-interval", 15);
+
+		random = new Random();
+		blocks = new HashMap<>();
+		lifewalkers = new HashSet<>();
+
+		List<String> blockList = getConfigStringList("blocks", null);
+		if (blockList != null) {
+			for (String str : blockList) {
+				String[] string = str.toUpperCase().split(" ");
+				Material material;
+				int chance = 0;
+				if (string.length < 2) MagicSpells.error("LifewalkSpell " + internalName + " has an invalid block defined");
+				material = Material.getMaterial(string[0]);
+				if (material == null) MagicSpells.error("LifewalkSpell " + internalName + " has an invalid block defined " + string[0]);
+				if (string.length >= 2 && string[1] == null) MagicSpells.error("LifewalkSpell " + internalName + " has an invalid chance defined for block " + string[0]);
+				else if (string.length >= 2) chance = Integer.valueOf(string[1]);
+
+				if (material != null && chance > 0) blocks.put(material, chance);
+			}
+		} else {
+			blocks.put(Material.TALL_GRASS, 25);
+			blocks.put(Material.FERN, 20);
+			blocks.put(Material.POPPY, 15);
+			blocks.put(Material.DANDELION, 10);
+			blocks.put(Material.OAK_SAPLING, 5);
+		}
+
 	}
 
 	@Override
-	public boolean castBuff(Player player, float power, String[] args) {
-		this.lifewalkers.add(player.getName());
-		if (this.grower == null) this.grower = new Grower();
+	public boolean castBuff(LivingEntity entity, float power, String[] args) {
+		lifewalkers.add(entity.getUniqueId());
+		if (grower == null) grower = new Grower();
 		return true;
-	}	
-	
+	}
+
 	@Override
-	public void turnOffBuff(Player player) {
-		this.lifewalkers.remove(player.getName());
-		if (!this.lifewalkers.isEmpty()) return;
-		if (this.grower == null) return;
+	public boolean isActive(LivingEntity entity) {
+		return lifewalkers.contains(entity.getUniqueId());
+	}
+
+	@Override
+	public void turnOffBuff(LivingEntity entity) {
+		lifewalkers.remove(entity.getUniqueId());
+		if (!lifewalkers.isEmpty()) return;
+		if (grower == null) return;
 		
-		this.grower.stop();
-		this.grower = null;
+		grower.stop();
+		grower = null;
 	}
 	
 	@Override
 	protected void turnOff() {
-		this.lifewalkers.clear();
-		if (this.grower == null) return;
+		lifewalkers.clear();
+		if (grower == null) return;
 		
-		this.grower.stop();
-		this.grower = null;
+		grower.stop();
+		grower = null;
 	}
 
 	private class Grower implements Runnable {
 		
-		int taskId;
-		String[] strArr = new String[0];
-		
+		private int taskId;
+
 		public Grower() {
-			this.taskId = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(MagicSpells.plugin, this, tickInterval, tickInterval);
+			taskId = MagicSpells.scheduleRepeatingTask(this, tickInterval, tickInterval);
 		}
 		
 		public void stop() {
-			Bukkit.getServer().getScheduler().cancelTask(this.taskId);
+			MagicSpells.cancelTask(taskId);
 		}
 		
 		@Override
 		public void run() {
-			for (String s : lifewalkers.toArray(this.strArr)) {
-				Player player = PlayerNameUtils.getPlayer(s);
-				if (player != null) {
-					if (isExpired(player)) {
-						turnOff(player);
-						continue;
-					}
-					Block feet = player.getLocation().getBlock();
-					Block ground = feet.getRelative(BlockFace.DOWN);
-					if (feet.getType() == Material.AIR && (ground.getType() == Material.DIRT || ground.getType() == Material.GRASS)) {
-						if (ground.getType() == Material.DIRT) {
-							ground.setType(Material.GRASS);
-						}
-						int rand = random.nextInt(100);
-						if (rand < redFlowerChance) {
-							feet.setType(Material.LEGACY_RED_ROSE);
-							addUse(player);
-							chargeUseCost(player);
-						} else {
-							rand -= redFlowerChance;
-							if (rand < yellowFlowerChance) {
-								feet.setType(Material.LEGACY_YELLOW_FLOWER);
-								addUse(player);
-								chargeUseCost(player);
-							} else {
-								rand -= yellowFlowerChance;
-								if (rand < saplingChance) {
-									feet.setType(Material.LEGACY_SAPLING);
-									addUse(player);
-									chargeUseCost(player);
-								} else {
-									rand -= saplingChance;
-									if (rand < tallgrassChance) {
-										BlockState state = feet.getState();
-										state.setType(Material.LEGACY_LONG_GRASS);
-										state.setData(new LongGrass(GrassSpecies.NORMAL));
-										state.update(true);
-										addUse(player);
-										chargeUseCost(player);
-									} else {
-										rand -= tallgrassChance;
-										if (rand < fernChance) {
-											BlockState state = feet.getState();
-											state.setType(Material.LEGACY_LONG_GRASS);
-											state.setData(new LongGrass(GrassSpecies.FERN_LIKE));
-											state.update(true);
-											addUse(player);
-											chargeUseCost(player);
-										}
-									}
-								}
-							}
-						}
-					}
+			for (UUID id : lifewalkers) {
+				Entity entity = Bukkit.getEntity(id);
+				if (entity == null) continue;
+				if (!entity.isValid()) continue;
+				if (!(entity instanceof LivingEntity)) continue;
+
+				LivingEntity livingEntity = (LivingEntity) entity;
+				if (isExpired(livingEntity)) {
+					turnOff(livingEntity);
+					continue;
+				}
+
+				Block feet = livingEntity.getLocation().getBlock();
+				Block ground = feet.getRelative(BlockFace.DOWN);
+
+				if (!BlockUtils.isAir(feet.getType())) continue;
+				if (ground.getType() != Material.DIRT && ground.getType() != Material.GRASS_BLOCK) continue;
+				if (ground.getType() == Material.DIRT) ground.setType(Material.GRASS_BLOCK);
+
+				int rand = random.nextInt(100);
+
+				for (Material m : blocks.keySet()) {
+					int chance = blocks.get(m);
+
+					if (rand > chance) continue;
+
+					feet.setType(m);
+					addUseAndChargeCost(livingEntity);
+
+					rand = random.nextInt(100);
 				}
 			}
 		}
-	}
-
-	@Override
-	public boolean isActive(Player player) {
-		return this.lifewalkers.contains(player.getName());
 	}
 
 }

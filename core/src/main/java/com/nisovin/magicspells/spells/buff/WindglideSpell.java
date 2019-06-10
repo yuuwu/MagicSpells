@@ -10,6 +10,7 @@ import org.bukkit.util.Vector;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityToggleGlideEvent;
 
@@ -21,19 +22,19 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 
 public class WindglideSpell extends BuffSpell {
 
-    Set<UUID> gliders;
+    private Set<UUID> gliders;
 
-    Subspell glideSpell;
-    Subspell collisionSpell;
-    String glideSpellName;
-    String collisionSpellName;
+	private Subspell glideSpell;
+	private Subspell collisionSpell;
+	private String glideSpellName;
+	private String collisionSpellName;
 
-    boolean cancelOnCollision;
-    boolean blockCollisionDmg;
+	private boolean cancelOnCollision;
+	private boolean blockCollisionDmg;
 
-    float velocity;
-    float height;
-    int interval;
+	private int interval;
+	private float height;
+	private float velocity;
 
     private GlideMonitor monitor;
 
@@ -46,9 +47,9 @@ public class WindglideSpell extends BuffSpell {
         blockCollisionDmg = getConfigBoolean("block-collision-dmg", true);
         cancelOnCollision = getConfigBoolean("cancel-on-collision", false);
 
-        velocity = getConfigFloat("velocity", 20F);
         height = getConfigFloat("height", 0F);
         interval = getConfigInt("interval", 4);
+		velocity = getConfigFloat("velocity", 20F) / 10;
         if (interval <= 0) interval = 4;
 
         gliders = new HashSet<>();
@@ -59,40 +60,35 @@ public class WindglideSpell extends BuffSpell {
     public void initialize() {
         super.initialize();
 
-        Subspell s = new Subspell(glideSpellName);
-
-        if (s.process()) {
-            glideSpell = s;
-        } else {
-            if (!glideSpellName.equals("")) MagicSpells.error("WindglideSpell " + internalName + " has an invalid spell defined");
+        glideSpell = new Subspell(glideSpellName);
+        if (!glideSpell.process() || !glideSpell.isTargetedLocationSpell()) {
+            glideSpell = null;
+			if (!glideSpellName.isEmpty()) MagicSpells.error("WindglideSpell " + internalName + " has an invalid spell defined");
         }
 
-        Subspell s2 = new Subspell(collisionSpellName);
-
-        if (s2.process()) {
-            collisionSpell = s2;
-        } else {
-            if (!collisionSpellName.equals("")) MagicSpells.error("WindglideSpell " + internalName + " has an invalid collision-spell defined");
-        }
-
+        collisionSpell = new Subspell(collisionSpellName);
+		if (!collisionSpell.process() || !collisionSpell.isTargetedLocationSpell()) {
+			collisionSpell = null;
+			if (!collisionSpellName.isEmpty()) MagicSpells.error("WindglideSpell " + internalName + " has an invalid collision-spell defined");
+		}
     }
 
     @Override
-    public boolean castBuff(Player player, float power, String[] args) {
-        gliders.add(player.getUniqueId());
-        player.setGliding(true);
+    public boolean castBuff(LivingEntity entity, float power, String[] args) {
+        gliders.add(entity.getUniqueId());
+        entity.setGliding(true);
         return true;
     }
 
     @Override
-    public boolean isActive(Player player) {
-        return gliders.contains(player.getUniqueId());
+    public boolean isActive(LivingEntity entity) {
+        return gliders.contains(entity.getUniqueId());
     }
 
     @Override
-    public void turnOffBuff(Player player) {
-        gliders.remove(player.getUniqueId());
-        player.setGliding(false);
+    public void turnOffBuff(LivingEntity entity) {
+        gliders.remove(entity.getUniqueId());
+        entity.setGliding(false);
     }
 
     @Override
@@ -103,59 +99,59 @@ public class WindglideSpell extends BuffSpell {
 
         for (UUID id : gliders) {
             Player pl = Bukkit.getPlayer(id);
-            if (pl != null && pl.isValid()) {
-                pl.setGliding(false);
-                turnOffBuff(pl);
-            }
+            if (pl == null) continue;
+            if (!pl.isValid()) continue;
+
+            pl.setGliding(false);
+            turnOffBuff(pl);
         }
 
         gliders.clear();
     }
 
     @EventHandler
-    public void onPlayerGlide(EntityToggleGlideEvent e) {
+    public void onEntityGlide(EntityToggleGlideEvent e) {
         Entity entity = e.getEntity();
-        if (!(entity instanceof Player)) return;
-        Player pl = (Player)entity;
-        if (!gliders.contains(pl.getUniqueId())) return;
-        if (pl.isGliding()) {
-            e.setCancelled(true);
-        }
+        if (!(entity instanceof LivingEntity)) return;
+        LivingEntity livingEntity = (LivingEntity) entity;
+        if (!isActive(livingEntity)) return;
+        if (livingEntity.isGliding()) e.setCancelled(true);
     }
 
     @EventHandler
-    public void onPlayerCollision(EntityDamageEvent e) {
+    public void onEntityCollision(EntityDamageEvent e) {
         if (e.getCause() != EntityDamageEvent.DamageCause.FLY_INTO_WALL) return;
-        if (!(e.getEntity() instanceof Player)) return;
-        Player pl = (Player)e.getEntity();
-        if (!gliders.contains(pl.getUniqueId())) return;
+        if (!(e.getEntity() instanceof LivingEntity)) return;
+		LivingEntity livingEntity = (LivingEntity) e.getEntity();
+		if (!isActive(livingEntity)) return;
 
         if (blockCollisionDmg) e.setCancelled(true);
-        if (cancelOnCollision) turnOffBuff(pl);
-        if (collisionSpell != null && collisionSpell.isTargetedLocationSpell()) collisionSpell.castAtLocation(pl, pl.getLocation(), 1);
+        if (cancelOnCollision) turnOff(livingEntity);
+        if (collisionSpell != null && livingEntity instanceof Player) collisionSpell.castAtLocation((Player) livingEntity, livingEntity.getLocation(), 1F);
     }
 
-    public class GlideMonitor implements Runnable {
+    class GlideMonitor implements Runnable {
 
         int taskId;
 
         public GlideMonitor() {
-            this.taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(MagicSpells.plugin,this, interval, interval);
+            taskId = MagicSpells.scheduleRepeatingTask(this, interval, interval);
         }
 
         @Override
         public void run() {
             for (UUID id : gliders) {
-                Player pl = Bukkit.getPlayer(id);
-                if (pl == null || !pl.isValid()) continue;
+            	Entity entity = Bukkit.getEntity(id);
+                if (entity == null || !entity.isValid()) continue;
+                if (!(entity instanceof LivingEntity)) continue;
 
-                Location pLoc = pl.getLocation();
-                Vector v = pLoc.getDirection().normalize().multiply(velocity).add(new Vector(0,height,0));
-                pl.setVelocity(v);
+                Location eLoc = entity.getLocation();
+                Vector v = eLoc.getDirection().normalize().multiply(velocity).add(new Vector(0, height, 0));
+                entity.setVelocity(v);
 
-                if (glideSpell != null && glideSpell.isTargetedLocationSpell()) glideSpell.castAtLocation(pl, pLoc, 1);
-                playSpellEffects(EffectPosition.SPECIAL, pLoc);
-                addUseAndChargeCost(pl);
+                if (glideSpell != null && entity instanceof Player) glideSpell.castAtLocation((Player) entity, eLoc, 1F);
+                playSpellEffects(EffectPosition.SPECIAL, eLoc);
+                addUseAndChargeCost((LivingEntity) entity);
             }
         }
     }

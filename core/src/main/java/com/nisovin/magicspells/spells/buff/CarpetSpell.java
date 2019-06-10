@@ -1,189 +1,132 @@
 package com.nisovin.magicspells.spells.buff;
 
-import java.util.HashMap;
+import java.util.Set;
+import java.util.Map;
+import java.util.UUID;
 import java.util.HashSet;
+import java.util.HashMap;
 
-import com.nisovin.magicspells.util.Util;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerPortalEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 
+import com.nisovin.magicspells.util.Util;
 import com.nisovin.magicspells.MagicSpells;
-import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spells.BuffSpell;
-import com.nisovin.magicspells.util.BlockPlatform;
-import com.nisovin.magicspells.util.LocationUtil;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.BlockPlatform;
 
 public class CarpetSpell extends BuffSpell {
-	
-	Material platformBlock;
-	private int size;
-	private boolean cancelOnTeleport;
-	
-	HashMap<String,BlockPlatform> windwalkers;
-	HashSet<Player> falling;
-	private Listener listener;
+
+	private Map<UUID, BlockPlatform> carpets;
+	private Set<UUID> falling;
+
+	private Material platformMaterial;
+	private String materialName;
+	private int platformSize;
 
 	public CarpetSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
-		
-		MagicMaterial m = MagicSpells.getItemNameResolver().resolveBlock(getConfigString("platform-block", "glass"));
-		if (m != null) {
-			platformBlock = m.getMaterial();
-		} else {
-			platformBlock = Material.GLASS;
+
+		materialName = getConfigString("platform-block", "GLASS").toUpperCase();
+		platformMaterial = Material.getMaterial(materialName);
+
+		if (platformMaterial == null || !platformMaterial.isBlock()) {
+			platformMaterial = null;
+			MagicSpells.error("CarpetSpell " + internalName + " has an invalid platform-block defined! '" + materialName + "'");
 		}
-		size = getConfigInt("size", 2);
-		cancelOnTeleport = getConfigBoolean("cancel-on-teleport", true);
-		
-		windwalkers = new HashMap<>();
+
+		platformSize = getConfigInt("size", 2);
+
+		carpets = new HashMap<>();
 		falling = new HashSet<>();
 	}
-
-	@Override
-	public void initialize() {
-		super.initialize();
-		if (cancelOnLogout) registerEvents(new QuitListener());
-		if (cancelOnTeleport) registerEvents(new TeleportListener());
-	}
 	
 	@Override
-	public boolean castBuff(Player player, float power, String[] args) {
-		windwalkers.put(player.getName(), new BlockPlatform(platformBlock, Material.AIR, player.getLocation().getBlock().getRelative(0, -1, 0), size, true, "square"));
-		registerListener();
+	public boolean castBuff(LivingEntity entity, float power, String[] args) {
+		carpets.put(entity.getUniqueId(), new BlockPlatform(platformMaterial, Material.AIR, entity.getLocation().getBlock().getRelative(0, -1, 0), platformSize, true, "square"));
 		return true;
 	}
-	
-	private void registerListener() {
-		if (listener != null) return;
-		
-		listener = new CarpetListener();
-		registerEvents(listener);
-	}
-	
-	private void unregisterListener() {
-		if (listener == null) return;
-		if (!windwalkers.isEmpty()) return;
-		
-		unregisterEvents(listener);
-		listener = null;
-	}
 
-	public class CarpetListener implements Listener {
-	
-		@EventHandler(priority=EventPriority.MONITOR)
-		public void onPlayerMove(PlayerMoveEvent event) {
-			Player player = event.getPlayer();
-			BlockPlatform platform = windwalkers.get(player.getName());
-			if (platform == null) return;
-			
-			if (isExpired(player)) {
-				turnOff(player);
-			} else {
-				if (falling.contains(player)) {
-					if (event.getTo().getY() < event.getFrom().getY()) {
-						falling.remove(player);
-					} else {
-						return;
-					}
-				}
-				if (!player.isSneaking()) { 
-					Block block = event.getTo().subtract(0, 1, 0).getBlock();
-					boolean moved = platform.isMoved(block, false);
-					if (moved) {
-						platform.movePlatform(block, true);
-						addUse(player);
-						chargeUseCost(player);
-					}
-				}
-			}
-		}
-	
-		@EventHandler(priority=EventPriority.MONITOR)
-		public void onPlayerToggleSneak(PlayerToggleSneakEvent event) {
-			Player player = event.getPlayer();
-			String playerName = player.getName();
-			
-			if (!windwalkers.containsKey(playerName)) return;
-			if (!event.isSneaking()) return;
-			
-			if (isExpired(player)) {
-				turnOff(player);
-				return;
-			}
-			Block block = player.getLocation().subtract(0, 2, 0).getBlock();
-			boolean moved = windwalkers.get(playerName).movePlatform(block);
-			if (moved) {
-				falling.add(player);
-				addUse(player);
-				chargeUseCost(player);
-			}
-		}
-	
-		@EventHandler(priority=EventPriority.NORMAL, ignoreCancelled=true)
-		public void onBlockBreak(BlockBreakEvent event) {
-			if (windwalkers.isEmpty()) return;
-			final Block block = event.getBlock();
-			if (block.getType() != platformBlock) return;
-			if (Util.containsValueParallel(windwalkers, platform -> platform.blockInPlatform(block))) event.setCancelled(true);
-		}
-		
-	}
-
-	public class TeleportListener implements Listener {
-		
-		@EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
-		public void onPlayerTeleport(PlayerTeleportEvent event) {
-			Player player = event.getPlayer();
-			if (!windwalkers.containsKey(player.getName())) return;
-			
-			Location locationFrom = event.getFrom();
-			Location locationTo = event.getTo();
-			if (LocationUtil.differentWorldDistanceGreaterThan(locationFrom, locationTo, 50)) {
-				turnOff(player);
-			}
-		}
-		
-		@EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
-		public void onPlayerPortal(PlayerPortalEvent event) {
-			Player player = event.getPlayer();
-			if (!windwalkers.containsKey(player.getName())) return;
-			turnOff(player);
-		}
-		
-	}
-	
 	@Override
-	public void turnOffBuff(Player player) {
-		String playerName = player.getName();
-		BlockPlatform platform = windwalkers.get(playerName);
-		if (platform == null) return;
-		
-		platform.destroyPlatform();
-		windwalkers.remove(playerName);
-		unregisterListener();
+	public boolean isActive(LivingEntity entity) {
+		return carpets.containsKey(entity.getUniqueId());
 	}
-	
+
+	@Override
+	public void turnOffBuff(LivingEntity entity) {
+		BlockPlatform platform = carpets.get(entity.getUniqueId());
+		if (platform == null) return;
+
+		platform.destroyPlatform();
+		carpets.remove(entity.getUniqueId());
+	}
+
 	@Override
 	protected void turnOff() {
-		Util.forEachValueOrdered(windwalkers, BlockPlatform::destroyPlatform);
-		windwalkers.clear();
-		unregisterListener();
+		Util.forEachValueOrdered(carpets, BlockPlatform::destroyPlatform);
+		carpets.clear();
+
 	}
 
-	@Override
-	public boolean isActive(Player player) {
-		return windwalkers.containsKey(player.getName());
+	@EventHandler(priority=EventPriority.MONITOR)
+	public void onPlayerMove(PlayerMoveEvent event) {
+		Player player = event.getPlayer();
+		BlockPlatform platform = carpets.get(player.getUniqueId());
+		if (platform == null) return;
+
+		if (isExpired(player)) {
+			turnOff(player);
+			return;
+		}
+
+		Block block = event.getTo().getBlock().getRelative(BlockFace.DOWN);
+		if (falling.contains(player.getUniqueId())) block = event.getTo().getBlock().getRelative(BlockFace.DOWN, 2);
+
+		boolean moved = platform.isMoved(block, true);
+		if (moved) {
+			platform.movePlatform(block, true);
+			addUseAndChargeCost(player);
+		}
+	}
+
+	@EventHandler(priority=EventPriority.MONITOR)
+	public void onPlayerToggleSneak(PlayerToggleSneakEvent event) {
+		Player player = event.getPlayer();
+		if (!isActive(player)) return;
+
+		if (player.isSneaking()) {
+			falling.remove(player.getUniqueId());
+			return;
+		}
+
+		if (isExpired(player)) {
+			turnOff(player);
+			return;
+		}
+
+		Block block = player.getLocation().getBlock().getRelative(BlockFace.DOWN, 2);
+		boolean moved = carpets.get(player.getUniqueId()).movePlatform(block);
+
+		if (moved) {
+			falling.add(player.getUniqueId());
+			addUseAndChargeCost(player);
+		}
+	}
+	
+	@EventHandler(priority=EventPriority.NORMAL, ignoreCancelled=true)
+	public void onBlockBreak(BlockBreakEvent event) {
+		if (carpets.isEmpty()) return;
+		final Block block = event.getBlock();
+		if (block.getType() != platformMaterial) return;
+		if (Util.containsValueParallel(carpets, platform -> platform.blockInPlatform(block))) event.setCancelled(true);
 	}
 
 }

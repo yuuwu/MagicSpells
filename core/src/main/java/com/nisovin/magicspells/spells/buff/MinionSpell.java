@@ -236,7 +236,9 @@ public class MinionSpell extends BuffSpell {
 	}
 
 	@Override
-	public boolean castBuff(Player player, float power, String[] args) {
+	public boolean castBuff(LivingEntity entity, float power, String[] args) {
+		if (!(entity instanceof Player)) return true;
+		Player player = (Player) entity;
 		// Selecting the mob
 		EntityType creatureType = null;
 		int num = random.nextInt(100);
@@ -319,6 +321,32 @@ public class MinionSpell extends BuffSpell {
 		minions.put(player.getUniqueId(), minion);
 		players.put(minion, player.getUniqueId());
 		return true;
+	}
+
+	@Override
+	public boolean isActive(LivingEntity entity) {
+		return minions.containsKey(entity.getUniqueId());
+	}
+
+	public boolean isMinion(Entity entity) {
+		return minions.containsValue(entity);
+	}
+
+	@Override
+	public void turnOffBuff(LivingEntity entity) {
+		LivingEntity minion = minions.remove(entity.getUniqueId());
+		if (minion != null && !minion.isDead()) minion.remove();
+
+		players.remove(minion);
+		targets.remove(entity.getUniqueId());
+	}
+
+	@Override
+	protected void turnOff() {
+		Util.forEachValueOrdered(minions, Entity::remove);
+		minions.clear();
+		players.clear();
+		targets.clear();
 	}
 
 	@EventHandler
@@ -553,32 +581,6 @@ public class MinionSpell extends BuffSpell {
 	public void onEntityCombust(EntityCombustEvent e) {
 		if (!preventCombust || !isMinion(e.getEntity())) return;
 		e.setCancelled(true);
-	}
-
-	@Override
-	public void turnOffBuff(Player player) {
-		LivingEntity minion = minions.remove(player.getUniqueId());
-		if (minion != null && !minion.isDead()) minion.remove();
-
-		players.remove(minion);
-		targets.remove(player.getUniqueId());
-	}
-
-	@Override
-	protected void turnOff() {
-		Util.forEachValueOrdered(minions, Entity::remove);
-		minions.clear();
-		players.clear();
-		targets.clear();
-	}
-
-	@Override
-	public boolean isActive(Player player) {
-		return minions.containsKey(player.getUniqueId());
-	}
-
-	public boolean isMinion(Entity entity) {
-		return minions.containsValue(entity);
 	}
 
 }

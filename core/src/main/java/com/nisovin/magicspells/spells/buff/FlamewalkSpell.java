@@ -1,31 +1,31 @@
 package com.nisovin.magicspells.spells.buff;
 
-import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
+import java.util.UUID;
+import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import com.nisovin.magicspells.MagicSpells;
-import com.nisovin.magicspells.events.MagicSpellsEntityDamageByEntityEvent;
-import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.BuffSpell;
-import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.PlayerNameUtils;
+import com.nisovin.magicspells.util.compat.EventUtil;
+import com.nisovin.magicspells.spelleffects.EffectPosition;
+import com.nisovin.magicspells.events.MagicSpellsEntityDamageByEntityEvent;
 
 public class FlamewalkSpell extends BuffSpell {
-	
-	int range;
-	int fireTicks;
-	int tickInterval;
-	boolean targetPlayers;
-	boolean checkPlugins;
-	
-	HashMap<String, Float> flamewalkers;
+
+	private Map<UUID, Float> flamewalkers;
+
+	private int range;
+	private int fireTicks;
+	private int tickInterval;
+	private boolean checkPlugins;
+
 	private Burner burner;
 	
 	public FlamewalkSpell(MagicConfig config, String spellName) {
@@ -34,22 +34,26 @@ public class FlamewalkSpell extends BuffSpell {
 		range = getConfigInt("range", 8);
 		fireTicks = getConfigInt("fire-ticks", 80);
 		tickInterval = getConfigInt("tick-interval", 100);
-		targetPlayers = getConfigBoolean("target-players", false);
 		checkPlugins = getConfigBoolean("check-plugins", true);
-		
+
 		flamewalkers = new HashMap<>();
 	}
 
 	@Override
-	public boolean castBuff(Player player, float power, String[] args) {
-		flamewalkers.put(player.getName(), power);
+	public boolean castBuff(LivingEntity entity, float power, String[] args) {
+		flamewalkers.put(entity.getUniqueId(), power);
 		if (burner == null) burner = new Burner();
 		return true;
-	}	
-	
+	}
+
 	@Override
-	public void turnOffBuff(Player player) {
-		flamewalkers.remove(player.getName());
+	public boolean isActive(LivingEntity entity) {
+		return flamewalkers.containsKey(entity.getUniqueId());
+	}
+
+	@Override
+	public void turnOffBuff(LivingEntity entity) {
+		flamewalkers.remove(entity.getUniqueId());
 		if (!flamewalkers.isEmpty()) return;
 		if (burner == null) return;
 		
@@ -69,55 +73,51 @@ public class FlamewalkSpell extends BuffSpell {
 	private class Burner implements Runnable {
 		
 		int taskId;
-		String[] strArr = new String[0];
-		
+
 		public Burner() {
-			taskId = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(MagicSpells.plugin, this, tickInterval, tickInterval);
+			taskId = MagicSpells.scheduleRepeatingTask(this, tickInterval, tickInterval);
 		}
 		
 		public void stop() {
-			Bukkit.getServer().getScheduler().cancelTask(taskId);
+			MagicSpells.cancelTask(taskId);
 		}
 		
 		@Override
 		public void run() {
-			for (String s : flamewalkers.keySet().toArray(strArr)) {
-				Player player = PlayerNameUtils.getPlayer(s);
-				float power = flamewalkers.get(s);
-				if (player == null) continue;
-				if (isExpired(player)) {
-					turnOff(player);
+			for (UUID id : flamewalkers.keySet()) {
+				Entity entity = Bukkit.getEntity(id);
+				if (!(entity instanceof LivingEntity)) continue;
+				LivingEntity livingEntity = (LivingEntity) entity;
+
+				if (isExpired(livingEntity)) {
+					turnOff(livingEntity);
 					continue;
 				}
-				playSpellEffects(EffectPosition.DELAYED, player);
-				List<Entity> entities = player.getNearbyEntities(range, range, range);
-				for (Entity entity : entities) {
-					// TODO this should be checking if it isn't a living entity first
-					if (entity instanceof Player) {
-						if (entity != player && targetPlayers) {
-							if (checkPlugins) {
-								MagicSpellsEntityDamageByEntityEvent event = new MagicSpellsEntityDamageByEntityEvent(player, entity, DamageCause.ENTITY_ATTACK, 1D);
-								EventUtil.call(event);
-								if (event.isCancelled()) continue;
-							}
-						}
-					} else if (!(entity instanceof LivingEntity)) {
-						continue;
+
+				float power = flamewalkers.get(livingEntity.getUniqueId());
+				playSpellEffects(EffectPosition.DELAYED, livingEntity);
+
+				List<Entity> entities = livingEntity.getNearbyEntities(range, range, range);
+				for (Entity target : entities) {
+					if (!(target instanceof LivingEntity)) continue;
+					if (validTargetList != null && !validTargetList.canTarget(target)) continue;
+					if (livingEntity.equals(target)) continue;
+					if (checkPlugins) {
+						MagicSpellsEntityDamageByEntityEvent event = new MagicSpellsEntityDamageByEntityEvent(livingEntity, entity, DamageCause.ENTITY_ATTACK, 1);
+						EventUtil.call(event);
+						if (event.isCancelled()) continue;
 					}
-					entity.setFireTicks(Math.round(fireTicks * power));
-					playSpellEffects(EffectPosition.TARGET, entity);
-					playSpellEffectsTrail(player.getLocation(), entity.getLocation());
-					addUse(player);
-					chargeUseCost(player);
+
+					target.setFireTicks(Math.round(fireTicks * power));
+					addUseAndChargeCost(livingEntity);
+					playSpellEffects(EffectPosition.TARGET, target);
+					playSpellEffectsTrail(livingEntity.getLocation(), target.getLocation());
 				}
+
 			}
+
 		}
 		
-	}
-
-	@Override
-	public boolean isActive(Player player) {
-		return flamewalkers.containsKey(player.getName());
 	}
 
 }
