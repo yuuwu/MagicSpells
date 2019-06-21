@@ -9,7 +9,7 @@ import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.castmodifiers.Condition;
 import com.nisovin.magicspells.util.HandHandler;
 
-public class DurabilityLessThanCondition extends Condition {
+public class DurabilityMoreThanCondition extends Condition {
 
 	private int durability;
 	int slot;
@@ -58,7 +58,7 @@ public class DurabilityLessThanCondition extends Condition {
 		if (item != null) {
 			int max = item.getType().getMaxDurability();
 			if (max > 0) {
-				return max - item.getDurability() < durability;
+				return max - item.getDurability() > durability;
 			}
 		} else {
 			return true;

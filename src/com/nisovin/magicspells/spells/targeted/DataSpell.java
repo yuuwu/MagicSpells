@@ -28,11 +28,17 @@ public class DataSpell extends TargetedSpell {
 	@Override
 	public void initialize() {
 		if (variableName == null) {
-			MagicSpells.error("variable-name is null for DataSpell");
+			MagicSpells.error("variable-name is null for '" + internalName + "'");
 			return;
 		}
 		
-		if (dataElement == null) MagicSpells.error("Invalid option defined for data-element");
+		if (dataElement == null) {
+			MagicSpells.error("Invalid data-element defined for '" + internalName + "'");
+		}
+
+		if (MagicSpells.getVariableManager().getVariable(this.variableName) == null) {
+			MagicSpells.error("invalid variable-name on '" + internalName + "'");
+		}
 	}
 	
 	@Override

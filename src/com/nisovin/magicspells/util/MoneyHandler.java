@@ -32,7 +32,7 @@ public class MoneyHandler {
 	
 	public double checkMoney(Player player) {
 		if (this.economy == null) return 0;
-		return this.economy.bankBalance(player.getName()).balance;
+		return this.economy.getBalance(player.getName());
 	}
 	
 }
