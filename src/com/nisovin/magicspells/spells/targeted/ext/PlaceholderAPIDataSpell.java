@@ -23,14 +23,18 @@ public class PlaceholderAPIDataSpell extends TargetedSpell {
 	@Override
 	public void initialize() {
 		if (variableName == null) {
-			MagicSpells.error("variable-name is null for PlaceholderAPIDataSpell");
+			MagicSpells.error("variable-name is null for '" + internalName + "'");
 			MagicSpells.error("In most cases, this should be set to the name of a string variable, but non string variables may work depending on values.");
 			return;
+		}
+
+		if (MagicSpells.getVariableManager().getVariable(this.variableName) == null) {
+			MagicSpells.error("invalid variable-name on '" + internalName + "'");
 		}
 		
 		// You have to REALLY screw up for this to happen
 		if (placeholderAPITemplate == null) {
-			MagicSpells.error("placeholderapi-template is null (you made it worse than the default) in PlaceholderAPIDataSpell");
+			MagicSpells.error("placeholderapi-template is null (you made it worse than the default) in '" + internalName + "'");
 			MagicSpells.error("This was probably because you put something similar to \"placeholderapi-template\" and did not specify a value.");
 		}
 	}

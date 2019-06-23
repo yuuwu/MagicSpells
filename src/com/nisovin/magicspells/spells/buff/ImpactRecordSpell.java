@@ -44,13 +44,13 @@ public class ImpactRecordSpell extends BuffSpell {
 		
 		// Variable name non null?
 		if (this.variableName == null) {
-			MagicSpells.error("invalid variable-name on ImpactRecordSpell");
+			MagicSpells.error("no variable defined on '" + internalName + "'");
 			return;
 		}
 		
 		// Make sure the variable exists
 		if (MagicSpells.getVariableManager().getVariable(this.variableName) == null) {
-			MagicSpells.error("invalid variable-name on ImpactRecordSpell");
+			MagicSpells.error("invalid variable-name on '" + internalName + "'");
 			this.variableName = null;
 		}
 	}

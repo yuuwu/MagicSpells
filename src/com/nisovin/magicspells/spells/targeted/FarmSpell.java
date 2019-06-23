@@ -94,7 +94,7 @@ public class FarmSpell extends TargetedSpell implements TargetedLocationSpell {
 						if (growth > 1) BlockUtils.setGrowthLevel(b, growth - 1);
 						count++;
 					}
-				} else if (((growWheat && b.getType() == Material.CROPS) || (growBeetroot && b.getType() == Material.BEETROOT) || (growCarrots && b.getType() == Material.CARROT) || (growPotatoes && b.getType() == Material.POTATO)) && BlockUtils.getGrowthLevel(b) < 7) {
+				} else if (((growWheat && b.getType() == Material.CROPS) || (growBeetroot && b.getType() == Material.BEETROOT_BLOCK) || (growCarrots && b.getType() == Material.CARROT) || (growPotatoes && b.getType() == Material.POTATO)) && BlockUtils.getGrowthLevel(b) < 7) {
 					int newGrowth = BlockUtils.getGrowthLevel(b) + growth;
 					if (newGrowth > 7) newGrowth = 7;
 					BlockUtils.setGrowthLevel(b, newGrowth);
