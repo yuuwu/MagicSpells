@@ -1,19 +1,15 @@
 package com.nisovin.magicspells.util;
 
-import java.util.Map;
 import java.util.List;
-import java.util.HashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
-import org.bukkit.NetherWartsState;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.material.NetherWarts;
 import org.bukkit.block.data.BlockData;
 
 import com.nisovin.magicspells.Spell;
@@ -21,21 +17,6 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.DebugHandler;
 
 public class BlockUtils {
-
-	private static Map<NetherWartsState, Integer> wartStateToInt = new HashMap<>();
-	private static Map<Integer, NetherWartsState> intToWartState = new HashMap<>();
-
-	static {
-		wartStateToInt.put(NetherWartsState.SEEDED, 1);
-		wartStateToInt.put(NetherWartsState.STAGE_ONE, 2);
-		wartStateToInt.put(NetherWartsState.STAGE_TWO, 3);
-		wartStateToInt.put(NetherWartsState.RIPE, 4);
-
-		intToWartState.put(1, NetherWartsState.SEEDED);
-		intToWartState.put(2, NetherWartsState.STAGE_ONE);
-		intToWartState.put(3, NetherWartsState.STAGE_TWO);
-		intToWartState.put(4, NetherWartsState.RIPE);
-	}
 
 	public static boolean isTransparent(Spell spell, Block block) {
 		return spell.getLosTransparentBlocks().contains(block.getType());
@@ -83,15 +64,6 @@ public class BlockUtils {
 		Ageable age = ((Ageable) block.getBlockData());
 		age.setAge(level);
 		block.setBlockData(age);
-	}
-
-	public static boolean growWarts(NetherWarts wart, int stagesToGrow) {
-		if (wart.getState() == NetherWartsState.RIPE) return false;
-		int state = wartStateToInt.get(wart.getState());
-		state= Math.min(state + stagesToGrow, 4);
-		wart.setState(intToWartState.get(state));
-		return true;
-
 	}
 
 	public static int getWaterLevel(BlockState blockState) {
@@ -147,6 +119,16 @@ public class BlockUtils {
 						m == Material.SPRUCE_BUTTON ||
 						m == Material.DARK_OAK_BUTTON ||
 						m == Material.BIRCH_BUTTON;
+	}
+
+	public static boolean isWoodPressurePlate(Material m) {
+		return
+				m == Material.OAK_PRESSURE_PLATE ||
+						m == Material.ACACIA_PRESSURE_PLATE ||
+						m == Material.JUNGLE_PRESSURE_PLATE ||
+						m == Material.SPRUCE_PRESSURE_PLATE ||
+						m == Material.DARK_OAK_PRESSURE_PLATE ||
+						m == Material.BIRCH_PRESSURE_PLATE;
 	}
 
 	public static boolean isWoodTrapdoor(Material m) {

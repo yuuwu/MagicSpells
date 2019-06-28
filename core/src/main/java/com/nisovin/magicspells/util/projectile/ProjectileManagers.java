@@ -1,10 +1,10 @@
 package com.nisovin.magicspells.util.projectile;
 
-import com.nisovin.magicspells.MagicSpells;
-
+import java.util.Map;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
+
+import com.nisovin.magicspells.MagicSpells;
 
 public class ProjectileManagers {
 
@@ -58,6 +58,7 @@ public class ProjectileManagers {
 		tryRegister(ProjectileManagerEgg.class, "egg");
 		tryRegister(ProjectileManagerEnderPearl.class, "enderpearl");
 		tryRegister(ProjectileManagerFireball.class, "fireball");
+		tryRegister(ProjectileManagerFishHook.class, "fishhook");
 		tryRegister(ProjectileManagerLargeFireball.class, "largefireball");
 		tryRegister(ProjectileManagerLingeringPotion.class, "lingeringpotion");
 		tryRegister(ProjectileManagerLlamaSpit.class, "llamaspit");
@@ -67,7 +68,9 @@ public class ProjectileManagers {
 		tryRegister(ProjectileManagerSpectralArrow.class, "spectralarrow");
 		tryRegister(ProjectileManagerSplashPotion.class, "splashpotion");
 		tryRegister(ProjectileManagerThrownExpBottle.class, "thrownexpbottle");
+		tryRegister(ProjectileManagerThrownPotion.class, "thrownpotion");
 		tryRegister(ProjectileManagerTippedArrow.class, "tippedarrow");
+		tryRegister(ProjectileManagerTrident.class, "trident");
 		tryRegister(ProjectileManagerWitherSkull.class, "witherskull");
 	}
 	

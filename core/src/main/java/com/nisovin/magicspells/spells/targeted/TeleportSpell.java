@@ -14,56 +14,35 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 
 public class TeleportSpell extends TargetedSpell implements TargetedEntitySpell {
 
-	Vector relativeOffset;
-	float pitch;
-	float yaw;
-	String strCantTeleport;
+	private float yaw;
+	private float pitch;
+
+	private Vector relativeOffset;
+
+	private String strCantTeleport;
 
 	public TeleportSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 
-		relativeOffset = getConfigVector("relative-offset", "0,0.1,0");
-		pitch = getConfigFloat("pitch", 0);
 		yaw = getConfigFloat("yaw", 0);
+		pitch = getConfigFloat("pitch", 0);
+
+		relativeOffset = getConfigVector("relative-offset", "0,0.1,0");
+
 		strCantTeleport = getConfigString("str-cant-teleport", "");
 	}
 
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
-
 			TargetInfo<LivingEntity> target = getTargetedEntity(player, power);
 			if (target == null) return noTarget(player);
 			if (!teleport(player, target.getTarget())) return noTarget(player, strCantTeleport);
+
 			sendMessages(player, target.getTarget());
 			return PostCastAction.NO_MESSAGES;
-
 		}
 		return PostCastAction.HANDLE_NORMALLY;
-	}
-
-	boolean teleport(Player caster, LivingEntity target) {
-		Location targetLoc = target.getLocation();
-		Location startLoc = caster.getLocation();
-
-		//apply relativeOffset
-		Vector startDir = startLoc.clone().getDirection().normalize();
-		Vector horizOffset = new Vector(-startDir.getZ(), 0.0, startDir.getX()).normalize();
-		targetLoc.add(horizOffset.multiply(relativeOffset.getZ())).getBlock().getLocation();
-		targetLoc.add(startLoc.getDirection().multiply(relativeOffset.getX()));
-		targetLoc.setY(targetLoc.getY() + relativeOffset.getY());
-
-		//set the pitch and yaw
-		targetLoc.setPitch(startLoc.getPitch() - pitch);
-		targetLoc.setYaw(startLoc.getYaw() + yaw);
-
-		if (!BlockUtils.isPathable(targetLoc.getBlock())) return false;
-
-		playSpellEffects(EffectPosition.CASTER, caster);
-		playSpellEffects(EffectPosition.TARGET, target);
-		playSpellEffectsTrail(startLoc, targetLoc);
-
-		return caster.teleport(targetLoc);
 	}
 
 	@Override
@@ -75,6 +54,28 @@ public class TeleportSpell extends TargetedSpell implements TargetedEntitySpell 
 	@Override
 	public boolean castAtEntity(LivingEntity target, float power) {
 		return false;
+	}
+
+	private boolean teleport(Player caster, LivingEntity target) {
+		Location targetLoc = target.getLocation();
+		Location startLoc = caster.getLocation();
+
+		Vector startDir = startLoc.clone().getDirection().normalize();
+		Vector horizOffset = new Vector(-startDir.getZ(), 0.0, startDir.getX()).normalize();
+		targetLoc.add(horizOffset.multiply(relativeOffset.getZ())).getBlock().getLocation();
+		targetLoc.add(startLoc.getDirection().multiply(relativeOffset.getX()));
+		targetLoc.setY(targetLoc.getY() + relativeOffset.getY());
+
+		targetLoc.setPitch(startLoc.getPitch() - pitch);
+		targetLoc.setYaw(startLoc.getYaw() + yaw);
+
+		if (!BlockUtils.isPathable(targetLoc.getBlock())) return false;
+
+		playSpellEffects(EffectPosition.CASTER, caster);
+		playSpellEffects(EffectPosition.TARGET, target);
+		playSpellEffectsTrail(startLoc, targetLoc);
+
+		return caster.teleport(targetLoc);
 	}
 
 }

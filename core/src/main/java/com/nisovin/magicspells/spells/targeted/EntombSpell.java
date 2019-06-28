@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.HashSet;
 import java.util.ArrayList;
 
-import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -14,36 +14,44 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.block.BlockBreakEvent;
 
 import com.nisovin.magicspells.MagicSpells;
-import com.nisovin.magicspells.util.TimeUtil;
 import com.nisovin.magicspells.util.TargetInfo;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 
 public class EntombSpell extends TargetedSpell implements TargetedEntitySpell {
 	
-	Set<Block> blocks;
-	MagicMaterial tombBlockType;
+	private Set<Block> blocks;
+
+	private Material material;
+	private String materialName;
 	
-	private int tombDuration;
+	private int duration;
+
 	private boolean allowBreaking;
 	private boolean closeTopAndBottom;
+
 	private String blockDestroyMessage;
 	
 	public EntombSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
+
+		materialName = getConfigString("block-type", "glass").toUpperCase();
+		material = Material.getMaterial(materialName);
+		if (material == null || !material.isBlock()) {
+			MagicSpells.error("EntombSpell '" + internalName + "' has an invalid block defined!");
+			material = null;
+		}
 		
-		tombBlockType = MagicSpells.getItemNameResolver().resolveBlock(getConfigString("tomb-block-type", "glass"));
-		tombDuration = getConfigInt("tomb-duration", 20);
+		duration = getConfigInt("duration", 20);
+
 		allowBreaking = getConfigBoolean("allow-breaking", true);
 		closeTopAndBottom = getConfigBoolean("close-top-and-bottom", true);
+
 		blockDestroyMessage = getConfigString("block-destroy-message", "");
 		
 		blocks = new HashSet<>();
-		
-		if (tombBlockType == null) MagicSpells.error("EntombSpell '" + internalName + "' has an invalid tomb-block-type defined!");
 	}
 	
 	@Override
@@ -51,11 +59,9 @@ public class EntombSpell extends TargetedSpell implements TargetedEntitySpell {
 		super.turnOff();
 		
 		for (Block block : blocks) {
-			if (block.getType() != tombBlockType.getMaterial()) continue;
 			block.setType(Material.AIR);
 			playSpellEffects(EffectPosition.BLOCK_DESTRUCTION, block.getLocation());
 		}
-		
 	}
 	
 	@Override
@@ -63,25 +69,22 @@ public class EntombSpell extends TargetedSpell implements TargetedEntitySpell {
 		if (state == SpellCastState.NORMAL) {
 			TargetInfo<LivingEntity> targetInfo = getTargetedEntity(player, power);
 			if (targetInfo == null) return noTarget(player);
-			
 			LivingEntity target = targetInfo.getTarget();
 			power = targetInfo.getPower();
 			
 			createTomb(target, power);
 			sendMessages(player, target);
 			playSpellEffects(player, target);
-			
 			return PostCastAction.NO_MESSAGES;
 		}
-		
 		return PostCastAction.HANDLE_NORMALLY;
 	}
 	
 	@Override
 	public boolean castAtEntity(Player caster, LivingEntity target, float power) {
 		if (!validTargetList.canTarget(caster, target)) return false;
-		createTomb(target, power);
 		playSpellEffects(caster, target);
+		createTomb(target, power);
 		return true;
 	}
 	
@@ -122,22 +125,20 @@ public class EntombSpell extends TargetedSpell implements TargetedEntitySpell {
 		
 		for (Block b : tempBlocks) {
 			if (b.getType() != Material.AIR) continue;
-			
-			tombBlockType.setBlock(b);
-			playSpellEffects(EffectPosition.SPECIAL, b.getLocation().add(0.5, 0.5, 0.5));
 			tombBlocks.add(b);
+			b.setType(material);
+			playSpellEffects(EffectPosition.SPECIAL, b.getLocation().add(0.5, 0.5, 0.5));
 		}
 		
 		blocks.addAll(tombBlocks);
 		
-		if (tombDuration > 0 && !tombBlocks.isEmpty()) {
-			MagicSpells.scheduleDelayedTask(() -> removeTomb(tombBlocks), Math.round(tombDuration * TimeUtil.TICKS_PER_SECOND * power));
+		if (duration > 0 && !tombBlocks.isEmpty()) {
+			MagicSpells.scheduleDelayedTask(() -> removeTomb(tombBlocks), Math.round(duration * power));
 		}
 	}
 	
 	private void removeTomb(List<Block> entomb) {
 		for (Block block : entomb) {
-			if (block.getType() != tombBlockType.getMaterial()) continue;
 			block.setType(Material.AIR);
 			playSpellEffects(EffectPosition.BLOCK_DESTRUCTION, block.getLocation());
 		}

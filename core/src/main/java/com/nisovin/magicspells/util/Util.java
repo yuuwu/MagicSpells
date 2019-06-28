@@ -754,13 +754,217 @@ public class Util {
 	}
 
 	public static ItemStack getEggItemForEntityType(EntityType type) {
-		ItemStack ret = new ItemStack(Material.LEGACY_MONSTER_EGG, 1);
-		ItemMeta meta = ret.getItemMeta();
-		if (meta instanceof SpawnEggMeta) {
-			((SpawnEggMeta) meta).setSpawnedType(type);
-			ret.setItemMeta(meta);
+		Material eggMaterial = null;
+		switch (type) {
+			case BAT: {
+				eggMaterial = Material.BAT_SPAWN_EGG;
+				break;
+			}
+			case BLAZE: {
+				eggMaterial = Material.BLAZE_SPAWN_EGG;
+				break;
+			}
+			case CAVE_SPIDER: {
+				eggMaterial = Material.CAVE_SPIDER_SPAWN_EGG;
+				break;
+			}
+			case CHICKEN: {
+				eggMaterial = Material.CHICKEN_SPAWN_EGG;
+				break;
+			}
+			case COD: {
+				eggMaterial = Material.COD_SPAWN_EGG;
+				break;
+			}
+			case COW: {
+				eggMaterial = Material.COW_SPAWN_EGG;
+				break;
+			}
+			case CREEPER: {
+				eggMaterial = Material.CREEPER_SPAWN_EGG;
+				break;
+			}
+			case DOLPHIN: {
+				eggMaterial = Material.DOLPHIN_SPAWN_EGG;
+				break;
+			}
+			case DONKEY: {
+				eggMaterial = Material.DONKEY_SPAWN_EGG;
+				break;
+			}
+			case DROWNED: {
+				eggMaterial = Material.DROWNED_SPAWN_EGG;
+				break;
+			}
+			case ELDER_GUARDIAN: {
+				eggMaterial = Material.ELDER_GUARDIAN_SPAWN_EGG;
+				break;
+			}
+			case ENDERMAN: {
+				eggMaterial = Material.ENDERMAN_SPAWN_EGG;
+				break;
+			}
+			case ENDERMITE: {
+				eggMaterial = Material.ENDERMITE_SPAWN_EGG;
+				break;
+			}
+			case EVOKER: {
+				eggMaterial = Material.EVOKER_SPAWN_EGG;
+				break;
+			}
+			case GHAST: {
+				eggMaterial = Material.GHAST_SPAWN_EGG;
+				break;
+			}
+			case GUARDIAN: {
+				eggMaterial = Material.GUARDIAN_SPAWN_EGG;
+				break;
+			}
+			case HORSE: {
+				eggMaterial = Material.HORSE_SPAWN_EGG;
+				break;
+			}
+			case HUSK: {
+				eggMaterial = Material.HUSK_SPAWN_EGG;
+				break;
+			}
+			case LLAMA: {
+				eggMaterial = Material.LLAMA_SPAWN_EGG;
+				break;
+			}
+			case MAGMA_CUBE: {
+				eggMaterial = Material.MAGMA_CUBE_SPAWN_EGG;
+				break;
+			}
+			case MUSHROOM_COW: {
+				eggMaterial = Material.MOOSHROOM_SPAWN_EGG;
+				break;
+			}
+			case MULE: {
+				eggMaterial = Material.MULE_SPAWN_EGG;
+				break;
+			}
+			case OCELOT: {
+				eggMaterial = Material.OCELOT_SPAWN_EGG;
+				break;
+			}
+			case PARROT: {
+				eggMaterial = Material.PARROT_SPAWN_EGG;
+				break;
+			}
+			case PHANTOM: {
+				eggMaterial = Material.PHANTOM_SPAWN_EGG;
+				break;
+			}
+			case PIG: {
+				eggMaterial = Material.PIG_SPAWN_EGG;
+				break;
+			}
+			case POLAR_BEAR: {
+				eggMaterial = Material.POLAR_BEAR_SPAWN_EGG;
+				break;
+			}
+			case PUFFERFISH: {
+				eggMaterial = Material.PUFFERFISH_SPAWN_EGG;
+				break;
+			}
+			case RABBIT: {
+				eggMaterial = Material.RABBIT_SPAWN_EGG;
+				break;
+			}
+			case SALMON: {
+				eggMaterial = Material.SALMON_SPAWN_EGG;
+				break;
+			}
+			case SHEEP: {
+				eggMaterial = Material.SHEEP_SPAWN_EGG;
+				break;
+			}
+			case SHULKER: {
+				eggMaterial = Material.SHULKER_SPAWN_EGG;
+				break;
+			}
+			case SILVERFISH: {
+				eggMaterial = Material.SILVERFISH_SPAWN_EGG;
+				break;
+			}
+			case SKELETON: {
+				eggMaterial = Material.SKELETON_SPAWN_EGG;
+				break;
+			}
+			case SKELETON_HORSE: {
+				eggMaterial = Material.SKELETON_HORSE_SPAWN_EGG;
+				break;
+			}
+			case SLIME: {
+				eggMaterial = Material.SLIME_SPAWN_EGG;
+				break;
+			}
+			case SPIDER: {
+				eggMaterial = Material.SPIDER_SPAWN_EGG;
+				break;
+			}
+			case SQUID: {
+				eggMaterial = Material.SQUID_SPAWN_EGG;
+				break;
+			}
+			case STRAY: {
+				eggMaterial = Material.STRAY_SPAWN_EGG;
+				break;
+			}
+			case TROPICAL_FISH: {
+				eggMaterial = Material.TROPICAL_FISH_SPAWN_EGG;
+				break;
+			}
+			case TURTLE: {
+				eggMaterial = Material.TURTLE_SPAWN_EGG;
+				break;
+			}
+			case VEX: {
+				eggMaterial = Material.VEX_SPAWN_EGG;
+				break;
+			}
+			case VILLAGER: {
+				eggMaterial = Material.VILLAGER_SPAWN_EGG;
+				break;
+			}
+			case VINDICATOR: {
+				eggMaterial = Material.VINDICATOR_SPAWN_EGG;
+				break;
+			}
+			case WITCH: {
+				eggMaterial = Material.WITCH_SPAWN_EGG;
+				break;
+			}
+			case WITHER_SKELETON: {
+				eggMaterial = Material.WITHER_SKELETON_SPAWN_EGG;
+				break;
+			}
+			case WOLF: {
+				eggMaterial = Material.WOLF_SPAWN_EGG;
+				break;
+			}
+			case ZOMBIE: {
+				eggMaterial = Material.ZOMBIE_SPAWN_EGG;
+				break;
+			}
+			case ZOMBIE_HORSE: {
+				eggMaterial = Material.ZOMBIE_HORSE_SPAWN_EGG;
+				break;
+			}
+			case PIG_ZOMBIE: {
+				eggMaterial = Material.ZOMBIE_PIGMAN_SPAWN_EGG;
+				break;
+			}
+			case ZOMBIE_VILLAGER: {
+				eggMaterial = Material.ZOMBIE_VILLAGER_SPAWN_EGG;
+				break;
+			}
 		}
-		return ret;
+
+		if (eggMaterial == null) return null;
+
+		return new ItemStack(eggMaterial);
 	}
 
 	private static Map<String, String> uniqueIds = new HashMap<>();

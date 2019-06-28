@@ -35,12 +35,12 @@ class ParticleCloudEffect extends SpellEffect {
 	boolean dust = false;
 	boolean block = false;
 
-	int color = 0xFF0000;
-	int duration = 60;
+	int color;
+	int duration;
 
-	float radius = 5f;
-	float radiusPerTick = 0f;
-	float yOffset = 0F;
+	float radius;
+	float yOffset;
+	float radiusPerTick;
 
 	@Override
 	public void loadFromConfig(ConfigurationSection config) {
@@ -86,11 +86,12 @@ class ParticleCloudEffect extends SpellEffect {
 			MagicSpells.error("Wrong color defined! '" + colorHex + "'");
 		}
 
-		radius = (float) config.getDouble("radius", radius);
-		radiusPerTick = (float) config.getDouble("radius-per-tick", radiusPerTick);
-		duration = config.getInt("duration", duration);
-		color = config.getInt("color", color);
-		yOffset = (float) config.getDouble("y-offset", yOffset);
+		color = config.getInt("color", 0xFF0000);
+		duration = config.getInt("duration", 60);
+
+		radius = (float) config.getDouble("radius", 5F);
+		yOffset = (float) config.getDouble("y-offset", 0F);
+		radiusPerTick = (float) config.getDouble("radius-per-tick", 0F);
 	}
 
 	@Override
@@ -102,10 +103,10 @@ class ParticleCloudEffect extends SpellEffect {
 		else if (dust) cloud.setParticle(particle, dustOptions);
 		else if (none) cloud.setParticle(particle);
 
-		cloud.setRadius(radius);
-		cloud.setRadiusPerTick(radiusPerTick);
-		cloud.setDuration(duration);
 		cloud.setColor(Color.fromRGB(color));
+		cloud.setRadius(radius);
+		cloud.setDuration(duration);
+		cloud.setRadiusPerTick(radiusPerTick);
 		return null;
 	}
 

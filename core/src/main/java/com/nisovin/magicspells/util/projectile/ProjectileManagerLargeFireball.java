@@ -1,7 +1,7 @@
 package com.nisovin.magicspells.util.projectile;
 
-import org.bukkit.entity.LargeFireball;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.LargeFireball;
 
 public class ProjectileManagerLargeFireball extends ProjectileManager {
 	

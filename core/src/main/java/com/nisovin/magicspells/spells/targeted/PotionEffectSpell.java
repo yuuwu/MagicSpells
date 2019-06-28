@@ -1,27 +1,29 @@
 package com.nisovin.magicspells.spells.targeted;
 
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
-import com.nisovin.magicspells.events.SpellApplyDamageEvent;
-import com.nisovin.magicspells.spelleffects.EffectPosition;
-import com.nisovin.magicspells.spells.TargetedEntitySpell;
+import com.nisovin.magicspells.util.Util;
+import com.nisovin.magicspells.util.TargetInfo;
+import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.compat.EventUtil;
-import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.TargetInfo;
-import com.nisovin.magicspells.util.Util;
+import com.nisovin.magicspells.spells.TargetedEntitySpell;
+import com.nisovin.magicspells.spelleffects.EffectPosition;
+import com.nisovin.magicspells.events.SpellApplyDamageEvent;
 
 public class PotionEffectSpell extends TargetedSpell implements TargetedEntitySpell {
 	
 	private PotionEffectType type;
+
 	private int duration;
 	private int strength;
-	private boolean ambient;
+
 	private boolean hidden;
+	private boolean ambient;
 	private boolean targeted;
 	private boolean spellPowerAffectsDuration;
 	private boolean spellPowerAffectsStrength;
@@ -29,12 +31,13 @@ public class PotionEffectSpell extends TargetedSpell implements TargetedEntitySp
 	public PotionEffectSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		// FIXME don't use magic numbers
 		type = Util.getPotionEffectType(getConfigString("type", "1"));
+
 		duration = getConfigInt("duration", 0);
 		strength = getConfigInt("strength", 0);
-		ambient = getConfigBoolean("ambient", false);
+
 		hidden = getConfigBoolean("hidden", false);
+		ambient = getConfigBoolean("ambient", false);
 		targeted = getConfigBoolean("targeted", false);
 		spellPowerAffectsDuration = getConfigBoolean("spell-power-affects-duration", true);
 		spellPowerAffectsStrength = getConfigBoolean("spell-power-affects-strength", true);
@@ -58,38 +61,21 @@ public class PotionEffectSpell extends TargetedSpell implements TargetedEntitySp
 					target = targetInfo.getTarget();
 					power = targetInfo.getPower();
 				}
-			} else {
-				target = player;
-			}
-			if (target == null) {
-				// Fail no target
-				return noTarget(player);
-			}
-			
+			} else target = player;
+
+			if (target == null) return noTarget(player);
+
 			int dur = spellPowerAffectsDuration ? Math.round(duration * power) : duration;
 			int str = spellPowerAffectsStrength ? Math.round(strength * power) : strength;
 			
 			applyPotionEffect(player, target, new PotionEffect(type, dur, str, ambient, !hidden));
-			if (targeted) {
-				playSpellEffects(player, target);
-			} else {
-				playSpellEffects(EffectPosition.CASTER, player);
-			}
+			if (targeted) playSpellEffects(player, target);
+			else playSpellEffects(EffectPosition.CASTER, player);
+
 			sendMessages(player, target);
 			return PostCastAction.NO_MESSAGES;
 		}		
 		return PostCastAction.HANDLE_NORMALLY;
-	}
-	
-	void applyPotionEffect(Player caster, LivingEntity target, PotionEffect effect) {
-		DamageCause cause = null;
-		if (effect.getType() == PotionEffectType.POISON) {
-			cause = DamageCause.POISON;
-		} else if (effect.getType() == PotionEffectType.WITHER) {
-			cause = DamageCause.WITHER;
-		}
-		if (cause != null) EventUtil.call(new SpellApplyDamageEvent(this, caster, target, effect.getAmplifier(), cause, ""));
-		target.addPotionEffect(effect, true);
 	}
 
 	@Override
@@ -117,6 +103,14 @@ public class PotionEffectSpell extends TargetedSpell implements TargetedEntitySp
 		applyPotionEffect(null, target, effect);
 		playSpellEffects(EffectPosition.TARGET, target);
 		return true;
+	}
+
+	private void applyPotionEffect(Player caster, LivingEntity target, PotionEffect effect) {
+		DamageCause cause = null;
+		if (effect.getType() == PotionEffectType.POISON) cause = DamageCause.POISON;
+		else if (effect.getType() == PotionEffectType.WITHER) cause = DamageCause.WITHER;
+		if (cause != null) EventUtil.call(new SpellApplyDamageEvent(this, caster, target, effect.getAmplifier(), cause, ""));
+		target.addPotionEffect(effect, true);
 	}
 
 }

@@ -1,42 +1,39 @@
 package com.nisovin.magicspells.castmodifiers.conditions;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+import java.util.HashSet;
 
-import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.LivingEntity;
 
-import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.castmodifiers.Condition;
-import com.nisovin.magicspells.materials.MagicMaterial;
 
 public class OnBlockCondition extends Condition {
 
-	Set<Material> types;
-	List<MagicMaterial> mats;
-	MagicMaterial mat;
+	Set<Material> materials;
+	Material material;
 
 	@Override
 	public boolean setVar(String var) {
 		if (var.contains(",")) {
-			types = new HashSet<>();
-			mats = new ArrayList<>();
+			materials = new HashSet<>();
 			String[] split = var.split(",");
 			for (String s : split) {
-				MagicMaterial mat = MagicSpells.getItemNameResolver().resolveBlock(s);
+				Material mat = Material.getMaterial(s.toUpperCase());
 				if (mat == null) return false;
-				types.add(mat.getMaterial());
-				mats.add(mat);
+				if (!mat.isBlock()) return false;
+				materials.add(mat);
 			}
 			return true;
 		}
-		mat = MagicSpells.getItemNameResolver().resolveBlock(var);
-		return mat != null;
+
+		material = Material.getMaterial(var.toUpperCase());
+		if (material == null) return false;
+		if (!material.isBlock()) return false;
+		return true;
 	}
 
 	@Override
@@ -47,12 +44,13 @@ public class OnBlockCondition extends Condition {
 	@Override
 	public boolean check(Player player, LivingEntity target) {
 		Block block = target.getLocation().subtract(0, 1, 0).getBlock();
-		if (mat != null) return mat.equals(block);
-		if (types.contains(block.getType())) {
-			for (MagicMaterial m : mats) {
-				if (m.equals(block)) return true;
-			}
+		if (material != null) return material.equals(block.getType());
+		if (!materials.contains(block.getType())) return false;
+
+		for (Material mat : materials) {
+			if (mat.equals(block.getType())) return true;
 		}
+
 		return false;
 	}
 	

@@ -25,22 +25,21 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 public class StunSpell extends TargetedSpell implements TargetedEntitySpell {
 	
 	private Map<UUID, StunnedInfo> stunnedLivingEntities;
-	
-	private int duration;
-	private int interval;
-	
+
 	private int taskId = -1;
+	private int interval;
+	private int duration;
+
 	private Listener listener;
 	
 	public StunSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		duration = (int) ((getConfigInt("duration", 200) / 20) * TimeUtil.MILLISECONDS_PER_SECOND);
 		interval = getConfigInt("interval", 5);
-		
+		duration = (int) ((getConfigInt("duration", 200) / 20) * TimeUtil.MILLISECONDS_PER_SECOND);
+
 		listener = new StunListener();
 		stunnedLivingEntities = new HashMap<>();
-		
 	}
 	
 	@Override
@@ -56,16 +55,13 @@ public class StunSpell extends TargetedSpell implements TargetedEntitySpell {
 		if (state == SpellCastState.NORMAL) {
 			TargetInfo<LivingEntity> targetInfo = getTargetedEntity(player, power);
 			if (targetInfo == null) return noTarget(player);
-			
 			LivingEntity target = targetInfo.getTarget();
 			power = targetInfo.getPower();
 			
 			stunLivingEntity(player, target, Math.round(duration * power));
 			sendMessages(player, target);
-			
 			return PostCastAction.NO_MESSAGES;
 		}
-		
 		return PostCastAction.HANDLE_NORMALLY;
 	}
 	

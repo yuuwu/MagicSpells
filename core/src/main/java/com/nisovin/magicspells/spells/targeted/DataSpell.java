@@ -1,37 +1,38 @@
 package com.nisovin.magicspells.spells.targeted;
 
-import com.nisovin.magicspells.MagicSpells;
-import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.TargetInfo;
-import com.nisovin.magicspells.util.data.DataEntity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-
 import java.util.function.Function;
 
-public class DataSpell extends TargetedSpell {
-	
-	
+import org.bukkit.entity.Player;
+import org.bukkit.entity.LivingEntity;
+
+import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.util.TargetInfo;
+import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.data.DataEntity;
+import com.nisovin.magicspells.spells.TargetedSpell;
+import com.nisovin.magicspells.spells.TargetedEntitySpell;
+
+public class DataSpell extends TargetedSpell implements TargetedEntitySpell {
+
 	private String variableName;
 	private Function<? super LivingEntity, String> dataElement;
 	
 	public DataSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		this.variableName = getConfigString("variable-name", null);
-		this.dataElement = DataEntity.getDataFunction(getConfigString("data-element", "uuid"));
-		
+		variableName = getConfigString("variable-name", "");
+		dataElement = DataEntity.getDataFunction(getConfigString("data-element", "uuid"));
 	}
 	
 	@Override
 	public void initialize() {
-		if (variableName == null) {
-			MagicSpells.error("variable-name is null for DataSpell");
+		if (variableName.isEmpty() || MagicSpells.getVariableManager().getVariable(variableName) == null) {
+			MagicSpells.error("DataSpell '" + internalName + "' has an invalid variable-name defined!");
 			return;
 		}
-		
-		if (dataElement == null) MagicSpells.error("Invalid option defined for data-element");
+
+		if (dataElement == null) MagicSpells.error("DataSpell '" + internalName + "' has an invalid option defined for data-element!");
+
 	}
 	
 	@Override
@@ -41,13 +42,25 @@ public class DataSpell extends TargetedSpell {
 			if (targetInfo == null) return noTarget(player);
 			LivingEntity target = targetInfo.getTarget();
 			if (target == null) return noTarget(player);
-			
+
+			playSpellEffects(player, target);
 			String value = dataElement.apply(target);
 			MagicSpells.getVariableManager().set(variableName, player, value);
-			
-			playSpellEffects(player, target);
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}
-	
+
+	@Override
+	public boolean castAtEntity(Player caster, LivingEntity target, float power) {
+		playSpellEffects(caster, target);
+		String value = dataElement.apply(target);
+		MagicSpells.getVariableManager().set(variableName, caster, value);
+		return true;
+	}
+
+	@Override
+	public boolean castAtEntity(LivingEntity target, float power) {
+		return false;
+	}
+
 }

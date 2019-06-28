@@ -16,42 +16,51 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.LivingEntity;
 
 import com.nisovin.magicspells.Subspell;
-import com.nisovin.magicspells.util.Util;
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.util.BlockUtils;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 
 public class NovaSpell extends TargetedSpell implements TargetedLocationSpell, TargetedEntitySpell {
-	
-	MagicMaterial material;
-	Vector relativeOffset;
-	Subspell spellOnEnd;
-	Subspell locationSpell;
-	Subspell spellOnWaveRemove;
-	String spellOnEndName;
-	String locationSpellName;
-	String spellOnWaveRemoveName;
-	
-	int radius;
-	int startRadius;
-	int heightPerTick;
-	int novaTickInterval;
-	int expandingRadiusChange;
-	
-	double visibleRange;
-	
-	boolean pointBlank;
-	boolean circleShape;
-	boolean removePreviousBlocks;
+
+	private Material material;
+	private String materialName;
+
+	private Vector relativeOffset;
+
+	private Subspell spellOnEnd;
+	private Subspell locationSpell;
+	private Subspell spellOnWaveRemove;
+	private String spellOnEndName;
+	private String locationSpellName;
+	private String spellOnWaveRemoveName;
+
+	private int radius;
+	private int startRadius;
+	private int heightPerTick;
+	private int novaTickInterval;
+	private int expandingRadiusChange;
+
+	private double visibleRange;
+
+	private boolean pointBlank;
+	private boolean circleShape;
+	private boolean removePreviousBlocks;
 	
 	public NovaSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
+
+		materialName = getConfigString("type", "water").toUpperCase();
+		material = Material.getMaterial(materialName);
+		if (material == null || !material.isBlock()) {
+			MagicSpells.error("NovaSpell '" + internalName + "' has an invalid block type defined!");
+			material = null;
+		}
 		
-		material = MagicSpells.getItemNameResolver().resolveBlock(getConfigString("type", "water"));
 		relativeOffset = getConfigVector("relative-offset", "0,0,0");
+
 		spellOnEndName = getConfigString("spell-on-end", "");
 		locationSpellName = getConfigString("spell", "");
 		spellOnWaveRemoveName = getConfigString("spell-on-wave-remove", "");
@@ -64,6 +73,7 @@ public class NovaSpell extends TargetedSpell implements TargetedLocationSpell, T
 		if (expandingRadiusChange < 1) expandingRadiusChange = 1;
 		
 		visibleRange = Math.max(getConfigDouble("visible-range", 20), 20);
+
 		pointBlank = getConfigBoolean("point-blank", true);
 		circleShape = getConfigBoolean("circle-shape", false);
 		removePreviousBlocks = getConfigBoolean("remove-previous-blocks", true);
@@ -91,23 +101,17 @@ public class NovaSpell extends TargetedSpell implements TargetedLocationSpell, T
 			if (!spellOnEndName.isEmpty()) MagicSpells.error("NovaSpell " + internalName + " has an invalid spell-on-end defined!");
 			spellOnEnd = null;
 		}
-		
-		if (material == null) {
-			MagicSpells.error("NovaSpell " + internalName + " has an invalid block type defined!");
-		}
 	}
 	
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState spellCastState, float power, String[] strings) {
 		if (spellCastState == SpellCastState.NORMAL) {
-			
 			Location loc;
 			if (pointBlank) loc = player.getLocation();
 			else loc = getTargetedBlock(player, power).getLocation();
 			
 			createNova(player, loc, power);
 		}
-		
 		return PostCastAction.HANDLE_NORMALLY;
 	}
 	
@@ -133,7 +137,7 @@ public class NovaSpell extends TargetedSpell implements TargetedLocationSpell, T
 		return false;
 	}
 	
-	void createNova(Player pl, Location loc, float power) {
+	private void createNova(Player pl, Location loc, float power) {
 		if (material == null) return;
 		// Relative offset
 		Location startLoc = loc.clone();
@@ -158,19 +162,19 @@ public class NovaSpell extends TargetedSpell implements TargetedLocationSpell, T
 	
 	private class NovaTrackerSquare implements Runnable {
 		
-		MagicMaterial matNova;
-		List<Player> nearby;
-		Set<Block> blocks;
-		Player caster;
-		Block center;
-		float power;
-		int radiusNova;
-		int radiusChange;
-		int taskId;
-		int count;
-		int temp;
-		
-		public NovaTrackerSquare(List<Player> nearby, Block center, MagicMaterial mat, Player caster, int radius, int tickInterval, int activeRadiusChange, float power) {
+		private Material matNova;
+		private List<Player> nearby;
+		private Set<Block> blocks;
+		private Player caster;
+		private Block center;
+		private float power;
+		private int radiusNova;
+		private int radiusChange;
+		private int taskId;
+		private int count;
+		private int temp;
+
+		private NovaTrackerSquare(List<Player> nearby, Block center, Material mat, Player caster, int radius, int tickInterval, int activeRadiusChange, float power) {
 			this.nearby = nearby;
 			this.center = center;
 			this.matNova = mat;
@@ -194,7 +198,7 @@ public class NovaSpell extends TargetedSpell implements TargetedLocationSpell, T
 			
 			if (removePreviousBlocks) {
 				for (Block b : blocks) {
-					for (Player p : nearby) Util.restoreFakeBlockChange(p, b);
+					for (Player p : nearby) p.sendBlockChange(b.getLocation(), b.getBlockData());
 					if (spellOnWaveRemove != null) spellOnWaveRemove.castAtLocation(caster, b.getLocation().add(0.5, 0, 0.5),  power);
 				}
 				blocks.clear();
@@ -217,27 +221,27 @@ public class NovaSpell extends TargetedSpell implements TargetedLocationSpell, T
 					if (Math.abs(x - bx) != temp && Math.abs(z - bz) != temp) continue;
 					
 					Block b = center.getWorld().getBlockAt(x, y, z);
-					if (b.getType() == Material.AIR || b.getType() == Material.LEGACY_LONG_GRASS) {
+					if (BlockUtils.isAir(b.getType()) || b.getType() == Material.TALL_GRASS) {
 						Block under = b.getRelative(BlockFace.DOWN);
-						if (under.getType() == Material.AIR || under.getType() == Material.LEGACY_LONG_GRASS) b = under;
-					} else if (b.getRelative(BlockFace.UP).getType() == Material.AIR || b.getRelative(BlockFace.UP).getType() == Material.LEGACY_LONG_GRASS) {
+						if (BlockUtils.isAir(under.getType()) || under.getType() == Material.TALL_GRASS) b = under;
+					} else if (BlockUtils.isAir(b.getRelative(BlockFace.UP).getType()) || b.getRelative(BlockFace.UP).getType() == Material.TALL_GRASS) {
 						b = b.getRelative(BlockFace.UP);
 					}
 					
-					if (b.getType() != Material.AIR && b.getType() != Material.LEGACY_LONG_GRASS) continue;
+					if (!BlockUtils.isAir(b.getType()) && b.getType() != Material.TALL_GRASS) continue;
 					
 					if (blocks.contains(b)) continue;
-					for (Player p : nearby) Util.sendFakeBlockChange(p, b, matNova);
+					for (Player p : nearby) p.sendBlockChange(b.getLocation(), matNova.createBlockData());
 					blocks.add(b);
 					if (locationSpell != null) locationSpell.castAtLocation(caster, b.getLocation().add(0.5, 0, 0.5),  power);
 				}
 			}
 			
 		}
-		
-		public void stop() {
+
+		private void stop() {
 			for (Block b : blocks) {
-				for (Player p : nearby) Util.restoreFakeBlockChange(p, b);
+				for (Player p : nearby) p.sendBlockChange(b.getLocation(), b.getBlockData());
 				if (spellOnEnd != null) spellOnEnd.castAtLocation(caster, b.getLocation().add(0.5, 0, 0.5),  power);
 			}
 			blocks.clear();
@@ -247,20 +251,20 @@ public class NovaSpell extends TargetedSpell implements TargetedLocationSpell, T
 	}
 	
 	private class NovaTrackerCircle implements Runnable {
-		
-		MagicMaterial matNova;
-		List<Player> nearby;
-		Set<Block> blocks;
-		Player caster;
-		Block center;
-		float power;
-		int radiusNova;
-		int radiusChange;
-		int taskId;
-		int count;
-		int temp;
-		
-		public NovaTrackerCircle(List<Player> nearby, Block center, MagicMaterial mat, Player caster, int radius, int tickInterval, int activeRadiusChange, float power) {
+
+		private Material matNova;
+		private List<Player> nearby;
+		private Set<Block> blocks;
+		private Player caster;
+		private Block center;
+		private float power;
+		private int radiusNova;
+		private int radiusChange;
+		private int taskId;
+		private int count;
+		private int temp;
+
+		private NovaTrackerCircle(List<Player> nearby, Block center, Material mat, Player caster, int radius, int tickInterval, int activeRadiusChange, float power) {
 			this.nearby = nearby;
 			this.center = center;
 			this.matNova = mat;
@@ -285,7 +289,7 @@ public class NovaSpell extends TargetedSpell implements TargetedLocationSpell, T
 			// Remove old blocks
 			if (removePreviousBlocks) {
 				for (Block b : blocks) {
-					for (Player p : nearby) Util.restoreFakeBlockChange(p, b);
+					for (Player p : nearby) p.sendBlockChange(b.getLocation(), b.getBlockData());
 					if (spellOnWaveRemove != null) spellOnWaveRemove.castAtLocation(caster, b.getLocation().add(0.5, 0, 0.5),  power);
 				}
 				blocks.clear();
@@ -306,17 +310,17 @@ public class NovaSpell extends TargetedSpell implements TargetedLocationSpell, T
 			if (startRadius == 0 && temp == 0) {
 				b = centerLocation.getWorld().getBlockAt(centerLocation);
 				
-				if (b.getType() == Material.AIR || b.getType() == Material.LEGACY_LONG_GRASS) {
+				if (BlockUtils.isAir(b.getType()) || b.getType() == Material.TALL_GRASS) {
 					Block under = b.getRelative(BlockFace.DOWN);
-					if (under.getType() == Material.AIR || under.getType() == Material.LEGACY_LONG_GRASS) b = under;
-				} else if (b.getRelative(BlockFace.UP).getType() == Material.AIR || b.getRelative(BlockFace.UP).getType() == Material.LEGACY_LONG_GRASS) {
+					if (BlockUtils.isAir(under.getType()) || under.getType() == Material.TALL_GRASS) b = under;
+				} else if (BlockUtils.isAir(b.getRelative(BlockFace.UP).getType()) || b.getRelative(BlockFace.UP).getType() == Material.TALL_GRASS) {
 					b = b.getRelative(BlockFace.UP);
 				}
 				
-				if (b.getType() != Material.AIR && b.getType() != Material.LEGACY_LONG_GRASS) return;
+				if (!BlockUtils.isAir(b.getType()) && b.getType() != Material.TALL_GRASS) return;
 				
 				if (blocks.contains(b)) return;
-				for (Player p : nearby) Util.sendFakeBlockChange(p, b, matNova);
+				for (Player p : nearby) p.sendBlockChange(b.getLocation(), matNova.createBlockData());
 				blocks.add(b);
 				if (locationSpell != null) locationSpell.castAtLocation(caster, b.getLocation().add(0.5, 0, 0.5),  power);
 			}
@@ -334,26 +338,26 @@ public class NovaSpell extends TargetedSpell implements TargetedLocationSpell, T
 				b = center.getWorld().getBlockAt(centerLocation.add(v));
 				centerLocation.subtract(v);
 				
-				if (b.getType() == Material.AIR || b.getType() == Material.LEGACY_LONG_GRASS) {
+				if (BlockUtils.isAir(b.getType()) || b.getType() == Material.TALL_GRASS) {
 					Block under = b.getRelative(BlockFace.DOWN);
-					if (under.getType() == Material.AIR || under.getType() == Material.LEGACY_LONG_GRASS) b = under;
-				} else if (b.getRelative(BlockFace.UP).getType() == Material.AIR || b.getRelative(BlockFace.UP).getType() == Material.LEGACY_LONG_GRASS) {
+					if (BlockUtils.isAir(under.getType()) || under.getType() == Material.TALL_GRASS) b = under;
+				} else if (BlockUtils.isAir(b.getRelative(BlockFace.UP).getType()) || b.getRelative(BlockFace.UP).getType() == Material.TALL_GRASS) {
 					b = b.getRelative(BlockFace.UP);
 				}
 				
-				if (b.getType() != Material.AIR && b.getType() != Material.LEGACY_LONG_GRASS) continue;
+				if (!BlockUtils.isAir(b.getType()) && b.getType() != Material.TALL_GRASS) continue;
 				
 				if (blocks.contains(b)) continue;
-				for (Player p : nearby) Util.sendFakeBlockChange(p, b, matNova);
+				for (Player p : nearby) p.sendBlockChange(b.getLocation(), matNova.createBlockData());
 				blocks.add(b);
 				if (locationSpell != null) locationSpell.castAtLocation(caster, b.getLocation().add(0.5, 0, 0.5),  power);
 			}
 			
 		}
-		
-		public void stop() {
+
+		private void stop() {
 			for (Block b : blocks) {
-				for (Player p : nearby) Util.restoreFakeBlockChange(p, b);
+				for (Player p : nearby) p.sendBlockChange(b.getLocation(), b.getBlockData());
 				if (spellOnEnd != null) spellOnEnd.castAtLocation(caster, b.getLocation().add(0.5, 0, 0.5),  power);
 			}
 			blocks.clear();

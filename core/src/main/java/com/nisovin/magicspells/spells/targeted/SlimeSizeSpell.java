@@ -1,18 +1,20 @@
 package com.nisovin.magicspells.spells.targeted;
 
-import com.nisovin.magicspells.spells.TargetedEntitySpell;
-import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.TargetInfo;
-import com.nisovin.magicspells.util.Util;
-import com.nisovin.magicspells.util.VariableMod;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.LivingEntity;
+
+import com.nisovin.magicspells.util.Util;
+import com.nisovin.magicspells.util.TargetInfo;
+import com.nisovin.magicspells.util.VariableMod;
+import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.spells.TargetedSpell;
+import com.nisovin.magicspells.spells.TargetedEntitySpell;
 
 public class SlimeSizeSpell extends TargetedSpell implements TargetedEntitySpell {
 	
 	private VariableMod variableMod;
+
 	private int minSize;
 	private int maxSize;
 	
@@ -24,13 +26,9 @@ public class SlimeSizeSpell extends TargetedSpell implements TargetedEntitySpell
 		variableMod = new VariableMod(getConfigString("size", "=5"));
 		
 		minSize = getConfigInt("min-size", 0);
-		
-		// Just a little safety check
-		if (minSize < 0) minSize = 0;
-		
 		maxSize = getConfigInt("max-size", 20);
-		
-		// Little sanity check
+
+		if (minSize < 0) minSize = 0;
 		if (maxSize < minSize) maxSize = minSize;
 	}
 	
@@ -39,34 +37,37 @@ public class SlimeSizeSpell extends TargetedSpell implements TargetedEntitySpell
 		if (state == SpellCastState.NORMAL) {
 			TargetInfo<LivingEntity> targetInfo = getTargetedEntity(player, power);
 			if (targetInfo == null) return noTarget(player);
+
 			LivingEntity targetEntity = targetInfo.getTarget();
-			if (!(targetEntity instanceof Slime)) return noTarget(player);
-			Slime slime = (Slime) targetEntity;
-			double rawOutputValue = variableMod.getValue(player, null, slime.getSize());
-			int finalSize = Util.clampValue(minSize, maxSize, (int)rawOutputValue);
-			slime.setSize(finalSize);
+			setSize(player, targetEntity);
 		}
 		return PostCastAction.HANDLE_NORMALLY;
+	}
+
+	@Override
+	public boolean castAtEntity(Player caster, LivingEntity target, float power) {
+		setSize(caster, target);
+		return true;
+	}
+
+	@Override
+	public boolean castAtEntity(LivingEntity target, float power) {
+		setSize(null, target);
+		return true;
 	}
 	
 	@Override
 	public ValidTargetChecker getValidTargetChecker() {
 		return isSlimeChecker;
 	}
-	
-	@Override
-	public boolean castAtEntity(Player caster, LivingEntity target, float power) {
-		if (!(target instanceof Slime)) return false;
+
+	private void setSize(Player caster, LivingEntity target) {
+		if (!(target instanceof Slime)) return;
+
 		Slime slime = (Slime) target;
 		double rawOutputValue = variableMod.getValue(caster, null, slime.getSize());
-		int finalSize = Util.clampValue(minSize, maxSize, (int)rawOutputValue);
+		int finalSize = Util.clampValue(minSize, maxSize, (int) rawOutputValue);
 		slime.setSize(finalSize);
-		return true;
 	}
-	
-	@Override
-	public boolean castAtEntity(LivingEntity target, float power) {
-		return castAtEntity(null, target, power);
-	}
-	
+
 }

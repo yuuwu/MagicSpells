@@ -1,67 +1,85 @@
 package com.nisovin.magicspells.spells.targeted;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.List;
+import java.util.HashMap;
+import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Subspell;
-import com.nisovin.magicspells.events.SpellTargetEvent;
-import com.nisovin.magicspells.materials.MagicMaterial;
-import com.nisovin.magicspells.spelleffects.EffectPosition;
-import com.nisovin.magicspells.spells.TargetedLocationSpell;
+import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.util.BlockUtils;
+import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.compat.EventUtil;
-import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.events.SpellTargetEvent;
+import com.nisovin.magicspells.spelleffects.EffectPosition;
+import com.nisovin.magicspells.spells.TargetedLocationSpell;
 
 public class CarpetSpell extends TargetedSpell implements TargetedLocationSpell {
 
-	int radius;
-	MagicMaterial block;
-	int duration;
-	boolean circle;
-	
-	int touchCheckInterval;
-	boolean removeOnTouch;
-	Subspell spellOnTouch;
-	
-	Map<Block, Player> blockMap;
-	TouchChecker checker;
+	private Map<Block, Player> blocks;
+
+	private Material material;
+	private String materialName;
+
+	private int radius;
+	private int duration;
+	private int touchCheckInterval;
+
+	private boolean circle;
+	private boolean removeOnTouch;
+
+	private String spellOnTouchName;
+	private Subspell spellOnTouch;
+
+	private TouchChecker checker;
 	
 	public CarpetSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
-		
-		radius = getConfigInt("radius", 1);
-		block = MagicSpells.getItemNameResolver().resolveBlock(getConfigString("block", "carpet:0"));
-		duration = getConfigInt("duration", 0);
-		circle = getConfigBoolean("circle", false);
-		if (configKeyExists("spell-on-touch")) {
-			touchCheckInterval = getConfigInt("touch-check-interval", 3);
-			removeOnTouch = getConfigBoolean("remove-on-touch", true);
-			spellOnTouch = new Subspell(getConfigString("spell-on-touch", ""));
-			blockMap = new HashMap<>();
-			checker = new TouchChecker();
+
+		materialName = getConfigString("block", "white_carpet").toUpperCase();
+		material = Material.getMaterial(materialName);
+		if (material == null || !material.isBlock()) {
+			MagicSpells.error("CarpetSpell '" + internalName + "' has an invalid block defined!");
+			material = null;
 		}
+
+		radius = getConfigInt("radius", 1);
+		duration = getConfigInt("duration", 0);
+		touchCheckInterval = getConfigInt("touch-check-interval", 3);
+
+		circle = getConfigBoolean("circle", false);
+		removeOnTouch = getConfigBoolean("remove-on-touch", true);
+
+		spellOnTouchName = getConfigString("spell-on-touch", "");
+
+		blocks = new HashMap<>();
 	}
 	
 	@Override
 	public void initialize() {
 		super.initialize();
-		if (spellOnTouch != null && !spellOnTouch.process()) {
-			MagicSpells.error("Invalid spell-on-touch for " + internalName);
+
+		spellOnTouch = new Subspell(spellOnTouchName);
+		if (!spellOnTouch.process() || !spellOnTouch.isTargetedEntitySpell()) {
+			MagicSpells.error("CarpetSpell '" + internalName + "' has an invalid spell-on-touch defined!");
+			spellOnTouch = null;
 		}
+
+		if (spellOnTouch != null) checker = new TouchChecker();
 	}
 	
 	@Override
 	public void turnOff() {
-		if (blockMap != null) blockMap.clear();
+		super.turnOff();
+
+		blocks.clear();
 		if (checker != null) checker.stop();
 	}
 
@@ -69,19 +87,33 @@ public class CarpetSpell extends TargetedSpell implements TargetedLocationSpell 
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			Location loc = null;
-			if (targetSelf) {
-				loc = player.getLocation();
-			} else {
+			if (targetSelf) loc = player.getLocation();
+			else {
 				Block b = getTargetedBlock(player, power);
 				if (b != null && b.getType() != Material.AIR) loc = b.getLocation();
 			}
+
 			if (loc == null) return noTarget(player);
+
 			layCarpet(player, loc, power);
 		}
 		return PostCastAction.ALREADY_HANDLED;
 	}
+
+	@Override
+	public boolean castAtLocation(Player caster, Location target, float power) {
+		if (targetSelf) layCarpet(caster, caster.getLocation(), power);
+		else layCarpet(caster, target, power);
+		return true;
+	}
+
+	@Override
+	public boolean castAtLocation(Location target, float power) {
+		layCarpet(null, target, power);
+		return true;
+	}
 	
-	void layCarpet(Player player, Location loc, float power) {
+	private void layCarpet(Player player, Location loc, float power) {
 		if (!loc.getBlock().getType().isOccluding()) {
 			int c = 0;
 			while (!loc.getBlock().getRelative(0, -1, 0).getType().isOccluding() && c <= 2) {
@@ -95,93 +127,74 @@ public class CarpetSpell extends TargetedSpell implements TargetedLocationSpell 
 				c++;
 			}
 		}
-		int rad = Math.round(radius * power);
+
 		Block b;
 		int y = loc.getBlockY();
-		final List<Block> blocks = new ArrayList<>();
+		int rad = Math.round(radius * power);
+
+		final List<Block> blockList = new ArrayList<>();
 		for (int x = loc.getBlockX() - rad; x <= loc.getBlockX() + rad; x++) {
 			for (int z = loc.getBlockZ() - rad; z <= loc.getBlockZ() + rad; z++) {
 				b = loc.getWorld().getBlockAt(x, y, z);
-				if (circle) {
-					if (loc.getBlock().getLocation().distanceSquared(b.getLocation()) > radius * radius) continue;
-				}
-				if (b.getType().isOccluding()) {
-					b = b.getRelative(0, 1, 0);
-				} else if (!b.getRelative(0, -1, 0).getType().isOccluding()) {
-					b = b.getRelative(0, -1, 0);
-				}
-				if (b.getType() == Material.AIR && b.getRelative(0, -1, 0).getType().isSolid()) {
-					block.setBlock(b, false);
-					blocks.add(b);
-					if (blockMap != null) blockMap.put(b, player);
-					playSpellEffects(EffectPosition.TARGET, b.getLocation().add(0.5, 0, 0.5));
-				}
+				if (circle && loc.getBlock().getLocation().distanceSquared(b.getLocation()) > radius * radius) continue;
+
+				if (b.getType().isOccluding()) b = b.getRelative(0, 1, 0);
+				else if (!b.getRelative(0, -1, 0).getType().isOccluding()) b = b.getRelative(0, -1, 0);
+
+				if (!BlockUtils.isAir(b.getType()) && !b.getRelative(0, -1, 0).getType().isSolid()) continue;
+
+				b.setType(material, false);
+				blockList.add(b);
+				blocks.put(b, player);
+				playSpellEffects(EffectPosition.TARGET, b.getLocation().add(0.5, 0, 0.5));
 			}
 		}
-		if (duration > 0 && !blocks.isEmpty()) {
-			MagicSpells.scheduleDelayedTask(new Runnable() {
-				
-				@Override
-				public void run() {
-					for (Block b : blocks) {
-						if (!block.equals(b)) continue;
-						b.setType(Material.AIR);
-						if (blockMap != null) blockMap.remove(b);
-					}
+
+		if (duration > 0 && !blockList.isEmpty()) {
+			MagicSpells.scheduleDelayedTask(() -> {
+				for (Block b1 : blockList) {
+					if (!material.equals(b1.getType())) continue;
+					b1.setType(Material.AIR);
+					if (blocks != null) blocks.remove(b1);
 				}
-				
 			}, duration);
 		}
 		if (player != null) playSpellEffects(EffectPosition.CASTER, player);
 	}
-
-	@Override
-	public boolean castAtLocation(Player caster, Location target, float power) {
-		if (targetSelf) {
-			layCarpet(caster, caster.getLocation(), power);
-		} else {
-			layCarpet(caster, target, power);
-		}
-		return true;
-	}
-
-	@Override
-	public boolean castAtLocation(Location target, float power) {
-		layCarpet(null, target, power);
-		return true;
-	}
 	
-	class TouchChecker implements Runnable {
+	private class TouchChecker implements Runnable {
 		
 		int taskId;
 		
-		public TouchChecker() {
+		private TouchChecker() {
 			taskId = MagicSpells.scheduleRepeatingTask(this, touchCheckInterval, touchCheckInterval);
 		}
 		
 		@Override
 		public void run() {
-			if (blockMap.isEmpty()) return;
+			if (blocks.isEmpty()) return;
 			for (Player player : Bukkit.getOnlinePlayers()) {
+
 				Block b = player.getLocation().getBlock();
-				Player caster = blockMap.get(b);
+				Player caster = blocks.get(b);
+
 				if (caster == null) continue;
-				if (!block.equals(b)) continue;
-				if (player == caster) continue;
+				if (player.equals(caster)) continue;
+				if (!material.equals(b.getType())) continue;
 				
 				SpellTargetEvent event = new SpellTargetEvent(spellOnTouch.getSpell(), caster, player, 1F);
 				EventUtil.call(event);
-				if (!event.isCancelled()) {
-					boolean casted = spellOnTouch.castAtEntity(caster, player, event.getPower());
-					if (casted && removeOnTouch) {
-						b.setType(Material.AIR);
-						blockMap.remove(b);
-					}
-				}
+				if (event.isCancelled()) continue;
+
+				if (spellOnTouch != null) spellOnTouch.castAtEntity(caster, player, event.getPower());
+				if (!removeOnTouch) continue;
+
+				b.setType(Material.AIR);
+				blocks.remove(b);
 			}
 		}
 		
-		public void stop() {
+		private void stop() {
 			MagicSpells.cancelTask(taskId);
 		}
 		
