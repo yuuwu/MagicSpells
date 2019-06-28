@@ -25,54 +25,54 @@ public class MagicBondSpell extends TargetedSpell implements TargetedEntitySpell
 
 	private Map<Player, Player> bondTarget;
 
-    private int duration;
+	private int duration;
 
-    private String strDurationEnd;
+	private String strDurationEnd;
 
-    private SpellFilter filter;
+	private SpellFilter filter;
 
-    public MagicBondSpell(MagicConfig config, String spellName){
-        super(config, spellName);
+	public MagicBondSpell(MagicConfig config, String spellName){
+		super(config, spellName);
 
-        duration = getConfigInt("duration", 200);
+		duration = getConfigInt("duration", 200);
 
-        strDurationEnd = getConfigString("str-duration", "");
+		strDurationEnd = getConfigString("str-duration", "");
 
-        List<String> spells = getConfigStringList("spells", null);
-        List<String> deniedSpells = getConfigStringList("denied-spells", null);
-        List<String> tagList = getConfigStringList("spell-tags", null);
-        List<String> deniedTagList = getConfigStringList("denied-spell-tags", null);
-        filter = new SpellFilter(spells, deniedSpells, tagList, deniedTagList);
+		List<String> spells = getConfigStringList("spells", null);
+		List<String> deniedSpells = getConfigStringList("denied-spells", null);
+		List<String> tagList = getConfigStringList("spell-tags", null);
+		List<String> deniedTagList = getConfigStringList("denied-spell-tags", null);
+		filter = new SpellFilter(spells, deniedSpells, tagList, deniedTagList);
 
-        bondTarget = new HashMap<>();
-    }
+		bondTarget = new HashMap<>();
+	}
 
-    @Override
-    public PostCastAction castSpell(final Player player, SpellCastState state, float power, String[] args) {
-        if (state == SpellCastState.NORMAL) {
-            TargetInfo<Player> target = getTargetedPlayer(player, power);
-            if (target == null) return noTarget(player);
+	@Override
+	public PostCastAction castSpell(final Player player, SpellCastState state, float power, String[] args) {
+		if (state == SpellCastState.NORMAL) {
+			TargetInfo<Player> target = getTargetedPlayer(player, power);
+			if (target == null) return noTarget(player);
 
-            bond(player, target.getTarget(), power);
-        }
-        return PostCastAction.HANDLE_NORMALLY;
-    }
+			bond(player, target.getTarget(), power);
+		}
+		return PostCastAction.HANDLE_NORMALLY;
+	}
 
-    @Override
-    public boolean castAtEntity(Player caster, LivingEntity target, float power) {
-    	if (!(target instanceof Player)) return false;
-    	bond(caster, (Player) target, power);
-        playSpellEffects(caster, target);
-        return true;
-    }
+	@Override
+	public boolean castAtEntity(Player caster, LivingEntity target, float power) {
+		if (!(target instanceof Player)) return false;
+		bond(caster, (Player) target, power);
+		playSpellEffects(caster, target);
+		return true;
+	}
 
-    @Override
-    public boolean castAtEntity(LivingEntity target, float power) {
-        playSpellEffects(EffectPosition.TARGET, target);
-        return true;
-    }
+	@Override
+	public boolean castAtEntity(LivingEntity target, float power) {
+		playSpellEffects(EffectPosition.TARGET, target);
+		return true;
+	}
 
-    private void bond(Player caster, Player target, float power) {
+	private void bond(Player caster, Player target, float power) {
 		bondTarget.put(caster, target);
 		playSpellEffects(caster, target);
 		SpellMonitor monitorBond = new SpellMonitor(caster, target, power);
@@ -88,50 +88,50 @@ public class MagicBondSpell extends TargetedSpell implements TargetedEntitySpell
 			HandlerList.unregisterAll(monitorBond);
 		}, duration);
 	}
-    
-    private class SpellMonitor implements Listener {
 
-        private Player caster;
-        private Player target;
-        private float power;
-        
-        private SpellMonitor(Player caster, Player target, float power) {
-            this.caster = caster;
-            this.target = bondTarget.get(caster);
-            this.power = power;
-        }
+	private class SpellMonitor implements Listener {
 
-        @EventHandler
-        public void onPlayerLeave(PlayerQuitEvent e){
-            if (bondTarget.containsKey(e.getPlayer()) || bondTarget.containsValue(e.getPlayer())){
-                bondTarget.remove(caster);
-            }
-        }
+		private Player caster;
+		private Player target;
+		private float power;
 
-        @EventHandler
-        public void onPlayerSpellCast(SpellCastEvent e) {
-        	Spell spell = e.getSpell();
-            if (e.getCaster() != caster || spell instanceof MagicBondSpell) return;
-            if (spell.onCooldown(caster)) return;
-            if (!bondTarget.containsKey(caster) && !bondTarget.containsValue(target)) return;
-            if (target.isDead()) return;
-            if (!filter.check(spell)) return;
+		private SpellMonitor(Player caster, Player target, float power) {
+			this.caster = caster;
+			this.target = bondTarget.get(caster);
+			this.power = power;
+		}
 
-            spell.cast(target);
+		@EventHandler
+		public void onPlayerLeave(PlayerQuitEvent e){
+			if (bondTarget.containsKey(e.getPlayer()) || bondTarget.containsValue(e.getPlayer())){
+				bondTarget.remove(caster);
+			}
+		}
 
-        }
-        
-        @Override
-        public boolean equals(Object other) {
-            if (other == null) return false;
-            if (!getClass().getName().equals(other.getClass().getName())) return false;
-            SpellMonitor otherMonitor = (SpellMonitor)other;
-            if (otherMonitor.caster != caster) return false;
-            if (otherMonitor.target != target) return false;
-            if (otherMonitor.power != power) return false;
-            return true;
-        }
+		@EventHandler
+		public void onPlayerSpellCast(SpellCastEvent e) {
+			Spell spell = e.getSpell();
+			if (e.getCaster() != caster || spell instanceof MagicBondSpell) return;
+			if (spell.onCooldown(caster)) return;
+			if (!bondTarget.containsKey(caster) && !bondTarget.containsValue(target)) return;
+			if (target.isDead()) return;
+			if (!filter.check(spell)) return;
 
-    }
-    
+			spell.cast(target);
+
+		}
+
+		@Override
+		public boolean equals(Object other) {
+			if (other == null) return false;
+			if (!getClass().getName().equals(other.getClass().getName())) return false;
+			SpellMonitor otherMonitor = (SpellMonitor)other;
+			if (otherMonitor.caster != caster) return false;
+			if (otherMonitor.target != target) return false;
+			if (otherMonitor.power != power) return false;
+			return true;
+		}
+
+	}
+
 }

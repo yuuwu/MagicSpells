@@ -36,53 +36,53 @@ import com.nisovin.magicspells.events.SpellTargetLocationEvent;
 
 public class TotemSpell extends TargetedSpell implements TargetedLocationSpell {
 
-    private Set<Totem> totems;
-    private PulserTicker ticker;
+	private Set<Totem> totems;
+	private PulserTicker ticker;
 
-    private int yOffset;
-    private int interval;
+	private int yOffset;
+	private int interval;
 	private int totalPulses;
-    private int capPerPlayer;
+	private int capPerPlayer;
 
-    private double maxDistanceSquared;
+	private double maxDistanceSquared;
 
-    private boolean gravity;
-    private boolean visibility;
-    private boolean targetable;
+	private boolean gravity;
+	private boolean visibility;
+	private boolean targetable;
 	private boolean onlyCountOnSuccess;
 
-    private String strAtCap;
-    private String totemName;
+	private String strAtCap;
+	private String totemName;
 
-    private ItemStack helmet;
-    private ItemStack chestplate;
-    private ItemStack leggings;
-    private ItemStack boots;
-    private ItemStack hand;
-    private ItemStack mainHand;
+	private ItemStack helmet;
+	private ItemStack chestplate;
+	private ItemStack leggings;
+	private ItemStack boots;
+	private ItemStack hand;
+	private ItemStack mainHand;
 
-    private List<String> spellNames;
-    private List<TargetedLocationSpell> spells;
+	private List<String> spellNames;
+	private List<TargetedLocationSpell> spells;
 
-    private String spellNameOnBreak;
-    private TargetedLocationSpell spellOnBreak;
+	private String spellNameOnBreak;
+	private TargetedLocationSpell spellOnBreak;
 
-    public TotemSpell(MagicConfig config, String spellName) {
-        super(config, spellName);
+	public TotemSpell(MagicConfig config, String spellName) {
+		super(config, spellName);
 
-        helmet = Util.getItemStackFromString(getConfigString("helmet", "AIR"));
-        chestplate = Util.getItemStackFromString(getConfigString("chestplate", "AIR"));
-        leggings = Util.getItemStackFromString(getConfigString("leggings", "AIR"));
-        boots = Util.getItemStackFromString(getConfigString("boots", "AIR"));
-        hand = Util.getItemStackFromString(getConfigString("hand", "AIR"));
-        mainHand = Util.getItemStackFromString(getConfigString("main-hand", "AIR"));
+		helmet = Util.getItemStackFromString(getConfigString("helmet", "AIR"));
+		chestplate = Util.getItemStackFromString(getConfigString("chestplate", "AIR"));
+		leggings = Util.getItemStackFromString(getConfigString("leggings", "AIR"));
+		boots = Util.getItemStackFromString(getConfigString("boots", "AIR"));
+		hand = Util.getItemStackFromString(getConfigString("hand", "AIR"));
+		mainHand = Util.getItemStackFromString(getConfigString("main-hand", "AIR"));
 
-        if (helmet != null && !BlockUtils.isAir(helmet.getType())) helmet.setAmount(1);
-        if (chestplate != null && !BlockUtils.isAir(chestplate.getType())) chestplate.setAmount(1);
-        if (leggings != null && !BlockUtils.isAir(leggings.getType())) leggings.setAmount(1);
-        if (boots != null && !BlockUtils.isAir(boots.getType())) boots.setAmount(1);
-        if (hand != null && !BlockUtils.isAir(hand.getType())) hand.setAmount(1);
-        if (mainHand != null && !BlockUtils.isAir(mainHand.getType())) mainHand.setAmount(1);
+		if (helmet != null && !BlockUtils.isAir(helmet.getType())) helmet.setAmount(1);
+		if (chestplate != null && !BlockUtils.isAir(chestplate.getType())) chestplate.setAmount(1);
+		if (leggings != null && !BlockUtils.isAir(leggings.getType())) leggings.setAmount(1);
+		if (boots != null && !BlockUtils.isAir(boots.getType())) boots.setAmount(1);
+		if (hand != null && !BlockUtils.isAir(hand.getType())) hand.setAmount(1);
+		if (mainHand != null && !BlockUtils.isAir(mainHand.getType())) mainHand.setAmount(1);
 
 		yOffset = getConfigInt("y-offset", 0);
 		interval = getConfigInt("interval", 30);
@@ -92,7 +92,7 @@ public class TotemSpell extends TargetedSpell implements TargetedLocationSpell {
 		maxDistanceSquared = getConfigDouble("max-distance", 30);
 		maxDistanceSquared *= maxDistanceSquared;
 
-        gravity = getConfigBoolean("gravity", false);
+		gravity = getConfigBoolean("gravity", false);
 		visibility = getConfigBoolean("visible", true);
 		targetable = getConfigBoolean("targetable", true);
 		onlyCountOnSuccess = getConfigBoolean("only-count-on-success", false);
@@ -100,25 +100,25 @@ public class TotemSpell extends TargetedSpell implements TargetedLocationSpell {
 		strAtCap = getConfigString("str-at-cap", "You have too many effects at once.");
 		totemName = getConfigString("totem-name", "");
 
-        spellNames = getConfigStringList("spells", null);
-        spellNameOnBreak = getConfigString("spell-on-break", "");
+		spellNames = getConfigStringList("spells", null);
+		spellNameOnBreak = getConfigString("spell-on-break", "");
 
-        totems = new HashSet<>();
-        ticker = new PulserTicker();
-    }
+		totems = new HashSet<>();
+		ticker = new PulserTicker();
+	}
 
-    @Override
-    public void initialize() {
-        super.initialize();
+	@Override
+	public void initialize() {
+		super.initialize();
 
-        spells = new ArrayList<>();
-        if (spellNames != null && !spellNames.isEmpty()) {
-            for (String spellName : spellNames) {
-                Spell spell = MagicSpells.getSpellByInternalName(spellName);
-                if (!(spell instanceof TargetedLocationSpell)) continue;
-                spells.add((TargetedLocationSpell) spell);
-            }
-        }
+		spells = new ArrayList<>();
+		if (spellNames != null && !spellNames.isEmpty()) {
+			for (String spellName : spellNames) {
+				Spell spell = MagicSpells.getSpellByInternalName(spellName);
+				if (!(spell instanceof TargetedLocationSpell)) continue;
+				spells.add((TargetedLocationSpell) spell);
+			}
+		}
 
 		if (!spellNameOnBreak.isEmpty()) {
 			Spell spell = MagicSpells.getSpellByInternalName(spellNameOnBreak);
@@ -126,55 +126,55 @@ public class TotemSpell extends TargetedSpell implements TargetedLocationSpell {
 			else MagicSpells.error("TotemSpell '" + internalName + "' has an invalid spell-on-break defined");
 		}
 
-        if (spells.isEmpty()) MagicSpells.error("TotemSpell '" + internalName + "' has no spells defined!");
-    }
+		if (spells.isEmpty()) MagicSpells.error("TotemSpell '" + internalName + "' has no spells defined!");
+	}
 
 	@Override
 	public void turnOff() {
-    	for (Totem t : totems) {
-    		t.stop();
+		for (Totem t : totems) {
+			t.stop();
 		}
 
 		totems.clear();
 		ticker.stop();
 	}
 
-    @Override
-    public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
-        if (state == SpellCastState.NORMAL) {
-            if (capPerPlayer > 0) {
-                int count = 0;
-                for (Totem pulser : totems) {
-                    if (!pulser.caster.equals(player)) continue;
+	@Override
+	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
+		if (state == SpellCastState.NORMAL) {
+			if (capPerPlayer > 0) {
+				int count = 0;
+				for (Totem pulser : totems) {
+					if (!pulser.caster.equals(player)) continue;
 
-                    count++;
-                    if (count >= capPerPlayer) {
-                        sendMessage(strAtCap, player, args);
-                        return PostCastAction.ALREADY_HANDLED;
-                    }
-                }
-            }
+					count++;
+					if (count >= capPerPlayer) {
+						sendMessage(strAtCap, player, args);
+						return PostCastAction.ALREADY_HANDLED;
+					}
+				}
+			}
 
-            List<Block> lastTwo = getLastTwoTargetedBlocks(player, power);
-            Block target = null;
+			List<Block> lastTwo = getLastTwoTargetedBlocks(player, power);
+			Block target = null;
 
-            if (lastTwo != null && lastTwo.size() == 2) target = lastTwo.get(0);
-            if (target == null) return noTarget(player);
-            if (yOffset > 0) target = target.getRelative(BlockFace.UP, yOffset);
-            else if (yOffset < 0) target = target.getRelative(BlockFace.DOWN, yOffset);
+			if (lastTwo != null && lastTwo.size() == 2) target = lastTwo.get(0);
+			if (target == null) return noTarget(player);
+			if (yOffset > 0) target = target.getRelative(BlockFace.UP, yOffset);
+			else if (yOffset < 0) target = target.getRelative(BlockFace.DOWN, yOffset);
 			if (!BlockUtils.isAir(target.getType()) && target.getType() != Material.SNOW && target.getType() != Material.TALL_GRASS) return noTarget(player);
 
-            if (target != null) {
-                SpellTargetLocationEvent event = new SpellTargetLocationEvent(this, player, target.getLocation(), power);
-                EventUtil.call(event);
-                if (event.isCancelled()) return noTarget(player);
-                target = event.getTargetLocation().getBlock();
-                power = event.getPower();
-            }
-            createTotem(player, target.getLocation(), power);
-        }
-        return PostCastAction.HANDLE_NORMALLY;
-    }
+			if (target != null) {
+				SpellTargetLocationEvent event = new SpellTargetLocationEvent(this, player, target.getLocation(), power);
+				EventUtil.call(event);
+				if (event.isCancelled()) return noTarget(player);
+				target = event.getTargetLocation().getBlock();
+				power = event.getPower();
+			}
+			createTotem(player, target.getLocation(), power);
+		}
+		return PostCastAction.HANDLE_NORMALLY;
+	}
 
 	@Override
 	public boolean castAtLocation(Player caster, Location target, float power) {
@@ -199,48 +199,48 @@ public class TotemSpell extends TargetedSpell implements TargetedLocationSpell {
 		return castAtLocation(null, target, power);
 	}
 
-    private void createTotem(Player caster, Location loc, float power) {
-        totems.add(new Totem(caster, loc, power));
-        ticker.start();
-        if (caster != null) playSpellEffects(caster, loc);
-        else playSpellEffects(EffectPosition.TARGET, loc);
-    }
+	private void createTotem(Player caster, Location loc, float power) {
+		totems.add(new Totem(caster, loc, power));
+		ticker.start();
+		if (caster != null) playSpellEffects(caster, loc);
+		else playSpellEffects(EffectPosition.TARGET, loc);
+	}
 
-    @EventHandler
-    public void onPlayerDeath(PlayerDeathEvent event) {
-        if (totems.isEmpty()) return;
-        Player player = event.getEntity();
-        Iterator<Totem> iter = totems.iterator();
-        while (iter.hasNext()) {
-            Totem pulser = iter.next();
-            if (pulser.caster == null) continue;
-            if (!pulser.caster.equals(player)) continue;
-            pulser.stop();
-            iter.remove();
-        }
-    }
+	@EventHandler
+	public void onPlayerDeath(PlayerDeathEvent event) {
+		if (totems.isEmpty()) return;
+		Player player = event.getEntity();
+		Iterator<Totem> iter = totems.iterator();
+		while (iter.hasNext()) {
+			Totem pulser = iter.next();
+			if (pulser.caster == null) continue;
+			if (!pulser.caster.equals(player)) continue;
+			pulser.stop();
+			iter.remove();
+		}
+	}
 
-    @EventHandler
-    public void onSpellTarget(SpellTargetEvent e) {
-        LivingEntity target = e.getTarget();
-        if (totems.isEmpty()) return;
-        for (Totem t : totems) {
-            if (target.equals(t.armorStand) && !targetable) e.setCancelled(true);
-            else if (e.getCaster().equals(t.caster) && target.equals(t.armorStand)) e.setCancelled(true);
-        }
-    }
+	@EventHandler
+	public void onSpellTarget(SpellTargetEvent e) {
+		LivingEntity target = e.getTarget();
+		if (totems.isEmpty()) return;
+		for (Totem t : totems) {
+			if (target.equals(t.armorStand) && !targetable) e.setCancelled(true);
+			else if (e.getCaster().equals(t.caster) && target.equals(t.armorStand)) e.setCancelled(true);
+		}
+	}
 
-    @EventHandler
-    public void onArmorStandManipulate(PlayerArmorStandManipulateEvent e) {
-        if (totems.isEmpty()) return;
-        for (Totem t : totems) {
-            if (t.armorStand.equals(e.getRightClicked())) e.setCancelled(true);
-        }
-    }
+	@EventHandler
+	public void onArmorStandManipulate(PlayerArmorStandManipulateEvent e) {
+		if (totems.isEmpty()) return;
+		for (Totem t : totems) {
+			if (t.armorStand.equals(e.getRightClicked())) e.setCancelled(true);
+		}
+	}
 
-    private class Totem {
+	private class Totem {
 
-        private Player caster;
+		private Player caster;
 		private LivingEntity armorStand;
 		private Location totemLocation;
 		private EntityEquipment totemEquipment;
@@ -248,93 +248,93 @@ public class TotemSpell extends TargetedSpell implements TargetedLocationSpell {
 		private float power;
 		private int pulseCount;
 
-        private Totem(Player caster, Location loc, float power) {
-            this.caster = caster;
-            this.power = power;
+		private Totem(Player caster, Location loc, float power) {
+			this.caster = caster;
+			this.power = power;
 
-            pulseCount = 0;
-            loc.setYaw(caster.getLocation().getYaw());
-            armorStand = (LivingEntity) loc.getWorld().spawnEntity(loc, EntityType.ARMOR_STAND);
-            if (!totemName.isEmpty()) {
-                armorStand.setCustomName(ChatColor.translateAlternateColorCodes('&', totemName));
-                armorStand.setCustomNameVisible(true);
-            }
-            totemEquipment = armorStand.getEquipment();
-            armorStand.setGravity(gravity);
-            totemEquipment.setItemInMainHand(mainHand);
-            totemEquipment.setItemInOffHand(hand);
-            totemEquipment.setHelmet(helmet);
-            totemEquipment.setChestplate(chestplate);
-            totemEquipment.setLeggings(leggings);
-            totemEquipment.setBoots(boots);
-            ((ArmorStand) armorStand).setVisible(visibility);
-            armorStand.setInvulnerable(true);
-            totemLocation = armorStand.getLocation();
-        }
+			pulseCount = 0;
+			loc.setYaw(caster.getLocation().getYaw());
+			armorStand = (LivingEntity) loc.getWorld().spawnEntity(loc, EntityType.ARMOR_STAND);
+			if (!totemName.isEmpty()) {
+				armorStand.setCustomName(ChatColor.translateAlternateColorCodes('&', totemName));
+				armorStand.setCustomNameVisible(true);
+			}
+			totemEquipment = armorStand.getEquipment();
+			armorStand.setGravity(gravity);
+			totemEquipment.setItemInMainHand(mainHand);
+			totemEquipment.setItemInOffHand(hand);
+			totemEquipment.setHelmet(helmet);
+			totemEquipment.setChestplate(chestplate);
+			totemEquipment.setLeggings(leggings);
+			totemEquipment.setBoots(boots);
+			((ArmorStand) armorStand).setVisible(visibility);
+			armorStand.setInvulnerable(true);
+			totemLocation = armorStand.getLocation();
+		}
 
-        private boolean pulse() {
-            totemLocation = armorStand.getLocation();
-            if (caster == null) {
-                if (!armorStand.isDead()) return activate();
-                stop();
-                return true;
-            } else if (caster.isValid() && caster.isOnline() && !armorStand.isDead() && totemLocation.getChunk().isLoaded()) {
-                if (maxDistanceSquared > 0 && (!LocationUtil.isSameWorld(totemLocation, caster) || totemLocation.distanceSquared(caster.getLocation()) > maxDistanceSquared)) {
-                    stop();
-                    return true;
-                }
-                return activate();
-            }
-            stop();
-            return true;
-        }
+		private boolean pulse() {
+			totemLocation = armorStand.getLocation();
+			if (caster == null) {
+				if (!armorStand.isDead()) return activate();
+				stop();
+				return true;
+			} else if (caster.isValid() && caster.isOnline() && !armorStand.isDead() && totemLocation.getChunk().isLoaded()) {
+				if (maxDistanceSquared > 0 && (!LocationUtil.isSameWorld(totemLocation, caster) || totemLocation.distanceSquared(caster.getLocation()) > maxDistanceSquared)) {
+					stop();
+					return true;
+				}
+				return activate();
+			}
+			stop();
+			return true;
+		}
 
-        private boolean activate() {
-            boolean activated = false;
-            for (TargetedLocationSpell spell : spells) {
-                if (caster != null) activated = spell.castAtLocation(caster, totemLocation, power) || activated;
-                else activated = spell.castAtLocation(totemLocation, power) || activated;
-            }
+		private boolean activate() {
+			boolean activated = false;
+			for (TargetedLocationSpell spell : spells) {
+				if (caster != null) activated = spell.castAtLocation(caster, totemLocation, power) || activated;
+				else activated = spell.castAtLocation(totemLocation, power) || activated;
+			}
 
-            playSpellEffects(EffectPosition.SPECIAL, totemLocation);
-            if (totalPulses > 0 && (activated || !onlyCountOnSuccess)) {
-                pulseCount += 1;
-                if (pulseCount >= totalPulses) {
-                    stop();
-                    return true;
-                }
-            }
-            return false;
-        }
+			playSpellEffects(EffectPosition.SPECIAL, totemLocation);
+			if (totalPulses > 0 && (activated || !onlyCountOnSuccess)) {
+				pulseCount += 1;
+				if (pulseCount >= totalPulses) {
+					stop();
+					return true;
+				}
+			}
+			return false;
+		}
 
 		private void stop() {
-            if (!totemLocation.getChunk().isLoaded()) totemLocation.getChunk().load();
-            armorStand.remove();
-            playSpellEffects(EffectPosition.DISABLED, totemLocation);
-            if (spellOnBreak != null) {
-                if (caster == null) spellOnBreak.castAtLocation(totemLocation, power);
-                else if (caster.isValid()) spellOnBreak.castAtLocation(caster, totemLocation, power);
-            }
-        }
+			if (!totemLocation.getChunk().isLoaded()) totemLocation.getChunk().load();
+			armorStand.remove();
+			playSpellEffects(EffectPosition.DISABLED, totemLocation);
+			if (spellOnBreak != null) {
+				if (caster == null) spellOnBreak.castAtLocation(totemLocation, power);
+				else if (caster.isValid()) spellOnBreak.castAtLocation(caster, totemLocation, power);
+			}
+		}
 
-    }
+	}
 
 	private class PulserTicker implements Runnable {
 
-        private int taskId = -1;
+		private int taskId = -1;
 
 		private void start() {
-            if (taskId < 0) taskId = MagicSpells.scheduleRepeatingTask(this, 0, interval);
-        }
+			if (taskId < 0) taskId = MagicSpells.scheduleRepeatingTask(this, 0, interval);
+		}
 
-        @Override
-        public void run() {
-            for (Totem p : new HashSet<>(totems)) {
-                boolean remove = p.pulse();
-                if (remove) totems.remove(p);
-            }
-            if (totems.isEmpty()) stop();
-        }
+		@Override
+		public void run() {
+			for (Totem p : new HashSet<>(totems)) {
+				boolean remove = p.pulse();
+				if (remove) totems.remove(p);
+			}
+			if (totems.isEmpty()) stop();
+		}
 
 		private void stop() {
 			if (taskId > 0) {
@@ -343,6 +343,6 @@ public class TotemSpell extends TargetedSpell implements TargetedLocationSpell {
 			}
 		}
 
-    }
+	}
 
 }
