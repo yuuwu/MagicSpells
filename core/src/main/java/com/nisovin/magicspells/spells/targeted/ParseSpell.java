@@ -1,45 +1,46 @@
 package com.nisovin.magicspells.spells.targeted;
 
 import org.bukkit.entity.Player;
+import org.bukkit.entity.LivingEntity;
 
 import com.nisovin.magicspells.MagicSpells;
-import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
+import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.spells.TargetedSpell;
+import com.nisovin.magicspells.spells.TargetedEntitySpell;
+import com.nisovin.magicspells.spelleffects.EffectPosition;
 
-public class ParseSpell extends TargetedSpell {
+public class ParseSpell extends TargetedSpell implements TargetedEntitySpell {
 
-	private String variableToParse;
+	private String parseTo;
 	private String expectedValue;
 	private String parseToVariable;
-	private String parseTo;
+	private String variableToParse;
 
 	public ParseSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 
-		this.variableToParse = getConfigString("variable-to-parse", null);
-		this.expectedValue = getConfigString("expected-value", null);
-		this.parseToVariable = getConfigString("parse-to-variable", null);
-		this.parseTo = getConfigString("parse-to", null);
+		parseTo = getConfigString("parse-to", "");
+		expectedValue = getConfigString("expected-value", "");
+		parseToVariable = getConfigString("parse-to-variable", "");
+		variableToParse = getConfigString("variable-to-parse", "");
 	}
 
 	@Override
 	public void initialize() {
-		// You can do it, I believe in you.
-		if (variableToParse == null) {
+		super.initialize();
+
+		if (variableToParse.isEmpty()) {
 			MagicSpells.error("You must define a variable to parse for ParseSpell");
 			return;
 		}
 
-		if (expectedValue == null) {
+		if (expectedValue.isEmpty()) {
 			MagicSpells.error("You must define an expected variable for ParseSpell");
 			return;
 		}
 
-		if (parseToVariable == null) {
-			MagicSpells.error("You must define a variable to parse to for ParseSpell");
-			return;
-		}
+		if (parseToVariable.isEmpty()) MagicSpells.error("You must define a variable to parse to for ParseSpell");
 	}
 
 	@Override
@@ -50,16 +51,33 @@ public class ParseSpell extends TargetedSpell {
 			Player target = targetInfo.getTarget();
 			if (target == null) return noTarget(player);
 
-			// Change the actual variable to the requested value.
-			String receivedValue = MagicSpells.getVariableManager().getStringValue(variableToParse, target);
-
-			// Do the values match?
-			if (receivedValue.equals(expectedValue)) {
-				MagicSpells.getVariableManager().set(parseToVariable, target, parseTo);
-
-				playSpellEffects(player, target);
-			}
+			parse(target);
+			playSpellEffects(player, target);
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}
+
+	@Override
+	public boolean castAtEntity(Player caster, LivingEntity target, float power) {
+		playSpellEffects(caster, target);
+		parse(target);
+		return true;
+	}
+
+	@Override
+	public boolean castAtEntity(LivingEntity target, float power) {
+		playSpellEffects(EffectPosition.TARGET, target);
+		parse(target);
+		return true;
+	}
+
+	private void parse(LivingEntity target) {
+		if (!(target instanceof Player)) return;
+
+		String receivedValue = MagicSpells.getVariableManager().getStringValue(variableToParse, (Player) target);
+		if (!receivedValue.equalsIgnoreCase(expectedValue)) return;
+
+		MagicSpells.getVariableManager().set(parseToVariable, (Player) target, parseTo);
+	}
+
 }

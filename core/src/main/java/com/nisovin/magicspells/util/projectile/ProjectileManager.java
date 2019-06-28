@@ -1,9 +1,10 @@
 package com.nisovin.magicspells.util.projectile;
 
-import com.nisovin.magicspells.MagicSpells;
+import org.bukkit.util.Vector;
 import org.bukkit.entity.Projectile;
 import org.bukkit.projectiles.ProjectileSource;
-import org.bukkit.util.Vector;
+
+import com.nisovin.magicspells.MagicSpells;
 
 public abstract class ProjectileManager {
 

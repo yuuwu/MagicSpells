@@ -1,12 +1,13 @@
 package com.nisovin.magicspells.spells.targeted;
 
-import com.nisovin.magicspells.spells.TargetedEntitySpell;
-import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.TargetBooleanState;
-import com.nisovin.magicspells.util.TargetInfo;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.LivingEntity;
+
+import com.nisovin.magicspells.util.TargetInfo;
+import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.spells.TargetedSpell;
+import com.nisovin.magicspells.util.TargetBooleanState;
+import com.nisovin.magicspells.spells.TargetedEntitySpell;
 
 public class CollisionSpell extends TargetedSpell implements TargetedEntitySpell {
 	
@@ -15,7 +16,7 @@ public class CollisionSpell extends TargetedSpell implements TargetedEntitySpell
 	public CollisionSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		this.targetBooleanState = TargetBooleanState.getFromName(getConfigString("target-state", "toggle"));
+		targetBooleanState = TargetBooleanState.getFromName(getConfigString("target-state", "toggle"));
 	}
 	
 	@Override
@@ -25,6 +26,7 @@ public class CollisionSpell extends TargetedSpell implements TargetedEntitySpell
 			if (targetInfo == null) return noTarget(player);
 			LivingEntity target = targetInfo.getTarget();
 			if (target == null) return noTarget(player);
+
 			target.setCollidable(targetBooleanState.getBooleanState(target.isCollidable()));
 		}
 		return PostCastAction.HANDLE_NORMALLY;

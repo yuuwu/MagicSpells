@@ -1,44 +1,74 @@
 package com.nisovin.magicspells.spells.targeted;
 
+import java.util.Set;
 import java.util.List;
+import java.util.HashSet;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Subspell;
-import com.nisovin.magicspells.materials.MagicMaterial;
-import com.nisovin.magicspells.spelleffects.EffectPosition;
-import com.nisovin.magicspells.spells.TargetedLocationSpell;
-import com.nisovin.magicspells.spells.TargetedSpell;
+import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.util.BlockUtils;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellAnimation;
+import com.nisovin.magicspells.spells.TargetedSpell;
+import com.nisovin.magicspells.spelleffects.EffectPosition;
+import com.nisovin.magicspells.spells.TargetedLocationSpell;
 
 public class BombSpell extends TargetedSpell implements TargetedLocationSpell {
 
-	MagicMaterial bomb;
-	int fuse;
-	int interval;
-	Subspell spell;
+	private Set<Block> blocks;
+
+	private Material material;
+	private String materialName;
+
+	private int fuse;
+	private int interval;
+
+	private Subspell targetSpell;
+	private String targetSpellName;
 	
 	public BombSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
-		
-		bomb = MagicSpells.getItemNameResolver().resolveBlock(getConfigString("block", "stone"));
+
+		materialName = getConfigString("block", "stone").toUpperCase();
+		material = Material.getMaterial(materialName);
+		if (material == null || !material.isBlock()) {
+			MagicSpells.error("BombSpell '" + internalName + "' has an invalid block defined!");
+			material = null;
+		}
+
 		fuse = getConfigInt("fuse", 100);
 		interval = getConfigInt("interval", 20);
-		spell = new Subspell(getConfigString("spell", ""));
+
+		targetSpellName = getConfigString("spell", "");
+
+		blocks = new HashSet<>();
 	}
 	
 	@Override
 	public void initialize() {
 		super.initialize();
-		if (!spell.process() || !spell.isTargetedLocationSpell()) {
-			spell = null;
-			MagicSpells.error("Invalid spell on BombSpell '" + internalName + '\'');
+
+		targetSpell = new Subspell(targetSpellName);
+		if (!targetSpell.process() || !targetSpell.isTargetedLocationSpell()) {
+			MagicSpells.error("BombSpell '" + internalName + "' has an invalid spell defined!");
+			targetSpell = null;
 		}
+	}
+
+	@Override
+	public void turnOff() {
+		super.turnOff();
+
+		for (Block b : blocks) {
+			b.setType(Material.AIR);
+		}
+
+		blocks.clear();
 	}
 
 	@Override
@@ -47,47 +77,12 @@ public class BombSpell extends TargetedSpell implements TargetedLocationSpell {
 			List<Block> blocks = getLastTwoTargetedBlocks(player, power);
 			if (blocks.size() != 2) return noTarget(player);
 			if (!blocks.get(1).getType().isSolid()) return noTarget(player);
+
 			Block target = blocks.get(0);
 			boolean ok = bomb(player, target.getLocation(), power);
 			if (!ok) return noTarget(player);
 		}
 		return PostCastAction.HANDLE_NORMALLY;
-	}
-	
-	private boolean bomb(final Player player, final Location loc, final float power) {
-		final Block block = loc.getBlock();
-		if (block.getType() == Material.AIR || block.getType() == Material.LEGACY_LONG_GRASS || block.getType() == Material.SNOW) {
-			bomb.setBlock(block);
-			if (player != null) {
-				playSpellEffects(player, loc);
-			} else {
-				playSpellEffects(EffectPosition.TARGET, loc);
-			}
-			new SpellAnimation(interval, interval, true) {
-				
-				int time = 0;
-				Location l = block.getLocation().add(0.5, 0.5, 0.5);
-				@Override
-				protected void onTick(int tick) {
-					time += interval;
-					if (time >= fuse) {
-						stop();
-						if (bomb.equals(block)) {
-							block.setType(Material.AIR);
-							playSpellEffects(EffectPosition.DELAYED, l);
-							spell.castAtLocation(player, l, power);
-						}						
-					} else if (!bomb.equals(block)) {
-						stop();
-					} else {
-						playSpellEffects(EffectPosition.SPECIAL, l);
-					}
-				}
-				
-			};
-			return true;
-		}
-		return false;
 	}
 
 	@Override
@@ -98,6 +93,40 @@ public class BombSpell extends TargetedSpell implements TargetedLocationSpell {
 	@Override
 	public boolean castAtLocation(Location target, float power) {
 		return bomb(null, target, power);
+	}
+
+	private boolean bomb(Player player, Location loc, float power) {
+		if (material == null) return false;
+		Block block = loc.getBlock();
+		if (!BlockUtils.isAir(block.getType())) return false;
+
+		blocks.add(block);
+		block.setType(material);
+		if (player != null) playSpellEffects(player, loc);
+		else playSpellEffects(EffectPosition.TARGET, loc);
+
+		new SpellAnimation(interval, interval, true) {
+				
+			int time = 0;
+			Location l = block.getLocation().add(0.5, 0, 0.5);
+			@Override
+			protected void onTick(int tick) {
+				time += interval;
+				if (time >= fuse) {
+					stop();
+					if (material.equals(block.getType())) {
+						blocks.remove(block);
+						block.setType(Material.AIR);
+						playSpellEffects(EffectPosition.DELAYED, l);
+						if (targetSpell != null) targetSpell.castAtLocation(player, l, power);
+					}
+				} else if (!material.equals(block.getType())) stop();
+				else playSpellEffects(EffectPosition.SPECIAL, l);
+			}
+				
+		};
+
+		return true;
 	}
 
 }

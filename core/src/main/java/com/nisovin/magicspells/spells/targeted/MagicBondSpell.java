@@ -1,45 +1,50 @@
 package com.nisovin.magicspells.spells.targeted;
 
-import com.nisovin.magicspells.MagicSpells;
-import com.nisovin.magicspells.events.SpellCastEvent;
-import com.nisovin.magicspells.spelleffects.EffectPosition;
-import com.nisovin.magicspells.spells.TargetedEntitySpell;
-import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.SpellFilter;
-import com.nisovin.magicspells.util.TargetInfo;
-import org.bukkit.entity.LivingEntity;
+import java.util.Map;
+import java.util.List;
+import java.util.HashMap;
+
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.EventHandler;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.nisovin.magicspells.Spell;
+import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.util.TargetInfo;
+import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.SpellFilter;
+import com.nisovin.magicspells.spells.TargetedSpell;
+import com.nisovin.magicspells.events.SpellCastEvent;
+import com.nisovin.magicspells.spells.TargetedEntitySpell;
+import com.nisovin.magicspells.spelleffects.EffectPosition;
 
-/**
- * 
- * @author ChronoKeeper
- *
- */
 public class MagicBondSpell extends TargetedSpell implements TargetedEntitySpell {
 
+	private Map<Player, Player> bondTarget;
+
     private int duration;
+
     private String strDurationEnd;
-    private Map<Player, Player> bondTarget = new HashMap<>();
+
     private SpellFilter filter;
 
     public MagicBondSpell(MagicConfig config, String spellName){
         super(config, spellName);
+
         duration = getConfigInt("duration", 200);
-        strDurationEnd = getConfigString("str-duration", null);
+
+        strDurationEnd = getConfigString("str-duration", "");
+
         List<String> spells = getConfigStringList("spells", null);
         List<String> deniedSpells = getConfigStringList("denied-spells", null);
         List<String> tagList = getConfigStringList("spell-tags", null);
         List<String> deniedTagList = getConfigStringList("denied-spell-tags", null);
         filter = new SpellFilter(spells, deniedSpells, tagList, deniedTagList);
+
+        bondTarget = new HashMap<>();
     }
 
     @Override
@@ -48,32 +53,15 @@ public class MagicBondSpell extends TargetedSpell implements TargetedEntitySpell
             TargetInfo<Player> target = getTargetedPlayer(player, power);
             if (target == null) return noTarget(player);
 
-            final Player targetedPlayer = target.getTarget();
-            playSpellEffects(player, targetedPlayer);
-            bondTarget.put(player, targetedPlayer);
-            final SpellMonitor monitorBond = new SpellMonitor(player, targetedPlayer, power);
-            MagicSpells.registerEvents(monitorBond);
-            
-            MagicSpells.scheduleDelayedTask(new Runnable() {
-                @Override
-                public void run() {
-                    if (strDurationEnd != null && !strDurationEnd.isEmpty()) {
-                        MagicSpells.sendMessage(player, strDurationEnd);
-                        MagicSpells.sendMessage(targetedPlayer, strDurationEnd);
-                    }
-                    bondTarget.remove(player);
-                    
-                    HandlerList.unregisterAll(monitorBond);
-                }
-            }, duration);
-
+            bond(player, target.getTarget(), power);
         }
         return PostCastAction.HANDLE_NORMALLY;
     }
 
-
     @Override
     public boolean castAtEntity(Player caster, LivingEntity target, float power) {
+    	if (!(target instanceof Player)) return false;
+    	bond(caster, (Player) target, power);
         playSpellEffects(caster, target);
         return true;
     }
@@ -83,14 +71,31 @@ public class MagicBondSpell extends TargetedSpell implements TargetedEntitySpell
         playSpellEffects(EffectPosition.TARGET, target);
         return true;
     }
-    
-    class SpellMonitor implements Listener {
 
-        Player caster;
-        Player target;
-        float power;
+    private void bond(Player caster, Player target, float power) {
+		bondTarget.put(caster, target);
+		playSpellEffects(caster, target);
+		SpellMonitor monitorBond = new SpellMonitor(caster, target, power);
+		MagicSpells.registerEvents(monitorBond);
+
+		MagicSpells.scheduleDelayedTask(() -> {
+			if (!strDurationEnd.isEmpty()) {
+				MagicSpells.sendMessage(caster, strDurationEnd);
+				MagicSpells.sendMessage(target, strDurationEnd);
+			}
+			bondTarget.remove(caster);
+
+			HandlerList.unregisterAll(monitorBond);
+		}, duration);
+	}
+    
+    private class SpellMonitor implements Listener {
+
+        private Player caster;
+        private Player target;
+        private float power;
         
-        public SpellMonitor(Player caster, Player target, float power) {
+        private SpellMonitor(Player caster, Player target, float power) {
             this.caster = caster;
             this.target = bondTarget.get(caster);
             this.power = power;
@@ -105,10 +110,15 @@ public class MagicBondSpell extends TargetedSpell implements TargetedEntitySpell
 
         @EventHandler
         public void onPlayerSpellCast(SpellCastEvent e) {
-            if (e.getCaster() != caster || e.getSpell() instanceof MagicBondSpell) return;
-            if (!e.getSpell().onCooldown(caster) && bondTarget.containsKey(caster) && bondTarget.containsValue(target) && !target.isDead() && filter.check(e.getSpell())) {
-                e.getSpell().cast(target);
-            }
+        	Spell spell = e.getSpell();
+            if (e.getCaster() != caster || spell instanceof MagicBondSpell) return;
+            if (spell.onCooldown(caster)) return;
+            if (!bondTarget.containsKey(caster) && !bondTarget.containsValue(target)) return;
+            if (target.isDead()) return;
+            if (!filter.check(spell)) return;
+
+            spell.cast(target);
+
         }
         
         @Override

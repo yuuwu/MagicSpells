@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import com.nisovin.magicspells.spells.targeted.DisguiseSpell;
 
 public interface IDisguiseManager {
-	
+
 	void registerSpell(DisguiseSpell spell);
 	void unregisterSpell(DisguiseSpell spell);
 	int registeredSpellsCount();
@@ -16,5 +16,5 @@ public interface IDisguiseManager {
 	boolean isDisguised(Player player);
 	DisguiseSpell.Disguise getDisguise(Player player);
 	void destroy();
-	
+
 }

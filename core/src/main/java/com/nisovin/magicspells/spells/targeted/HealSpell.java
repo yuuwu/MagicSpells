@@ -1,33 +1,39 @@
 package com.nisovin.magicspells.spells.targeted;
 
-import com.nisovin.magicspells.util.Util;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 
-import com.nisovin.magicspells.events.MagicSpellsEntityRegainHealthEvent;
-import com.nisovin.magicspells.spelleffects.EffectPosition;
-import com.nisovin.magicspells.spells.TargetedEntitySpell;
+import com.nisovin.magicspells.util.Util;
+import com.nisovin.magicspells.util.TargetInfo;
+import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.compat.EventUtil;
-import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.TargetInfo;
+import com.nisovin.magicspells.spells.TargetedEntitySpell;
+import com.nisovin.magicspells.spelleffects.EffectPosition;
+import com.nisovin.magicspells.events.MagicSpellsEntityRegainHealthEvent;
 
 public class HealSpell extends TargetedSpell implements TargetedEntitySpell {
 	
 	private double healAmount;
-	private boolean cancelIfFull;
+
 	private boolean checkPlugins;
+	private boolean cancelIfFull;
+
 	private String strMaxHealth;
+
 	private ValidTargetChecker checker;
 
 	public HealSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
 		healAmount = getConfigFloat("heal-amount", 10);
-		cancelIfFull = getConfigBoolean("cancel-if-full", true);
-		strMaxHealth = getConfigString("str-max-health", "%t is already at max health.");
+
 		checkPlugins = getConfigBoolean("check-plugins", true);
+		cancelIfFull = getConfigBoolean("cancel-if-full", true);
+
+		strMaxHealth = getConfigString("str-max-health", "%t is already at max health.");
+
 		checker = (LivingEntity entity) -> entity.getHealth() < Util.getMaxHealth(entity);
 	}
 
@@ -41,32 +47,10 @@ public class HealSpell extends TargetedSpell implements TargetedEntitySpell {
 			if (cancelIfFull && target.getHealth() == Util.getMaxHealth(target)) return noTarget(player, formatMessage(strMaxHealth, "%t", getTargetName(target)));
 			boolean healed = heal(player, target, power);
 			if (!healed) return noTarget(player);
-			sendMessages(player, target);				
+			sendMessages(player, target);
 			return PostCastAction.NO_MESSAGES;
 		}
 		return PostCastAction.HANDLE_NORMALLY;
-	}
-	
-	private boolean heal(Player player, LivingEntity target, float power) {
-		double health = target.getHealth();
-		double amt = healAmount * power;
-		if (checkPlugins) {
-			MagicSpellsEntityRegainHealthEvent evt = new MagicSpellsEntityRegainHealthEvent(target, amt, RegainReason.CUSTOM);
-			EventUtil.call(evt);
-			if (evt.isCancelled()) return false;
-			amt = evt.getAmount();
-		}
-		health += amt;
-		if (health > Util.getMaxHealth(target)) health = Util.getMaxHealth(target);
-		target.setHealth(health);
-
-		playSpellEffects(EffectPosition.TARGET, target);
-		if (player != null) {
-			playSpellEffects(EffectPosition.CASTER, player);
-			playSpellEffectsTrail(player.getLocation(), target.getLocation());			
-		}
-		
-		return true;
 	}
 
 	@Override
@@ -80,15 +64,30 @@ public class HealSpell extends TargetedSpell implements TargetedEntitySpell {
 		if (validTargetList.canTarget(target) && target.getHealth() < Util.getMaxHealth(target)) return heal(null, target, power);
 		return false;
 	}
-	
-	@Override
-	public boolean isBeneficialDefault() {
-		return true;
-	}
-	
+
 	@Override
 	public ValidTargetChecker getValidTargetChecker() {
 		return checker;
+	}
+	
+	private boolean heal(Player player, LivingEntity target, float power) {
+		double health = target.getHealth();
+		double amt = healAmount * power;
+
+		if (checkPlugins) {
+			MagicSpellsEntityRegainHealthEvent evt = new MagicSpellsEntityRegainHealthEvent(target, amt, RegainReason.CUSTOM);
+			EventUtil.call(evt);
+			if (evt.isCancelled()) return false;
+			amt = evt.getAmount();
+		}
+
+		health += amt;
+		if (health > Util.getMaxHealth(target)) health = Util.getMaxHealth(target);
+		target.setHealth(health);
+
+		if (player == null) playSpellEffects(EffectPosition.TARGET, target);
+		else playSpellEffects(player, target);
+		return true;
 	}
 
 }

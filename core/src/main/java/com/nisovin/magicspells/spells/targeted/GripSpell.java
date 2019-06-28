@@ -15,34 +15,36 @@ import com.nisovin.magicspells.spells.TargetedEntityFromLocationSpell;
 
 public class GripSpell extends TargetedSpell implements TargetedEntitySpell, TargetedEntityFromLocationSpell {
 
-	float locationOffset;
-	float yOffset;
-	Vector relativeOffset;
-	String strCantGrip;
+	private float yOffset;
+	private float locationOffset;
+
+	private Vector relativeOffset;
+
+	private String strCantGrip;
 
 	public GripSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 
 		yOffset = getConfigFloat("y-offset", 0);
 		locationOffset = getConfigFloat("location-offset", 0);
+
 		relativeOffset = getConfigVector("relative-offset", "0,0.5,0");
+
+		strCantGrip = getConfigString("str-cant-grip", "");
 
 		if (locationOffset != 0) relativeOffset.setX(locationOffset);
 		if (yOffset != 0) relativeOffset.setY(yOffset);
-
-		strCantGrip = getConfigString("str-cant-grip", "");
 	}
 
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
-
 			TargetInfo<LivingEntity> target = getTargetedEntity(player, power);
 			if (target == null) return noTarget(player);
 			if (!grip(player.getLocation(), target.getTarget())) return noTarget(player, strCantGrip);
+
 			sendMessages(player, target.getTarget());
 			return PostCastAction.NO_MESSAGES;
-
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}
@@ -60,7 +62,8 @@ public class GripSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 
 	@Override
 	public boolean castAtEntityFromLocation(Player caster, Location from, LivingEntity target, float power) {
-		return castAtEntityFromLocation(from, target, power);
+		if (!validTargetList.canTarget(caster, target)) return false;
+		return grip(from, target);
 	}
 
 	@Override

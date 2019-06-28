@@ -7,6 +7,8 @@ import java.lang.reflect.Field;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.data.AnaloguePowerable;
+import org.bukkit.block.data.Powerable;
 import org.bukkit.util.Vector;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -71,22 +73,22 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 
 	@Override
 	public void toggleLeverOrButton(Block block) {
-		if (block.getType() == Material.STONE_BUTTON || BlockUtils.isWoodButton(block.getType())) {
-			BlockState state = block.getState();
-			Button button = (Button) state.getData();
-			button.setPowered(true);
-			state.update();
-		} else if (block.getType() == Material.LEVER) {
-			BlockState state = block.getState();
-			Lever lever = (Lever) state.getData();
-			lever.setPowered(!lever.isPowered());
-			state.update();
-		}
+		Powerable powerable = ((Powerable) block.getBlockData());
+		powerable.setPowered(true);
+		block.setBlockData(powerable, true);
 	}
 
 	@Override
 	public void pressPressurePlate(Block block) {
-		//block.setData((byte) (block.getData() ^ 0x1));
+		if (block.getType() == Material.HEAVY_WEIGHTED_PRESSURE_PLATE || block.getType() == Material.LIGHT_WEIGHTED_PRESSURE_PLATE) {
+			AnaloguePowerable powerable = ((AnaloguePowerable) block.getBlockData());
+			powerable.setPower(powerable.getMaximumPower());
+			block.setBlockData(powerable, true);
+			return;
+		}
+		Powerable powerable = ((Powerable) block.getBlockData());
+		powerable.setPowered(true);
+		block.setBlockData(powerable, true);
 	}
 
 	@Override

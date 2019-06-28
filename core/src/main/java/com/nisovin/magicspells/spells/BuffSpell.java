@@ -43,32 +43,33 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 
 	protected ValidTargetList targetList;
 
-	protected boolean targeted;
-	protected boolean toggle;
-
-	protected SpellReagents reagents;
-	protected int useCostInterval;
-	protected int numUses;
 	protected float duration;
 
-	protected boolean powerAffectsDuration;
-	protected boolean cancelOnChangeWorld;
-	protected boolean cancelOnGiveDamage;
-	protected boolean cancelOnTakeDamage;
-	protected boolean cancelOnSpellCast;
-	protected boolean cancelOnTeleport;
-	protected boolean cancelOnLogout;
-	protected boolean cancelOnDeath;
-	protected boolean cancelOnJoin;
-	protected String strFade;
+	protected int numUses;
+	protected int useCostInterval;
 
-	protected SpellFilter filter;
+	protected SpellReagents reagents;
+
+	protected boolean toggle;
+	protected boolean targeted;
 	protected boolean castWithItem;
 	protected boolean castByCommand;
+	protected boolean cancelOnJoin;
+	protected boolean cancelOnDeath;
+	protected boolean cancelOnLogout;
+	protected boolean cancelOnTeleport;
+	protected boolean cancelOnSpellCast;
+	protected boolean cancelOnTakeDamage;
+	protected boolean cancelOnGiveDamage;
+	protected boolean cancelOnChangeWorld;
+	protected boolean powerAffectsDuration;
 
+	protected String strFade;
 	protected String spellOnEndName;
 	protected String spellOnCostName;
 	protected String spellOnUseIncrementName;
+
+	protected SpellFilter filter;
 
 	protected Subspell spellOnEnd;
 	protected Subspell spellOnCost;
@@ -80,30 +81,33 @@ public abstract class BuffSpell extends TargetedSpell implements TargetedEntityS
 		thisSpell = this;
 
 		targetList = new ValidTargetList(this, getConfigStringList("can-target", null));
-		// add players by default
 		targetList.enforce(ValidTargetList.TargetingElement.TARGET_PLAYERS, true);
 
-		targeted = getConfigBoolean("targeted", false);
-		toggle = getConfigBoolean("toggle", true);
-		reagents = getConfigReagents("use-cost");
-		useCostInterval = getConfigInt("use-cost-interval", 0);
-		numUses = getConfigInt("num-uses", 0);
 		duration = getConfigFloat("duration", 0);
-		powerAffectsDuration = getConfigBoolean("power-affects-duration", true);
-		cancelOnGiveDamage = getConfigBoolean("cancel-on-give-damage", false);
-		cancelOnTakeDamage = getConfigBoolean("cancel-on-take-damage", false);
-		cancelOnDeath = getConfigBoolean("cancel-on-death", false);
-		cancelOnTeleport = getConfigBoolean("cancel-on-teleport", false);
-		cancelOnChangeWorld = getConfigBoolean("cancel-on-change-world", false);
-		cancelOnSpellCast = getConfigBoolean("cancel-on-spell-cast", false);
-		cancelOnLogout = getConfigBoolean("cancel-on-logout", false);
-		cancelOnJoin = getConfigBoolean("cancel-on-join", false);
-		spellOnUseIncrementName = getConfigString("spell-on-use-increment", "");
-		spellOnCostName = getConfigString("spell-on-cost", "");
-		spellOnEndName = getConfigString("spell-on-end", "");
-		strFade = getConfigString("str-fade", "");
+
+		numUses = getConfigInt("num-uses", 0);
+		useCostInterval = getConfigInt("use-cost-interval", 0);
+
+		reagents = getConfigReagents("use-cost");
+
+		toggle = getConfigBoolean("toggle", true);
+		targeted = getConfigBoolean("targeted", false);
 		castWithItem = getConfigBoolean("can-cast-with-item", true);
 		castByCommand = getConfigBoolean("can-cast-by-command", true);
+		cancelOnJoin = getConfigBoolean("cancel-on-join", false);
+		cancelOnDeath = getConfigBoolean("cancel-on-death", false);
+		cancelOnLogout = getConfigBoolean("cancel-on-logout", false);
+		cancelOnTeleport = getConfigBoolean("cancel-on-teleport", false);
+		cancelOnSpellCast = getConfigBoolean("cancel-on-spell-cast", false);
+		cancelOnTakeDamage = getConfigBoolean("cancel-on-take-damage", false);
+		cancelOnGiveDamage = getConfigBoolean("cancel-on-give-damage", false);
+		cancelOnChangeWorld = getConfigBoolean("cancel-on-change-world", false);
+		powerAffectsDuration = getConfigBoolean("power-affects-duration", true);
+
+		strFade = getConfigString("str-fade", "");
+		spellOnEndName = getConfigString("spell-on-end", "");
+		spellOnCostName = getConfigString("spell-on-cost", "");
+		spellOnUseIncrementName = getConfigString("spell-on-use-increment", "");
 
 		List<String> spells = getConfigStringList("spells", null);
 		List<String> deniedSpells = getConfigStringList("denied-spells", null);

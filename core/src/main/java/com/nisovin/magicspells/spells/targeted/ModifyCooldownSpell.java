@@ -1,31 +1,32 @@
 package com.nisovin.magicspells.spells.targeted;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.LivingEntity;
 
-import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spell;
-import com.nisovin.magicspells.spelleffects.EffectPosition;
-import com.nisovin.magicspells.spells.TargetedEntitySpell;
-import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.util.TargetInfo;
+import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.spells.TargetedSpell;
+import com.nisovin.magicspells.spells.TargetedEntitySpell;
+import com.nisovin.magicspells.spelleffects.EffectPosition;
 
 public class ModifyCooldownSpell extends TargetedSpell implements TargetedEntitySpell {
 
-	List<Spell> spells;
-	List<String> spellNames;
+	private List<Spell> spells;
+	private List<String> spellNames;
 	
-	float seconds;
-	float multiplier;
+	private float seconds;
+	private float multiplier;
 	
 	public ModifyCooldownSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
 		spellNames = getConfigStringList("spells", null);
+
 		seconds = getConfigFloat("seconds", 1F);
 		multiplier = getConfigFloat("multiplier", 0F);
 	}
@@ -33,17 +34,20 @@ public class ModifyCooldownSpell extends TargetedSpell implements TargetedEntity
 	@Override
 	public void initialize() {
 		spells = new ArrayList<>();
-		if (spellNames != null) {
-			for (String spellName : spellNames) {
-				Spell spell = MagicSpells.getSpellByInternalName(spellName);
-				if (spell != null) {
-					spells.add(spell);
-				} else {
-					MagicSpells.error("Invalid spell '" + spellName + "' on ModifyCooldownSpell + '" + internalName + '\'');
-				}
-			}
+
+		if (spellNames == null) {
+			MagicSpells.error("ModifyCooldownSpell '" + internalName + "' has no spells defined!");
+			return;
 		}
-		if (spells.isEmpty()) MagicSpells.error("ModifyCooldownSpell '" + internalName + "' has no spells!");
+
+		for (String spellName : spellNames) {
+			Spell spell = MagicSpells.getSpellByInternalName(spellName);
+			if (spell == null) {
+				MagicSpells.error("ModifyCooldownSpell '" + internalName + "' has an invalid spellToCast defined '" + spellName + '\'');
+				continue;
+			}
+			spells.add(spell);
+		}
 	}
 
 	@Override
@@ -55,40 +59,36 @@ public class ModifyCooldownSpell extends TargetedSpell implements TargetedEntity
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}
-	
-	void modifyCooldowns(Player player, float power) {
-		float sec = seconds * power;
-		float mult = multiplier * (1F / power);
-		
-		for (Spell spell : spells) {
-			float cd = spell.getCooldown(player);
-			if (cd > 0) {
-				cd -= sec;
-				if (mult > 0) cd *= mult;
-				if (cd < 0) cd = 0;
-				spell.setCooldown(player, cd, false);
-			}
-		}
-	}
 
 	@Override
 	public boolean castAtEntity(Player caster, LivingEntity target, float power) {
-		if (target instanceof Player) {
-			modifyCooldowns((Player)target, power);
-			playSpellEffects(caster, target);
-			return true;
-		}
-		return false;
+		if (!(target instanceof Player)) return false;
+		modifyCooldowns((Player)target, power);
+		playSpellEffects(caster, target);
+		return true;
 	}
 
 	@Override
 	public boolean castAtEntity(LivingEntity target, float power) {
-		if (target instanceof Player) {
-			modifyCooldowns((Player)target, power);
-			playSpellEffects(EffectPosition.TARGET, target);
-			return true;
+		if (!(target instanceof Player)) return false;
+		modifyCooldowns((Player)target, power);
+		playSpellEffects(EffectPosition.TARGET, target);
+		return true;
+	}
+
+	private void modifyCooldowns(Player player, float power) {
+		float sec = seconds * power;
+		float mult = multiplier * (1F / power);
+
+		for (Spell spell : spells) {
+			float cd = spell.getCooldown(player);
+			if (cd <= 0) continue;
+
+			cd -= sec;
+			if (mult > 0) cd *= mult;
+			if (cd < 0) cd = 0;
+			spell.setCooldown(player, cd, false);
 		}
-		return false;
 	}
 
 }

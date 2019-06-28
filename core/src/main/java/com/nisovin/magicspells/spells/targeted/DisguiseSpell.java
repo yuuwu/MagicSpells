@@ -1,91 +1,96 @@
 package com.nisovin.magicspells.spells.targeted;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.HashMap;
+import java.io.FileReader;
+import java.io.BufferedReader;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import com.nisovin.magicspells.MagicSpells;
-import com.nisovin.magicspells.events.SpellCastedEvent;
-import com.nisovin.magicspells.spelleffects.EffectPosition;
-import com.nisovin.magicspells.spells.TargetedEntitySpell;
-import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.util.EntityData;
-import com.nisovin.magicspells.util.IDisguiseManager;
-import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.PlayerNameUtils;
 import com.nisovin.magicspells.util.TargetInfo;
+import com.nisovin.magicspells.util.EntityData;
+import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.spells.TargetedSpell;
+import com.nisovin.magicspells.util.IDisguiseManager;
+import com.nisovin.magicspells.events.SpellCastedEvent;
+import com.nisovin.magicspells.spells.TargetedEntitySpell;
+import com.nisovin.magicspells.spelleffects.EffectPosition;
 
 public class DisguiseSpell extends TargetedSpell implements TargetedEntitySpell {
 
-	static IDisguiseManager manager;
+	private static IDisguiseManager manager;
 
 	private DisguiseSpell thisSpell;
+
+	private Map<UUID, Disguise> disguised = new HashMap<>();
+
 	private EntityData entityData;
-	private boolean showPlayerName = false;
-	private String nameplateText = "";
+
+	private int duration;
+
 	private String uuid = "";
 	private String skin = "";
 	private String skinSig = "";
-	private boolean alwaysShowNameplate = true;
-	private boolean preventPickups = false;
-	private boolean friendlyMobs = true;
-	private boolean ridingBoat = false;
-	private boolean undisguiseOnDeath = true;
-	private boolean undisguiseOnLogout = false;
-	private boolean undisguiseOnCast = false;
-	boolean undisguiseOnGiveDamage = false;
-	boolean undisguiseOnTakeDamage = false;
-	private boolean disguiseSelf = false;
-	private int duration;
-	private boolean toggle;
 	private String strFade;
-	
-	Map<String, Disguise> disguised = new HashMap<>();
-	
+	private String nameplateText;
+
+	private boolean toggle;
+	private boolean ridingBoat;
+	private boolean disguiseSelf;
+	private boolean friendlyMobs;
+	private boolean showPlayerName;
+	private boolean preventPickups;
+	private boolean undisguiseOnCast;
+	private boolean undisguiseOnDeath;
+	private boolean undisguiseOnLogout;
+	private boolean alwaysShowNameplate;
+	private boolean undisguiseOnGiveDamage;
+	private boolean undisguiseOnTakeDamage;
+
 	public DisguiseSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		thisSpell = this;
-		
+
 		if (manager == null) {
 			try {
-				// TODO non volatile
 				manager = MagicSpells.getVolatileCodeHandler().getDisguiseManager(config);
 			} catch (Exception e) {
 				manager = null;
 			}
+
 			if (manager == null) {
 				MagicSpells.error("DisguiseManager could not be created!");
 				return;
 			}
 		}
 		manager.registerSpell(this);
-		
+
 		String type = getConfigString("entity-type", "zombie");
 		entityData = new EntityData(type);
-		showPlayerName = getConfigBoolean("show-player-name", false);
-		nameplateText = ChatColor.translateAlternateColorCodes('&', getConfigString("nameplate-text", ""));
+
+		duration = getConfigInt("duration", 0);
+
 		uuid = getConfigString("uuid", "");
+		strFade = getConfigString("str-fade", "");
+		nameplateText = ChatColor.translateAlternateColorCodes('&', getConfigString("nameplate-text", ""));
 		if (configKeyExists("skin")) {
 			String skinName = getConfigString("skin", "skin");
 			File folder = new File(MagicSpells.getInstance().getDataFolder(), "disguiseskins");
@@ -108,24 +113,23 @@ public class DisguiseSpell extends TargetedSpell implements TargetedEntitySpell 
 				}
 			}
 		}
-		alwaysShowNameplate = getConfigBoolean("always-show-nameplate", true);
-		preventPickups = getConfigBoolean("prevent-pickups", true);
-		friendlyMobs = getConfigBoolean("friendly-mobs", true);
+
+		toggle = getConfigBoolean("toggle", false);
 		ridingBoat = getConfigBoolean("riding-boat", false);
+		disguiseSelf = getConfigBoolean("disguise-self", false);
+		friendlyMobs = getConfigBoolean("friendly-mobs", true);
+		showPlayerName = getConfigBoolean("show-player-name", false);
+		preventPickups = getConfigBoolean("prevent-pickups", true);
+		undisguiseOnCast = getConfigBoolean("undisguise-on-cast", false);
 		undisguiseOnDeath = getConfigBoolean("undisguise-on-death", true);
 		undisguiseOnLogout = getConfigBoolean("undisguise-on-logout", false);
-		undisguiseOnCast = getConfigBoolean("undisguise-on-cast", false);
+		alwaysShowNameplate = getConfigBoolean("always-show-nameplate", true);
 		undisguiseOnGiveDamage = getConfigBoolean("undisguise-on-give-damage", false);
 		undisguiseOnTakeDamage = getConfigBoolean("undisguise-on-take-damage", false);
-		disguiseSelf = getConfigBoolean("disguise-self", false);
-		duration = getConfigInt("duration", 0);
-		toggle = getConfigBoolean("toggle", false);
-		targetSelf = getConfigBoolean("target-self", true);
-		strFade = getConfigString("str-fade", "");
-				
+
 		if (entityData.getType() == null) MagicSpells.error("Invalid entity-type specified for disguise spell '" + spellName + '\'');
 	}
-	
+
 	@Override
 	public void initialize() {
 		if (manager == null) return;
@@ -138,7 +142,7 @@ public class DisguiseSpell extends TargetedSpell implements TargetedEntitySpell 
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (manager == null) return PostCastAction.ALREADY_HANDLED;
 		if (state == SpellCastState.NORMAL) {
-			Disguise oldDisguise = disguised.remove(player.getName().toLowerCase());
+			Disguise oldDisguise = disguised.remove(player.getUniqueId());
 			manager.removeDisguise(player);
 			if (oldDisguise != null && toggle) {
 				sendMessage(strFade, player, args);
@@ -154,113 +158,109 @@ public class DisguiseSpell extends TargetedSpell implements TargetedEntitySpell 
 		return PostCastAction.HANDLE_NORMALLY;
 	}
 
-	private void disguise(Player player) {
-		String nameplate = nameplateText;
-		if (showPlayerName) nameplate = player.getDisplayName();
-		PlayerDisguiseData playerDisguiseData = new PlayerDisguiseData((uuid.isEmpty() ? UUID.randomUUID().toString() : uuid), skin, skinSig);
-		Disguise disguise = new Disguise(player, entityData.getType(), nameplate, playerDisguiseData, alwaysShowNameplate, disguiseSelf, ridingBoat, entityData.getFlag(), entityData.getVar1(), entityData.getVar2(), entityData.getVar3(), duration, this);
-		manager.addDisguise(player, disguise);
-		disguised.put(player.getName().toLowerCase(), disguise);
-		playSpellEffects(EffectPosition.TARGET, player);
-	}
-	
-	public void undisguise(Player player) {
-		Disguise disguise = disguised.remove(player.getName().toLowerCase());
-		if (disguise == null) return;
-		
-		disguise.cancelDuration();
-		sendMessage(strFade, player, MagicSpells.NULL_ARGS);
-		playSpellEffects(EffectPosition.DISABLED, player);
-	}
-	
 	@Override
 	public boolean castAtEntity(Player player, LivingEntity target, float power) {
 		if (!(target instanceof Player)) return false;
 		disguise((Player)target);
 		return true;
 	}
-	
+
 	@Override
 	public boolean castAtEntity(LivingEntity target, float power) {
 		if (!(target instanceof Player)) return false;
 		disguise((Player)target);
 		return true;
 	}
-	
+
+	private void disguise(Player player) {
+		String nameplate = nameplateText;
+		if (showPlayerName) nameplate = player.getDisplayName();
+		PlayerDisguiseData playerDisguiseData = new PlayerDisguiseData((uuid.isEmpty() ? UUID.randomUUID().toString() : uuid), skin, skinSig);
+		Disguise disguise = new Disguise(player, entityData.getType(), nameplate, playerDisguiseData, alwaysShowNameplate, disguiseSelf, ridingBoat, entityData.getFlag(), entityData.getVar1(), entityData.getVar2(), entityData.getVar3(), duration, this);
+		manager.addDisguise(player, disguise);
+		disguised.put(player.getUniqueId(), disguise);
+		playSpellEffects(EffectPosition.TARGET, player);
+	}
+
+	public void undisguise(Player player) {
+		Disguise disguise = disguised.remove(player.getUniqueId());
+		if (disguise == null) return;
+
+		disguise.cancelDuration();
+		sendMessage(strFade, player, MagicSpells.NULL_ARGS);
+		playSpellEffects(EffectPosition.DISABLED, player);
+	}
+
 	@EventHandler
-	public void onPickup(PlayerPickupItemEvent event) {
+	public void onPickup(EntityPickupItemEvent event) {
 		if (!preventPickups) return;
-		if (!disguised.containsKey(event.getPlayer().getName().toLowerCase())) return;
+		if (!disguised.containsKey(event.getEntity().getUniqueId())) return;
 		event.setCancelled(true);
 	}
-	
+
 	@EventHandler
 	public void onDeath(PlayerDeathEvent event) {
 		if (!undisguiseOnDeath) return;
-		if (!disguised.containsKey(event.getEntity().getName().toLowerCase())) return;
+		if (!disguised.containsKey(event.getEntity().getUniqueId())) return;
 		manager.removeDisguise(event.getEntity(), entityData.getType() == EntityType.PLAYER);
 	}
-	
+
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
 		if (!undisguiseOnLogout) return;
-		if (!disguised.containsKey(event.getPlayer().getName().toLowerCase())) return;
+		if (!disguised.containsKey(event.getPlayer().getUniqueId())) return;
 		manager.removeDisguise(event.getPlayer(), entityData.getType() == EntityType.PLAYER);
 	}
-	
+
 	@EventHandler
 	public void onTarget(EntityTargetEvent event) {
 		if (!friendlyMobs) return;
 		if (event.getTarget() == null) return;
 		if (!(event.getTarget() instanceof Player)) return;
-		if (!disguised.containsKey(event.getTarget().getName().toLowerCase())) return;
+		if (!disguised.containsKey(event.getTarget().getUniqueId())) return;
 		event.setCancelled(true);
 	}
-	
+
 	class CastListener implements Listener {
-		
+
 		@EventHandler
 		void onSpellCast(SpellCastedEvent event) {
 			if (event.getSpell() == thisSpell) return;
-			if (!disguised.containsKey(event.getCaster().getName().toLowerCase())) return;
+			if (!disguised.containsKey(event.getCaster().getUniqueId())) return;
 			manager.removeDisguise(event.getCaster());
 		}
-		
+
 	}
-	
+
 	class DamageListener implements Listener {
-		
+
 		@EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
 		void onDamage(EntityDamageEvent event) {
-			if (undisguiseOnTakeDamage && event.getEntity() instanceof Player && disguised.containsKey(event.getEntity().getName().toLowerCase())) {
+			if (undisguiseOnTakeDamage && event.getEntity() instanceof Player && disguised.containsKey(event.getEntity().getUniqueId())) {
 				manager.removeDisguise((Player)event.getEntity());
 			}
 			if (undisguiseOnGiveDamage && event instanceof EntityDamageByEntityEvent) {
 				Entity e = ((EntityDamageByEntityEvent)event).getDamager();
 				if (e instanceof Player) {
-					if (disguised.containsKey(e.getName().toLowerCase())) {
-						manager.removeDisguise((Player)e);
-					}
+					if (disguised.containsKey(e.getUniqueId())) manager.removeDisguise((Player)e);
 				} else if (e instanceof Projectile && ((Projectile)e).getShooter() instanceof Player) {
 					Player shooter = (Player)((Projectile)e).getShooter();
-					if (disguised.containsKey(shooter.getName().toLowerCase())) {
-						manager.removeDisguise(shooter);
-					}
+					if (disguised.containsKey(shooter.getUniqueId())) manager.removeDisguise(shooter);
 				}
 			}
 		}
-		
+
 	}
-	
+
 	public static IDisguiseManager getDisguiseManager() {
 		return manager;
 	}
-	
+
 	@Override
 	public void turnOff() {
 		if (manager != null) {
-			for (String name : new ArrayList<>(disguised.keySet())) {
-				Player player = PlayerNameUtils.getPlayerExact(name);
+			for (UUID id : disguised.keySet()) {
+				Player player = Bukkit.getPlayer(id);
 				if (player == null) continue;
 				manager.removeDisguise(player, false);
 			}
@@ -271,7 +271,7 @@ public class DisguiseSpell extends TargetedSpell implements TargetedEntitySpell 
 			}
 		}
 	}
-	
+
 	public class Disguise {
 
 		Player player;
@@ -286,9 +286,9 @@ public class DisguiseSpell extends TargetedSpell implements TargetedEntitySpell 
 		private int var2;
 		private int var3;
 		private DisguiseSpell spell;
-		
+
 		private int taskId;
-		
+
 		public Disguise(Player player, EntityType entityType, String nameplateText, PlayerDisguiseData playerDisguiseData, boolean alwaysShowNameplate, boolean disguiseSelf, boolean ridingBoat, boolean flag, int var1, int var2, int var3, int duration, DisguiseSpell spell) {
 			this.player = player;
 			this.entityType = entityType;
@@ -304,85 +304,85 @@ public class DisguiseSpell extends TargetedSpell implements TargetedEntitySpell 
 			if (duration > 0) startDuration(duration);
 			this.spell = spell;
 		}
-		
+
 		public Player getPlayer() {
 			return player;
 		}
-		
+
 		public EntityType getEntityType() {
 			return entityType;
 		}
-		
+
 		public String getNameplateText() {
 			return nameplateText;
 		}
-		
+
 		public PlayerDisguiseData getPlayerDisguiseData() {
 			return playerDisguiseData;
 		}
-		
+
 		public boolean alwaysShowNameplate() {
 			return alwaysShowNameplate;
 		}
-		
+
 		public boolean disguiseSelf() {
 			return disguiseSelf;
 		}
-		
+
 		public boolean isRidingBoat() {
 			return ridingBoat;
 		}
-		
+
 		public boolean getFlag() {
 			return flag;
 		}
-		
+
 		public int getVar1() {
 			return var1;
 		}
-		
+
 		public int getVar2() {
 			return var2;
 		}
-		
+
 		public int getVar3() {
 			return var3;
 		}
-		
+
 		private void startDuration(int duration) {
-			taskId = Bukkit.getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, () -> DisguiseSpell.manager.removeDisguise(player), duration);
+			taskId = MagicSpells.scheduleDelayedTask(() -> DisguiseSpell.manager.removeDisguise(player), duration);
 		}
-		
+
 		public void cancelDuration() {
 			if (taskId > 0) {
-				Bukkit.getScheduler().cancelTask(taskId);
+				MagicSpells.cancelTask(taskId);
 				taskId = 0;
 			}
 		}
-		
+
 		public DisguiseSpell getSpell() {
 			return spell;
 		}
-		
+
 	}
-	
+
 	public class PlayerDisguiseData {
-		
+
 		public String uuid;
 		public String skin;
 		public String sig;
-		
+
 		public PlayerDisguiseData(String uuid, String skin, String sig) {
 			this.uuid = uuid;
 			this.skin = skin;
 			this.sig = sig;
 		}
-		
+
 		@Override
 		public PlayerDisguiseData clone() {
 			return new PlayerDisguiseData(uuid, skin, sig);
 		}
-		
+
 	}
-	
+
 }

@@ -26,7 +26,7 @@ public class MarkSpell extends InstantSpell implements TargetedLocationSpell {
 	private boolean permanentMarks;
 	private boolean useAsRespawnLocation;
 	
-	private HashMap<String,MagicLocation> marks;
+	private Map<String, MagicLocation> marks;
 
 	private boolean enableDefaultMarks;
 	private MagicLocation defaultMark = null;
@@ -89,11 +89,11 @@ public class MarkSpell extends InstantSpell implements TargetedLocationSpell {
 		}
 	}
 	
-	public HashMap<String,MagicLocation> getMarks() {
+	public Map<String, MagicLocation> getMarks() {
 		return this.marks;
 	}
 	
-	public void setMarks(HashMap<String,MagicLocation> newMarks) {
+	public void setMarks(Map<String, MagicLocation> newMarks) {
 		this.marks = newMarks;
 		if (this.permanentMarks) saveMarks();
 	}

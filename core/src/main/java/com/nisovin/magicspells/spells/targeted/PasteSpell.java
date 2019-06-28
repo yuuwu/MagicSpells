@@ -1,51 +1,47 @@
 package com.nisovin.magicspells.spells.targeted;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
+import java.io.IOException;
+import java.io.FileInputStream;
 
-import com.nisovin.magicspells.util.TimeUtil;
-import com.sk89q.worldedit.LocalSession;
-import com.sk89q.worldedit.extent.clipboard.Clipboard;
-import com.sk89q.worldedit.extent.clipboard.io.BuiltInClipboardFormat;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
-import com.sk89q.worldedit.session.ClipboardHolder;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
-import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.util.MagicConfig;
-//import com.sk89q.worldedit.CuboidClipboard;
-//import com.sk89q.worldedit.EditSession;
-//import com.sk89q.worldedit.Vector;
-//import com.sk89q.worldedit.blocks.BaseBlock;
-//import com.sk89q.worldedit.bukkit.BukkitWorld;
-//import com.sk89q.worldedit.schematic.SchematicFormat;
+
+import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.EditSession;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.WorldEditException;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.session.ClipboardHolder;
+import com.sk89q.worldedit.extent.clipboard.Clipboard;
+import com.sk89q.worldedit.function.operation.Operation;
+import com.sk89q.worldedit.function.operation.Operations;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
 
 public class PasteSpell extends TargetedSpell implements TargetedLocationSpell {
 
-	File file;
-	int yOffset;
-	int maxBlocks;
-	boolean pasteAir;
-	boolean pasteEntities;
-	boolean pasteAtCaster;
-	boolean playBlockBreakEffect;
-	
-	int tickInterval;
-	int blocksPerTick;
-	
-	// This will only work with instant paste for now
-	boolean undo;
-	int undoDelayTicks;
+	private List<EditSession> sessions;
+
+	private File file;
+	private Clipboard clipboard;
+
+	private int yOffset;
+	private int undoDelay;
+
+	private boolean pasteAir;
+	private boolean removePaste;
+	private boolean pasteAtCaster;
 	
 	public PasteSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -57,28 +53,37 @@ public class PasteSpell extends TargetedSpell implements TargetedLocationSpell {
 		if (!file.exists()) MagicSpells.error("PasteSpell " + spellName + " has non-existant schematic: " + schematic);
 		
 		yOffset = getConfigInt("y-offset", 0);
-		maxBlocks = getConfigInt("max-blocks", 10000);
+		undoDelay = getConfigInt("undo-delay", 0);
+		if (undoDelay < 0) undoDelay = 0;
+
 		pasteAir = getConfigBoolean("paste-air", false);
-		pasteEntities = getConfigBoolean("paste-entities", true);
+		removePaste = getConfigBoolean("remove-paste", true);
 		pasteAtCaster = getConfigBoolean("paste-at-caster", false);
-		
-		undo = getConfigBoolean("undo", false);
-		undoDelayTicks = getConfigInt("undo-delay-ticks", TimeUtil.TICKS_PER_SECOND * 10);
-		if (undoDelayTicks < 0) undoDelayTicks = 0;
-		
-		playBlockBreakEffect = getConfigBoolean("play-block-break-effect", true);
-		
-		float blocksPerSecond = getConfigFloat("blocks-per-second", 0F);
-		if (blocksPerSecond == 0) {
-			tickInterval = 0;
-			blocksPerTick = 0;
-		} else if (blocksPerSecond > 20) {
-			tickInterval = 1;
-			blocksPerTick = (int)Math.ceil(blocksPerSecond / 20);
-		} else {
-			tickInterval = Math.round(20 / blocksPerSecond);
-			blocksPerTick = 1;
+
+		sessions = new ArrayList<>();
+	}
+
+	@Override
+	public void initialize() {
+		super.initialize();
+
+		ClipboardFormat format = ClipboardFormats.findByFile(file);
+		try (ClipboardReader reader = format.getReader(new FileInputStream(file))) {
+			clipboard = reader.read();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+
+		if (clipboard == null) MagicSpells.error("PasteSpell " + internalName + " has a wrong schematic!");
+	}
+
+	@Override
+	public void turnOff() {
+		for (EditSession session : sessions) {
+			session.undo(session);
+		}
+
+		sessions.clear();
 	}
 
 	@Override
@@ -96,20 +101,11 @@ public class PasteSpell extends TargetedSpell implements TargetedLocationSpell {
 
 	@Override
 	public boolean castAtLocation(Player caster, Location target, float power) {
-		boolean ok;
-		if (tickInterval == 0) {
-			ok = pasteInstant(target);
-		} else {
-			ok = pasteOverTime(target);
-		}
-		if (ok) {
-			if (caster != null) {
-				playSpellEffects(caster, target);
-			} else {
-				playSpellEffects(EffectPosition.TARGET, target);
-			}
-		}
-		return ok;
+		boolean ok = pasteInstant(target);
+		if (!ok) return false;
+		if (caster != null) playSpellEffects(caster, target);
+		else playSpellEffects(EffectPosition.TARGET, target);
+		return true;
 	}
 
 	@Override
@@ -118,119 +114,29 @@ public class PasteSpell extends TargetedSpell implements TargetedLocationSpell {
 	}
 	
 	private boolean pasteInstant(Location target) {
-		/*try {
-			CuboidClipboard cuboid = SchematicFormat.MCEDIT.load(file);
-			final EditSession session = new EditSession(new BukkitWorld(target.getWorld()), maxBlocks);
-			cuboid.paste(session, new Vector(target.getX(), target.getY(), target.getZ()), !pasteAir, pasteEntities);
-			if (undo) {
-				MagicSpells.plugin.getServer().getScheduler().scheduleSyncDelayedTask(MagicSpells.plugin, () -> session.undo(session), undoDelayTicks);
+		if (clipboard == null) return false;
+
+		try (EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(BukkitAdapter.adapt(target.getWorld()), -1)) {
+			Operation operation = new ClipboardHolder(clipboard)
+					.createPaste(editSession)
+					.to(BlockVector3.at(target.getX(), target.getY(), target.getZ()))
+					.ignoreAirBlocks(!pasteAir)
+					.build();
+			Operations.complete(operation);
+			if (removePaste) sessions.add(editSession);
+
+			if (undoDelay > 0) {
+				MagicSpells.scheduleDelayedTask(() -> {
+					editSession.undo(editSession);
+					sessions.remove(editSession);
+				}, undoDelay);
 			}
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}*/
-		return false;
-	}
-	
-	private boolean pasteOverTime(Location target) {
-		try {
-			Builder builder = new Builder(target);
-			builder.build();
-			return true;
-		} catch (Exception e) {
+		} catch (WorldEditException e) {
 			e.printStackTrace();
 			return false;
 		}
-	}
-	
-	class Builder {
 
-		Block center;
-		List<BlockState> blocks = new ArrayList<>();
-		
-		int current = 0;
-		int taskId;
-		
-		public Builder(Location target) throws Exception {
-			this.center = target.getBlock();
-			
-			LocalSession session = new LocalSession();
-			ClipboardFormat format = BuiltInClipboardFormat.MCEDIT_SCHEMATIC;
-			FileInputStream fis = new FileInputStream(file);
-			BufferedInputStream bis = new BufferedInputStream(fis);
-			ClipboardReader reader = format.getReader(bis);
-			Clipboard clipboard = reader.read();
-			
-			session.setClipboard(new ClipboardHolder(clipboard));
-			
-			
-			/*CuboidClipboard clipboard = SchematicFormat.MCEDIT.load(file);
-			Vector size = clipboard.getSize();
-			Vector offset = clipboard.getOffset();
-
-			List<BlockState> air = new ArrayList<>();
-			List<BlockState> solids = new ArrayList<>();
-			List<BlockState> nonsolids = new ArrayList<>();
-			
-			for (int y = 0; y < size.getBlockY(); y++) {
-				for (int x = 0; x < size.getBlockX(); x++) {
-					for (int z = 0; z < size.getBlockZ(); z++) {
-						BaseBlock b = clipboard.getBlock(new Vector(x, y, z));
-						int blockX = target.getBlockX() + x + offset.getBlockX();
-						int blockY = target.getBlockY() + y + offset.getBlockY();
-						int blockZ = target.getBlockZ() + z + offset.getBlockZ();
-						Block block = target.getWorld().getBlockAt(blockX, blockY, blockZ);
-						if (b.getId() != 0 || (pasteAir && block.getType() != Material.AIR)) {
-							BlockState state = block.getState();
-							setBlockStateFromWorldEditBlock(state, b);
-							if (state.getType() == Material.AIR) {
-								air.add(state);
-							} else if (state.getType().isSolid()) {
-								solids.add(state);
-							} else {
-								nonsolids.add(state);
-							}
-						}
-					}
-				}
-			}
-			
-			blocks.addAll(air);
-			blocks.addAll(solids);
-			blocks.addAll(nonsolids);*/
-		}
-		
-		public void build() {
-			/*taskId = MagicSpells.scheduleRepeatingTask(new Runnable() {
-				@Override
-				public void run() {
-					if (current >= blocks.size()) {
-						MagicSpells.cancelTask(taskId);
-					} else {
-						for (int i = 0; i < blocksPerTick; i++) {
-							BlockState state = blocks.get(current);
-							state.update(true, false);
-							if (playBlockBreakEffect && state.getType() != Material.AIR) {
-								center.getWorld().playEffect(state.getLocation(), Effect.STEP_SOUND, state.getType());
-							}
-							current++;
-							if (current >= blocks.size()) {
-								MagicSpells.cancelTask(taskId);
-								break;
-							}
-						}
-					}
-				}
-			}, 1, tickInterval);*/
-		}
-		
-		/*private void setBlockStateFromWorldEditBlock(BlockState state, BaseBlock block) {
-			// TODO fix this, (and update worldedit dependency)
-			//state.setTypeId(block.getId());
-			//state.setRawData((byte)block.getData());
-		}*/
-		
+		return true;
 	}
 
 }

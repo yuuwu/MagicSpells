@@ -3,15 +3,15 @@ package com.nisovin.magicspells.spells.targeted;
 import java.util.Random;
 
 import org.bukkit.DyeColor;
+import org.bukkit.entity.Sheep;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Sheep;
 
 import com.nisovin.magicspells.MagicSpells;
-import com.nisovin.magicspells.spells.TargetedEntitySpell;
-import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
+import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.spells.TargetedSpell;
+import com.nisovin.magicspells.spells.TargetedEntitySpell;
 
 //This spell currently support the shearing of sheep at the moment.
 //Future tweaks for the shearing of other mobs will be added.
@@ -25,20 +25,25 @@ RegrowSpell:
 
 public class RegrowSpell extends TargetedSpell implements TargetedEntitySpell {
 
+	private DyeColor dye;
+
+	private Random random;
+
+	private String requestedColor;
+
 	private boolean forceWoolColor;
 	private boolean randomWoolColor;
-	private String requestedColor;
-	private DyeColor dye;
-	private Random random = new Random();
-
 	private boolean configuredCorrectly;
 
 	public RegrowSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 
+		requestedColor = getConfigString("wool-color", "");
+
 		forceWoolColor = getConfigBoolean("force-wool-color", false);
 		randomWoolColor = getConfigBoolean("random-wool-color", false);
-		requestedColor = getConfigString("wool-color", null);
+
+		random = new Random();
 	}
 
 	@Override
@@ -46,20 +51,7 @@ public class RegrowSpell extends TargetedSpell implements TargetedEntitySpell {
 		super.initialize();
 
 		configuredCorrectly = parseSpell();
-		if (!configuredCorrectly) MagicSpells.error("Regrow Spell " + internalName + " was configured incorrectly!");
-
-	}
-
-	public boolean parseSpell() {
-		if (forceWoolColor && requestedColor != null) {
-			try {
-				dye = DyeColor.valueOf(requestedColor);
-			} catch (IllegalArgumentException e) {
-				MagicSpells.error("Invalid wool color defined. Will use sheep's color instead.");
-				return false;
-			}
-		}
-		return true;
+		if (!configuredCorrectly) MagicSpells.error("RegrowSpell " + internalName + " was configured incorrectly!");
 	}
 
 	@Override
@@ -69,7 +61,7 @@ public class RegrowSpell extends TargetedSpell implements TargetedEntitySpell {
 			if (target == null) return PostCastAction.ALREADY_HANDLED;
 			if (!(target.getTarget() instanceof Sheep)) return PostCastAction.ALREADY_HANDLED;
 
-			boolean done = grow((Sheep)target.getTarget());
+			boolean done = grow((Sheep) target.getTarget());
 			if (!done) return noTarget(player);
 
 			sendMessages(player, target.getTarget());
@@ -78,10 +70,16 @@ public class RegrowSpell extends TargetedSpell implements TargetedEntitySpell {
 		return PostCastAction.HANDLE_NORMALLY;
 	}
 
-	private DyeColor randomizeDyeColor() {
-		DyeColor[] allDyes = DyeColor.values();
-		int dyePosition = random.nextInt(allDyes.length);
-		return allDyes[dyePosition];
+	@Override
+	public boolean castAtEntity(Player caster, LivingEntity target, float power) {
+		if (!(target instanceof Sheep)) return false;
+		return grow((Sheep) target);
+	}
+
+	@Override
+	public boolean castAtEntity(LivingEntity target, float power) {
+		if (!(target instanceof Sheep)) return false;
+		return grow((Sheep) target);
 	}
 
 	private boolean grow(Sheep sheep) {
@@ -97,13 +95,22 @@ public class RegrowSpell extends TargetedSpell implements TargetedEntitySpell {
 		return true;
 	}
 
-	public boolean castAtEntity(Player caster, LivingEntity target, float power) {
-		if (!(target instanceof Sheep)) return false;
-		return grow((Sheep)target);
+	private DyeColor randomizeDyeColor() {
+		DyeColor[] allDyes = DyeColor.values();
+		int dyePosition = random.nextInt(allDyes.length);
+		return allDyes[dyePosition];
 	}
 
-	public boolean castAtEntity(LivingEntity target, float power) {
-		if (!(target instanceof Sheep)) return false;
-		return grow((Sheep)target);
+	private boolean parseSpell() {
+		if (forceWoolColor && !requestedColor.isEmpty()) {
+			try {
+				dye = DyeColor.valueOf(requestedColor);
+			} catch (IllegalArgumentException e) {
+				MagicSpells.error("Invalid wool color defined. Will use sheep's color instead.");
+				return false;
+			}
+		}
+		return true;
 	}
+
 }

@@ -1,18 +1,18 @@
 package com.nisovin.magicspells.spells.targeted;
 
-import com.nisovin.magicspells.spells.TargetedEntityFromLocationSpell;
 import org.bukkit.Location;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.command.CommandSender;
 
-import com.nisovin.magicspells.spelleffects.EffectPosition;
-import com.nisovin.magicspells.spells.TargetedEntitySpell;
-import com.nisovin.magicspells.spells.TargetedLocationSpell;
-import com.nisovin.magicspells.spells.TargetedSpell;
-import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.TargetInfo;
+import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.spells.TargetedSpell;
+import com.nisovin.magicspells.spells.TargetedEntitySpell;
+import com.nisovin.magicspells.spelleffects.EffectPosition;
+import com.nisovin.magicspells.spells.TargetedLocationSpell;
+import com.nisovin.magicspells.spells.TargetedEntityFromLocationSpell;
 
 public class DummySpell extends TargetedSpell implements TargetedEntitySpell, TargetedLocationSpell, TargetedEntityFromLocationSpell {
 
@@ -25,6 +25,7 @@ public class DummySpell extends TargetedSpell implements TargetedEntitySpell, Ta
 		if (state == SpellCastState.NORMAL) {
 			TargetInfo<LivingEntity> target = getTargetedEntity(player, power);
 			if (target == null) return noTarget(player);
+
 			playSpellEffects(player, target.getTarget());
 			sendMessages(player, target.getTarget());
 			return PostCastAction.NO_MESSAGES;
@@ -58,8 +59,8 @@ public class DummySpell extends TargetedSpell implements TargetedEntitySpell, Ta
 	
 	@Override
 	public boolean castFromConsole(CommandSender sender, String[] args) {
-		playSpellEffects(EffectPosition.CASTER, (Entity)null);
-		playSpellEffects(EffectPosition.TARGET, (Entity)null);
+		playSpellEffects(EffectPosition.CASTER, (Entity) null);
+		playSpellEffects(EffectPosition.TARGET, (Entity) null);
 		return true;
 	}
 	

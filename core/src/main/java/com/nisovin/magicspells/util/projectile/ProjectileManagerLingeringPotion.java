@@ -1,7 +1,7 @@
 package com.nisovin.magicspells.util.projectile;
 
-import org.bukkit.entity.LingeringPotion;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.LingeringPotion;
 
 public class ProjectileManagerLingeringPotion extends ProjectileManager {
 	
