@@ -1,19 +1,20 @@
 package com.nisovin.magicspells.spells.command;
 
-import com.nisovin.magicspells.MagicSpells;
-import com.nisovin.magicspells.spells.CommandSpell;
-import com.nisovin.magicspells.util.InventoryUtil;
-import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.itemreader.alternative.AlternativeReaderManager;
+import java.io.File;
+import java.util.List;
+import java.io.IOException;
+
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
+import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.InventoryUtil;
+import com.nisovin.magicspells.spells.CommandSpell;
+import com.nisovin.magicspells.util.itemreader.alternative.AlternativeReaderManager;
 
 // TODO find a good way of configuring which items to serialize
 // TODO make the serialization and io processing async
@@ -25,13 +26,17 @@ import java.util.List;
 // DO NOT USE CURRENTLY IF EXPECTING LONG TERM UNCHANGING BEHAVIOR
 public class ItemSerializeSpell extends CommandSpell {
 	
-	File dataFolder;
+	private File dataFolder;
+
 	private String serializerKey;
-	private int indentation = 4;
+
+	private int indentation;
 	
 	public ItemSerializeSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
+
 		serializerKey = getConfigString("serializer-key", "external::spigot");
+
 		indentation = getConfigInt("indentation", 4);
 	}
 	
@@ -39,9 +44,7 @@ public class ItemSerializeSpell extends CommandSpell {
 	protected void initialize() {
 		// Setup data folder
 		dataFolder = new File(MagicSpells.getInstance().getDataFolder(), "items");
-		if (!dataFolder.exists()) {
-			dataFolder.mkdirs();
-		}
+		if (!dataFolder.exists()) dataFolder.mkdirs();
 	}
 	
 	@Override
@@ -49,11 +52,6 @@ public class ItemSerializeSpell extends CommandSpell {
 		super.turnOff();
 		
 		// This is where any resources should be closed if they aren't already
-	}
-	
-	@Override
-	public boolean castFromConsole(CommandSender sender, String[] args) {
-		return false;
 	}
 	
 	@Override
@@ -71,10 +69,13 @@ public class ItemSerializeSpell extends CommandSpell {
 			}
 			
 			processItem(heldItem);
-			
-			
 		}
 		return PostCastAction.HANDLE_NORMALLY;
+	}
+
+	@Override
+	public boolean castFromConsole(CommandSender sender, String[] args) {
+		return false;
 	}
 	
 	private File makeFile() {
