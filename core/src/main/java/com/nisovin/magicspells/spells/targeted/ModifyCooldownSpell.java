@@ -43,7 +43,7 @@ public class ModifyCooldownSpell extends TargetedSpell implements TargetedEntity
 		for (String spellName : spellNames) {
 			Spell spell = MagicSpells.getSpellByInternalName(spellName);
 			if (spell == null) {
-				MagicSpells.error("ModifyCooldownSpell '" + internalName + "' has an invalid spellToCast defined '" + spellName + '\'');
+				MagicSpells.error("ModifyCooldownSpell '" + internalName + "' has an invalid spell defined '" + spellName + '\'');
 				continue;
 			}
 			spells.add(spell);

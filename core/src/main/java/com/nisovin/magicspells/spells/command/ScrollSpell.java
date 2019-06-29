@@ -1,113 +1,118 @@
 package com.nisovin.magicspells.spells.command;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.List;
+import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
-import com.nisovin.magicspells.Perm;
-import com.nisovin.magicspells.util.RegexUtil;
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.event.EventPriority;
+import org.bukkit.command.CommandSender;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
-import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.Perm;
 import com.nisovin.magicspells.Spell;
+import com.nisovin.magicspells.util.Util;
 import com.nisovin.magicspells.Spellbook;
-import com.nisovin.magicspells.materials.MagicMaterial;
-import com.nisovin.magicspells.spells.CommandSpell;
+import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.util.RegexUtil;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.SpellReagents;
-import com.nisovin.magicspells.util.Util;
+import com.nisovin.magicspells.spells.CommandSpell;
+import com.nisovin.magicspells.materials.MagicMaterial;
 
 public class ScrollSpell extends CommandSpell {
 
 	private static final Pattern CAST_ARGUMENT_USE_COUNT_PATTERN = Pattern.compile("^-?[0-9]+$");
 	private static final Pattern SCROLL_DATA_USES_PATTERN = Pattern.compile("^[0-9]+$");
-	
-	private boolean castForFree;
-	private boolean ignoreCastPerm;
-	private boolean bypassNormalChecks;
-	private int defaultUses;
-	private int maxUses;
-	private MagicMaterial itemType;
-	private boolean rightClickCast;
-	private boolean leftClickCast;
-	private boolean removeScrollWhenDepleted;
-	private boolean chargeReagentsForSpellPerCharge;
-	private boolean requireTeachPerm;
-	private boolean requireScrollCastPermOnUse;
-	private boolean textContainsUses;
-	private String strScrollName;
-	private String strScrollSubtext;
-	private String strUsage;
-	private String strNoSpell;
-	private String strCantTeach;
-	private String strOnUse;
-	private String strUseFail;
-	
+
 	private List<String> predefinedScrolls;
 	private Map<Integer, Spell> predefinedScrollSpells;
 	private Map<Integer, Integer> predefinedScrollUses;
+
+	private MagicMaterial itemType;
+
+	private String strUsage;
+	private String strOnUse;
+	private String strNoSpell;
+	private String strUseFail;
+	private String strCantTeach;
+	private String strScrollName;
+	private String strScrollSubtext;
+
+	private int maxUses;
+	private int defaultUses;
+
+	private boolean castForFree;
+	private boolean leftClickCast;
+	private boolean rightClickCast;
+	private boolean ignoreCastPerm;
+	private boolean requireTeachPerm;
+	private boolean textContainsUses;
+	private boolean bypassNormalChecks;
+	private boolean removeScrollWhenDepleted;
+	private boolean requireScrollCastPermOnUse;
+	private boolean chargeReagentsForSpellPerCharge;
 		
 	public ScrollSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
-		
-		this.castForFree = getConfigBoolean("cast-for-free", true);
-		this.ignoreCastPerm = getConfigBoolean("ignore-cast-perm", false);
-		this.bypassNormalChecks = getConfigBoolean("bypass-normal-checks", false);
-		this.defaultUses = getConfigInt("default-uses", 5);
-		this.maxUses = getConfigInt("max-uses", 10);
-		this.itemType = MagicSpells.getItemNameResolver().resolveItem(getConfigString("item-id", "paper"));
-		this.rightClickCast = getConfigBoolean("right-click-cast", true);
-		this.leftClickCast = getConfigBoolean("left-click-cast", false);
-		this.removeScrollWhenDepleted = getConfigBoolean("remove-scroll-when-depleted", true);
-		this.chargeReagentsForSpellPerCharge = getConfigBoolean("charge-reagents-for-spell-per-charge", false);
-		this.requireTeachPerm = getConfigBoolean("require-teach-perm", true);
-		this.requireScrollCastPermOnUse = getConfigBoolean("require-scroll-cast-perm-on-use", true);
-		this.strScrollName = getConfigString("str-scroll-name", "Magic Scroll: %s");
-		this.strScrollSubtext = getConfigString("str-scroll-subtext", "Uses remaining: %u");
-		this.strUsage = getConfigString("str-usage", "You must hold a single blank paper \nand type /cast scroll <spell> <uses>.");
-		this.strNoSpell = getConfigString("str-no-spell", "You do not know a spell by that name.");
-		this.strCantTeach = getConfigString("str-cant-teach", "You cannot create a scroll with that spell.");
-		this.strOnUse = getConfigString("str-on-use", "Spell Scroll: %s used. %u uses remaining.");
-		this.strUseFail = getConfigString("str-use-fail", "Unable to use this scroll right now.");
-		
-		this.predefinedScrolls = getConfigStringList("predefined-scrolls", null);
-		
-		this.textContainsUses = this.strScrollName.contains("%u") || this.strScrollSubtext.contains("%u");
+
+		predefinedScrolls = getConfigStringList("predefined-scrolls", null);
+
+		itemType = MagicSpells.getItemNameResolver().resolveItem(getConfigString("item-id", "paper"));
+
+		strUsage = getConfigString("str-usage", "You must hold a single blank paper \nand type /cast scroll <spell> <uses>.");
+		strOnUse = getConfigString("str-on-use", "Spell Scroll: %s used. %u uses remaining.");
+		strNoSpell = getConfigString("str-no-spell", "You do not know a spell by that name.");
+		strUseFail = getConfigString("str-use-fail", "Unable to use this scroll right now.");
+		strCantTeach = getConfigString("str-cant-teach", "You cannot create a scroll with that spell.");
+		strScrollName = getConfigString("str-scroll-name", "Magic Scroll: %s");
+		strScrollSubtext = getConfigString("str-scroll-subtext", "Uses remaining: %u");
+
+		maxUses = getConfigInt("max-uses", 10);
+		defaultUses = getConfigInt("default-uses", 5);
+
+		castForFree = getConfigBoolean("cast-for-free", true);
+		leftClickCast = getConfigBoolean("left-click-cast", false);
+		rightClickCast = getConfigBoolean("right-click-cast", true);
+		ignoreCastPerm = getConfigBoolean("ignore-cast-perm", false);
+		requireTeachPerm = getConfigBoolean("require-teach-perm", true);
+		bypassNormalChecks = getConfigBoolean("bypass-normal-checks", false);
+		removeScrollWhenDepleted = getConfigBoolean("remove-scroll-when-depleted", true);
+		requireScrollCastPermOnUse = getConfigBoolean("require-scroll-cast-perm-on-use", true);
+		chargeReagentsForSpellPerCharge = getConfigBoolean("charge-reagents-for-spell-per-charge", false);
+
+		textContainsUses = strScrollName.contains("%u") || strScrollSubtext.contains("%u");
 	}
 	
 	@Override
 	public void initialize() {
 		super.initialize();
-		if (this.predefinedScrolls != null && !this.predefinedScrolls.isEmpty()) {
-			this.predefinedScrollSpells = new HashMap<>();
-			this.predefinedScrollUses = new HashMap<>();
-			for (String s : this.predefinedScrolls) {
-				String[] data = s.split(" ");
-				try {
-					int id = Integer.parseInt(data[0]);
-					Spell spell = MagicSpells.getSpellByInternalName(data[1]);
-					int uses = this.defaultUses;
-					if (data.length > 2) uses = Integer.parseInt(data[2]);
-					if (id > 0 && spell != null) {
-						this.predefinedScrollSpells.put(id, spell);
-						this.predefinedScrollUses.put(id, uses);
-					} else {
-						MagicSpells.error("Scroll spell has invalid predefined scroll: " + s);
-					}
-				} catch (Exception e) {
-					MagicSpells.error("Scroll spell has invalid predefined scroll: " + s);
-				}
+
+		if (predefinedScrolls == null || predefinedScrolls.isEmpty()) return;
+
+		predefinedScrollSpells = new HashMap<>();
+		predefinedScrollUses = new HashMap<>();
+		for (String s : predefinedScrolls) {
+			String[] data = s.split(" ");
+			try {
+				int id = Integer.parseInt(data[0]);
+				Spell spell = MagicSpells.getSpellByInternalName(data[1]);
+				int uses = defaultUses;
+				if (data.length > 2) uses = Integer.parseInt(data[2]);
+				if (id > 0 && spell != null) {
+					predefinedScrollSpells.put(id, spell);
+					predefinedScrollUses.put(id, uses);
+				} else MagicSpells.error("ScrollSpell '" + internalName + "' has invalid predefined scroll: " + s);
+			} catch (Exception e) {
+				MagicSpells.error("ScrollSpell '" + internalName + "' has invalid predefined scroll: " + s);
 			}
 		}
 	}
@@ -116,83 +121,68 @@ public class ScrollSpell extends CommandSpell {
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			if (args == null || args.length == 0) {
-				// Fail -- no args
-				sendMessage(this.strUsage, player, args);
+				sendMessage(strUsage, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			
-			// Get item in hand
 			ItemStack inHand = player.getEquipment().getItemInMainHand();
 			if (inHand.getAmount() != 1 || !itemType.equals(inHand)) {
-				// Fail -- incorrect item in hand
-				sendMessage(this.strUsage, player, args);
+				sendMessage(strUsage, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			
-			// Get spell
 			Spell spell = MagicSpells.getSpellByInGameName(args[0]);
 			Spellbook spellbook = MagicSpells.getSpellbook(player);
 			if (spell == null || spellbook == null || !spellbook.hasSpell(spell)) {
-				// Fail -- no such spell
-				sendMessage(this.strNoSpell, player, args);
+				sendMessage(strNoSpell, player, args);
 				return PostCastAction.ALREADY_HANDLED;			
 			}
-			if (this.requireTeachPerm && !spellbook.canTeach(spell)) {
-				sendMessage(this.strCantTeach, player, args);
+			if (requireTeachPerm && !spellbook.canTeach(spell)) {
+				sendMessage(strCantTeach, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
 			
-			// Get uses
-			int uses = this.defaultUses;
-			if (args.length > 1 && RegexUtil.matches(CAST_ARGUMENT_USE_COUNT_PATTERN, args[1])) {
-				uses = Integer.parseInt(args[1]);
-			}
-			if (uses > this.maxUses || (this.maxUses > 0 && uses <= 0)) {
-				uses = this.maxUses;
-			}
+			int uses = defaultUses;
+			if (args.length > 1 && RegexUtil.matches(CAST_ARGUMENT_USE_COUNT_PATTERN, args[1])) uses = Integer.parseInt(args[1]);
+			if (uses > maxUses || (maxUses > 0 && uses <= 0)) uses = maxUses;
 			
-			// Get additional reagent cost
-			if (this.chargeReagentsForSpellPerCharge && uses > 0) {
+			if (chargeReagentsForSpellPerCharge && uses > 0) {
 				SpellReagents reagents = spell.getReagents().multiply(uses);
 				if (!hasReagents(player, reagents)) {
-					// Missing reagents
-					sendMessage(this.strMissingReagents, player, args);
+					sendMessage(strMissingReagents, player, args);
 					return PostCastAction.ALREADY_HANDLED;
 				}
-				// Has reagents, so just remove them
 				removeReagents(player, reagents);
 			}
 			
-			// Create scroll
 			inHand = createScroll(spell, uses, inHand);
 			player.getEquipment().setItemInMainHand(inHand);
 			
-			// Done
-			sendMessage(formatMessage(this.strCastSelf, "%s", spell.getName()), player, args);
+			sendMessage(formatMessage(strCastSelf, "%s", spell.getName()), player, args);
 			return PostCastAction.NO_MESSAGES;
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}
-	
-	public ItemStack createScroll(Spell spell, int uses, ItemStack item) {
-		if (item == null) item = this.itemType.toItemStack(1);
-		item.setDurability((short)0);
-		ItemMeta meta = item.getItemMeta();
-		meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', this.strScrollName.replace("%s", spell.getName()).replace("%u", (uses >= 0 ? uses + "" : "many"))));
-		if (this.strScrollSubtext != null && !this.strScrollSubtext.isEmpty()) {
-			List<String> lore = new ArrayList<>();
-			lore.add(ChatColor.translateAlternateColorCodes('&', this.strScrollSubtext.replace("%s", spell.getName()).replace("%u", (uses >= 0 ? uses + "" : "many"))));
-			meta.setLore(lore);
-		}
-		item.setItemMeta(meta);
-		Util.setLoreData(item, this.internalName + ':' + spell.getInternalName() + (uses > 0 ? "," + uses : ""));
-		item = MagicSpells.getVolatileCodeHandler().addFakeEnchantment(item);
-		return item;
-	}
-	
+
 	@Override
 	public boolean castFromConsole(CommandSender sender, String[] args) {
 		return false;
+	}
+	
+	public ItemStack createScroll(Spell spell, int uses, ItemStack item) {
+		if (item == null) item = itemType.toItemStack(1);
+		item.setDurability((short) 0);
+		ItemMeta meta = item.getItemMeta();
+		meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', strScrollName.replace("%s", spell.getName()).replace("%u", (uses >= 0 ? uses + "" : "many"))));
+		if (strScrollSubtext != null && !strScrollSubtext.isEmpty()) {
+			List<String> lore = new ArrayList<>();
+			lore.add(ChatColor.translateAlternateColorCodes('&', strScrollSubtext.replace("%s", spell.getName()).replace("%u", (uses >= 0 ? uses + "" : "many"))));
+			meta.setLore(lore);
+		}
+		item.setItemMeta(meta);
+		Util.setLoreData(item, internalName + ':' + spell.getInternalName() + (uses > 0 ? "," + uses : ""));
+		item = MagicSpells.getVolatileCodeHandler().addFakeEnchantment(item);
+		return item;
 	}
 	
 	@Override
@@ -204,9 +194,7 @@ public class ScrollSpell extends CommandSpell {
 	
 	private String getSpellDataFromScroll(ItemStack item) {
 		String loreData = Util.getLoreData(item);
-		if (loreData != null && loreData.startsWith(this.internalName + ':')) {
-			return loreData.replace(this.internalName + ':', "");
-		}
+		if (loreData != null && loreData.startsWith(internalName + ':')) return loreData.replace(internalName + ':', "");
 		return null;
 	}
 	
@@ -215,13 +203,13 @@ public class ScrollSpell extends CommandSpell {
 		if (!actionAllowedForCast(event.getAction())) return;
 		Player player = event.getPlayer();
 		ItemStack inHand = player.getEquipment().getItemInMainHand();
-		if (this.itemType.getMaterial() != inHand.getType() || inHand.getAmount() > 1) return;
+		if (itemType.getMaterial() != inHand.getType() || inHand.getAmount() > 1) return;
 		
 		// Check for predefined scroll
-		if (inHand.getDurability() > 0 && this.predefinedScrollSpells != null) {
-			Spell spell = this.predefinedScrollSpells.get(Integer.valueOf(inHand.getDurability()));
+		if (inHand.getDurability() > 0 && predefinedScrollSpells != null) {
+			Spell spell = predefinedScrollSpells.get(Integer.valueOf(inHand.getDurability()));
 			if (spell != null) {
-				int uses = this.predefinedScrollUses.get(Integer.valueOf(inHand.getDurability()));
+				int uses = predefinedScrollUses.get(Integer.valueOf(inHand.getDurability()));
 				inHand = createScroll(spell, uses, inHand);
 				player.getEquipment().setItemInMainHand(inHand);
 			}
@@ -234,27 +222,19 @@ public class ScrollSpell extends CommandSpell {
 		Spell spell = MagicSpells.getSpellByInternalName(scrollData[0]);
 		if (spell == null) return;
 		int uses = 0;
-		if (scrollData.length > 1 && RegexUtil.matches(SCROLL_DATA_USES_PATTERN, scrollData[1])) {
-			uses = Integer.parseInt(scrollData[1]);
-		}
+		if (scrollData.length > 1 && RegexUtil.matches(SCROLL_DATA_USES_PATTERN, scrollData[1])) uses = Integer.parseInt(scrollData[1]);
 
-		// Check for permission
-		if (this.requireScrollCastPermOnUse && !MagicSpells.getSpellbook(player).canCast(this)) {
-			sendMessage(this.strUseFail, player, MagicSpells.NULL_ARGS);
+		if (requireScrollCastPermOnUse && !MagicSpells.getSpellbook(player).canCast(this)) {
+			sendMessage(strUseFail, player, MagicSpells.NULL_ARGS);
 			return;
 		}
-				
-		
-		// Cast spell
-		if (this.ignoreCastPerm && !Perm.CAST.has(player, spell)) {
-			player.addAttachment(MagicSpells.plugin, Perm.CAST.getNode(spell), true, 1);
-		}
-		if (this.castForFree && !Perm.NOREAGENTS.has(player)) {
-			player.addAttachment(MagicSpells.plugin, Perm.NOREAGENTS.getNode(), true, 1);
-		}
+
+		if (ignoreCastPerm && !Perm.CAST.has(player, spell)) player.addAttachment(MagicSpells.plugin, Perm.CAST.getNode(spell), true, 1);
+		if (castForFree && !Perm.NOREAGENTS.has(player)) player.addAttachment(MagicSpells.plugin, Perm.NOREAGENTS.getNode(), true, 1);
+
 		SpellCastState state;
 		PostCastAction action;
-		if (this.bypassNormalChecks) {
+		if (bypassNormalChecks) {
 			state = SpellCastState.NORMAL;
 			action = spell.castSpell(player, SpellCastState.NORMAL, 1.0F, null);
 		} else {
@@ -263,27 +243,22 @@ public class ScrollSpell extends CommandSpell {
 			action = result.action;
 		}
 
-		if (state == SpellCastState.NORMAL && action != PostCastAction.ALREADY_HANDLED) {
-			// Remove use
+		if (state != SpellCastState.NORMAL || action == PostCastAction.ALREADY_HANDLED) return;
+
+		if (uses > 0) {
+			uses -= 1;
 			if (uses > 0) {
-				uses -= 1;
-				if (uses > 0) {
-					inHand = createScroll(spell, uses, inHand);
-					if (this.textContainsUses) {
-						player.getEquipment().setItemInMainHand(inHand);
-					}
-				} else {
-					if (this.removeScrollWhenDepleted) {
-						player.getEquipment().setItemInMainHand(null);
-					} else {
-						player.getEquipment().setItemInMainHand(itemType.toItemStack(1));
-					}
-				}
+				inHand = createScroll(spell, uses, inHand);
+				if (textContainsUses) player.getEquipment().setItemInMainHand(inHand);
+			} else {
+				if (removeScrollWhenDepleted) {
+					player.getEquipment().setItemInMainHand(null);
+					event.setCancelled(true);
+				} else player.getEquipment().setItemInMainHand(itemType.toItemStack(1));
 			}
-			
-			// Send msg
-			sendMessage(formatMessage(this.strOnUse, "%s", spell.getName(), "%u", uses >= 0 ? uses + "" : "many"), player, MagicSpells.NULL_ARGS);
 		}
+
+		sendMessage(formatMessage(strOnUse, "%s", spell.getName(), "%u", uses >= 0 ? uses + "" : "many"), player, MagicSpells.NULL_ARGS);
 	}
 	
 	@EventHandler
@@ -291,13 +266,12 @@ public class ScrollSpell extends CommandSpell {
 		Player player = event.getPlayer();
 		ItemStack inHand = player.getInventory().getItem(event.getNewSlot());
 		
-		if (inHand == null || inHand.getType() != this.itemType.getMaterial()) return;
+		if (inHand == null || inHand.getType() != itemType.getMaterial()) return;
 		
-		// Check for predefined scroll
-		if (inHand.getDurability() > 0 && this.predefinedScrollSpells != null) {
-			Spell spell = this.predefinedScrollSpells.get(Integer.valueOf(inHand.getDurability()));
+		if (inHand.getDurability() > 0 && predefinedScrollSpells != null) {
+			Spell spell = predefinedScrollSpells.get(Integer.valueOf(inHand.getDurability()));
 			if (spell != null) {
-				int uses = this.predefinedScrollUses.get(Integer.valueOf(inHand.getDurability()));
+				int uses = predefinedScrollUses.get(Integer.valueOf(inHand.getDurability()));
 				inHand = createScroll(spell, uses, inHand);
 				player.getInventory().setItem(event.getNewSlot(), inHand);
 			}
@@ -308,10 +282,10 @@ public class ScrollSpell extends CommandSpell {
 		switch (action) {
 			case RIGHT_CLICK_AIR:
 			case RIGHT_CLICK_BLOCK:
-				return this.rightClickCast;
+				return rightClickCast;
 			case LEFT_CLICK_AIR:
 			case LEFT_CLICK_BLOCK:
-				return this.leftClickCast;
+				return leftClickCast;
 			default:
 				return false;
 		}
