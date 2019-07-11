@@ -4,26 +4,21 @@ import java.util.List;
 import java.util.ArrayList;
 import java.lang.reflect.Field;
 
-import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.util.Vector;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.FireworkEffect;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Fireball;
-import org.bukkit.entity.Firework;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.FireworkEffect.Type;
 import org.bukkit.entity.SmallFireball;
 import org.bukkit.block.data.Powerable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.block.data.AnaloguePowerable;
 import org.bukkit.craftbukkit.v1_13_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftPlayer;
@@ -39,6 +34,8 @@ import com.nisovin.magicspells.util.BoundingBox;
 import com.nisovin.magicspells.util.DisguiseManager;
 
 public class VolatileCodeDisabled implements VolatileCodeHandle {
+
+	List<EntityFireworks> fireworks = new ArrayList<>();
 
 	@Override
 	public void addPotionGraphicalEffect(LivingEntity entity, int color, int duration) {
@@ -142,7 +139,50 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 
 	@Override
 	public void createFireworksExplosion(Location location, boolean flicker, boolean trail, int type, int[] colors, int[] fadeColors, int flightDuration) {
-		FireworkEffect.Type t = Type.BALL;
+		if (flightDuration > 50) flightDuration = 50;
+
+		ItemStack firework = new ItemStack(Material.FIREWORK_ROCKET);
+
+		net.minecraft.server.v1_13_R2.ItemStack itemStack = CraftItemStack.asNMSCopy(firework);
+
+		NBTTagCompound tag = itemStack.getTag();
+		if (tag == null) tag = new NBTTagCompound();
+
+		NBTTagCompound expTag = new NBTTagCompound();
+		expTag.setByte("Flicker", flicker ? (byte) 1 : (byte) 0);
+		expTag.setByte("Trail", trail ? (byte) 1 : (byte) 0);
+		expTag.setByte("Type", (byte) type);
+		expTag.setIntArray("Colors", colors);
+		expTag.setIntArray("FadeColors", fadeColors);
+
+		NBTTagCompound fwTag = new NBTTagCompound();
+		fwTag.setByte("Flight", (byte) flightDuration);
+		NBTTagList expList = new NBTTagList();
+		expList.add(expTag);
+		fwTag.set("Explosions", expList);
+		tag.set("Fireworks", fwTag);
+
+		itemStack.setTag(tag);
+
+		WorldServer world = ((CraftWorld) location.getWorld()).getHandle();
+
+		EntityFireworks entity = new EntityFireworks(world, location.getX(), location.getY(), location.getZ(), itemStack);
+		world.addEntity(entity);
+		fireworks.add(entity);
+
+		if (flightDuration == 0) {
+			world.broadcastEntityEffect(entity, (byte) 17);
+			fireworks.remove(entity);
+			entity.die();
+		} else {
+			MagicSpells.scheduleDelayedTask(() -> {
+				world.broadcastEntityEffect(entity, (byte) 17);
+				fireworks.remove(entity);
+				entity.die();
+			}, flightDuration);
+		}
+
+		/*FireworkEffect.Type t = Type.BALL;
 		if (type == 1) t = Type.BALL_LARGE;
 		else if (type == 2) t = Type.STAR;
 		else if (type == 3) t = Type.CREEPER;
@@ -174,7 +214,7 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 			if (!firework.isValid()) return;
 			if (firework.isDead()) return;
 			firework.detonate();
-		}, flightDuration);
+		}, flightDuration); */
 	}
 
 	@Override
@@ -330,6 +370,14 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 	@Override
 	public void setTexture(SkullMeta meta, String texture, String signature, String uuid, String name) {
 		// Need volatile code for this
+	}
+
+	public void turnOff() {
+		for (EntityFireworks entity : fireworks) {
+			entity.die();
+		}
+
+		fireworks.clear();
 	}
 
 }

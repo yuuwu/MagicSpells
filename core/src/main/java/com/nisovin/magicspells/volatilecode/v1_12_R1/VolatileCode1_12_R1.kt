@@ -37,6 +37,7 @@ import java.util.*
 private typealias nmsItemStack = net.minecraft.server.v1_12_R1.ItemStack
 
 class VolatileCode1_12_R1: VolatileCodeHandle {
+
     private var fallback = VolatileCodeDisabled()
 
     private var craftItemStackHandleField: Field? = null
@@ -657,4 +658,9 @@ class VolatileCode1_12_R1: VolatileCodeHandle {
         }
 
     }
+
+    override fun turnOff() {
+
+    }
+
 }

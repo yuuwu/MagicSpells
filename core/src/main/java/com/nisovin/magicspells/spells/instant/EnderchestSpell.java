@@ -1,13 +1,14 @@
 package com.nisovin.magicspells.spells.instant;
 
 import org.bukkit.entity.Player;
+import org.bukkit.entity.LivingEntity;
 
-import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.util.PlayerNameUtils;
+import com.nisovin.magicspells.spells.TargetedEntitySpell;
 
-// Advanced perm is for accessing other's echests
-public class EnderchestSpell extends InstantSpell {
+public class EnderchestSpell extends InstantSpell implements TargetedEntitySpell {
 
 	public EnderchestSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -23,11 +24,21 @@ public class EnderchestSpell extends InstantSpell {
 					return PostCastAction.ALREADY_HANDLED;
 				}
 				player.openInventory(target.getEnderChest());
-			} else {
-				player.openInventory(player.getEnderChest());
-			}
+			} else player.openInventory(player.getEnderChest());
 		}
 		return PostCastAction.HANDLE_NORMALLY;
+	}
+
+	@Override
+	public boolean castAtEntity(Player caster, LivingEntity target, float power) {
+		if (!(target instanceof Player)) return false;
+		caster.openInventory(((Player) target).getEnderChest());
+		return false;
+	}
+
+	@Override
+	public boolean castAtEntity(LivingEntity target, float power) {
+		return false;
 	}
 
 }

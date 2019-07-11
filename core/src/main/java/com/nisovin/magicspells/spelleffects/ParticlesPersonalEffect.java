@@ -1,9 +1,12 @@
 package com.nisovin.magicspells.spelleffects;
 
 import org.bukkit.Color;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.Location;
+import org.bukkit.util.Vector;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.Particle.DustOptions;
@@ -13,7 +16,7 @@ import com.nisovin.magicspells.util.Util;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.util.ColorUtil;
 
-public class ParticlesEffect extends SpellEffect {
+public class ParticlesPersonalEffect extends SpellEffect {
 
 	Particle particle;
 	String particleName;
@@ -97,13 +100,24 @@ public class ParticlesEffect extends SpellEffect {
 	}
 
 	@Override
-	public Runnable playEffectLocation(Location location) {
+	public Runnable playEffectEntity(Entity entity) {
+		super.playEffectEntity(entity);
 		if (particle == null) return null;
+		if (!(entity instanceof Player)) return null;
 
-		if (block) location.getWorld().spawnParticle(particle, location.clone().add(0, yOffset, 0), count, xSpread, ySpread, zSpread, speed, blockData);
-		else if (item) location.getWorld().spawnParticle(particle, location.clone().add(0, yOffset, 0), count, xSpread, ySpread, zSpread, speed, itemStack);
-		else if (dust) location.getWorld().spawnParticle(particle, location.clone().add(0, yOffset, 0), count, xSpread, ySpread, zSpread, speed, dustOptions);
-		else if (none) location.getWorld().spawnParticle(particle, location.clone().add(0, yOffset, 0), count, xSpread, ySpread, zSpread, speed);
+		Location loc = entity.getLocation().clone();
+		if (zOffset != 0) {
+			Vector locDirection = loc.getDirection().normalize();
+			Vector horizOffset = new Vector(-locDirection.getZ(), 0.0, locDirection.getX()).normalize();
+			loc.add(horizOffset.multiply(zOffset)).getBlock().getLocation();
+		}
+		if (heightOffset != 0) loc.setY(loc.getY() + heightOffset);
+		if (forwardOffset != 0) loc.add(loc.getDirection().setY(0).normalize().multiply(forwardOffset));
+
+		if (block) ((Player) entity).spawnParticle(particle, loc.add(0, yOffset, 0), count, xSpread, ySpread, zSpread, speed, blockData);
+		else if (item) ((Player) entity).spawnParticle(particle, loc.add(0, yOffset, 0), count, xSpread, ySpread, zSpread, speed, itemStack);
+		else if (dust) ((Player) entity).spawnParticle(particle, loc.add(0, yOffset, 0), count, xSpread, ySpread, zSpread, speed, dustOptions);
+		else if (none) ((Player) entity).spawnParticle(particle, loc.add(0, yOffset, 0), count, xSpread, ySpread, zSpread, speed);
 
 		return null;
 	}

@@ -18,6 +18,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import com.nisovin.magicspells.util.BlockUtils;
 import com.nisovin.magicspells.spells.BuffSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.compat.EventUtil;
@@ -50,7 +51,7 @@ public class ReachSpell extends BuffSpell {
 		List<String> list = getConfigStringList("disallowed-break-blocks", null);
 		if (list != null) {
 			for (String s : list) {
-				Material material = Material.getMaterial(s);
+				Material material = Material.getMaterial(s.toUpperCase());
 				if (material == null) continue;
 				disallowedBreakBlocks.add(material);
 			}
@@ -59,7 +60,7 @@ public class ReachSpell extends BuffSpell {
 		list = getConfigStringList("disallowed-place-blocks", null);
 		if (list != null) {
 			for (String s : list) {
-				Material material = Material.getMaterial(s);
+				Material material = Material.getMaterial(s.toUpperCase());
 				if (material == null) continue;
 				disallowedBreakBlocks.add(material);
 			}
@@ -109,8 +110,7 @@ public class ReachSpell extends BuffSpell {
 
 		airBlock = targets.get(0);
 		targetBlock = targets.get(1);
-
-		if ((action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) && targetBlock.getType() != Material.AIR) {
+		if ((action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) && !BlockUtils.isAir(targetBlock.getType())) {
 			// Break
 			
 			// Check for disallowed
@@ -127,7 +127,7 @@ public class ReachSpell extends BuffSpell {
 			else targetBlock.setType(Material.AIR);
 			addUseAndChargeCost(player);
 
-		} else if ((action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) && targetBlock.getType() != Material.AIR) {
+		} else if ((action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) && !BlockUtils.isAir(targetBlock.getType())) {
 			// Place
 			
 			// Check for block in hand

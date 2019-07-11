@@ -2,8 +2,8 @@ package com.nisovin.magicspells.spells.instant;
 
 import org.bukkit.entity.Player;
 
-import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.spells.InstantSpell;
 
 public class CraftSpell extends InstantSpell {
 

@@ -1,16 +1,17 @@
 package com.nisovin.magicspells.spells.targeted;
 
 import java.util.Map;
+import java.util.UUID;
 import java.util.Iterator;
 
 import org.bukkit.World;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.Spell;
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.util.BlockUtils;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.MagicLocation;
 import com.nisovin.magicspells.spells.TargetedSpell;
@@ -57,7 +58,7 @@ public class RemoveMarksSpell extends TargetedSpell implements TargetedLocationS
 			if (pointBlank) loc = player.getLocation();
 			else {
 				Block b = getTargetedBlock(player, power);
-				if (b != null && b.getType() != Material.AIR) loc = b.getLocation();
+				if (b != null && !BlockUtils.isAir(b.getType())) loc = b.getLocation();
 			}
 			if (loc == null) return noTarget(player);
 			removeMarks(player, loc, power);
@@ -81,8 +82,8 @@ public class RemoveMarksSpell extends TargetedSpell implements TargetedLocationS
 		float rad = radius * power;
 		float radSq = rad * rad;
 
-		Map<String, MagicLocation> marks = markSpell.getMarks();
-		Iterator<String> iter = marks.keySet().iterator();
+		Map<UUID, MagicLocation> marks = markSpell.getMarks();
+		Iterator<UUID> iter = marks.keySet().iterator();
 		World locWorld = loc.getWorld();
 
 		while (iter.hasNext()) {

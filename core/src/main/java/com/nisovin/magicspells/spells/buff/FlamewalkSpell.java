@@ -21,7 +21,7 @@ public class FlamewalkSpell extends BuffSpell {
 
 	private Map<UUID, Float> flamewalkers;
 
-	private int range;
+	private int radius;
 	private int fireTicks;
 	private int tickInterval;
 	private boolean checkPlugins;
@@ -30,8 +30,8 @@ public class FlamewalkSpell extends BuffSpell {
 	
 	public FlamewalkSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
-		
-		range = getConfigInt("range", 8);
+
+		radius = getConfigInt("radius", 8);
 		fireTicks = getConfigInt("fire-ticks", 80);
 		tickInterval = getConfigInt("tick-interval", 100);
 		checkPlugins = getConfigBoolean("check-plugins", true);
@@ -97,7 +97,7 @@ public class FlamewalkSpell extends BuffSpell {
 				float power = flamewalkers.get(livingEntity.getUniqueId());
 				playSpellEffects(EffectPosition.DELAYED, livingEntity);
 
-				List<Entity> entities = livingEntity.getNearbyEntities(range, range, range);
+				List<Entity> entities = livingEntity.getNearbyEntities(radius, radius, radius);
 				for (Entity target : entities) {
 					if (!(target instanceof LivingEntity)) continue;
 					if (validTargetList != null && !validTargetList.canTarget(target)) continue;

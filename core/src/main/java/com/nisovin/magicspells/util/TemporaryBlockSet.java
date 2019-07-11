@@ -1,81 +1,95 @@
 package com.nisovin.magicspells.util;
 
+import java.util.List;
+import java.util.Random;
 import java.util.ArrayList;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
+import org.bukkit.block.BlockState;
 
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.events.MagicSpellsBlockPlaceEvent;
-import com.nisovin.magicspells.materials.MagicMaterial;
 
 public class TemporaryBlockSet implements Runnable {
-	
-	private Material original;
-	private MagicMaterial replaceWith;
-	private boolean callPlaceEvent;
+
+	private Random random;
+
 	private Player player;
-	
-	private ArrayList<Block> blocks;
-	
+	private Material original;
+	private boolean callPlaceEvent;
+
+	private List<Block> blocks;
+	private List<Material> replaceMaterials;
+
 	private BlockSetRemovalCallback callback;
 	
-	public TemporaryBlockSet(Material original, MagicMaterial replaceWith, boolean callPlaceEvent, Player player) {
+	public TemporaryBlockSet(Material original, Material replaceWith, boolean callPlaceEvent, Player player) {
 		this.original = original;
-		this.replaceWith = replaceWith;
 		this.callPlaceEvent = callPlaceEvent;
 		this.player = player;
-		
-		this.blocks = new ArrayList<>();
+
+		random = new Random();
+		blocks = new ArrayList<>();
+		replaceMaterials = new ArrayList<>();
+
+		replaceMaterials.add(replaceWith);
+	}
+
+	public TemporaryBlockSet(Material original, List<Material> replaceMaterials, boolean callPlaceEvent, Player player) {
+		this.original = original;
+		this.replaceMaterials = replaceMaterials;
+		this.callPlaceEvent = callPlaceEvent;
+		this.player = player;
+
+		random = new Random();
+		blocks = new ArrayList<>();
 	}
 	
 	public void add(Block block) {
-		if (block.getType() == this.original) {
-			if (this.callPlaceEvent) {
-				BlockState state = block.getState();
-				this.replaceWith.setBlock(block, false);
-				MagicSpellsBlockPlaceEvent event = new MagicSpellsBlockPlaceEvent(block, state, block, this.player.getEquipment().getItemInMainHand(), this.player, true);
-				Bukkit.getPluginManager().callEvent(event);
-				if (event.isCancelled()) {
-					BlockUtils.setTypeAndData(block, this.original, this.original.createBlockData(), false);
-				} else {
-					this.blocks.add(block);
-				}
-			} else {
-				this.replaceWith.setBlock(block);
-				this.blocks.add(block);
-			}
+		if (block.getType() != original) return;
+		int r = random.nextInt(replaceMaterials.size());
+		if (!callPlaceEvent) {
+			block.setType(replaceMaterials.get(r));
+			blocks.add(block);
+			return;
 		}
+
+		BlockState state = block.getState();
+		block.setType(replaceMaterials.get(r), false);
+		MagicSpellsBlockPlaceEvent event = new MagicSpellsBlockPlaceEvent(block, state, block, player.getEquipment().getItemInMainHand(), player, true);
+		EventUtil.call(event);
+		if (event.isCancelled()) BlockUtils.setTypeAndData(block, original, original.createBlockData(), false);
+		else blocks.add(block);
 	}
 	
 	public boolean contains(Block block) {
-		return this.blocks.contains(block);
+		return blocks.contains(block);
 	}
 	
-	public void removeAfter(int seconds) {
-		removeAfter(seconds, null);
+	public void removeAfter(int ticks) {
+		removeAfter(ticks, null);
 	}
 	
-	public void removeAfter(int seconds, BlockSetRemovalCallback callback) {
-		if (this.blocks.isEmpty()) return;
+	public void removeAfter(int ticks, BlockSetRemovalCallback callback) {
+		if (blocks.isEmpty()) return;
 		this.callback = callback;
-		MagicSpells.scheduleDelayedTask(this, seconds * TimeUtil.TICKS_PER_SECOND);
+		MagicSpells.scheduleDelayedTask(this, ticks);
 	}
 	
 	@Override
 	public void run() {
-		if (this.callback != null) this.callback.run(this);
+		if (callback != null) callback.run(this);
 		remove();
 	}
 	
 	public void remove() {
-		for (Block block : this.blocks) {
-			if (this.replaceWith.equals(block)) block.setType(this.original);
+		for (Block block : blocks) {
+			if (replaceMaterials.contains(block.getType())) block.setType(original);
 		}
-		this.player = null;
+		player = null;
 	}
 	
 	public interface BlockSetRemovalCallback {

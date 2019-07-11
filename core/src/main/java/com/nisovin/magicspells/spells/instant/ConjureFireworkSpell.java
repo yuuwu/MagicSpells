@@ -3,46 +3,55 @@ package com.nisovin.magicspells.spells.instant;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import com.nisovin.magicspells.util.RegexUtil;
-import org.bukkit.ChatColor;
 import org.bukkit.Color;
-import org.bukkit.FireworkEffect;
-import org.bukkit.FireworkEffect.Type;
-import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Location;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.FireworkEffect;
+import org.bukkit.FireworkEffect.Type;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 
-import com.nisovin.magicspells.spelleffects.EffectPosition;
-import com.nisovin.magicspells.spells.InstantSpell;
-import com.nisovin.magicspells.spells.TargetedLocationSpell;
-import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.Util;
+import com.nisovin.magicspells.util.RegexUtil;
+import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.spells.InstantSpell;
+import com.nisovin.magicspells.spelleffects.EffectPosition;
+import com.nisovin.magicspells.spells.TargetedLocationSpell;
 
-// The special position plays on the dropped items
 public class ConjureFireworkSpell extends InstantSpell implements TargetedLocationSpell {
 
 	private static final Pattern COLORS_PATTERN = Pattern.compile("^[A-Fa-f0-9]{6}(,[A-Fa-f0-9]{6})*$");
-	
-	boolean addToInventory;
-	ItemStack firework;
-	private boolean itemHasGravity;
+
+	private int count;
+	private int flight;
 	private int pickupDelay;
-	
+
+	private boolean gravity;
+	private boolean addToInventory;
+
+	private String fireworkName;
+
+	private ItemStack firework;
+
 	public ConjureFireworkSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 
-		addToInventory = getConfigBoolean("add-to-inventory", true);
+		count = getConfigInt("count", 1);
+		flight = getConfigInt("flight", 2);
 		pickupDelay = getConfigInt("pickup-delay", 0);
-		pickupDelay = Math.max(pickupDelay, 0);
-		itemHasGravity = getConfigBoolean("gravity", true);
-		firework = new ItemStack(Material.LEGACY_FIREWORK, getConfigInt("count", 1));
-		FireworkMeta meta = (FireworkMeta)firework.getItemMeta();
+
+		gravity = getConfigBoolean("gravity", true);
+		addToInventory = getConfigBoolean("add-to-inventory", true);
+
+		fireworkName = getConfigString("firework-name", "");
+
+		firework = new ItemStack(Material.FIREWORK_ROCKET, count);
+		FireworkMeta meta = (FireworkMeta) firework.getItemMeta();
 		
-		meta.setPower(getConfigInt("flight", 2));
-		String fireworkName = getConfigString("firework-name", "");
+		meta.setPower(flight);
 		if (!fireworkName.isEmpty()) meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', fireworkName));
 		
 		List<String> fireworkEffects = getConfigStringList("firework-effects", null);
@@ -76,11 +85,9 @@ public class ConjureFireworkSpell extends InstantSpell implements TargetedLocati
 						for (int i = 0; i < scolors.length; i++) {
 							icolors[i] = Integer.parseInt(scolors[i], 16);
 						}
-						if (colors == null) {
-							colors = icolors;
-						} else if (fadeColors == null) {
-							fadeColors = icolors;
-						}
+
+						if (colors == null) colors = icolors;
+						else if (fadeColors == null) fadeColors = icolors;
 					}
 				}
 
@@ -89,13 +96,13 @@ public class ConjureFireworkSpell extends InstantSpell implements TargetedLocati
 				builder.trail(trail);
 				builder.flicker(twinkle);
 				if (colors != null) {
-					for (int i = 0; i < colors.length; i++) {
-						builder.withColor(Color.fromRGB(colors[i]));
+					for (int color : colors) {
+						builder.withColor(Color.fromRGB(color));
 					}
 				}
 				if (fadeColors != null) {
-					for (int i = 0; i < fadeColors.length; i++) {
-						builder.withColor(Color.fromRGB(fadeColors[i]));
+					for (int fadeColor : fadeColors) {
+						builder.withColor(Color.fromRGB(fadeColor));
 					}
 				}
 				meta.addEffect(builder.build());
@@ -115,9 +122,8 @@ public class ConjureFireworkSpell extends InstantSpell implements TargetedLocati
 				Item dropped = player.getWorld().dropItem(player.getLocation(), item);
 				dropped.setItemStack(item);
 				dropped.setPickupDelay(pickupDelay);
-				dropped.setGravity(itemHasGravity);
+				dropped.setGravity(gravity);
 				playSpellEffects(EffectPosition.SPECIAL, dropped);
-				//player.getWorld().dropItem(player.getLocation(), item).setItemStack(item);
 			}
 			playSpellEffects(EffectPosition.CASTER, player);
 		}
@@ -136,9 +142,8 @@ public class ConjureFireworkSpell extends InstantSpell implements TargetedLocati
 		Item dropped = target.getWorld().dropItem(target, item);
 		dropped.setItemStack(item);
 		dropped.setPickupDelay(pickupDelay);
-		dropped.setGravity(itemHasGravity);
+		dropped.setGravity(gravity);
 		playSpellEffects(EffectPosition.SPECIAL, dropped);
-		//target.getWorld().dropItem(target, item).setItemStack(item);
 		return true;
 	}
 

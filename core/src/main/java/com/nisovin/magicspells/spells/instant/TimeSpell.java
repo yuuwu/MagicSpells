@@ -1,24 +1,25 @@
 package com.nisovin.magicspells.spells.instant;
 
-import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
-import com.nisovin.magicspells.util.MagicConfig;
 
 public class TimeSpell extends InstantSpell implements TargetedLocationSpell {
 
 	private int timeToSet;
+
 	private String strAnnounce;
 		
 	public TimeSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		this.timeToSet = getConfigInt("time-to-set", 0);
-		this.strAnnounce = getConfigString("str-announce", "The sun suddenly appears in the sky.");
+		timeToSet = getConfigInt("time-to-set", 0);
+		strAnnounce = getConfigString("str-announce", "The sun suddenly appears in the sky.");
 	}
 
 	@Override
@@ -28,13 +29,6 @@ public class TimeSpell extends InstantSpell implements TargetedLocationSpell {
 			setTime(world);
 		}
 		return PostCastAction.HANDLE_NORMALLY;
-	}
-	
-	void setTime(World world) {
-		world.setTime(this.timeToSet);
-		for (Player p : world.getPlayers()) {
-			sendMessage(this.strAnnounce, p, MagicSpells.NULL_ARGS);
-		}
 	}
 
 	@Override
@@ -47,6 +41,11 @@ public class TimeSpell extends InstantSpell implements TargetedLocationSpell {
 	public boolean castAtLocation(Location target, float power) {
 		setTime(target.getWorld());
 		return true;
+	}
+
+	private void setTime(World world) {
+		world.setTime(timeToSet);
+		for (Player p : world.getPlayers()) sendMessage(strAnnounce, p, MagicSpells.NULL_ARGS);
 	}
 
 }

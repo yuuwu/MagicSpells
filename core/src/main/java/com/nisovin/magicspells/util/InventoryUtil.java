@@ -1,13 +1,12 @@
 package com.nisovin.magicspells.util;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.HashMap;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.event.inventory.InventoryType;
 
 public class InventoryUtil {
 
@@ -88,7 +87,7 @@ public class InventoryUtil {
 	
 	public static boolean isNothing(ItemStack itemStack) {
 		if (itemStack == null) return true;
-		if (itemStack.getType() == Material.AIR) return true;
+		if (BlockUtils.isAir(itemStack.getType())) return true;
 		return itemStack.getAmount() == 0;
 	}
 	

@@ -171,8 +171,8 @@ public class PulserSpell extends TargetedSpell implements TargetedLocationSpell 
 		block.setType(material);
 		pulsers.put(block, new Pulser(caster, block, power));
 		ticker.start();
-		if (caster != null) playSpellEffects(caster, block.getLocation());
-		else playSpellEffects(EffectPosition.TARGET, block.getLocation());
+		if (caster != null) playSpellEffects(caster, block.getLocation().add(0.5, 0.5, 0.5));
+		else playSpellEffects(EffectPosition.TARGET, block.getLocation().add(0.5, 0.5, 0.5));
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)

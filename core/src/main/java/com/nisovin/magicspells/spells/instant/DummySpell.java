@@ -1,12 +1,12 @@
 package com.nisovin.magicspells.spells.instant;
 
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 
-import com.nisovin.magicspells.spelleffects.EffectPosition;
-import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.spells.InstantSpell;
+import com.nisovin.magicspells.spelleffects.EffectPosition;
 
 public class DummySpell extends InstantSpell {
 
@@ -24,7 +24,7 @@ public class DummySpell extends InstantSpell {
 	
 	@Override
 	public boolean castFromConsole(CommandSender sender, String[] args) {
-		playSpellEffects(EffectPosition.CASTER, (Entity)null);
+		playSpellEffects(EffectPosition.CASTER, (Entity) null);
 		return true;
 	}
 

@@ -741,4 +741,8 @@ public class VolatileCodeEnabled_1_12_R1 implements VolatileCodeHandle {
 		}
 	}
 
+	public void turnOff() {
+
+	}
+
 }
