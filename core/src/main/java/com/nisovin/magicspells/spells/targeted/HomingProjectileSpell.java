@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import org.bukkit.Location;
+import org.bukkit.ChatColor;
 import org.bukkit.util.Vector;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -57,6 +58,7 @@ public class HomingProjectileSpell extends TargetedSpell implements TargetedEnti
 
 	private String hitSpellName;
 	private String airSpellName;
+	private String projectileName;
 	private String groundSpellName;
 	private String modifierSpellName;
 	private String durationSpellName;
@@ -69,7 +71,6 @@ public class HomingProjectileSpell extends TargetedSpell implements TargetedEnti
 
 	private ModifierSet homingModifiers;
 	private List<String> homingModifiersStrings;
-
 
 	public HomingProjectileSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -98,6 +99,7 @@ public class HomingProjectileSpell extends TargetedSpell implements TargetedEnti
 
 		hitSpellName = getConfigString("spell", "");
 		airSpellName = getConfigString("spell-on-hit-air", "");
+		projectileName = ChatColor.translateAlternateColorCodes('&', getConfigString("projectile-name", ""));
 		groundSpellName = getConfigString("spell-on-hit-ground", "");
 		modifierSpellName = getConfigString("spell-on-modifier-fail", "");
 		durationSpellName = getConfigString("spell-after-duration", "");
@@ -281,6 +283,10 @@ public class HomingProjectileSpell extends TargetedSpell implements TargetedEnti
 			playSpellEffects(EffectPosition.CASTER, startLocation);
 
 			projectile = startLocation.getWorld().spawn(startLocation, projectileManager.getProjectileClass());
+			if (!projectileName.isEmpty()) {
+				projectile.setCustomName(projectileName);
+				projectile.setCustomNameVisible(true);
+			}
 
 			currentVelocity = target.getLocation().add(0, 0.75, 0).toVector().subtract(projectile.getLocation().toVector()).normalize();
 			currentVelocity.multiply(velocity * power);
@@ -378,6 +384,7 @@ public class HomingProjectileSpell extends TargetedSpell implements TargetedEnti
 			if (projectile != null) projectile.remove();
 			projectile = null;
 		}
+
 	}
 
 }

@@ -1,28 +1,45 @@
 package com.nisovin.magicspells.spells.instant;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.HashMap;
 
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.enchantments.Enchantment;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.enchantments.Enchantment;
 
-import com.nisovin.magicspells.spells.InstantSpell;
+import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.spells.InstantSpell;
 
 public class EnchantSpell extends InstantSpell {
 	
-	protected Map<Enchantment, Integer> enchantments;
+	private Map<Enchantment, Integer> enchantments;
+
+	private List<String> enchantmentList;
+
+	private boolean safeEnchants;
 	
 	public EnchantSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
+
 		enchantments = new HashMap<>();
-		if (!configKeyExists("enchantments")) throw new NullPointerException("There must be a configuration section called enchantments");
-		ConfigurationSection enchantSection = getConfigSection("enchantments");
-		for (String key: enchantSection.getKeys(false)) {
-			enchantments.put(Enchantment.getByName(key), enchantSection.getInt(key));
-		}
+
+		enchantmentList = getConfigStringList("enchantments", null);
+
+		safeEnchants = getConfigBoolean("safe-enchants", true);
+
+		if (enchantmentList != null && !enchantmentList.isEmpty()) {
+			for (String string : enchantmentList) {
+				Enchantment enchant = null;
+				int level = 1;
+				String[] str = string.split(" ");
+				if (str[0] != null) enchant = Enchantment.getByKey(NamespacedKey.minecraft(str[0].toLowerCase()));
+				if (str.length > 1 && str[1] != null) level = Integer.valueOf(str[1]);
+				if (enchant != null) enchantments.put(enchant, level);
+			}
+		} else MagicSpells.error("EnchantSpell '" + internalName + "' has invalid enchantments defined!");
 	}
 	
 	@Override
@@ -33,18 +50,19 @@ public class EnchantSpell extends InstantSpell {
 		return PostCastAction.HANDLE_NORMALLY;
 	}
 	
-	void enchant(ItemStack item) {
-		for (Enchantment e: enchantments.keySet()) {
+	private void enchant(ItemStack item) {
+		for (Enchantment e : enchantments.keySet()) {
 			enchant(item, e, enchantments.get(e));
 		}
 	}
 	
-	void enchant(ItemStack item, Enchantment enchant, int level) {
-		if (level <= 0) {
-			// Remove the enchant
-			item.removeEnchantment(enchant);
-		} else {
-			item.addEnchantment(enchant, level);
+	private void enchant(ItemStack item, Enchantment enchant, int level) {
+		if (!enchant.canEnchantItem(item)) return;
+		if (safeEnchants && level > enchant.getMaxLevel()) level = enchant.getMaxLevel();
+		if (level <= 0) item.removeEnchantment(enchant);
+		else {
+			if (safeEnchants) item.addEnchantment(enchant, level);
+			else item.addUnsafeEnchantment(enchant, level);
 		}
 	}
 

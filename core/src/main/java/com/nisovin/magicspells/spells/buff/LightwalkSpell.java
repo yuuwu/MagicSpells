@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.List;
-import java.util.Objects;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -46,12 +45,12 @@ public class LightwalkSpell extends BuffSpell {
 		List<String> blockList = getConfigStringList("allowed-types", null);
 		if (blockList != null) {
 			for (String str : blockList) {
-				Material material = Material.getMaterial(str);
+				Material material = Material.getMaterial(str.toUpperCase());
 				if (material == null) MagicSpells.error("LightwalkSpell " + internalName + " has an invalid block defined " + str);
 				else allowedTypes.add(material);
 			}
 		} else {
-			allowedTypes.add(Material.GRASS);
+			allowedTypes.add(Material.GRASS_BLOCK);
 			allowedTypes.add(Material.DIRT);
 			allowedTypes.add(Material.GRAVEL);
 			allowedTypes.add(Material.STONE);
@@ -70,7 +69,7 @@ public class LightwalkSpell extends BuffSpell {
 
 	@Override
 	public boolean castBuff(LivingEntity entity, float power, String[] args) {
-		lightwalkers.put(entity.getUniqueId(), null);
+		lightwalkers.put(entity.getUniqueId(), entity.getLocation().getBlock().getRelative(BlockFace.DOWN));
 		return true;
 	}
 
@@ -93,6 +92,7 @@ public class LightwalkSpell extends BuffSpell {
 			Entity entity = Bukkit.getEntity(id);
 			if (!(entity instanceof Player)) continue;
 			Block b = lightwalkers.get(id);
+			if (b == null) continue;
 			((Player) entity).sendBlockChange(b.getLocation(), b.getBlockData());
 		}
 
@@ -106,8 +106,9 @@ public class LightwalkSpell extends BuffSpell {
 
 		Block oldBlock = lightwalkers.get(player.getUniqueId());
 		Block newBlock = player.getLocation().getBlock().getRelative(BlockFace.DOWN);
-
-		if (Objects.equals(oldBlock, newBlock)) return;
+		if (oldBlock == null) return;
+		if (newBlock == null) return;
+		if (oldBlock.equals(newBlock)) return;
 		if (!allowedTypes.contains(newBlock.getType())) return;
 		if (BlockUtils.isAir(newBlock.getType())) return;
 		if (isExpired(player)) {

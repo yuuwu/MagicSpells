@@ -38,6 +38,6 @@ tool-slot: 8
 mana-potion-cooldown: 30
 str-mana-potion-on-cooldown: You cannot use another mana potion yet (%c seconds).
 mana-potions:
-    - INK_SACK 100
+    - LAPIS_LAZULI 100
 #    - 348 60
 #    - 331 30

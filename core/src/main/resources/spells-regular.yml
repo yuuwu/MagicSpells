@@ -13,36 +13,31 @@
 anvil:
     spell-class: ".instant.ThrowBlockSpell"
     name: anvil
-    spell-icon: anvil
-    description: Throws an anvil.
-    cast-item: blaze_rod
     cooldown: 10
+    cast-item: blaze_rod
+    description: Throws an anvil.
     block-type: anvil
     velocity: 1.0
-    vertical-adjustment: 0.5
     rotation-offset: 0
-    fall-damage: 2.0
-    fall-damage-max: 20
+    vertical-adjustment: 0.5
     drop-item: false
     remove-blocks: false
     call-target-event: true
-    check-plugins: false
     cost:
         - mana 25
-        - anvil
+        - anvil 1
     str-cost: 25 mana and 1 anvil
 
 armor:
     spell-class: ".buff.ArmorSpell"
     name: armor
-    spell-icon: iron_chestplate
-    cast-item: book
     duration: 30
+    cast-item: book
     num-uses: 15
-    helmet: gold_helmet protection_explosions:1 oxygen:1
-    chestplate: gold_chestplate protection_projectile:1
-    leggings: gold_leggings protection_fire:1
-    boots: gold_boots protection_fall:1
+    helmet: golden_helmet blastprotection:1 respiration:1
+    chestplate: golden_chestplate blastprotection:1
+    leggings: golden_leggings fireprotection:1
+    boots: golden_boots featherfalling:1
     cost:
         - mana 25
         - gold_nugget 1
@@ -53,10 +48,9 @@ armor:
 blind:
     spell-class: ".targeted.PotionEffectSpell"
     name: blind
-    spell-icon: ink_sac # :0
-    description: Blind your target.
-    cast-item: blaze_rod
     cooldown: 15
+    cast-item: blaze_rod
+    description: Blind your target.
     range: 20
     type: 15
     strength: 0
@@ -73,37 +67,39 @@ blind:
 blink:
     spell-class: ".targeted.BlinkSpell"
     name: blink
-    spell-icon: ender_pearl
-    description: Teleport a short distance.
-    cast-item: stick
     cooldown: 8
+    cast-item: stick
+    description: Teleport a short distance.
     range: 25
     pass-through-ceiling: false
-    smoke-trail: true
-    effects:
-        - pos1 ender
-        - pos2 ender
     cost:
         - mana 15
     str-cost: 15 mana
     str-cast-self: You blink away!
     str-cast-others: "%a blinks away!"
     str-cant-blink: You cannot blink there.
+    effects:
+        eff1:
+            position: pos1
+            effect: ender
+        eff2:
+            position: pos2
+            effect: ender
 
 build:
     spell-class: ".targeted.BuildSpell"
     name: build
-    spell-icon: stone
-    description: Build blocks from far away.
-    cast-item: stick
     cooldown: 2
+    cast-item: stick
+    description: Build blocks from far away.
     range: 25
     slot: 0
     consume-block: true
-    effects:
-        - target blockbreak
     check-plugins: true
-    allowed-types: 1,2,3,4,5,12,13,17,20,22,24,35,41,42,43,44,45,47,48,49,50,53,57,65,67,80,85,87,88,89,91,92
+    allowed-types:
+        - grass_block
+        - stone
+        - dirt
     cost:
         - mana 5
     str-cost: 5 mana
@@ -113,10 +109,10 @@ build:
 carpet:
     spell-class: ".buff.CarpetSpell"
     name: carpet
-    spell-icon: glass_pane
-    description: Lets you walk on a platform of glass.
-    cast-item: book
     cooldown: 30
+    cast-item: book
+    description: Lets you walk on a platform of glass.
+    platform-block: glass
     cancel-on-logout: true
     cancel-on-teleport: true
     size: 2
@@ -160,7 +156,6 @@ cleanse:
         - 19
         - 20
     target-self: true
-    beneficial: true
     cost:
         - mana 30
     str-cost: 30 mana
@@ -192,7 +187,7 @@ confusion:
     description: Cause nearby monsters to attack each other.
     cast-item: bone
     cooldown: 30
-    range: 20
+    radius: 20
     can-target: zombie,skeleton,creeper
     cost:
         - mana 30
@@ -213,7 +208,7 @@ conjure:
     auto-equip: false
     items:
         - redstone 1-2 25%
-        - speckled_melon 1 25%
+        - glistering_melon_slice 1 25%
         - magma_cream 1-2 25%
         - spider_eye 1-2 25%
     add-to-inventory: false
@@ -240,7 +235,7 @@ cripple:
 disarm:
     spell-class: ".targeted.DisarmSpell"
     name: disarm
-    spell-icon: stone_sword # :130
+    spell-icon: stone_sword
     description: Disarm your opponent.
     cast-item: blaze_rod
     cooldown: 15
@@ -300,6 +295,7 @@ drainlife:
     give-amt: 2
     animation-speed: 2
     ignore-armor: false
+    instant: false
     can-target: players,monsters
     check-plugins: true
     cost:
@@ -307,6 +303,16 @@ drainlife:
     str-cost: 10 mana
     str-cast-self: You drain life from your enemy.
     str-no-target: No target found.
+    effects:
+        eff1:
+            position: special
+            effect: particles
+            height-offset: 1
+            particle-name: redstone
+            color: FF0000
+            horiz-spread: 0.25
+            vert-spread: 0.25
+            count: 10
 
 empower:
     spell-class: ".buff.EmpowerSpell"
@@ -343,14 +349,13 @@ enderchest:
 entomb:
     spell-class: ".targeted.EntombSpell"
     name: entomb
-    spell-icon: glass
-    description: Encase an enemy in glass.
-    cast-item: blaze_rod
     cooldown: 5
+    cast-item: blaze_rod
+    description: Encase an enemy in glass.
+    block-type: glass
     range: 15
     can-target: players,monsters
-    tomb-block-type: 20
-    tomb-duration: 20
+    duration: 20
     cost:
         - mana 15
     str-cost: 15 mana
@@ -361,23 +366,22 @@ entomb:
             effect: effectlib
             effectlib:
                 class: SphereEffect
+                particle: SPELL_MOB
+                particles: 20
+                radius: 0.1
                 iterations: 18
                 period: 1
-                radius: .1
-                particles: 20
-                particle: SPELL_MOB
         tombdown:
             position: blockdestruction # when the tomb blocks are removed
             effect: effectlib
             effectlib:
                 class: SphereEffect
+                particle: BLOCK_CRACK
+                material: TNT
+                particles: 10
+                radius: 0.1
                 iterations: 20
                 period: 1
-                particles: 10
-                radius: .1
-                particle: BLOCK_CRACK # yep, the block crack
-                material: TNT # breaking tnt blocks
-                materialData: 0 # tnt doesn't really have much in terms of damage value data
 
 explode:
     spell-class: ".targeted.ExplodeSpell"
@@ -410,13 +414,11 @@ explosivearrow:
     description: Cause an explosion where an arrow lands
     cast-item: blaze_rod
     cooldown: 30
-    projectile: arrow
-    velocity: 0
-    require-hit-entity: false
-    cancel-damage: true
-    remove-projectile: true
-    max-distance: 25
-    spells: [explode]
+    projectile-type: arrow
+    velocity: 1
+    max-duration: 3
+    spell: explode
+    spell-on-hit-ground: explode
     cost:
         - mana 25
         - gunpowder 1
@@ -507,16 +509,18 @@ firebomb: # some fun features of the fireball spell
                 period: 2
 
 firenova:
-    spell-class: ".instant.FirenovaSpell"
+    spell-class: ".targeted.NovaSpell"
     name: firenova
     spell-icon: blaze_powder
     description: Summon an expanding ring of fire.
     cast-item: bone
     cooldown: 10
-    range: 5
-    tick-speed: 10
-    burn-tall-grass: true
-    check-plugins: true
+    type: fire
+    radius: 5
+    expand-interval: 5
+    visible-range: 50
+    point-blank: true
+    circle-shape: true
     cost:
         - mana 15
     str-cost: 15 mana
@@ -524,36 +528,22 @@ firenova:
     str-cast-others: "%a summons an expanding ring of fire."
 
 earth-nova:
-    spell-class: ".instant.FirenovaSpell"
+    spell-class: ".targeted.NovaSpell"
     name: earth-nova
     spell-icon: blaze_powder
     description: Summon an earthen shockwave.
     cast-item: bone
     cooldown: 10
-    range: 9
+    type: grass_block
+    radius: 9
+    start-radius: 1
+    point-blank: true
     expanding-radius-change: 3 # we can change how many rings are skipped now!
-    tick-speed: 10
-    burn-tall-grass: true
-    check-plugins: true
-    block-type: grass
     cost:
         - mana 15
     str-cost: 15 mana
     str-cast-self: You summon an earthen shockwave.
     str-cast-others: "%a summons an earthen shockwave."
-    effects:
-        eff1:
-            position: special # firenova spell plays this on each block it creates
-            effect: effectlib
-            effectlib:
-                class: SphereEffect
-                iterations: 20
-                period: 1
-                radius: 2
-                particle: BLOCK_CRACK
-                particles: 20
-                material: GRASS
-                materialData: 0
 
 flamewalk:
     spell-class: ".buff.FlamewalkSpell"
@@ -562,11 +552,11 @@ flamewalk:
     description: Burn your enemies around you as you walk.
     cast-item: book
     cooldown: 30
-    range: 8
+    radius: 2
     fire-ticks: 100
-    tick-interval: 100
-    target-players: false
-    duration: 120
+    tick-interval: 20
+    target-players: true
+    duration: 20
     cost:
         - mana 25
         - coal 2
@@ -576,6 +566,17 @@ flamewalk:
     str-cost: 25 mana, 2 coal, plus 10 mana occasionally
     str-cast-self: You begin to burn your enemies around you.
     str-fade: You are no longer burning your enemies.
+    effects:
+        eff1:
+            position: buff
+            effect-interval: 20
+            effect: particles
+            height-offset: 1
+            particle-name: flame
+            horiz-spread: 0.5
+            vert-spread: 0.7
+            count: 35
+            speed: 0.01
 
 food:
     spell-class: ".instant.FoodSpell"
@@ -594,7 +595,6 @@ food:
 forcebomb:
     spell-class: ".targeted.ForcebombSpell"
     name: forcebomb
-    spell-icon: record_4
     description: Push back your enemies.
     cast-item: blaze_rod
     cooldown: 8
@@ -603,35 +603,56 @@ forcebomb:
     pushback-force: 30
     additional-vertical-force: 15
     max-vertical-force: 20
-    can-target: players,monsters
+    can-target: players,nonplayers
     cost:
         - mana 30
     str-cost: 30 mana
     str-cast-self: An explosion of energy pushes your enemies around.
     str-no-target: No target found.
+    effects:
+        eff1:
+            position: special
+            effect: fireworks
+            height-offset: 1
+            type: 0
+            flight: 0
+            trail: false
+            flicker: false
+            colors: FF0000,0000FF
+            fade-colors: 0000FF
 
 forcepush:
     spell-class: ".instant.ForcepushSpell"
     name: forcepush
-    spell-icon: record_3
     description: Push back your enemies.
     cast-item: bone
     cooldown: 8
-    range: 10
+    radius: 10
     pushback-force: 30
     additional-vertical-force: 15
     max-vertical-force: 20
-    can-target: players,monsters
+    can-target: players,nonplayers
     cost:
         - mana 30
     str-cost: 30 mana
     str-cast-self: You push back your enemies!
     str-cast-others: "%a pushes back his enemies."
+    effects:
+        eff1:
+            position: caster
+            effect: fireworks
+            height-offset: 1
+            forward-offset: 0
+            type: 0
+            flight: 0
+            trail: false
+            flicker: false
+            colors: FF0000,0000FF
+            fade-colors: 0000FF
 
 forcetoss:
     spell-class: ".targeted.ForcetossSpell"
     name: forcetoss
-    spell-icon: piston_base
     description: Magically throw an enemy into the air.
     cast-item: blaze_rod
     cooldown: 5
@@ -647,38 +668,6 @@ forcetoss:
     str-no-target: No target found.
     str-cast-self: You push back your enemy!
     str-cast-others: "%a pushes back his enemy."
-
-freeze:
-    spell-class: ".instant.FreezeSpell"
-    name: freeze
-    spell-icon: snowball
-    description: Spray your enemies with cold snowballs.
-    cast-item: blaze_rod
-    snowballs: 25
-    horizontal-spread: 15
-    vertical-spread: 5
-    damage: 3
-    slow-amount: 3
-    slow-duration: 80
-    can-target: players,monsters
-    cooldown: 5
-    cost:
-        - mana 10
-        - snowball 1
-    str-cost: 10 mana and 1 snowball
-    effects:
-        projectile:
-            effect: effectlibentity # this tells effectlib to do the entity tracking for us
-            position: projectile # this will play it on the snowballs
-            effectlib:
-                class: SphereEffect
-                iterations: 100
-                disappearWithOriginEntity: true
-                particle: REDSTONE
-                color: 21FFFF
-                radius: .1
-                particles: 5
-                period: 2
 
 frostwalk:
     spell-class: ".buff.FrostwalkSpell"
@@ -707,9 +696,6 @@ gate:
     can-cast-with-item: false
     world: CURRENT
     coordinates: SPAWN
-    effects:
-        - pos1 ender
-        - pos2 ender
     cost:
         - mana 50
         - iron_ingot 1
@@ -717,6 +703,13 @@ gate:
     str-cast-self: You have teleported to spawn.
     str-cast-others: "%a teleports!"
     str-gate-failed: Unable to teleport.
+    effects:
+        eff1:
+            position: pos1
+            effect: ender
+        eff2:
+            position: pos2
+            effect: ender
 
 geyser:
     spell-class: ".targeted.GeyserSpell"
@@ -742,10 +735,11 @@ geyser:
 gills:
     spell-class: ".buff.GillsSpell"
     name: gills
-    spell-icon: gold_helmet
     description: Allows you to breath underwater.
     cast-item: book
-    glass-head-effect: true
+    head-block: glass
+    head-effect: true
+    refill-air-bar: true
     cooldown: 60
     duration: 300
     num-uses: 5
@@ -762,7 +756,6 @@ gills:
 haste:
     spell-class: ".buff.HasteSpell"
     name: haste
-    spell-icon: gold_boots
     description: Sprint faster for a time.
     cast-item: book
     effect-strength: 3
@@ -803,8 +796,6 @@ heal:
     cast-item: stick
     heal-amount: 10
     cancel-if-full: true
-    effects:
-        - target potion FF0000 40
     can-target: players,wolf,cat
     obey-los: true
     cooldown: 0
@@ -816,17 +807,22 @@ heal:
     str-cast-target: "%a has healed you."
     str-no-target: No target to heal.
     str-max-health: "%t is already at max health."
+    effects:
+        eff1:
+            position: target
+            effect: particles
+            height-offset: 1
+            particle-name: happy_villager
+            horiz-spread: 0.5
+            vert-spread: 0.5
+            count: 20
 
 invisibility:
     spell-class: ".buff.InvisibilitySpell"
     name: invisibility
-    spell-icon: record_11
     description: Makes you invisible to players and monsters.
     cast-item: bone
     cooldown: 60
-    effects:
-        - caster spawn
-        - disabled spawn
     toggle: true
     prevent-pickups: true
     cancel-on-give-damage: true
@@ -841,11 +837,17 @@ invisibility:
     str-cast-self: You vanish!
     str-cast-others: "%a vanishes!"
     str-fade: You are visible again.
+    effects:
+        eff1:
+            position: caster
+            effect: spawn
+        eff2:
+            position: disabled
+            effect: spawn
 
 invulnerability:
     spell-class: ".buff.InvulnerabilitySpell"
     name: invulnerability
-    spell-icon: gold_chestplate
     description: Makes you invulnerable to damage.
     cast-item: book
     damage-causes:
@@ -882,7 +884,6 @@ invulnerability:
 leap:
     spell-class: ".instant.LeapSpell"
     name: leap
-    spell-icon: diamond_boots
     description: Leap forward.
     cast-item: stick
     forward-velocity: 40
@@ -902,7 +903,7 @@ levitate:
     description: Cause your target to fly through the air.
     cast-item: bone
     tick-rate: 5
-    duration: 15
+    duration: 100
     cooldown: 30
     range: 12
     cancel-on-item-switch: true
@@ -919,15 +920,12 @@ levitate:
 lifewalk:
     spell-class: ".buff.LifewalkSpell"
     name: lifewalk
-    spell-icon: oak_sapling # :2
     description: Flowers grow in your footsteps!
     cast-item: book
     tick-interval: 15
-    red-flower-chance: 15
-    yellow-flower-chance: 15
-    sapling-chance: 5
-    tallgrass-chance: 25
-    fern-chance: 15
+    blocks:
+        - dandelion 25
+        - poppy 50
     cost:
         - mana 25
         - poppy 1
@@ -935,7 +933,7 @@ lifewalk:
     use-cost:
         - dandelion 1
     use-cost-interval: 25
-    str-cost: 25 mana, 1 rose, 1 yellow flower, plus 1 flower every so often
+    str-cost: 25 mana, 1 poppy, 1 dandelion, plus 1 flower every so often
     str-cast-self: Flowers grow in your footsteps!
     str-cast-others: Flowers grow in %a's footsteps!
     str-fade: Flowers no longer grow in your footsteps.
@@ -943,7 +941,6 @@ lifewalk:
 lightning:
     spell-class: ".targeted.LightningSpell"
     name: lightning
-    spell-icon: gold_sword
     description: Call down lightning.
     cast-item: blaze_rod
     cooldown: 15
@@ -962,9 +959,11 @@ lightning:
 lightwalk:
     spell-class: ".buff.LightwalkSpell"
     name: lightwalk
-    spell-icon: glowstone
+    cast-item: golden_boots
     description: Light your path.
-    cast-item: GOLD_BOOTS
+    material: glowstone
+    allowed-types:
+        - grass_block
     cost:
         - mana 25
         - torch 3
@@ -995,8 +994,8 @@ lilywalk:
 
 mana:
     spell-class: ".instant.ManaSpell"
-    name: lifetap
-    spell-icon: potion # :8193
+    name: mana
+    spell-icon: lapis_lazuli
     description: Restores mana at the cost of life.
     cast-item: bone
     cooldown: 3
@@ -1009,10 +1008,10 @@ mana:
 mark:
     spell-class: ".instant.MarkSpell"
     name: mark
-    spell-icon: bed
+    spell-icon: paper
     description: Marks your location for later recall.
     cast-item: stick
-    cooldown: 43200
+    cooldown: 100
     permanent-marks: true
     cost:
         - mana 75
@@ -1024,7 +1023,7 @@ mark:
 minion:
     spell-class: ".buff.MinionSpell"
     name: minion
-    spell-icon: monster_egg # :54
+    spell-icon: zombie_spawn_egg
     description: Summons an undead minion to aid you.
     cast-item: bone
     cooldown: 60
@@ -1034,6 +1033,9 @@ minion:
         - Skeleton 25
     prevent-sun-burn: true
     target-players: false
+    minion-targets:
+        - players
+        - nonplayers
     cost:
         - mana 30
         - bone 2
@@ -1069,7 +1071,7 @@ phase:
     cooldown: 10
     range: 5
     max-distance: 15
-    allowed-pass-thru-blocks: []
+    phasable-blocks: []
     cost:
         - mana 15
     str-cost: 15 mana
@@ -1094,28 +1096,13 @@ poison:
     str-cast-self: You have poisoned your target!
     str-no-target: No target found.
 
-prayer:
-    spell-class: ".instant.PrayerSpell"
-    name: prayer
-    spell-icon: dandelion
-    description: Heals yourself for five hearts.
-    cast-item: stick
-    cooldown: 15
-    amount-healed: 10
-    cost:
-        - mana 10
-    str-cost: 10 mana
-    str-cast-self: You have healed yourself.
-    str-at-full-health: You are already at full health.
-
 purge:
     spell-class: ".instant.PurgeSpell"
     name: purge
-    spell-icon: potion # :16396
     description: Kill all monsters and animals around you.
     cast-item: bone
     cooldown: 60
-    range: 8
+    radius: 8
     can-target: monsters,animals
     cost:
         - mana 50
@@ -1134,13 +1121,17 @@ reach:
     range: 15
     consume-blocks: true
     drop-blocks: true
-    disallowed-break-blocks: [0,7]
-    disallowed-place-blocks: [0,7]
+    disallowed-break-blocks:
+        - air
+        - bedrock
+    disallowed-place-blocks:
+        - air
+        - bedrock
     cost:
         - mana 50
     str-cost: 50 mana
     str-cast-self: You gain the ability to manipulate the world around you.
-    str-fade: You can no longer manipulate the world around you.        
+    str-fade: You can no longer manipulate the world around you.
 
 recall:
     spell-class: ".instant.RecallSpell"
@@ -1183,7 +1174,6 @@ reflect:
 repair:
     spell-class: ".instant.RepairSpell"
     name: repair
-    spell-icon: workbench
     description: Repairs your gear.
     cast-item: book
     cooldown: 120
@@ -1197,8 +1187,8 @@ repair:
         - leggings
         - boots
     ignore-items:
-        - 259
-        - 346
+        - flint_and_steel
+        - fishing_rod
     cost:
         - mana 50
         - iron_ingot 2
@@ -1209,11 +1199,10 @@ repair:
 roar:
     spell-class: ".instant.RoarSpell"
     name: roar
-    spell-icon: mob_spawner
     description: Forces nearby enemies to attack you.
     cast-item: book
     cooldown: 15
-    range: 8
+    radius: 8
     can-target: monsters
     cost:
         - mana 10
@@ -1244,11 +1233,7 @@ safefall:
 shadowstep:
     spell-class: ".targeted.ShadowstepSpell"
     name: shadowstep
-    spell-icon: leather_boots
     cast-item: stick
-    effects:
-        - caster spawner
-        - target spawner
     can-target: players,monsters
     range: 15
     cost:
@@ -1256,6 +1241,13 @@ shadowstep:
     str-cost: 10 mana
     str-no-target: No target found.
     str-no-landing-spot: Cannot shadowstep there.
+    effects:
+        eff1:
+            position: caster
+            effect: spawn
+        eff2:
+            position: target
+            effect: spawn
 
 silence:
     spell-class: ".targeted.SilenceSpell"
@@ -1282,7 +1274,6 @@ silence:
 spellhaste:
     spell-class: ".buff.SpellHasteSpell"
     name: spellhaste
-    spell-icon: ink_sack # :4
     description: Reduces the cast time and cooldown of your spells.
     cast-item: book
     cooldown: 60
@@ -1298,7 +1289,6 @@ spellhaste:
 stealth:
     spell-class: ".buff.StealthSpell"
     name: stealth
-    spell-icon: leather_boots
     description: Become invisible to monsters.
     cast-item: bone
     cooldown: 60
@@ -1316,11 +1306,13 @@ stonevision:
     description: See through stone.
     cast-item: book
     range: 4
-    transparent-type: 1
+    transparent-types:
+        - stone
     unobfuscate: false
+    material: barrier
     cooldown: 60
     duration: 30
-    cost: 
+    cost:
         - mana 50
         - stone 2
         - glass 2
@@ -1379,21 +1371,11 @@ stormblock:
                 particlesStrand: 150
                 particlesSpout: 200
                 radius: 5
-                radiusSpout: .1
+                radiusSpout: 0.1
                 height: 3
                 heightSpout: 7
-                iterations: 40
-                period: 2
-        blockdestruction: # aiming for a voidish feel on end
-            position: blockdestruction
-            effect: effectlib
-            effectlib:
-                class: SphereEffect
-                particle: SUSPENDED_DEPTH
-                particles: 100
-                radius: 10
-                iterations: 10
-                period: 3
+                iterations: 15
+                period: 10
 
 summon_helper:
     spell-class: ".targeted.SummonSpell"
@@ -1545,7 +1527,7 @@ fire-volley:
                 iterations: 100
                 disappearWithOriginEntity: true
                 particle: FLAME
-                radius: .1
+                radius: 0.1
                 particles: 5
                 period: 2
         heavy-tracers:
@@ -1560,16 +1542,14 @@ fire-volley:
                 iterations: 50
                 disappearWithOriginEntity: false
                 disappearWithTargetEntity: true
-                
 
 walkway:
     spell-class: ".buff.WalkwaySpell"
     name: walkway
-    spell-icon: oak_stairs
     description: Summon a moving magical walkway to take you places.
     cast-item: book
     cooldown: 60
-    platform-type: 5
+    platform-type: oak_wood
     size: 6
     cancel-on-logout: true
     cancel-on-teleport: true
@@ -1587,15 +1567,16 @@ walkway:
 wall:
     spell-class: ".instant.WallSpell"
     name: wall
-    spell-icon: brick
     description: Creates a temporary wall to block your enemies.
     cast-item: stick
     cooldown: 15
     range: 3
     wall-width: 5
     wall-height: 3
-    wall-type: brick
-    wall-duration: 15
+    wall-types:
+        - stone
+        - cobblestone
+    wall-duration: 100
     cost:
         - mana 12
         - stone 2
@@ -1677,8 +1658,6 @@ zap:
     disallowed-block-types: [air, bedrock]
     drop-block: false
     drop-normal: true
-    effects:
-        - target blockbreak
     check-plugins: true
     range: 15
     cost:
@@ -1687,32 +1666,6 @@ zap:
     str-cast-self: You zapped a block.
     str-cant-zap: You can't zap that.
     str-no-target: No target found.
-
-gianttree:
-    spell-class: ".ExternalCommandSpell"
-    name: gianttree
-    spell-icon: sapling # :3
-    enabled: false
-    description: Create a giant tree!
-    cooldown: 300
-    can-cast-by-command: true
-    can-cast-with-item: false
-    command-to-execute: 
-        - "gt 25 4"
-    command-to-execute-later: []
-    command-delay: 0
-    command-to-block:
-        - "gt"
-    temporary-permissions: []
-    require-player-target: false
-    obey-los: true
-    range: 20
-    cost:
-        - mana 50
-        - sapling 5
-    str-cost: 50 mana and 5 saplings
-    str-cast-self: You grow a tree!
-    str-cant-use-command: "&4You don't have permission to do that."
 
 torcharrow:
     spell-class: ".PermissionSpell"
@@ -1736,10 +1689,8 @@ torcharrow:
 zeus:
     spell-class: ".MultiSpell"
     name: zeus
-    spell-icon: gold_axe
     cooldown: 30
     cast-item: blaze_rod
-    check-individual-cooldowns: false
     cost:
         - mana 30
     str-cost: 30 mana

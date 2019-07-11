@@ -317,6 +317,7 @@ public abstract class SpellEffect {
 		effects.put("lightning", LightningEffect.class);
 		effects.put("nova", NovaEffect.class);
 		effects.put("particles", ParticlesEffect.class);
+		effects.put("particlespersonal", ParticlesPersonalEffect.class);
 		effects.put("particlecloud", ParticleCloudEffect.class);
 		effects.put("potion", PotionEffect.class);
 		effects.put("smokeswirl", SmokeSwirlEffect.class);

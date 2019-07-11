@@ -23,9 +23,10 @@ public class ReflectSpell extends BuffSpell {
 	private Set<String> shieldBreakerNames;
 	private Set<String> delayedReflectionSpells;
 
-	float reflectedSpellPowerMultiplier;
-	boolean spellPowerAffectsReflectedPower;
-	boolean delayedReflectionSpellsUsePayloadShieldBreaker;
+	private float reflectedSpellPowerMultiplier;
+
+	private boolean spellPowerAffectsReflectedPower;
+	private boolean delayedReflectionSpellsUsePayloadShieldBreaker;
 
 	public ReflectSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
@@ -36,7 +37,9 @@ public class ReflectSpell extends BuffSpell {
 
 		shieldBreakerNames.addAll(getConfigStringList("shield-breakers", new ArrayList<>()));
 		delayedReflectionSpells.addAll(getConfigStringList("delayed-reflection-spells", new ArrayList<>()));
-		reflectedSpellPowerMultiplier = (float) getConfigDouble("reflected-spell-power-multiplier", 1.0);
+
+		reflectedSpellPowerMultiplier = (float) getConfigDouble("reflected-spell-power-multiplier", 1F);
+
 		spellPowerAffectsReflectedPower = getConfigBoolean("spell-power-affects-reflected-power", false);
 		delayedReflectionSpellsUsePayloadShieldBreaker = getConfigBoolean("delayed-reflection-spells-use-payload-shield-breaker", true);
 	}

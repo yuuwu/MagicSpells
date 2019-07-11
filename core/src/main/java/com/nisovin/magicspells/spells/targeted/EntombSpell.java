@@ -14,6 +14,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.block.BlockBreakEvent;
 
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.util.BlockUtils;
 import com.nisovin.magicspells.util.TargetInfo;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.spells.TargetedSpell;
@@ -124,7 +125,7 @@ public class EntombSpell extends TargetedSpell implements TargetedEntitySpell {
 		}
 		
 		for (Block b : tempBlocks) {
-			if (b.getType() != Material.AIR) continue;
+			if (!BlockUtils.isAir(b.getType())) continue;
 			tombBlocks.add(b);
 			b.setType(material);
 			playSpellEffects(EffectPosition.SPECIAL, b.getLocation().add(0.5, 0.5, 0.5));
@@ -140,7 +141,7 @@ public class EntombSpell extends TargetedSpell implements TargetedEntitySpell {
 	private void removeTomb(List<Block> entomb) {
 		for (Block block : entomb) {
 			block.setType(Material.AIR);
-			playSpellEffects(EffectPosition.BLOCK_DESTRUCTION, block.getLocation());
+			playSpellEffects(EffectPosition.BLOCK_DESTRUCTION, block.getLocation().add(0.5, 0.5, 0.5));
 		}
 		
 		blocks.removeAll(entomb);

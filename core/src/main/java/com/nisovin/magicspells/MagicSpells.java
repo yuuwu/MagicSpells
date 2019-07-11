@@ -1262,6 +1262,10 @@ public class MagicSpells extends JavaPlugin {
 			bossBarManager.turnOff();
 			bossBarManager = null;
 		}
+		if (volatileCodeHandle != null) {
+			volatileCodeHandle.turnOff();
+			volatileCodeHandle = null;
+		}
 		expBarManager = null;
 		itemNameResolver = null;
 		moneyHandler = null;
