@@ -1,20 +1,19 @@
 package com.nisovin.magicspells.castmodifiers.conditions;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+import java.util.List;
+import java.util.HashSet;
+import java.util.ArrayList;
 
-import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 
-import com.nisovin.magicspells.materials.MagicMaterial;
-import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.castmodifiers.Condition;
 
 public class UnderBlockCondition extends Condition {
@@ -25,7 +24,7 @@ public class UnderBlockCondition extends Condition {
 
 	//Block Data
 	Set<Material> types;
-	List<MagicMaterial> mats;
+	List<Material> mats;
 
 	@Override
 	public boolean setVar(String var) {
@@ -54,9 +53,9 @@ public class UnderBlockCondition extends Condition {
 		String[] split = blocks.split(",");
 
 		for (String s : split) {
-			MagicMaterial mat = MagicSpells.getItemNameResolver().resolveBlock(s);
-			if (mat == null) return false;
-			types.add(mat.getMaterial());
+			Material mat = Material.getMaterial(s.toUpperCase());
+			if (mat == null || !mat.isBlock()) return false;
+			types.add(mat);
 			mats.add(mat);
 		}
 		return true;
@@ -82,9 +81,9 @@ public class UnderBlockCondition extends Condition {
 		for (int i = 0; i < height; i++) {
 			//Compares the material of the block to the list of blocks.
 			if (types.contains(block.getType())) {
-				for (MagicMaterial m : mats) {
+				for (Material m : mats) {
 					//If it is true, stops the loop and returns true;
-					if (m.equals(block)) return true;
+					if (m.equals(block.getType())) return true;
 				}
 			}
 			//Uses position of the next block up

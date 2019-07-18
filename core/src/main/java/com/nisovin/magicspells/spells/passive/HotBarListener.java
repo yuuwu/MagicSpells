@@ -1,24 +1,24 @@
 package com.nisovin.magicspells.spells.passive;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.List;
+import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Map.Entry;
+import java.util.LinkedHashMap;
 
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 
-import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spellbook;
-import com.nisovin.magicspells.materials.MagicItemWithNameMaterial;
-import com.nisovin.magicspells.materials.MagicMaterial;
+import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spells.PassiveSpell;
 import com.nisovin.magicspells.util.OverridePriority;
+import com.nisovin.magicspells.materials.MagicMaterial;
+import com.nisovin.magicspells.materials.MagicItemWithNameMaterial;
 
 // Trigger variable is the item to trigger on
 public class HotBarListener extends PassiveListener {
@@ -29,13 +29,15 @@ public class HotBarListener extends PassiveListener {
 	
 	@Override
 	public void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var) {
-		MagicMaterial mat;
-		if (var.contains("|")) {
-			String[] stuff = var.split("\\|");
-			mat = MagicSpells.getItemNameResolver().resolveItem(stuff[0]);
-			if (mat != null) mat = new MagicItemWithNameMaterial(mat, stuff[1]);						
-		} else {
-			mat = MagicSpells.getItemNameResolver().resolveItem(var);
+		MagicMaterial mat = null;
+		if (var != null) {
+			if (var.contains("|")) {
+				String[] stuff = var.split("\\|");
+				mat = MagicSpells.getItemNameResolver().resolveItem(stuff[0]);
+				if (mat != null) mat = new MagicItemWithNameMaterial(mat, stuff[1]);
+			} else {
+				mat = MagicSpells.getItemNameResolver().resolveItem(var);
+			}
 		}
 		if (mat != null) {
 			materials.add(mat.getMaterial());

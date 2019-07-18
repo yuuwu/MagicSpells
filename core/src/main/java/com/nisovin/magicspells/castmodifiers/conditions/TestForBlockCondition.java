@@ -1,19 +1,18 @@
 package com.nisovin.magicspells.castmodifiers.conditions;
 
+import org.bukkit.Material;
 import org.bukkit.Location;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.LivingEntity;
 
 import com.nisovin.magicspells.DebugHandler;
-import com.nisovin.magicspells.MagicSpells;
-import com.nisovin.magicspells.castmodifiers.Condition;
-import com.nisovin.magicspells.materials.MagicMaterial;
 import com.nisovin.magicspells.util.MagicLocation;
+import com.nisovin.magicspells.castmodifiers.Condition;
 
 public class TestForBlockCondition extends Condition {
 
 	MagicLocation location;
-	MagicMaterial blockType;
+	Material blockType;
 	
 	@Override
 	public boolean setVar(String var) {
@@ -21,8 +20,8 @@ public class TestForBlockCondition extends Condition {
 			String[] varsplit = var.split("=");
 			String[] locsplit = varsplit[0].split(",");
 			location = new MagicLocation(locsplit[0], Integer.parseInt(locsplit[1]), Integer.parseInt(locsplit[2]), Integer.parseInt(locsplit[3]));
-			blockType = MagicSpells.getItemNameResolver().resolveBlock(varsplit[1]);
-			if (blockType == null) return false;
+			blockType = Material.getMaterial(varsplit[1].toUpperCase());
+			if (blockType == null || !blockType.isBlock()) return false;
 			return true;
 		} catch (Exception e) {
 			DebugHandler.debugGeneral(e);
@@ -34,7 +33,7 @@ public class TestForBlockCondition extends Condition {
 	public boolean check(Player player) {
 		Location loc = location.getLocation();
 		if (loc == null) return false;
-		if (blockType.equals(loc.getBlock())) return true;
+		if (blockType.equals(loc.getBlock().getType())) return true;
 		return false;
 	}
 

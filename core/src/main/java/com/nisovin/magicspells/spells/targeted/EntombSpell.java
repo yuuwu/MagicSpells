@@ -63,6 +63,7 @@ public class EntombSpell extends TargetedSpell implements TargetedEntitySpell {
 			block.setType(Material.AIR);
 			playSpellEffects(EffectPosition.BLOCK_DESTRUCTION, block.getLocation());
 		}
+		blocks.clear();
 	}
 	
 	@Override

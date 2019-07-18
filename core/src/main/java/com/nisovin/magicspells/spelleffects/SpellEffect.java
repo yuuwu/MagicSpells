@@ -69,12 +69,9 @@ public abstract class SpellEffect {
 		horizOffset = (float) config.getDouble("orbit-horiz-offset", 0F);
 		horizExpandRadius = (float) config.getDouble("orbit-horiz-expand-radius", 0);
 		vertExpandRadius = (float) config.getDouble("orbit-vert-expand-radius", 0);
-		ticksPerSecond = 20F / (float) tickInterval;
-		distancePerTick = 6.28F / (ticksPerSecond * secondsPerRevolution);
 		secondsPerRevolution = (float) config.getDouble("orbit-seconds-per-revolution", 3);
 
 		tickInterval = config.getInt("orbit-tick-interval", 2);
-		ticksPerRevolution = Math.round(ticksPerSecond * secondsPerRevolution);
 		horizExpandDelay = config.getInt("orbit-horiz-expand-delay", 0);
 		vertExpandDelay = config.getInt("orbit-vert-expand-delay", 0);
 		effectInterval = config.getInt("effect-interval", effectInterval);
@@ -83,7 +80,10 @@ public abstract class SpellEffect {
 		
 		List<String> list = config.getStringList("modifiers");
 		if (list != null) modifiers = new ModifierSet(list);
-		
+
+		ticksPerSecond = 20F / (float) tickInterval;
+		ticksPerRevolution = Math.round(ticksPerSecond * secondsPerRevolution);
+		distancePerTick = 6.28F / (ticksPerSecond * secondsPerRevolution);
 		loadFromConfig(config);
 	}
 	
@@ -178,10 +178,10 @@ public abstract class SpellEffect {
 		SpellEffectActiveChecker checker;
 		int effectTrackerTaskId;
 
-		public EffectTracker(Entity entity, SpellEffectActiveChecker checker) {
+		EffectTracker(Entity entity, SpellEffectActiveChecker checker) {
 			this.entity = entity;
 			this.checker = checker;
-			this.effectTrackerTaskId = MagicSpells.scheduleRepeatingTask(this, 0, effectInterval);
+			effectTrackerTaskId = MagicSpells.scheduleRepeatingTask(this, 0, effectInterval);
 		}
 
 		@Override
@@ -217,19 +217,19 @@ public abstract class SpellEffect {
 		
 		int counter = 0;
 		
-		public OrbitTracker(Entity entity, SpellEffectActiveChecker checker) {
+		OrbitTracker(Entity entity, SpellEffectActiveChecker checker) {
 			this.entity = entity;
 			this.checker = checker;
-			this.currentPosition = entity.getLocation().getDirection().setY(0);
-			Util.rotateVector(this.currentPosition, horizOffset);
-			this.orbRadius = orbitRadius;
-			this.orbHeight = orbitYOffset;
-			this.orbitTrackerTaskId = MagicSpells.scheduleRepeatingTask(this, 0, tickInterval);
+			currentPosition = entity.getLocation().getDirection().setY(0);
+			Util.rotateVector(currentPosition, horizOffset);
+			orbRadius = orbitRadius;
+			orbHeight = orbitYOffset;
+			orbitTrackerTaskId = MagicSpells.scheduleRepeatingTask(this, 0, tickInterval);
 			if (horizExpandDelay > 0 && horizExpandRadius != 0) {
-				this.repeatingHorizTaskId = MagicSpells.scheduleRepeatingTask(() -> this.orbRadius += horizExpandRadius, horizExpandDelay, horizExpandDelay);
+				repeatingHorizTaskId = MagicSpells.scheduleRepeatingTask(() -> orbRadius += horizExpandRadius, horizExpandDelay, horizExpandDelay);
 			}
 			if (vertExpandDelay > 0 && vertExpandRadius != 0) {
-				this.repeatingVertTaskId = MagicSpells.scheduleRepeatingTask(() -> this.orbHeight += vertExpandRadius, vertExpandDelay, vertExpandDelay);
+				repeatingVertTaskId = MagicSpells.scheduleRepeatingTask(() -> orbHeight += vertExpandRadius, vertExpandDelay, vertExpandDelay);
 			}
 		}
 		
@@ -240,7 +240,7 @@ public abstract class SpellEffect {
 				return;
 			}
 
-			if (counter++ % ticksPerRevolution == 0 && !checker.isActive(entity)) {
+			if (!checker.isActive(entity)) {
 				stop();
 				return;
 			}
@@ -250,7 +250,6 @@ public abstract class SpellEffect {
 			if (entity instanceof Player && !modifiers.check((Player) entity)) return;
 			
 			playEffect(loc);
-			
 		}
 		
 		private Location getLocation() {
@@ -258,7 +257,7 @@ public abstract class SpellEffect {
 			if (counterClockwise) perp = new Vector(currentPosition.getZ(), 0, -currentPosition.getX());
 			else perp = new Vector(-currentPosition.getZ(), 0, currentPosition.getX());
 			currentPosition.add(perp.multiply(distancePerTick)).normalize();
-			return entity.getLocation().add(0, orbHeight, 0).add(currentPosition.clone().multiply(orbRadius));
+			return entity.getLocation().clone().add(0, orbHeight, 0).add(currentPosition.clone().multiply(orbRadius));
 		}
 		
 		public void stop() {

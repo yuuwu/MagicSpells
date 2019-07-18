@@ -28,7 +28,7 @@ public class GripSpell extends TargetedSpell implements TargetedEntitySpell, Tar
 		yOffset = getConfigFloat("y-offset", 0);
 		locationOffset = getConfigFloat("location-offset", 0);
 
-		relativeOffset = getConfigVector("relative-offset", "0,0.5,0");
+		relativeOffset = getConfigVector("relative-offset", "1,1,0");
 
 		strCantGrip = getConfigString("str-cant-grip", "");
 

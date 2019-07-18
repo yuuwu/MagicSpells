@@ -121,7 +121,7 @@ public class HomingProjectileSpell extends TargetedSpell implements TargetedEnti
 		hitSpell = new Subspell(hitSpellName);
 		if (!hitSpell.process()) {
 			hitSpell = null;
-			MagicSpells.error("HomingMissileSpell '" + internalName + "' has an invalid spell defined!");
+			if (!hitSpellName.isEmpty()) MagicSpells.error("HomingMissileSpell '" + internalName + "' has an invalid spell defined!");
 		}
 
 		groundSpell = new Subspell(groundSpellName);

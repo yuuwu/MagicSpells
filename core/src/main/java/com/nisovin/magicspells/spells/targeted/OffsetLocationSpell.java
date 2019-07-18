@@ -13,7 +13,7 @@ import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 
-public class OffsetLocationSpell extends TargetedSpell implements TargetedLocationSpell{
+public class OffsetLocationSpell extends TargetedSpell implements TargetedLocationSpell {
 
 	private Vector relativeOffset;
 	private Vector absoluteOffset;
@@ -23,6 +23,7 @@ public class OffsetLocationSpell extends TargetedSpell implements TargetedLocati
 	
 	public OffsetLocationSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
+
 		relativeOffset = getConfigVector("relative-offset", "0,0,0");
 		absoluteOffset = getConfigVector("absolute-offset", "0,0,0");
 		
@@ -34,8 +35,9 @@ public class OffsetLocationSpell extends TargetedSpell implements TargetedLocati
 		super.initialize();
 
 		spellToCast = new Subspell(spellToCastName);
-		if (!spellToCast.process()) {
+		if (!spellToCast.process() || !spellToCast.isTargetedLocationSpell()) {
 			MagicSpells.error("OffsetLocationSpell '" + internalName + "' has an invalid spell defined!");
+			spellToCast = null;
 		}
 	}
 
@@ -50,15 +52,16 @@ public class OffsetLocationSpell extends TargetedSpell implements TargetedLocati
 			Location loc = Util.applyOffsets(baseTargetLocation, relativeOffset, absoluteOffset);
 			if (loc == null) return PostCastAction.ALREADY_HANDLED;
 
+			if (spellToCast != null) spellToCast.castAtLocation(player, loc, power);
 			playSpellEffects(player, loc);
-			spellToCast.castAtLocation(player, loc, power);
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}
 
 	@Override
 	public boolean castAtLocation(Player caster, Location target, float power) {
-		return spellToCast.castAtLocation(caster, Util.applyOffsets(target, relativeOffset, absoluteOffset), power);
+		if (spellToCast != null) spellToCast.castAtLocation(caster, Util.applyOffsets(target, relativeOffset, absoluteOffset), power);
+		return true;
 	}
 
 	@Override

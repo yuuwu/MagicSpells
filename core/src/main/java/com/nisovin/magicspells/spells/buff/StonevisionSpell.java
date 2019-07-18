@@ -29,7 +29,7 @@ public class StonevisionSpell extends BuffSpell {
 	private Map<UUID, TransparentBlockSet> seers;
 	private Set<Material> transparentTypes;
 
-	private int range;
+	private int radius;
 	private boolean unobfuscate;
 
 	private Material material;
@@ -37,7 +37,7 @@ public class StonevisionSpell extends BuffSpell {
 	public StonevisionSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		range = getConfigInt("range", 4);
+		radius = getConfigInt("radius", 4);
 		unobfuscate = getConfigBoolean("unobfuscate", false);
 		
 		transparentTypes = new HashSet<>();
@@ -65,7 +65,7 @@ public class StonevisionSpell extends BuffSpell {
 	@Override
 	public boolean castBuff(LivingEntity entity, float power, String[] args) {
 		if (!(entity instanceof Player)) return true;
-		seers.put(entity.getUniqueId(), new TransparentBlockSet((Player) entity, range, transparentTypes));
+		seers.put(entity.getUniqueId(), new TransparentBlockSet((Player) entity, radius, transparentTypes));
 		return true;
 	}
 
@@ -107,15 +107,15 @@ public class StonevisionSpell extends BuffSpell {
 
 		Player player;
 		Block center;
-		int range;
+		int radius;
 		Set<Material> types;
 		List<Block> blocks;
 		Set<Chunk> chunks;
 
-		public TransparentBlockSet(Player player, int range, Set<Material> types) {
+		public TransparentBlockSet(Player player, int radius, Set<Material> types) {
 			this.player = player;
 			this.center = player.getLocation().getBlock();
-			this.range = range;
+			this.radius = radius;
 			this.types = types;
 
 			this.blocks = new ArrayList<>();
@@ -134,9 +134,9 @@ public class StonevisionSpell extends BuffSpell {
 			Block block;
 			if (!unobfuscate) {
 				// Handle normally
-				for (int x = px - range; x <= px + range; x++) {
-					for (int y = py - range; y <= py + range; y++) {
-						for (int z = pz - range; z <= pz + range; z++) {
+				for (int x = px - radius; x <= px + radius; x++) {
+					for (int y = py - radius; y <= py + radius; y++) {
+						for (int z = pz - radius; z <= pz + radius; z++) {
 							block = center.getWorld().getBlockAt(x,y,z);
 							if (types.contains(block.getType())) {
 								player.sendBlockChange(block.getLocation(), material.createBlockData());
@@ -150,14 +150,14 @@ public class StonevisionSpell extends BuffSpell {
 				int dx;
 				int dy;
 				int dz;
-				for (int x = px - range - 1; x <= px + range + 1; x++) {
-					for (int y = py - range - 1; y <= py + range + 1; y++) {
-						for (int z = pz - range - 1; z <= pz + range + 1; z++) {
+				for (int x = px - radius - 1; x <= px + radius + 1; x++) {
+					for (int y = py - radius - 1; y <= py + radius + 1; y++) {
+						for (int z = pz - radius - 1; z <= pz + radius + 1; z++) {
 							dx = Math.abs(x - px);
 							dy = Math.abs(y - py);
 							dz = Math.abs(z - pz);
 							block = center.getWorld().getBlockAt(x, y, z);
-							if (types.contains(block.getType()) && dx <= range && dy <= range && dz <= range) {
+							if (types.contains(block.getType()) && dx <= radius && dy <= radius && dz <= radius) {
 								player.sendBlockChange(block.getLocation(), material.createBlockData());
 								newBlocks.add(block);
 							} else if (block.getType() != Material.AIR) {

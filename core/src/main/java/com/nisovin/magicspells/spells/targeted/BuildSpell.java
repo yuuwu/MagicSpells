@@ -118,10 +118,7 @@ public class BuildSpell extends TargetedSpell implements TargetedLocationSpell {
 
 	private boolean build(Player player, Block block, Block against, ItemStack item) {
 		BlockState previousState = block.getState();
-		BlockState state = block.getState();
-		state.setType(item.getType());
-		state.setData(item.getData());
-		state.update(true);
+		block.setType(item.getType());
 
 		if (checkPlugins) {
 			MagicSpellsBlockPlaceEvent event = new MagicSpellsBlockPlaceEvent(block, previousState, against, player.getEquipment().getItemInMainHand(), player, true);

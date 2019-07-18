@@ -103,8 +103,18 @@ public class SilenceSpell extends TargetedSpell implements TargetedEntitySpell {
 	private void silence(Player player, float power) {
 		Unsilencer u = silenced.get(player.getUniqueId());
 		if (u != null) u.cancel();
-
 		silenced.put(player.getUniqueId(), new Unsilencer(player, Math.round(duration * power)));
+	}
+
+	public boolean isSilenced(Player player) {
+		return silenced.containsKey(player.getUniqueId());
+	}
+
+	public void removeSilence(Player player) {
+		if (!isSilenced(player)) return;
+		Unsilencer unsilencer = silenced.get(player.getUniqueId());
+		unsilencer.cancel();
+		silenced.remove(player.getUniqueId());
 	}
 	
 	public class CastListener implements Listener {

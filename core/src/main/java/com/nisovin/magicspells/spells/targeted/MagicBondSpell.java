@@ -97,7 +97,7 @@ public class MagicBondSpell extends TargetedSpell implements TargetedEntitySpell
 
 		private SpellMonitor(Player caster, Player target, float power) {
 			this.caster = caster;
-			this.target = bondTarget.get(caster);
+			this.target = target;
 			this.power = power;
 		}
 

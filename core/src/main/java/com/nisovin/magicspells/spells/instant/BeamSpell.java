@@ -86,7 +86,7 @@ public class BeamSpell extends InstantSpell implements TargetedLocationSpell, Ta
 
 		hitSpell = new Subspell(hitSpellName);
 		if (!hitSpell.process()) {
-			MagicSpells.error("BeamSpell '" + internalName + "' has an invalid spell defined!");
+			if (!hitSpellName.isEmpty()) MagicSpells.error("BeamSpell '" + internalName + "' has an invalid spell defined!");
 			hitSpell = null;
 		}
 

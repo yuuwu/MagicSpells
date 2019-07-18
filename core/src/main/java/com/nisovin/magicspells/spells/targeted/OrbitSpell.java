@@ -4,7 +4,6 @@ import java.util.Set;
 import java.util.List;
 import java.util.HashSet;
 
-import com.nisovin.magicspells.events.SpellTargetLocationEvent;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.util.Vector;
@@ -25,6 +24,7 @@ import com.nisovin.magicspells.events.SpellTargetEvent;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
+import com.nisovin.magicspells.events.SpellTargetLocationEvent;
 
 public class OrbitSpell extends TargetedSpell implements TargetedEntitySpell, TargetedLocationSpell {
 
@@ -90,7 +90,6 @@ public class OrbitSpell extends TargetedSpell implements TargetedEntitySpell, Ta
 		orbitSpellName = getConfigString("spell", "");
 		groundSpellName = getConfigString("spell-on-hit-ground", "");
 		entitySpellName = getConfigString("spell-on-hit-entity", "");
-
 
 		ticksPerSecond = 20F / (float) tickInterval;
 		distancePerTick = 6.28F / (ticksPerSecond * secondsPerRevolution);

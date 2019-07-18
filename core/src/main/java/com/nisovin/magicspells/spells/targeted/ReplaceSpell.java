@@ -59,7 +59,7 @@ public class ReplaceSpell extends TargetedSpell implements TargetedLocationSpell
 		List<String> list = getConfigStringList("replace-blocks", null);
 		if (list != null) {
 			for (String s : list) {
-				Material material = Material.getMaterial(s);
+				Material material = Material.getMaterial(s.toUpperCase());
 				if (material == null) {
 					MagicSpells.error("ReplaceSpell " + internalName + " has an invalid replace-blocks item: " + s);
 					continue;
@@ -72,7 +72,7 @@ public class ReplaceSpell extends TargetedSpell implements TargetedLocationSpell
 		list = getConfigStringList("replace-with", null);
 		if (list != null) {
 			for (String s : list) {
-				Material material = Material.getMaterial(s);
+				Material material = Material.getMaterial(s.toUpperCase());
 				if (material == null) {
 					MagicSpells.error("ReplaceSpell " + internalName + " has an invalid replace-with item: " + s);
 					continue;

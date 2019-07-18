@@ -1,24 +1,25 @@
 package com.nisovin.magicspells.spells.passive;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.List;
+import java.util.HashSet;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Map.Entry;
 
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 
-import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spellbook;
-import com.nisovin.magicspells.materials.MagicItemWithNameMaterial;
-import com.nisovin.magicspells.materials.MagicMaterial;
+import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.spells.PassiveSpell;
 import com.nisovin.magicspells.util.OverridePriority;
+import com.nisovin.magicspells.materials.MagicMaterial;
+import com.nisovin.magicspells.materials.MagicItemWithNameMaterial;
 
 // Optional trigger variable that is a comma separated list of items to accept
 public class PickupItemListener extends PassiveListener {
@@ -54,13 +55,15 @@ public class PickupItemListener extends PassiveListener {
 	
 	@OverridePriority
 	@EventHandler
-	public void onPickup(PlayerPickupItemEvent event) {
+	public void onPickup(EntityPickupItemEvent event) {
+		if (!(event.getEntity() instanceof Player)) return;
+		Player pl = (Player) event.getEntity();
 		if (!allTypes.isEmpty()) {
-			Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());
+			Spellbook spellbook = MagicSpells.getSpellbook(pl);
 			for (PassiveSpell spell : allTypes) {
 				if (!isCancelStateOk(spell, event.isCancelled())) continue;
 				if (!spellbook.hasSpell(spell)) continue;
-				boolean casted = spell.activate(event.getPlayer());
+				boolean casted = spell.activate(pl);
 				if (!PassiveListener.cancelDefaultAction(spell, casted)) continue;
 				event.setCancelled(true);
 			}
@@ -69,11 +72,11 @@ public class PickupItemListener extends PassiveListener {
 		if (!types.isEmpty()) {
 			List<PassiveSpell> list = getSpells(event.getItem().getItemStack());
 			if (list != null) {
-				Spellbook spellbook = MagicSpells.getSpellbook(event.getPlayer());
+				Spellbook spellbook = MagicSpells.getSpellbook(pl);
 				for (PassiveSpell spell : list) {
 					if (!isCancelStateOk(spell, event.isCancelled())) continue;
 					if (!spellbook.hasSpell(spell)) continue;
-					boolean casted = spell.activate(event.getPlayer());
+					boolean casted = spell.activate(pl);
 					if (!PassiveListener.cancelDefaultAction(spell, casted)) continue;
 					event.setCancelled(true);
 				}

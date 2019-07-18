@@ -68,7 +68,7 @@ public class CarpetSpell extends TargetedSpell implements TargetedLocationSpell 
 
 		spellOnTouch = new Subspell(spellOnTouchName);
 		if (!spellOnTouch.process() || !spellOnTouch.isTargetedEntitySpell()) {
-			MagicSpells.error("CarpetSpell '" + internalName + "' has an invalid spell-on-touch defined!");
+			if (!spellOnTouchName.isEmpty()) MagicSpells.error("CarpetSpell '" + internalName + "' has an invalid spell-on-touch defined!");
 			spellOnTouch = null;
 		}
 

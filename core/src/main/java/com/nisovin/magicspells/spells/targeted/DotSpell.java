@@ -77,6 +77,16 @@ public class DotSpell extends TargetedSpell implements TargetedEntitySpell, Spel
 	public String getSpellDamageType() {
 		return spellDamageType;
 	}
+
+	public boolean isActive(LivingEntity entity) {
+		return activeDots.containsKey(entity.getUniqueId());
+	}
+
+	public void cancelDot(LivingEntity entity) {
+		if (!isActive(entity)) return;
+		Dot dot = activeDots.get(entity.getUniqueId());
+		dot.cancel();
+	}
 	
 	private void applyDot(Player caster, LivingEntity target, float power) {
 		Dot dot = activeDots.get(target.getUniqueId());
@@ -93,7 +103,7 @@ public class DotSpell extends TargetedSpell implements TargetedEntitySpell, Spel
 	}
 	
 	@EventHandler
-	void onDeath(PlayerDeathEvent event) {
+	private void onDeath(PlayerDeathEvent event) {
 		Dot dot = activeDots.get(event.getEntity().getUniqueId());
 		if (dot != null) dot.cancel();
 	}
