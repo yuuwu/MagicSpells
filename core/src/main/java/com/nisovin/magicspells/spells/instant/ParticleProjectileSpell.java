@@ -53,7 +53,8 @@ public class ParticleProjectileSpell extends InstantSpell implements TargetedLoc
 	private float projectileVelocity;
 	private float projectileVertOffset;
 	private float projectileHorizOffset;
-	private float projectileSpread;
+	private float projectileVertSpread;
+	private float projectileHorizSpread;
 	private float projectileVertGravity;
 	private float projectileHorizGravity;
 
@@ -141,23 +142,25 @@ public class ParticleProjectileSpell extends InstantSpell implements TargetedLoc
 		projectileVelocity = getConfigFloat("projectile-velocity", 10F);
 		projectileVertOffset = getConfigFloat("projectile-vert-offset", 0F);
 		projectileHorizOffset = getConfigFloat("projectile-horiz-offset", 0F);
-		float projectileGravity = getConfigFloat("projectile-gravity", 0.25F);
+		float projectileGravity = getConfigFloat("projectile-gravity", 0F);
 		projectileVertGravity = getConfigFloat("projectile-vert-gravity", projectileGravity);
 		projectileHorizGravity = getConfigFloat("projectile-horiz-gravity", 0F);
-		projectileSpread = getConfigFloat("projectile-spread", 0F);
+		float projectileSpread = getConfigFloat("projectile-spread", 0F);
+		projectileVertSpread = getConfigFloat("projectile-vertical-spread", projectileSpread);
+		projectileHorizSpread = getConfigFloat("projectile-horizontal-spread", projectileSpread);
 
 		tickInterval = getConfigInt("tick-interval", 2);
 		ticksPerSecond = 20F / (float) tickInterval;
 		spellInterval = getConfigInt("spell-interval", 20);
 		intermediateEffects = getConfigInt("intermediate-effects", 0);
-		specialEffectInterval = getConfigInt("special-effect-interval", 0);
+		specialEffectInterval = getConfigInt("special-effect-interval", 1);
 
 		maxDistanceSquared = getConfigInt("max-distance", 15);
 		maxDistanceSquared *= maxDistanceSquared;
 		maxDuration = (int) (getConfigInt("max-duration", 0) * TimeUtil.MILLISECONDS_PER_SECOND);
 		hitRadius = getConfigFloat("hit-radius", 1.5F);
 		maxEntitiesHit = getConfigInt("max-entities-hit", 0);
-		verticalHitRadius = getConfigFloat("vertical-hit-radius", this.hitRadius);
+		verticalHitRadius = getConfigFloat("vertical-hit-radius", hitRadius);
 
 		hugSurface = getConfigBoolean("hug-surface", false);
 		if (hugSurface) heightFromSurface = getConfigFloat("height-from-surface", 0.6F);
@@ -204,7 +207,7 @@ public class ParticleProjectileSpell extends InstantSpell implements TargetedLoc
 
 		defaultSpell = new Subspell(defaultSpellName);
 		if (!defaultSpell.process()) {
-			MagicSpells.error("ParticleProjectileSpell '" + internalName + "' has an invalid spell defined!");
+			if (!defaultSpellName.isEmpty()) MagicSpells.error("ParticleProjectileSpell '" + internalName + "' has an invalid spell defined!");
 			defaultSpell = null;
 		}
 
@@ -424,10 +427,10 @@ public class ParticleProjectileSpell extends InstantSpell implements TargetedLoc
 		private void init() {
 			if (projectileHorizOffset != 0) Util.rotateVector(currentVelocity, projectileHorizOffset);
 			if (projectileVertOffset != 0) currentVelocity.add(new Vector(0, projectileVertOffset, 0)).normalize();
-			if (projectileSpread > 0) {
+			if (projectileVertSpread > 0 || projectileHorizSpread > 0) {
 				float rx = -1 + rand.nextFloat() * (1 + 1);
 				float ry = -1 + rand.nextFloat() * (1 + 1);
-				currentVelocity.add(new Vector(rx * projectileSpread, ry * projectileSpread, rx * projectileSpread));
+				currentVelocity.add(new Vector(rx * projectileHorizSpread, ry * projectileVertSpread, rx * projectileHorizSpread));
 			}
 			if (hugSurface) {
 				currentLocation.setY(currentLocation.getY() + heightFromSurface);

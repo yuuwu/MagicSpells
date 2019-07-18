@@ -97,7 +97,7 @@ public class HomingMissileSpell extends TargetedSpell implements TargetedEntityS
 
 		tickInterval = getConfigInt("tick-interval", 2);
 		airSpellInterval = getConfigInt("spell-interval", 20);
-		specialEffectInterval = getConfigInt("special-effect-interval", 0);
+		specialEffectInterval = getConfigInt("special-effect-interval", 2);
 		intermediateSpecialEffects = getConfigInt("intermediate-special-effect-locations", 0);
 
 		ticksPerSecond = 20F / (float) tickInterval;
@@ -120,7 +120,7 @@ public class HomingMissileSpell extends TargetedSpell implements TargetedEntityS
 		hitSpell = new Subspell(hitSpellName);
 		if (!hitSpell.process()) {
 			hitSpell = null;
-			MagicSpells.error("HomingMissileSpell '" + internalName + "' has an invalid spell defined!");
+			if (!hitSpellName.isEmpty()) MagicSpells.error("HomingMissileSpell '" + internalName + "' has an invalid spell defined!");
 		}
 
 		groundSpell = new Subspell(groundSpellName);

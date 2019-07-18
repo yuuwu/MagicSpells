@@ -126,7 +126,7 @@ public class BlockBeamSpell extends InstantSpell implements TargetedLocationSpel
 
 		hitSpell = new Subspell(hitSpellName);
 		if (!hitSpell.process()) {
-			MagicSpells.error("BlockBeamSpell '" + internalName + "' has an invalid spell defined!");
+			if (!hitSpellName.isEmpty()) MagicSpells.error("BlockBeamSpell '" + internalName + "' has an invalid spell defined!");
 			hitSpell = null;
 		}
 

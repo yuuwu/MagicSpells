@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.List;
 import java.util.HashMap;
+import java.util.ArrayList;
 
 import org.bukkit.util.Vector;
 import org.bukkit.entity.Entity;
@@ -107,10 +108,30 @@ public class LevitateSpell extends TargetedSpell implements TargetedEntitySpell 
 		return false;
 	}
 
+	public boolean isBeingLevitated(LivingEntity entity) {
+		for (Levitator levitator : levitating.values()) {
+			if (levitator.target.equals(entity)) return true;
+		}
+		return false;
+	}
+
+	public void removeLevitate(LivingEntity entity) {
+		List<Player> toRemove = new ArrayList<>();
+		for (Levitator levitator : levitating.values()) {
+			if (!levitator.target.equals(entity)) continue;
+			toRemove.add(levitator.caster);
+			levitator.stop();
+		}
+		for (Player pl : toRemove) {
+			levitating.remove(pl.getUniqueId());
+		}
+		toRemove.clear();
+	}
+
 	private boolean isLevitating(LivingEntity entity) {
 		return levitating.containsKey(entity.getUniqueId());
 	}
-	
+
 	private void levitate(Player player, Entity target) {
 		double distance = player.getLocation().distance(target.getLocation());
 		Levitator lev = new Levitator(player, target, duration / tickRate, distance);

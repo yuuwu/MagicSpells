@@ -1,7 +1,9 @@
 package com.nisovin.magicspells.spells.targeted;
 
+import java.util.Set;
 import java.util.Map;
 import java.util.UUID;
+import java.util.HashSet;
 import java.util.HashMap;
 
 import org.bukkit.Location;
@@ -92,12 +94,12 @@ public class StunSpell extends TargetedSpell implements TargetedEntitySpell {
 		});
 		
 	}
-	
-	private boolean isStunned(LivingEntity entity) {
+
+	public boolean isStunned(LivingEntity entity) {
 		return stunnedLivingEntities.containsKey(entity.getUniqueId());
 	}
 	
-	private void removeStun(LivingEntity entity) {
+	public void removeStun(LivingEntity entity) {
 		stunnedLivingEntities.remove(entity.getUniqueId());
 	}
 	
@@ -120,7 +122,7 @@ public class StunSpell extends TargetedSpell implements TargetedEntitySpell {
 	private class StunListener implements Listener {
 		
 		@EventHandler
-		public void onMove(PlayerMoveEvent e) {
+		private void onMove(PlayerMoveEvent e) {
 			Player pl = e.getPlayer();
 			if (!isStunned(pl)) return;
 			StunnedInfo info = stunnedLivingEntities.get(pl.getUniqueId());
@@ -135,20 +137,20 @@ public class StunSpell extends TargetedSpell implements TargetedEntitySpell {
 		}
 		
 		@EventHandler
-		public void onInteract(PlayerInteractEvent e) {
+		private void onInteract(PlayerInteractEvent e) {
 			if (!isStunned(e.getPlayer())) return;
 			e.setCancelled(true);
 		}
 		
 		@EventHandler
-		public void onQuit(PlayerQuitEvent e) {
+		private void onQuit(PlayerQuitEvent e) {
 			Player pl = e.getPlayer();
 			if (!isStunned(pl)) return;
 			removeStun(pl);
 		}
 		
 		@EventHandler
-		public void onDeath(PlayerDeathEvent e) {
+		private void onDeath(PlayerDeathEvent e) {
 			Player pl = e.getEntity();
 			if (!isStunned(pl)) return;
 			removeStun(pl);
@@ -157,10 +159,11 @@ public class StunSpell extends TargetedSpell implements TargetedEntitySpell {
 	}
 	
 	private class StunMonitor implements Runnable {
-		
+
+		private Set<LivingEntity> toRemove = new HashSet<>();
+
 		@Override
 		public void run() {
-			
 			for (UUID id : stunnedLivingEntities.keySet()) {
 				StunnedInfo info = stunnedLivingEntities.get(id);
 				LivingEntity entity = info.target;
@@ -171,11 +174,15 @@ public class StunSpell extends TargetedSpell implements TargetedEntitySpell {
 					entity.teleport(info.targetLocation);
 					continue;
 				}
-				
-				removeStun(entity);
-				
+
+				toRemove.add(entity);
 			}
-			
+
+			for (LivingEntity entity : toRemove) {
+				removeStun(entity);
+			}
+
+			toRemove.clear();
 		}
 		
 	}

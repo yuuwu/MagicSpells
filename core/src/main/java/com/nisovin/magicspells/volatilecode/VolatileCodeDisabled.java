@@ -156,7 +156,7 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 		expTag.setIntArray("FadeColors", fadeColors);
 
 		NBTTagCompound fwTag = new NBTTagCompound();
-		fwTag.setByte("Flight", (byte) flightDuration);
+		fwTag.setByte("Flight", (byte) 3);
 		NBTTagList expList = new NBTTagList();
 		expList.add(expTag);
 		fwTag.set("Explosions", expList);
@@ -248,7 +248,7 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 		MagicSpells.scheduleDelayedTask(() -> {
 			for (Player player : players) {
 				if (!player.isValid()) continue;
-				((CraftPlayer)player).getHandle().playerConnection.sendPacket(packet29);
+				((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet29);
 			}
 		}, 250);
 	}

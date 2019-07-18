@@ -25,7 +25,11 @@ public class CleanseSpell extends TargetedSpell implements TargetedEntitySpell {
 	private ValidTargetChecker checker;
 
 	private List<String> toCleanse;
+	private List<DotSpell> dotSpells;
+	private List<StunSpell> stunSpells;
 	private List<BuffSpell> buffSpells;
+	private List<SilenceSpell> silenceSpells;
+	private List<LevitateSpell> levitateSpells;
 	private List<PotionEffectType> potionEffectTypes;
 
 	private boolean fire;
@@ -34,7 +38,11 @@ public class CleanseSpell extends TargetedSpell implements TargetedEntitySpell {
 		super(config, spellName);
 
 		toCleanse = getConfigStringList("remove", Arrays.asList("fire", "17", "19", "20"));
+		dotSpells = new ArrayList<>();
+		stunSpells = new ArrayList<>();
 		buffSpells = new ArrayList<>();
+		silenceSpells = new ArrayList<>();
+		levitateSpells = new ArrayList<>();
 		potionEffectTypes = new ArrayList<>();
 		fire = false;
 	}
@@ -55,6 +63,30 @@ public class CleanseSpell extends TargetedSpell implements TargetedEntitySpell {
 				continue;
 			}
 
+			if (s.startsWith("dot:")) {
+				Spell spell = MagicSpells.getSpellByInternalName(s.replace("dot:", ""));
+				if (spell instanceof DotSpell) dotSpells.add((DotSpell) spell);
+				continue;
+			}
+
+			if (s.startsWith("stun:")) {
+				Spell spell = MagicSpells.getSpellByInternalName(s.replace("stun:", ""));
+				if (spell instanceof StunSpell) stunSpells.add((StunSpell) spell);
+				continue;
+			}
+
+			if (s.startsWith("silence:")) {
+				Spell spell = MagicSpells.getSpellByInternalName(s.replace("silence:", ""));
+				if (spell instanceof SilenceSpell) silenceSpells.add((SilenceSpell) spell);
+				continue;
+			}
+
+			if (s.startsWith("levitate:")) {
+				Spell spell = MagicSpells.getSpellByInternalName(s.replace("levitate:", ""));
+				if (spell instanceof LevitateSpell) levitateSpells.add((LevitateSpell) spell);
+				continue;
+			}
+
 			PotionEffectType type = Util.getPotionEffectType(s);
 			if (type != null) potionEffectTypes.add(type);
 		}
@@ -68,6 +100,22 @@ public class CleanseSpell extends TargetedSpell implements TargetedEntitySpell {
 
 			if (entity instanceof Player) {
 				for (BuffSpell spell : buffSpells) if (spell.isActive(entity)) return true;
+			}
+
+			for (DotSpell spell : dotSpells) {
+				if (spell.isActive(entity)) return true;
+			}
+
+			for (StunSpell spell : stunSpells) {
+				if (spell.isStunned(entity)) return true;
+			}
+
+			if (entity instanceof Player) {
+				for (SilenceSpell spell : silenceSpells) if (spell.isSilenced((Player) entity)) return true;
+			}
+
+			for (LevitateSpell spell : levitateSpells) {
+				if (spell.isBeingLevitated(entity)) return true;
 			}
 
 			return false;
@@ -118,6 +166,24 @@ public class CleanseSpell extends TargetedSpell implements TargetedEntitySpell {
 			for (BuffSpell spell : buffSpells) {
 				spell.turnOff(target);
 			}
+		}
+
+		for (DotSpell spell : dotSpells) {
+			spell.cancelDot(target);
+		}
+
+		for (StunSpell spell : stunSpells) {
+			spell.removeStun(target);
+		}
+
+		if (target instanceof Player) {
+			for (SilenceSpell spell : silenceSpells) {
+				spell.removeSilence((Player) target);
+			}
+		}
+
+		for (LevitateSpell spell : levitateSpells) {
+			spell.removeLevitate(target);
 		}
 
 		if (caster != null) playSpellEffects(caster, target);

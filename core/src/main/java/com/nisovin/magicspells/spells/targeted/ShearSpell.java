@@ -19,15 +19,6 @@ import com.nisovin.magicspells.spells.TargetedEntitySpell;
 //This spell currently support the shearing of sheep at the moment.
 //Future tweaks for the shearing of other mobs will be added.
 
-/*
-#Example Configuration.
-ShearSpell:
-	force-wool-color: false
-	wool-color: white
-	wool-count: 1-3
-	drop-offset: 1
-*/
-
 public class ShearSpell extends TargetedSpell implements TargetedEntitySpell {
 
 	private Random random;

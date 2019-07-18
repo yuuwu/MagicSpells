@@ -55,7 +55,7 @@ public class BombSpell extends TargetedSpell implements TargetedLocationSpell {
 
 		targetSpell = new Subspell(targetSpellName);
 		if (!targetSpell.process() || !targetSpell.isTargetedLocationSpell()) {
-			MagicSpells.error("BombSpell '" + internalName + "' has an invalid spell defined!");
+			if (!targetSpellName.isEmpty()) MagicSpells.error("BombSpell '" + internalName + "' has an invalid spell defined!");
 			targetSpell = null;
 		}
 	}
@@ -102,8 +102,8 @@ public class BombSpell extends TargetedSpell implements TargetedLocationSpell {
 
 		blocks.add(block);
 		block.setType(material);
-		if (player != null) playSpellEffects(player, loc);
-		else playSpellEffects(EffectPosition.TARGET, loc);
+		if (player != null) playSpellEffects(player, loc.add(0.5, 0, 0.5));
+		else playSpellEffects(EffectPosition.TARGET, loc.add(0.5, 0, 0.5));
 
 		new SpellAnimation(interval, interval, true) {
 				

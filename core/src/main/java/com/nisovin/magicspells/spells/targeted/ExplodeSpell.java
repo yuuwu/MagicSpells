@@ -49,7 +49,7 @@ public class ExplodeSpell extends TargetedSpell implements TargetedLocationSpell
 
 		addFire = getConfigBoolean("add-fire", false);
 		simulateTnt = getConfigBoolean("simulate-tnt", true);
-		ignoreCanceled = getConfigBoolean("ignore-canceled", false);
+		ignoreCanceled = getConfigBoolean("ignore-cancelled", false);
 		preventBlockDamage = getConfigBoolean("prevent-block-damage", false);
 		preventPlayerDamage = getConfigBoolean("prevent-player-damage", false);
 		preventAnimalDamage = getConfigBoolean("prevent-animal-damage", false);
