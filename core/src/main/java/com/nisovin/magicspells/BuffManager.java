@@ -20,10 +20,10 @@ public class BuffManager {
 	private Monitor monitor;
 
 	public BuffManager(int interval) {
-		this.activeBuffs = new HashMap<>();
-		this.toRemove = new HashMap<>();
 		this.interval = interval;
-		this.monitor = new Monitor();
+		activeBuffs = new HashMap<>();
+		toRemove = new HashMap<>();
+		monitor = new Monitor();
 	}
 
 	public void addBuff(LivingEntity entity, BuffSpell spell) {
@@ -63,13 +63,12 @@ public class BuffManager {
 
 		private int taskId;
 
-		public Monitor() {
-			this.taskId = MagicSpells.scheduleRepeatingTask(this, interval, interval);
+		Monitor() {
+			taskId = MagicSpells.scheduleRepeatingTask(this, interval, interval);
 		}
 
 		@Override
 		public void run() {
-
 			NoMagicZoneManager zoneManager = MagicSpells.getNoMagicZoneManager();
 			if (zoneManager == null) return;
 

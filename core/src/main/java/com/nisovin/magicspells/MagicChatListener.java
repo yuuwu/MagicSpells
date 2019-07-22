@@ -1,34 +1,34 @@
 package com.nisovin.magicspells;
 
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 public class MagicChatListener implements Listener {
 
-	MagicSpells plugin;
+	private MagicSpells plugin;
 	
-	public MagicChatListener(MagicSpells plugin) {
+	MagicChatListener(MagicSpells plugin) {
 		this.plugin = plugin;
 	}
 	
-	@EventHandler(ignoreCancelled=true)
+	@EventHandler(ignoreCancelled = true)
 	public void onPlayerChat(final AsyncPlayerChatEvent event) {
 		MagicSpells.scheduleDelayedTask(() -> handleIncantation(event.getPlayer(), event.getMessage()), 0);
 	}
 	
-	@EventHandler(ignoreCancelled=true)
+	@EventHandler(ignoreCancelled = true)
 	public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
 		boolean casted = handleIncantation(event.getPlayer(), event.getMessage());
 		if (casted) event.setCancelled(true);
 	}
 	
-	boolean handleIncantation(Player player, String message) {
+	private boolean handleIncantation(Player player, String message) {
 		if (message.contains(" ")) {
 			String[] split = message.split(" ");
-			Spell spell = plugin.incantations.get(split[0].toLowerCase() + " *");
+			Spell spell = MagicSpells.getIncantations().get(split[0].toLowerCase() + " *");
 			if (spell != null) {
 				Spellbook spellbook = MagicSpells.getSpellbook(player);
 				if (spellbook.hasSpell(spell)) {
@@ -40,7 +40,7 @@ public class MagicChatListener implements Listener {
 				return false;
 			}
 		}
-		Spell spell = plugin.incantations.get(message.toLowerCase());
+		Spell spell = MagicSpells.getIncantations().get(message.toLowerCase());
 		if (spell != null) {
 			Spellbook spellbook = MagicSpells.getSpellbook(player);
 			if (spellbook.hasSpell(spell)) {

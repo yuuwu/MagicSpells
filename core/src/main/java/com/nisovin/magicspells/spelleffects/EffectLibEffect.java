@@ -10,7 +10,7 @@ import de.slikey.effectlib.EffectManager;
 public class EffectLibEffect extends SpellEffect {
 
 	ConfigurationSection effectLibSection;
-	EffectManager manager = MagicSpells.plugin.effectManager;
+	EffectManager manager = MagicSpells.getEffectManager();
 	String className;
 	
 	@Override

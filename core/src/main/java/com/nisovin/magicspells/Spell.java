@@ -1,418 +1,357 @@
 package com.nisovin.magicspells;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
+import java.util.List;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import com.nisovin.magicspells.util.LocationUtil;
-import com.nisovin.magicspells.util.TimeUtil;
-import com.nisovin.magicspells.util.TxtUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Location;
+import org.bukkit.util.Vector;
 import org.bukkit.block.Block;
-import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.scoreboard.Team;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.EventHandler;
+import org.bukkit.util.BlockIterator;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.EventPriority;
 import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
-import org.bukkit.util.BlockIterator;
-import org.bukkit.util.Vector;
+import org.bukkit.command.CommandSender;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
-import com.nisovin.magicspells.castmodifiers.ModifierSet;
-import com.nisovin.magicspells.events.MagicSpellsEntityDamageByEntityEvent;
+import com.nisovin.magicspells.util.Util;
+import com.nisovin.magicspells.util.IntMap;
+import com.nisovin.magicspells.util.TxtUtil;
+import com.nisovin.magicspells.util.TimeUtil;
+import com.nisovin.magicspells.util.CastItem;
+import com.nisovin.magicspells.util.TargetInfo;
+import com.nisovin.magicspells.util.BlockUtils;
+import com.nisovin.magicspells.mana.ManaHandler;
+import com.nisovin.magicspells.util.VariableMod;
+import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.MoneyHandler;
+import com.nisovin.magicspells.util.LocationUtil;
+import com.nisovin.magicspells.util.SpellReagents;
+import com.nisovin.magicspells.spells.PassiveSpell;
+import com.nisovin.magicspells.util.ExperienceUtils;
+import com.nisovin.magicspells.util.ValidTargetList;
+import com.nisovin.magicspells.util.compat.EventUtil;
+import com.nisovin.magicspells.mana.ManaChangeReason;
 import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.events.SpellCastedEvent;
 import com.nisovin.magicspells.events.SpellTargetEvent;
-import com.nisovin.magicspells.mana.ManaChangeReason;
-import com.nisovin.magicspells.mana.ManaHandler;
-import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spelleffects.SpellEffect;
-import com.nisovin.magicspells.spells.PassiveSpell;
-import com.nisovin.magicspells.util.BlockUtils;
-import com.nisovin.magicspells.util.CastItem;
-import com.nisovin.magicspells.util.compat.EventUtil;
-import com.nisovin.magicspells.util.ExperienceUtils;
-import com.nisovin.magicspells.util.IntMap;
-import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.MoneyHandler;
-import com.nisovin.magicspells.util.SpellReagents;
-import com.nisovin.magicspells.util.TargetInfo;
-import com.nisovin.magicspells.util.Util;
-import com.nisovin.magicspells.util.ValidTargetList;
-import com.nisovin.magicspells.util.VariableMod;
 import com.nisovin.magicspells.variables.VariableManager;
+import com.nisovin.magicspells.castmodifiers.ModifierSet;
+import com.nisovin.magicspells.spelleffects.EffectPosition;
+import com.nisovin.magicspells.events.MagicSpellsEntityDamageByEntityEvent;
 
 import de.slikey.effectlib.Effect;
 
 public abstract class Spell implements Comparable<Spell>, Listener {
 
-	private MagicConfig config;
+	protected MagicConfig config;
 
-	private boolean debug;
-	protected String internalName;
+	protected Map<String, Long> nextCast;
+	protected Map<String, Integer> xpGranted;
+	protected Map<String, Integer> xpRequired;
+	protected Map<Spell, Float> sharedCooldowns;
+	protected Map<String, VariableMod> variableModsCast;
+	protected Map<String, VariableMod> variableModsCasted;
+	protected Map<String, VariableMod> variableModsTarget;
+	protected Map<String, Map<EffectPosition, List<Runnable>>> callbacks;
 
-	protected String name;
+	protected IntMap<String> chargesConsumed;
 
-	protected String profilingKey;
+	protected EnumMap<EffectPosition, List<SpellEffect>> effects;
+
+	protected Set<String> tags;
+	protected Set<CastItem> bindableItems;
+	protected Set<Material> losTransparentBlocks;
+
+	protected List<String> replaces;
+	protected List<String> precludes;
+	protected List<String> incantations;
+	protected List<String> prerequisites;
+	protected List<String> modifierStrings;
+	protected List<String> worldRestrictions;
+	protected List<String> rawSharedCooldowns;
+	protected List<String> targetModifierStrings;
+
+	protected boolean debug;
+	protected boolean obeyLos;
+	protected boolean bindable;
+	protected boolean beneficial;
+	protected boolean helperSpell;
+	protected boolean alwaysGranted;
+	protected boolean interruptOnMove;
+	protected boolean interruptOnCast;
+	protected boolean interruptOnDamage;
+	protected boolean castWithLeftClick;
+	protected boolean castWithRightClick;
+	protected boolean interruptOnTeleport;
+	protected boolean ignoreGlobalCooldown;
+	protected boolean spellPowerAffectsRange;
+	protected boolean requireCastItemOnCommand;
+
+	protected CastItem[] castItems;
+	protected CastItem[] consumeCastItems;
+	protected CastItem[] rightClickCastItems;
 
 	protected String[] aliases;
 
-	protected boolean helperSpell;
-
-	protected boolean alwaysGranted;
-
+	protected String name;
 	protected String permName;
-
-	protected List<String> incantations;
-
 	protected String description;
-
-	protected CastItem[] castItems;
-
-	protected CastItem[] rightClickCastItems;
-
-	protected CastItem[] consumeCastItems;
-
-	protected boolean castWithLeftClick;
-
-	protected boolean castWithRightClick;
-
+	protected String internalName;
+	protected String profilingKey;
+	protected String rechargeSound;
+	protected String soundOnCooldown;
 	protected String danceCastSequence;
-
-	protected boolean requireCastItemOnCommand;
-
-	protected boolean bindable;
-
-	protected HashSet<CastItem> bindableItems;
-
-	protected ItemStack spellIcon;
-
-	protected int broadcastRange;
-
-	protected int experience;
-
-	protected EnumMap<EffectPosition, List<SpellEffect>> effects;
-	protected Map<String, Map<EffectPosition, List<Runnable>>> callbacks;
-
-	protected int minRange;
-
-	protected int range;
-
-	protected boolean spellPowerAffectsRange;
-
-	protected boolean obeyLos;
-
-	protected ValidTargetList validTargetList;
-
-	protected boolean beneficial;
-
-	private DamageCause targetDamageCause;
-
-	private double targetDamageAmount;
-
-	protected HashSet<Material> losTransparentBlocks;
-
-	protected int castTime;
-
-	protected boolean interruptOnMove;
-
-	protected boolean interruptOnTeleport;
-
-	protected boolean interruptOnDamage;
-
-	protected boolean interruptOnCast;
-
+	protected String soundMissingReagents;
 	protected String spellNameOnInterrupt;
+
+	protected String strCost;
+	protected String strCastSelf;
+	protected String strCantCast;
+	protected String strCantBind;
+	protected String strCastStart;
+	protected String strCastOthers;
+	protected String strOnCooldown;
+	protected String strWrongWorld;
+	protected String strInterrupted;
+	protected String strXpAutoLearned;
+	protected String strWrongCastItem;
+	protected String strModifierFailed;
+	protected String strMissingReagents;
+
+	protected ModifierSet modifiers;
+	protected ModifierSet targetModifiers;
 
 	protected Spell spellOnInterrupt;
 
 	protected SpellReagents reagents;
 
+	protected ItemStack spellIcon;
+
+	protected DamageCause targetDamageCause;
+
+	protected ValidTargetList validTargetList;
+
+	protected long nextCastServer;
+
+	protected double targetDamageAmount;
+
+	protected int range;
+	protected int charges;
+	protected int minRange;
+	protected int castTime;
+	protected int experience;
+	protected int broadcastRange;
+
 	protected float cooldown;
 	protected float serverCooldown;
-	protected List<String> rawSharedCooldowns;
-	protected HashMap<Spell, Float> sharedCooldowns;
-
-	protected boolean ignoreGlobalCooldown;
-
-	protected int charges;
-
-	protected String rechargeSound;
-
-	private List<String> modifierStrings;
-
-	private List<String> targetModifierStrings;
-
-	protected ModifierSet modifiers;
-	protected ModifierSet targetModifiers;
-
-	protected List<String> prerequisites;
-
-	protected List<String> replaces;
-
-	protected List<String> precludes;
-
-	protected Map<String, Integer> xpGranted;
-
-	protected Map<String, Integer> xpRequired;
-
-	protected List<String> worldRestrictions;
-
-	protected Map<String, VariableMod> variableModsCast;
-
-	protected Map<String, VariableMod> variableModsCasted;
-
-	protected Map<String, VariableMod> variableModsTarget;
-
-	protected String soundOnCooldown;
-	protected String soundMissingReagents;
-
-	protected String strCost;
-
-	protected String strCastSelf;
-
-	protected String strCastOthers;
-
-	protected String strOnCooldown;
-
-	protected String strMissingReagents;
-
-	protected String strCantCast;
-
-	protected String strCantBind;
-
-	protected String strWrongWorld;
-
-	protected String strWrongCastItem;
-
-	protected String strCastStart;
-
-	protected String strInterrupted;
-
-	protected String strModifierFailed;
-
-	protected String strXpAutoLearned;
-
-	private HashMap<String, Long> nextCast;
-	IntMap<String> chargesConsumed;
-	private long nextCastServer;
-
-	private Set<String> tags;
 
 	public Spell(MagicConfig config, String spellName) {
 		this.config = config;
-
 		this.internalName = spellName;
+
 		callbacks = new HashMap<>();
 		loadConfigData(config, spellName, "spells");
 	}
 
-	protected void loadConfigData(MagicConfig config, String spellName, String section) {
-		this.debug = config.getBoolean(section + '.' + spellName + ".debug", false);
-		this.profilingKey = "Spell:" + this.getClass().getName().replace("com.nisovin.magicspells.spells.", "") + '-' + spellName;
-		this.name = config.getString(section + '.' + spellName + ".name", spellName);
-		List<String> temp = config.getStringList(section + '.' + spellName + ".aliases", null);
+	private void loadConfigData(MagicConfig config, String spellName, String section) {
+		String path = section + '.' + spellName + '.';
+		debug = config.getBoolean(path + "debug", false);
+		name = config.getString(path + "name", spellName);
+		profilingKey = "Spell:" + getClass().getName().replace("com.nisovin.magicspells.spells.", "") + '-' + spellName;
+		List<String> temp = config.getStringList(path + "aliases", null);
 		if (temp != null) {
 			aliases = new String[temp.size()];
 			aliases = temp.toArray(aliases);
 		}
-		this.helperSpell = config.getBoolean(section + '.' + spellName + ".helper-spell", false);
-		this.alwaysGranted = config.getBoolean(section + '.' + spellName + ".always-granted", false);
-		this.permName = config.getString(section + '.' + spellName + ".permission-name", spellName);
-		this.incantations = config.getStringList(section + '.' + spellName + ".incantations", null);
+		helperSpell = config.getBoolean(path + "helper-spell", false);
+		alwaysGranted = config.getBoolean(path + "always-granted", false);
+		permName = config.getString(path + "permission-name", spellName);
+		incantations = config.getStringList(path + "incantations", null);
 
 		// General options
-		this.description = config.getString(section + '.' + spellName + ".description", "");
-		if (config.contains(section + '.' + spellName + ".cast-item")) {
-			String[] sItems = config.getString(section + '.' + spellName + ".cast-item", "-5").trim().replace(" ", "").split(",");
-			this.castItems = new CastItem[sItems.length];
+		description = config.getString(path + "description", "");
+		if (config.contains(path + "cast-item")) {
+			String[] sItems = config.getString(path + "cast-item", "-5").trim().replace(" ", "").split(",");
+			castItems = new CastItem[sItems.length];
 			for (int i = 0; i < sItems.length; i++) {
 				ItemStack is = Util.getItemStackFromString(sItems[i]);
 				if (is == null) continue;
-				this.castItems[i] = new CastItem(is);
+				castItems[i] = new CastItem(is);
 			}
-		} else if (config.contains(section + '.' + spellName + ".cast-items")) {
-			List<String> sItems = config.getStringList(section + '.' + spellName + ".cast-items", null);
+		} else if (config.contains(path + "cast-items")) {
+			List<String> sItems = config.getStringList(path + "cast-items", null);
 			if (sItems == null) sItems = new ArrayList<>();
-			this.castItems = new CastItem[sItems.size()];
-			for (int i = 0; i < this.castItems.length; i++) {
+			castItems = new CastItem[sItems.size()];
+			for (int i = 0; i < castItems.length; i++) {
 				ItemStack is = Util.getItemStackFromString(sItems.get(i));
 				if (is == null) continue;
-				this.castItems[i] = new CastItem(is);
+				castItems[i] = new CastItem(is);
 			}
 		} else {
-			this.castItems = new CastItem[0];
+			castItems = new CastItem[0];
 		}
-		if (config.contains(section + '.' + spellName + ".right-click-cast-item")) {
-			String[] sItems = config.getString(section + '.' + spellName + ".right-click-cast-item", "-5").trim().replace(" ", "").split(",");
-			this.rightClickCastItems = new CastItem[sItems.length];
+		if (config.contains(path + "right-click-cast-item")) {
+			String[] sItems = config.getString(path + "right-click-cast-item", "-5").trim().replace(" ", "").split(",");
+			rightClickCastItems = new CastItem[sItems.length];
 			for (int i = 0; i < sItems.length; i++) {
 				ItemStack is = Util.getItemStackFromString(sItems[i]);
 				if (is == null) continue;
-				this.rightClickCastItems[i] = new CastItem(is);
+				rightClickCastItems[i] = new CastItem(is);
 			}
-		} else if (config.contains(section + '.' + spellName + ".right-click-cast-items")) {
-			List<String> sItems = config.getStringList(section + '.' + spellName + ".right-click-cast-items", null);
+		} else if (config.contains(path + "right-click-cast-items")) {
+			List<String> sItems = config.getStringList(path + "right-click-cast-items", null);
 			if (sItems == null) sItems = new ArrayList<>();
-			this.rightClickCastItems = new CastItem[sItems.size()];
+			rightClickCastItems = new CastItem[sItems.size()];
 			for (int i = 0; i < rightClickCastItems.length; i++) {
 				ItemStack is = Util.getItemStackFromString(sItems.get(i));
 				if (is == null) continue;
-				this.rightClickCastItems[i] = new CastItem(is);
+				rightClickCastItems[i] = new CastItem(is);
 			}
 		} else {
-			this.rightClickCastItems = new CastItem[0];
+			rightClickCastItems = new CastItem[0];
 		}
-		if (config.contains(section + '.' + spellName + ".consume-cast-item")) {
-			String[] sItems = config.getString(section + '.' + spellName + ".consume-cast-item", "-5").trim().replace(" ", "").split(",");
-			this.consumeCastItems = new CastItem[sItems.length];
+		if (config.contains(path + "consume-cast-item")) {
+			String[] sItems = config.getString(path + "consume-cast-item", "-5").trim().replace(" ", "").split(",");
+			consumeCastItems = new CastItem[sItems.length];
 			for (int i = 0; i < sItems.length; i++) {
 				ItemStack is = Util.getItemStackFromString(sItems[i]);
 				if (is == null) continue;
-				this.consumeCastItems[i] = new CastItem(is);
+				consumeCastItems[i] = new CastItem(is);
 			}
-		} else if (config.contains(section + '.' + spellName + ".consume-cast-items")) {
-			List<String> sItems = config.getStringList(section + '.' + spellName + ".consume-cast-items", null);
+		} else if (config.contains(path + "consume-cast-items")) {
+			List<String> sItems = config.getStringList(path + "consume-cast-items", null);
 			if (sItems == null) sItems = new ArrayList<>();
-			this.consumeCastItems = new CastItem[sItems.size()];
-			for (int i = 0; i < this.consumeCastItems.length; i++) {
+			consumeCastItems = new CastItem[sItems.size()];
+			for (int i = 0; i < consumeCastItems.length; i++) {
 				ItemStack is = Util.getItemStackFromString(sItems.get(i));
 				if (is == null) continue;
-				this.consumeCastItems[i] = new CastItem(is);
+				consumeCastItems[i] = new CastItem(is);
 			}
 		} else {
-			this.consumeCastItems = new CastItem[0];
+			consumeCastItems = new CastItem[0];
 		}
-		this.castWithLeftClick = config.getBoolean(section + '.' + spellName + ".cast-with-left-click", MagicSpells.plugin.castWithLeftClick);
-		this.castWithRightClick = config.getBoolean(section + '.' + spellName + ".cast-with-right-click", MagicSpells.plugin.castWithRightClick);
-		this.danceCastSequence = config.getString(section + '.' + spellName + ".dance-cast-sequence", null);
-		this.requireCastItemOnCommand = config.getBoolean(section + '.' + spellName + ".require-cast-item-on-command", false);
-		this.bindable = config.getBoolean(section + '.' + spellName + ".bindable", true);
-		List<String> bindables = config.getStringList(section + '.' + spellName + ".bindable-items", null);
+		castWithLeftClick = config.getBoolean(path + "cast-with-left-click", MagicSpells.plugin.castWithLeftClick);
+		castWithRightClick = config.getBoolean(path + "cast-with-right-click", MagicSpells.plugin.castWithRightClick);
+		danceCastSequence = config.getString(path + "dance-cast-sequence", null);
+		requireCastItemOnCommand = config.getBoolean(path + "require-cast-item-on-command", false);
+		bindable = config.getBoolean(path + "bindable", true);
+		List<String> bindables = config.getStringList(path + "bindable-items", null);
 		if (bindables != null) {
-			this.bindableItems = new HashSet<>();
+			bindableItems = new HashSet<>();
 			for (String s : bindables) {
 				ItemStack is = Util.getItemStackFromString(s);
 				if (is == null) continue;
-				this.bindableItems.add(new CastItem(is));
+				bindableItems.add(new CastItem(is));
 			}
 		}
-		String icontemp = config.getString(section + '.' + spellName + ".spell-icon", null);
+		String icontemp = config.getString(path + "spell-icon", null);
 		if (icontemp == null) {
-			this.spellIcon = null;
+			spellIcon = null;
 		} else {
-			this.spellIcon = Util.getItemStackFromString(icontemp);
-			if (this.spellIcon != null && this.spellIcon.getType() != Material.AIR) {
-				this.spellIcon.setAmount(0);
+			spellIcon = Util.getItemStackFromString(icontemp);
+			if (spellIcon != null && spellIcon.getType() != Material.AIR) {
+				spellIcon.setAmount(0);
 				if (!icontemp.contains("|")) {
-					ItemMeta iconMeta = this.spellIcon.getItemMeta();
-					iconMeta.setDisplayName(MagicSpells.getTextColor() + this.name);
-					this.spellIcon.setItemMeta(iconMeta);
+					ItemMeta iconMeta = spellIcon.getItemMeta();
+					iconMeta.setDisplayName(MagicSpells.getTextColor() + name);
+					spellIcon.setItemMeta(iconMeta);
 				}
 			}
 		}
-		this.broadcastRange = config.getInt(section + '.' + spellName + ".broadcast-range", MagicSpells.plugin.broadcastRange);
-		this.experience = config.getInt(section + '.' + spellName + ".experience", 0);
+		experience = config.getInt(path + "experience", 0);
+		broadcastRange = config.getInt(path + "broadcast-range", MagicSpells.plugin.broadcastRange);
 
 		// Cast time
-		this.castTime = config.getInt(section + '.' + spellName + ".cast-time", 0);
-		this.interruptOnMove = config.getBoolean(section + '.' + spellName + ".interrupt-on-move", true);
-		this.interruptOnTeleport = config.getBoolean(section + '.' + spellName + ".interrupt-on-teleport", true);
-		this.interruptOnDamage = config.getBoolean(section + '.' + spellName + ".interrupt-on-damage", false);
-		this.interruptOnCast = config.getBoolean(section + '.' + spellName + ".interrupt-on-cast", true);
-		this.spellNameOnInterrupt = config.getString(section + '.' + spellName + ".spell-on-interrupt", null);
+		castTime = config.getInt(path + "cast-time", 0);
+		interruptOnMove = config.getBoolean(path + "interrupt-on-move", true);
+		interruptOnCast = config.getBoolean(path + "interrupt-on-cast", true);
+		interruptOnDamage = config.getBoolean(path + "interrupt-on-damage", false);
+		interruptOnTeleport = config.getBoolean(path + "interrupt-on-teleport", true);
+		spellNameOnInterrupt = config.getString(path + "spell-on-interrupt", null);
 
 		// Targeting
-		this.minRange = config.getInt(section + '.' + spellName + ".min-range", 0);
-		this.range = config.getInt(section + '.' + spellName + ".range", 20);
-		this.spellPowerAffectsRange = config.getBoolean(section + '.' + spellName + ".spell-power-affects-range", false);
-		this.obeyLos = config.getBoolean(section + '.' + spellName + ".obey-los", true);
-		if (config.contains(section + '.' + spellName + ".can-target")) {
-			if (config.isList(section + '.' + spellName + ".can-target")) {
-				this.validTargetList = new ValidTargetList(this, config.getStringList(section + '.' + spellName + ".can-target", null));
-			} else {
-				this.validTargetList = new ValidTargetList(this, config.getString(section + '.' + spellName + ".can-target", ""));
-			}
+		minRange = config.getInt(path + "min-range", 0);
+		range = config.getInt(path + "range", 20);
+		spellPowerAffectsRange = config.getBoolean(path + "spell-power-affects-range", false);
+		obeyLos = config.getBoolean(path + "obey-los", true);
+		if (config.contains(path + "can-target")) {
+			if (config.isList(path + "can-target")) validTargetList = new ValidTargetList(this, config.getStringList(path + "can-target", null));
+			else validTargetList = new ValidTargetList(this, config.getString(path + "can-target", ""));
 		} else {
-			boolean targetPlayers = config.getBoolean(section + '.' + spellName + ".target-players", true);
-			boolean targetNonPlayers = config.getBoolean(section + '.' + spellName + ".target-non-players", true);
-			this.validTargetList = new ValidTargetList(targetPlayers, targetNonPlayers);
+			boolean targetPlayers = config.getBoolean(path + "target-players", true);
+			boolean targetNonPlayers = config.getBoolean(path + "target-non-players", true);
+			validTargetList = new ValidTargetList(targetPlayers, targetNonPlayers);
 		}
-		this.beneficial = config.getBoolean(section + '.' + spellName + ".beneficial", isBeneficialDefault());
-		this.targetDamageCause = null;
-		String causeStr = config.getString(section + '.' + spellName + ".target-damage-cause", null);
+		beneficial = config.getBoolean(path + "beneficial", isBeneficialDefault());
+		targetDamageCause = null;
+		String causeStr = config.getString(path + "target-damage-cause", null);
 		if (causeStr != null) {
 			for (DamageCause cause : DamageCause.values()) {
-				if (cause.name().equalsIgnoreCase(causeStr)) {
-					this.targetDamageCause = cause;
-					break;
-				}
+				if (!cause.name().equalsIgnoreCase(causeStr)) continue;
+				targetDamageCause = cause;
+				break;
 			}
 		}
-		this.targetDamageAmount = config.getDouble(section + '.' + spellName + ".target-damage-amount", 0);
-		this.losTransparentBlocks = MagicSpells.getTransparentBlocks();
-		if (config.contains(section + '.' + spellName + ".los-transparent-blocks")) {
-			this.losTransparentBlocks = Util.getMaterialList(config.getStringList(section + '.' + spellName + ".los-transparent-blocks", Collections.emptyList()), HashSet::new);
-			this.losTransparentBlocks.add(Material.AIR);
-			this.losTransparentBlocks.add(Material.CAVE_AIR);
-			this.losTransparentBlocks.add(Material.VOID_AIR);
+		targetDamageAmount = config.getDouble(path + "target-damage-amount", 0);
+		losTransparentBlocks = MagicSpells.getTransparentBlocks();
+		if (config.contains(path + "los-transparent-blocks")) {
+			losTransparentBlocks = Util.getMaterialList(config.getStringList(path + "los-transparent-blocks", Collections.emptyList()), HashSet::new);
+			losTransparentBlocks.add(Material.AIR);
+			losTransparentBlocks.add(Material.CAVE_AIR);
+			losTransparentBlocks.add(Material.VOID_AIR);
 		}
 
 		// Graphical effects
-		if (config.contains(section + '.' + spellName + ".effects")) {
-			this.effects = new EnumMap<>(EffectPosition.class);
-			if (config.isList(section + '.' + spellName + ".effects")) {
-				List<String> effectsList = config.getStringList(section + '.' + spellName + ".effects", null);
+		if (config.contains(path + "effects")) {
+			effects = new EnumMap<>(EffectPosition.class);
+			if (config.isList(path + "effects")) {
+				List<String> effectsList = config.getStringList(path + "effects", null);
 				if (effectsList != null) {
-					for (Object obj : effectsList) {
-						if (obj instanceof String) {
-							String eff = (String)obj;
-							String[] data = eff.split(" ", 3);
-							EffectPosition pos = EffectPosition.getPositionFromString(data[0]);
-							if (pos != null) {
-								SpellEffect effect = SpellEffect.createNewEffectByName(data[1]);
-								if (effect != null) {
-									effect.loadFromString(data.length > 2 ? data[2] : null);
-									List<SpellEffect> e = this.effects.computeIfAbsent(pos, p -> new ArrayList<>());
-									e.add(effect);
-								}
-							}
-						}
+					for (String eff : effectsList) {
+						String[] data = eff.split(" ", 3);
+						EffectPosition pos = EffectPosition.getPositionFromString(data[0]);
+						if (pos == null) continue;
+						SpellEffect effect = SpellEffect.createNewEffectByName(data[1]);
+						if (effect == null) continue;
+						effect.loadFromString(data.length > 2 ? data[2] : null);
+						List<SpellEffect> e = effects.computeIfAbsent(pos, p -> new ArrayList<>());
+						e.add(effect);
 					}
 				}
-			} else if (config.isSection(section + '.' + spellName + ".effects")) {
-				for (String key : config.getKeys(section + '.' + spellName + ".effects")) {
-					ConfigurationSection effConf = config.getSection(section + '.' + spellName + ".effects." + key);
+			} else if (config.isSection(path + "effects")) {
+				for (String key : config.getKeys(path + "effects")) {
+					ConfigurationSection effConf = config.getSection(path + "effects." + key);
 					EffectPosition pos = EffectPosition.getPositionFromString(effConf.getString("position", ""));
-					if (pos != null) {
-						SpellEffect effect = SpellEffect.createNewEffectByName(effConf.getString("effect", ""));
-						if (effect != null) {
-							effect.loadFromConfiguration(effConf);
-							List<SpellEffect> e = this.effects.computeIfAbsent(pos, p -> new ArrayList<>());
-							e.add(effect);
-						}
-					}
+					if (pos == null) continue;
+					SpellEffect effect = SpellEffect.createNewEffectByName(effConf.getString("effect", ""));
+					if (effect == null) continue;
+					effect.loadFromConfiguration(effConf);
+					List<SpellEffect> e = effects.computeIfAbsent(pos, p -> new ArrayList<>());
+					e.add(effect);
 				}
 			}
 		}
@@ -420,194 +359,186 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		//TODO load the fast mapping for effects here
 
 		// Cost
-		this.reagents = getConfigReagents("cost");
-		if (this.reagents == null) this.reagents = new SpellReagents();
+		reagents = getConfigReagents("cost");
+		if (reagents == null) reagents = new SpellReagents();
 
 		// Cooldowns
-		this.cooldown = (float)config.getDouble(section + '.' + spellName + ".cooldown", 0);
-		this.serverCooldown = (float)config.getDouble(section + '.' + spellName + ".server-cooldown", 0);
-		this.rawSharedCooldowns = config.getStringList(section + '.' + spellName + ".shared-cooldowns", null);
-		this.ignoreGlobalCooldown = config.getBoolean(section + '.' + spellName + ".ignore-global-cooldown", false);
-		this.charges = config.getInt(section + '.' + spellName + ".charges", 0);
-		this.rechargeSound = config.getString(section + '.' + spellName + ".recharge-sound", "");
-		this.nextCast = new HashMap<>();
-		this.chargesConsumed = new IntMap<>();
-		this.nextCastServer = 0;
+		cooldown = (float) config.getDouble(path + "cooldown", 0);
+		serverCooldown = (float) config.getDouble(path + "server-cooldown", 0);
+		rawSharedCooldowns = config.getStringList(path + "shared-cooldowns", null);
+		ignoreGlobalCooldown = config.getBoolean(path + "ignore-global-cooldown", false);
+		charges = config.getInt(path + "charges", 0);
+		rechargeSound = config.getString(path + "recharge-sound", "");
+		nextCast = new HashMap<>();
+		chargesConsumed = new IntMap<>();
+		nextCastServer = 0;
 
 		// Modifiers
-		this.modifierStrings = config.getStringList(section + '.' + spellName + ".modifiers", null);
-		this.targetModifierStrings = config.getStringList(section + '.' + spellName + ".target-modifiers", null);
+		modifierStrings = config.getStringList(path + "modifiers", null);
+		targetModifierStrings = config.getStringList(path + "target-modifiers", null);
 
 		// Hierarchy options
-		this.prerequisites = config.getStringList(section + '.' + spellName + ".prerequisites", null);
-		this.replaces = config.getStringList(section + '.' + spellName + ".replaces", null);
-		this.precludes = config.getStringList(section + '.' + spellName + ".precludes", null);
-		this.worldRestrictions = config.getStringList(section + '.' + spellName + ".restrict-to-worlds", null);
-		List<String> sXpGranted = config.getStringList(section + '.' + spellName + ".xp-granted", null);
-		List<String> sXpRequired = config.getStringList(section + '.' + spellName + ".xp-required", null);
+		prerequisites = config.getStringList(path + "prerequisites", null);
+		replaces = config.getStringList(path + "replaces", null);
+		precludes = config.getStringList(path + "precludes", null);
+		worldRestrictions = config.getStringList(path + "restrict-to-worlds", null);
+		List<String> sXpGranted = config.getStringList(path + "xp-granted", null);
+		List<String> sXpRequired = config.getStringList(path + "xp-required", null);
 		if (sXpGranted != null) {
-			this.xpGranted = new LinkedHashMap<>();
+			xpGranted = new LinkedHashMap<>();
 			for (String s : sXpGranted) {
 				String[] split = s.split(" ");
 				try {
 					int amt = Integer.parseInt(split[1]);
-					this.xpGranted.put(split[0], amt);
+					xpGranted.put(split[0], amt);
 				} catch (NumberFormatException e) {
-					MagicSpells.error("Error in xp-granted entry for spell '" + this.internalName + "': " + s);
+					MagicSpells.error("Error in xp-granted entry for spell '" + internalName + "': " + s);
 				}
 			}
 		}
 		if (sXpRequired != null) {
-			this.xpRequired = new LinkedHashMap<>();
+			xpRequired = new LinkedHashMap<>();
 			for (String s : sXpRequired) {
 				String[] split = s.split(" ");
 				try {
 					int amt = Integer.parseInt(split[1]);
-					this.xpRequired.put(split[0], amt);
+					xpRequired.put(split[0], amt);
 				} catch (NumberFormatException e) {
-					MagicSpells.error("Error in xp-required entry for spell '" + this.internalName + "': " + s);
+					MagicSpells.error("Error in xp-required entry for spell '" + internalName + "': " + s);
 				}
 			}
 		}
 
 		// Variable options
-		List<String> varModsCast = config.getStringList(section + '.' + spellName + ".variable-mods-cast", null);
+		List<String> varModsCast = config.getStringList(path + "variable-mods-cast", null);
 		if (varModsCast != null && !varModsCast.isEmpty()) {
-			this.variableModsCast = new HashMap<>();
+			variableModsCast = new HashMap<>();
 			for (String s : varModsCast) {
 				try {
 					String[] data = s.split(" ");
 					String var = data[0];
 					VariableMod varMod = new VariableMod(data[1]);
-					this.variableModsCast.put(var, varMod);
+					variableModsCast.put(var, varMod);
 				} catch (Exception e) {
 					MagicSpells.error("Invalid variable-mods-cast option for spell '" + spellName + "': " + s);
 				}
 			}
 		}
-		List<String> varModsCasted = config.getStringList(section + '.' + spellName + ".variable-mods-casted", null);
+		List<String> varModsCasted = config.getStringList(path + "variable-mods-casted", null);
 		if (varModsCasted != null && !varModsCasted.isEmpty()) {
-			this.variableModsCasted = new HashMap<>();
+			variableModsCasted = new HashMap<>();
 			for (String s : varModsCasted) {
 				try {
 					String[] data = s.split(" ");
 					String var = data[0];
 					VariableMod varMod = new VariableMod(data[1]);
-					this.variableModsCasted.put(var, varMod);
+					variableModsCasted.put(var, varMod);
 				} catch (Exception e) {
 					MagicSpells.error("Invalid variable-mods-casted option for spell '" + spellName + "': " + s);
 				}
 			}
 		}
-		List<String> varModsTarget = config.getStringList(section + '.' + spellName + ".variable-mods-target", null);
+		List<String> varModsTarget = config.getStringList(path + "variable-mods-target", null);
 		if (varModsTarget != null && !varModsTarget.isEmpty()) {
-			this.variableModsTarget = new HashMap<>();
+			variableModsTarget = new HashMap<>();
 			for (String s : varModsTarget) {
 				try {
 					String[] data = s.split(" ");
 					String var = data[0];
 					VariableMod varMod = new VariableMod(data[1]);
-					this.variableModsTarget.put(var, varMod);
+					variableModsTarget.put(var, varMod);
 				} catch (Exception e) {
 					MagicSpells.error("Invalid variable-mods-target option for spell '" + spellName + "': " + s);
 				}
 			}
 		}
 
-		this.soundOnCooldown = config.getString(section + '.' + spellName + ".sound-on-cooldown", MagicSpells.plugin.soundFailOnCooldown);
-		if (this.soundOnCooldown != null && this.soundOnCooldown.isEmpty()) this.soundOnCooldown = null;
-		this.soundMissingReagents = config.getString(section + '.' + spellName + ".sound-missing-reagents", MagicSpells.plugin.soundFailMissingReagents);
-		if (this.soundMissingReagents != null && this.soundMissingReagents.isEmpty()) this.soundMissingReagents = null;
+		soundOnCooldown = config.getString(path + "sound-on-cooldown", MagicSpells.plugin.soundFailOnCooldown);
+		soundMissingReagents = config.getString(path + "sound-missing-reagents", MagicSpells.plugin.soundFailMissingReagents);
+		if (soundOnCooldown != null && soundOnCooldown.isEmpty()) soundOnCooldown = null;
+		if (soundMissingReagents != null && soundMissingReagents.isEmpty()) soundMissingReagents = null;
 
 		// Strings
-		this.strCost = config.getString(section + '.' + spellName + ".str-cost", null);
-		this.strCastSelf = config.getString(section + '.' + spellName + ".str-cast-self", null);
-		this.strCastOthers = config.getString(section + '.' + spellName + ".str-cast-others", null);
-		this.strOnCooldown = config.getString(section + '.' + spellName + ".str-on-cooldown", MagicSpells.plugin.strOnCooldown);
-		this.strMissingReagents = config.getString(section + '.' + spellName + ".str-missing-reagents", MagicSpells.plugin.strMissingReagents);
-		this.strCantCast = config.getString(section + '.' + spellName + ".str-cant-cast", MagicSpells.plugin.strCantCast);
-		this.strCantBind = config.getString(section + '.' + spellName + ".str-cant-bind", null);
-		this.strWrongWorld = config.getString(section + '.' + spellName + ".str-wrong-world", MagicSpells.plugin.strWrongWorld);
-		this.strWrongCastItem = config.getString(section + '.' + spellName + ".str-wrong-cast-item", this.strCantCast);
-		this.strCastStart = config.getString(section + '.' + spellName + ".str-cast-start", null);
-		this.strInterrupted = config.getString(section + '.' + spellName + ".str-interrupted", null);
-		this.strModifierFailed = config.getString(section + '.' + spellName + ".str-modifier-failed", null);
-		this.strXpAutoLearned = config.getString(section + '.' + spellName + ".str-xp-auto-learned", MagicSpells.plugin.strXpAutoLearned);
-		if (this.strXpAutoLearned != null) this.strXpAutoLearned = this.strXpAutoLearned.replace("%s", this.name);
+		strCost = config.getString(path + "str-cost", null);
+		strCantCast = config.getString(path + "str-cant-cast", MagicSpells.plugin.strCantCast);
+		strCantBind = config.getString(path + "str-cant-bind", null);
+		strCastSelf = config.getString(path + "str-cast-self", null);
+		strCastStart = config.getString(path + "str-cast-start", null);
+		strCastOthers = config.getString(path + "str-cast-others", null);
+		strOnCooldown = config.getString(path + "str-on-cooldown", MagicSpells.plugin.strOnCooldown);
+		strWrongWorld = config.getString(path + "str-wrong-world", MagicSpells.plugin.strWrongWorld);
+		strInterrupted = config.getString(path + "str-interrupted", null);
+		strXpAutoLearned = config.getString(path + "str-xp-auto-learned", MagicSpells.plugin.strXpAutoLearned);
+		strWrongCastItem = config.getString(path + "str-wrong-cast-item", strCantCast);
+		strModifierFailed = config.getString(path + "str-modifier-failed", null);
+		strMissingReagents = config.getString(path + "str-missing-reagents", MagicSpells.plugin.strMissingReagents);
+		if (strXpAutoLearned != null) strXpAutoLearned = strXpAutoLearned.replace("%s", name);
 
-		this.tags = new HashSet<>(config.getStringList(section + '.' + spellName + ".tags", new ArrayList<>()));
-		this.tags.add("spell-class:" + this.getClass().getCanonicalName());
-		this.tags.add("spell-package:" + this.getClass().getPackage().getName());
+		tags = new HashSet<>(config.getStringList(path + "tags", new ArrayList<>()));
+		tags.add("spell-class:" + getClass().getCanonicalName());
+		tags.add("spell-package:" + getClass().getPackage().getName());
 	}
 
 	public Set<String> getTags() {
-		return Collections.unmodifiableSet(this.tags);
+		return Collections.unmodifiableSet(tags);
 	}
 
 	public boolean hasTag(String tag) {
-		return this.tags.contains(tag);
+		return tags.contains(tag);
 	}
 
 	public String getLoggingSpellPrefix() {
-		return '[' + this.internalName + ']';
+		return '[' + internalName + ']';
 	}
 
 	protected SpellReagents getConfigReagents(String option) {
 		SpellReagents reagents = null;
-		List<String> costList = config.getStringList("spells." + this.internalName + '.' + option, null);
+		List<String> costList = config.getStringList("spells." + internalName + '.' + option, null);
 		if (costList != null && !costList.isEmpty()) {
 			reagents = new SpellReagents();
 			String[] data;
-			for (int i = 0; i < costList.size(); i++) {
-				String costVal = costList.get(i);
-
+			for (String costVal : costList) {
 				try {
 					// Parse cost data
 					data = costVal.split(" ");
+					int amt = 1;
+					float money = 1;
 					if (data[0].equalsIgnoreCase("health")) {
-						int amt = 1;
 						if (data.length > 1) amt = Integer.parseInt(data[1]);
 						reagents.setHealth(amt);
 					} else if (data[0].equalsIgnoreCase("mana")) {
-						int amt = 1;
 						if (data.length > 1) amt = Integer.parseInt(data[1]);
 						reagents.setMana(amt);
 					} else if (data[0].equalsIgnoreCase("hunger")) {
-						int amt = 1;
 						if (data.length > 1) amt = Integer.parseInt(data[1]);
 						reagents.setHunger(amt);
 					} else if (data[0].equalsIgnoreCase("experience")) {
-						int amt = 1;
 						if (data.length > 1) amt = Integer.parseInt(data[1]);
 						reagents.setExperience(amt);
 					} else if (data[0].equalsIgnoreCase("levels")) {
-						int amt = 1;
 						if (data.length > 1) amt = Integer.parseInt(data[1]);
 						reagents.setLevels(amt);
 					} else if (data[0].equalsIgnoreCase("durability")) {
-						int amt = 1;
 						if (data.length > 1) amt = Integer.parseInt(data[1]);
 						reagents.setDurability(amt);
 					} else if (data[0].equalsIgnoreCase("money")) {
-						float amt = 1;
-						if (data.length > 1) amt = Float.parseFloat(data[1]);
-						reagents.setMoney(amt);
+						if (data.length > 1) money = Float.parseFloat(data[1]);
+						reagents.setMoney(money);
 					} else if (data[0].equalsIgnoreCase("variable")) {
 						reagents.addVariable(data[1], Double.parseDouble(data[2]));
 					} else {
-						int amt = 1;
 						if (data.length > 1) amt = Integer.parseInt(data[1]);
 						ItemStack is = Util.getItemStackFromString(data[0]);
 						if (is != null) {
 							is.setAmount(amt);
 							reagents.addItem(is);
 						} else {
-							MagicSpells.error("Failed to process cost value for " + this.internalName + " spell: " + costVal);
+							MagicSpells.error("Failed to process cost value for " + internalName + " spell: " + costVal);
 						}
 					}
 				} catch (Exception e) {
 					// FIXME this should not be a means of breaking
-					MagicSpells.error("Failed to process cost value for " + this.internalName + " spell: " + costVal);
+					MagicSpells.error("Failed to process cost value for " + internalName + " spell: " + costVal);
 				}
 			}
 		}
@@ -621,43 +552,39 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	 */
 	protected void initialize() {
 		// Modifiers
-		if (this.modifierStrings != null && !this.modifierStrings.isEmpty()) {
-			debug(2, "Adding modifiers to " + this.internalName + " spell");
-			this.modifiers = new ModifierSet(this.modifierStrings);
-			this.modifierStrings = null;
+		if (modifierStrings != null && !modifierStrings.isEmpty()) {
+			debug(2, "Adding modifiers to " + internalName + " spell");
+			modifiers = new ModifierSet(modifierStrings);
+			modifierStrings = null;
 		}
-		if (this.targetModifierStrings != null && !this.targetModifierStrings.isEmpty()) {
-			debug(2, "Adding target modifiers to " + this.internalName + " spell");
-			this.targetModifiers = new ModifierSet(this.targetModifierStrings);
-			this.targetModifierStrings = null;
+		if (targetModifierStrings != null && !targetModifierStrings.isEmpty()) {
+			debug(2, "Adding target modifiers to " + internalName + " spell");
+			targetModifiers = new ModifierSet(targetModifierStrings);
+			targetModifierStrings = null;
 		}
 
 		// Process shared cooldowns
-		if (this.rawSharedCooldowns != null) {
-			this.sharedCooldowns = new HashMap<>();
-			for (String s : this.rawSharedCooldowns) {
+		if (rawSharedCooldowns != null) {
+			sharedCooldowns = new HashMap<>();
+			for (String s : rawSharedCooldowns) {
 				String[] data = s.split(" ");
 				Spell spell = MagicSpells.getSpellByInternalName(data[0]);
 				float cd = Float.parseFloat(data[1]);
-				if (spell != null) {
-					this.sharedCooldowns.put(spell, cd);
-				}
+				if (spell != null) sharedCooldowns.put(spell, cd);
 			}
-			this.rawSharedCooldowns.clear();
-			this.rawSharedCooldowns = null;
+			rawSharedCooldowns.clear();
+			rawSharedCooldowns = null;
 		}
 
 		// Register events
 		registerEvents();
 
 		// Other processing
-		if (this.spellNameOnInterrupt != null && !this.spellNameOnInterrupt.isEmpty()) {
-			this.spellOnInterrupt = MagicSpells.getSpellByInternalName(this.spellNameOnInterrupt);
-		}
+		if (spellNameOnInterrupt != null && !spellNameOnInterrupt.isEmpty()) spellOnInterrupt = MagicSpells.getSpellByInternalName(spellNameOnInterrupt);
 	}
 
 	protected boolean configKeyExists(String key) {
-		return this.config.contains("spells." + this.internalName + '.' + key);
+		return config.contains("spells." + internalName + '.' + key);
 	}
 
 	/**
@@ -669,7 +596,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	 * @return The config value, or defaultValue if it does not exist
 	 */
 	protected int getConfigInt(String key, int defaultValue) {
-		return this.config.getInt("spells." + this.internalName + '.' + key, defaultValue);
+		return config.getInt("spells." + internalName + '.' + key, defaultValue);
 	}
 
 	/**
@@ -681,7 +608,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	 * @return The config value, or defaultValue if it does not exist
 	 */
 	protected long getConfigLong(String key, long defaultValue) {
-		return this.config.getLong("spells." + this.internalName + '.' + key, defaultValue);
+		return config.getLong("spells." + internalName + '.' + key, defaultValue);
 	}
 
 	/**
@@ -693,7 +620,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	 * @return The config value, or defaultValue if it does not exist
 	 */
 	protected boolean getConfigBoolean(String key, boolean defaultValue) {
-		return this.config.getBoolean("spells." + this.internalName + '.' + key, defaultValue);
+		return config.getBoolean("spells." + internalName + '.' + key, defaultValue);
 	}
 
 	/**
@@ -705,7 +632,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	 * @return The config value, or defaultValue if it does not exist
 	 */
 	protected String getConfigString(String key, String defaultValue) {
-		return this.config.getString("spells." + this.internalName + '.' + key, defaultValue);
+		return config.getString("spells." + internalName + '.' + key, defaultValue);
 	}
 
 	/**
@@ -730,7 +657,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	 * @return The config value, or defaultValue if it does not exist
 	 */
 	protected float getConfigFloat(String key, float defaultValue) {
-		return (float)this.config.getDouble("spells." + this.internalName + '.' + key, defaultValue);
+		return (float) config.getDouble("spells." + internalName + '.' + key, defaultValue);
 	}
 
 	/**
@@ -742,31 +669,31 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	 * @return The config value, or defaultValue if it does not exist
 	 */
 	protected double getConfigDouble(String key, double defaultValue) {
-		return this.config.getDouble("spells." + this.internalName + '.' + key, defaultValue);
+		return config.getDouble("spells." + internalName + '.' + key, defaultValue);
 	}
 
 	protected List<Integer> getConfigIntList(String key, List<Integer> defaultValue) {
-		return this.config.getIntList("spells." + this.internalName + '.' + key, defaultValue);
+		return config.getIntList("spells." + internalName + '.' + key, defaultValue);
 	}
 
 	protected List<String> getConfigStringList(String key, List<String> defaultValue) {
-		return this.config.getStringList("spells." + this.internalName + '.' + key, defaultValue);
+		return config.getStringList("spells." + internalName + '.' + key, defaultValue);
 	}
 
 	protected Set<String> getConfigKeys(String key) {
-		return this.config.getKeys("spells." + this.internalName + '.' + key);
+		return config.getKeys("spells." + internalName + '.' + key);
 	}
 
 	protected ConfigurationSection getConfigSection(String key) {
-		return this.config.getSection("spells." + this.internalName + '.' + key);
+		return config.getSection("spells." + internalName + '.' + key);
 	}
 
 	protected boolean isConfigString(String key) {
-		return this.config.isString("spells." + this.internalName + '.' + key);
+		return config.isString("spells." + internalName + '.' + key);
 	}
 
 	protected boolean isConfigSection(String key) {
-		return this.config.isSection("spells." + this.internalName + '.' + key);
+		return config.isSection("spells." + internalName + '.' + key);
 	}
 
 	public final SpellCastResult cast(Player player) {
@@ -784,27 +711,22 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		if (spellCast == null) return new SpellCastResult(SpellCastState.CANT_CAST, PostCastAction.HANDLE_NORMALLY);
 		PostCastAction action;
 		int castTime = spellCast.getCastTime();
-		if (castTime <= 0 || spellCast.getSpellCastState() != SpellCastState.NORMAL) {
-			action = handleCast(spellCast);
-		} else if (!preCastTimeCheck(player, args)) {
-			action = PostCastAction.ALREADY_HANDLED;
-		} else {
+		if (castTime <= 0 || spellCast.getSpellCastState() != SpellCastState.NORMAL) action = handleCast(spellCast);
+		else if (!preCastTimeCheck(player, args)) action = PostCastAction.ALREADY_HANDLED;
+		else {
 			action = PostCastAction.DELAYED;
-			sendMessage(this.strCastStart, player, args);
+			sendMessage(strCastStart, player, args);
 			playSpellEffects(EffectPosition.START_CAST, player);
-			if (MagicSpells.plugin.useExpBarAsCastTimeBar) {
-				new DelayedSpellCastWithBar(spellCast);
-			} else {
-				new DelayedSpellCast(spellCast);
-			}
+			if (MagicSpells.plugin.useExpBarAsCastTimeBar) new DelayedSpellCastWithBar(spellCast);
+			else new DelayedSpellCast(spellCast);
 		}
 		return new SpellCastResult(spellCast.getSpellCastState(), action);
 	}
 
 	protected SpellCastState getCastState(Player player) {
 		if (!MagicSpells.getSpellbook(player).canCast(this)) return SpellCastState.CANT_CAST;
-		if (this.worldRestrictions != null && !this.worldRestrictions.contains(player.getWorld().getName())) return SpellCastState.WRONG_WORLD;
-		if (MagicSpells.plugin.noMagicZones != null && MagicSpells.plugin.noMagicZones.willFizzle(player, this)) return SpellCastState.NO_MAGIC_ZONE;
+		if (worldRestrictions != null && !worldRestrictions.contains(player.getWorld().getName())) return SpellCastState.WRONG_WORLD;
+		if (MagicSpells.getNoMagicZoneManager() != null && MagicSpells.getNoMagicZoneManager().willFizzle(player, this)) return SpellCastState.NO_MAGIC_ZONE;
 		if (onCooldown(player)) return SpellCastState.ON_COOLDOWN;
 		if (!hasReagents(player)) return SpellCastState.MISSING_REAGENTS;
 		return SpellCastState.NORMAL;
@@ -820,30 +742,26 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		debug(2, "    Spell cast state: " + state);
 
 		// Call events
-		SpellCastEvent event = new SpellCastEvent(this, player, state, power, args, this.cooldown, this.reagents.clone(), this.castTime);
+		SpellCastEvent event = new SpellCastEvent(this, player, state, power, args, cooldown, reagents.clone(), castTime);
 		EventUtil.call(event);
 		if (event.isCancelled()) {
 			debug(2, "    Spell canceled");
 			return null;
-		} else {
-			if (event.haveReagentsChanged()) {
-				boolean hasReagents = hasReagents(player, event.getReagents());
-				if (!hasReagents && state != SpellCastState.MISSING_REAGENTS) {
-					event.setSpellCastState(SpellCastState.MISSING_REAGENTS);
-					debug(2, "    Spell cast state changed: " + state);
-				} else if (hasReagents && state == SpellCastState.MISSING_REAGENTS) {
-					event.setSpellCastState(state = SpellCastState.NORMAL);
-					debug(2, "    Spell cast state changed: " + state);
-				}
-			}
-			if (event.hasSpellCastStateChanged()) {
+		}
+
+		if (event.haveReagentsChanged()) {
+			boolean hasReagents = hasReagents(player, event.getReagents());
+			if (!hasReagents && state != SpellCastState.MISSING_REAGENTS) {
+				event.setSpellCastState(SpellCastState.MISSING_REAGENTS);
+				debug(2, "    Spell cast state changed: " + state);
+			} else if (hasReagents && state == SpellCastState.MISSING_REAGENTS) {
+				event.setSpellCastState(state = SpellCastState.NORMAL);
 				debug(2, "    Spell cast state changed: " + state);
 			}
 		}
-		if (Perm.NOCASTTIME.has(player)) {
-			event.setCastTime(0);
-		}
 
+		if (event.hasSpellCastStateChanged()) debug(2, "    Spell cast state changed: " + state);
+		if (Perm.NOCASTTIME.has(player)) event.setCastTime(0);
 		return event;
 	}
 
@@ -857,20 +775,18 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		String[] args = spellCast.getSpellArgs();
 		float power = spellCast.getPower();
 		debug(3, "    Power: " + power);
-		debug(3, "    Cooldown: " + this.cooldown);
-		if (MagicSpells.plugin.debug && args != null && args.length > 0) {
-			debug(3, "    Args: {" + Util.arrayJoin(args, ',') + '}');
-		}
+		debug(3, "    Cooldown: " + cooldown);
+		if (MagicSpells.plugin.debug && args != null && args.length > 0) debug(3, "    Args: {" + Util.arrayJoin(args, ',') + '}');
 		PostCastAction action = castSpell(player, state, power, args);
 		if (MagicSpells.plugin.enableProfiling) {
-			Long total = MagicSpells.plugin.profilingTotalTime.get(this.profilingKey);
-			if (total == null) total = (long)0;
+			Long total = MagicSpells.getProfilingTotalTime().get(profilingKey);
+			if (total == null) total = (long) 0;
 			total += System.nanoTime() - start;
-			MagicSpells.plugin.profilingTotalTime.put(this.profilingKey, total);
-			Integer runs = MagicSpells.plugin.profilingRuns.get(this.profilingKey);
+			MagicSpells.getProfilingTotalTime().put(profilingKey, total);
+			Integer runs = MagicSpells.getProfilingRuns().get(profilingKey);
 			if (runs == null) runs = 0;
 			runs += 1;
-			MagicSpells.plugin.profilingRuns.put(this.profilingKey, runs);
+			MagicSpells.getProfilingRuns().put(profilingKey, runs);
 		}
 		postCast(spellCast, action);
 		return action;
@@ -887,30 +803,30 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 				if (action.setCooldown()) setCooldown(player, spellCast.getCooldown());
 				if (action.chargeReagents()) removeReagents(player, spellCast.getReagents());
 				if (action.sendMessages()) sendMessages(player, spellCast.getSpellArgs());
-				if (this.experience > 0) player.giveExp(this.experience);
+				if (experience > 0) player.giveExp(experience);
 			} else if (state == SpellCastState.ON_COOLDOWN) {
 				MagicSpells.sendMessage(formatMessage(strOnCooldown, "%c", Math.round(getCooldown(player)) + ""), player, spellCast.getSpellArgs());
-				if (this.soundOnCooldown != null) MagicSpells.getVolatileCodeHandler().playSound(player, this.soundOnCooldown, 1F, 1F);
+				if (soundOnCooldown != null) MagicSpells.getVolatileCodeHandler().playSound(player, soundOnCooldown, 1F, 1F);
 			} else if (state == SpellCastState.MISSING_REAGENTS) {
 				MagicSpells.sendMessage(strMissingReagents, player, spellCast.getSpellArgs());
-				if (MagicSpells.plugin.showStrCostOnMissingReagents && this.strCost != null && !this.strCost.isEmpty()) MagicSpells.sendMessage("    (" + this.strCost + ')', player, spellCast.getSpellArgs());
-				if (this.soundMissingReagents != null) MagicSpells.getVolatileCodeHandler().playSound(player, this.soundMissingReagents, 1F, 1F);
+				if (MagicSpells.plugin.showStrCostOnMissingReagents && strCost != null && !strCost.isEmpty()) MagicSpells.sendMessage("    (" + strCost + ')', player, spellCast.getSpellArgs());
+				if (soundMissingReagents != null) MagicSpells.getVolatileCodeHandler().playSound(player, soundMissingReagents, 1F, 1F);
 			} else if (state == SpellCastState.CANT_CAST) {
 				MagicSpells.sendMessage(strCantCast, player, spellCast.getSpellArgs());
 			} else if (state == SpellCastState.NO_MAGIC_ZONE) {
-				MagicSpells.plugin.noMagicZones.sendNoMagicMessage(player, this);
+				MagicSpells.getNoMagicZoneManager().sendNoMagicMessage(player, this);
 			} else if (state == SpellCastState.WRONG_WORLD) {
-				MagicSpells.sendMessage(this.strWrongWorld, player, spellCast.getSpellArgs());
+				MagicSpells.sendMessage(strWrongWorld, player, spellCast.getSpellArgs());
 			}
 		}
-		SpellCastedEvent event = new SpellCastedEvent(this, player, state, spellCast.getPower(), spellCast.getSpellArgs(), this.cooldown, this.reagents, action);
+		SpellCastedEvent event = new SpellCastedEvent(this, player, state, spellCast.getPower(), spellCast.getSpellArgs(), cooldown, reagents, action);
 		EventUtil.call(event);
 	}
 
 	// TODO can this safely be made varargs?
 	public void sendMessages(Player player, String[] args) {
-		sendMessage(formatMessage(this.strCastSelf, "%a", player.getDisplayName()), player, args);
-		sendMessageNear(player, formatMessage(this.strCastOthers, "%a", player.getDisplayName()));
+		sendMessage(formatMessage(strCastSelf, "%a", player.getDisplayName()), player, args);
+		sendMessageNear(player, formatMessage(strCastOthers, "%a", player.getDisplayName()));
 	}
 
 	// TODO can this safely be made varargs?
@@ -934,13 +850,13 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	}
 
 	protected List<String> tabCompletePlayerName(CommandSender sender, String partial) {
-		ArrayList<String> matches = new ArrayList<>();
+		List<String> matches = new ArrayList<>();
 		partial = partial.toLowerCase();
 		// TODO stream this
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			String name = p.getName();
 			if (!name.toLowerCase().startsWith(partial)) continue;
-			if (sender.isOp() || !(sender instanceof Player) || ((Player)sender).canSee(p)) matches.add(name);
+			if (sender.isOp() || !(sender instanceof Player) || ((Player) sender).canSee(p)) matches.add(name);
 		}
 		if (!matches.isEmpty()) return matches;
 		return null;
@@ -966,39 +882,39 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	public abstract boolean canCastByCommand();
 
 	public boolean canCastWithLeftClick() {
-		return this.castWithLeftClick;
+		return castWithLeftClick;
 	}
 
 	public boolean canCastWithRightClick() {
-		return this.castWithRightClick;
+		return castWithRightClick;
 	}
 
 	public boolean isAlwaysGranted() {
-		return this.alwaysGranted;
+		return alwaysGranted;
 	}
 
 	public boolean isValidItemForCastCommand(ItemStack item) {
-		if (!this.requireCastItemOnCommand || this.castItems == null) return true;
-		if (item == null && this.castItems.length == 1 && this.castItems[0].getItemType() == Material.AIR) return true;
-		for (CastItem castItem : this.castItems) {
+		if (!requireCastItemOnCommand || castItems == null) return true;
+		if (item == null && castItems.length == 1 && BlockUtils.isAir(castItems[0].getItemType())) return true;
+		for (CastItem castItem : castItems) {
 			if (castItem.equals(item)) return true;
 		}
 		return false;
 	}
 
 	public boolean canBind(CastItem item) {
-		if (!this.bindable) return false;
-		if (this.bindableItems == null) return true;
-		return this.bindableItems.contains(item);
+		if (!bindable) return false;
+		if (bindableItems == null) return true;
+		return bindableItems.contains(item);
 	}
 
 	public ItemStack getSpellIcon() {
-		return this.spellIcon;
+		return spellIcon;
 	}
 
 	public String getCostStr() {
-		if (this.strCost == null || this.strCost.isEmpty()) return null;
-		return this.strCost;
+		if (strCost == null || strCost.isEmpty()) return null;
+		return strCost;
 	}
 
 	/**
@@ -1008,20 +924,16 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	 */
 	public boolean onCooldown(Player player) {
 		if (Perm.NOCOOLDOWN.has(player)) return false;
+		if (charges > 0) return chargesConsumed.get(player.getName()) >= charges;
+		if (serverCooldown > 0 && nextCastServer > System.currentTimeMillis()) return true;
 
-		if (this.charges > 0) return this.chargesConsumed.get(player.getName()) >= this.charges;
-
-		if (this.serverCooldown > 0 && this.nextCastServer > System.currentTimeMillis()) return true;
-
-		Long next = this.nextCast.get(player.getName());
-		if (next != null) {
-			if (next > System.currentTimeMillis()) return true;
-		}
+		Long next = nextCast.get(player.getName());
+		if (next != null && next > System.currentTimeMillis()) return true;
 		return false;
 	}
 
 	public float getCooldown() {
-		return this.cooldown;
+		return cooldown;
 	}
 
 	/**
@@ -1030,18 +942,18 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	 * @return The number of seconds remaining in the cooldown
 	 */
 	public float getCooldown(Player player) {
-		if (this.charges > 0) return -1;
+		if (charges > 0) return -1;
 
 		float cd = 0;
 
-		Long next = this.nextCast.get(player.getName());
+		Long next = nextCast.get(player.getName());
 		if (next != null) {
-			float c = (next - System.currentTimeMillis()) / ((float)TimeUtil.MILLISECONDS_PER_SECOND);
+			float c = (next - System.currentTimeMillis()) / ((float) TimeUtil.MILLISECONDS_PER_SECOND);
 			cd =  c > 0 ? c : 0;
 		}
 
-		if (this.serverCooldown > 0 && this.nextCastServer > System.currentTimeMillis()) {
-			float c = (this.nextCastServer - System.currentTimeMillis()) / ((float)TimeUtil.MILLISECONDS_PER_SECOND);
+		if (serverCooldown > 0 && nextCastServer > System.currentTimeMillis()) {
+			float c = (nextCastServer - System.currentTimeMillis()) / ((float) TimeUtil.MILLISECONDS_PER_SECOND);
 			if (c > cd) cd = c;
 		}
 
@@ -1062,36 +974,25 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	 */
 	public void setCooldown(final Player player, float cooldown, boolean activateSharedCooldowns) {
 		if (cooldown > 0) {
-			if (this.charges <= 0) {
-				this.nextCast.put(player.getName(), System.currentTimeMillis() + (long)(cooldown * TimeUtil.MILLISECONDS_PER_SECOND));
+			if (charges <= 0) {
+				nextCast.put(player.getName(), System.currentTimeMillis() + (long) (cooldown * TimeUtil.MILLISECONDS_PER_SECOND));
 			} else {
 				final String name = player.getName();
-				this.chargesConsumed.increment(name);
-				// TODO convert this to lambda
-				MagicSpells.scheduleDelayedTask(new Runnable() {
-
-					@Override
-					public void run() {
-						chargesConsumed.decrement(name);
-						if (rechargeSound == null) return;
-						if (rechargeSound.isEmpty()) return;
-						MagicSpells.getVolatileCodeHandler().playSound(player, rechargeSound, 1.0F, 1.0F);
-					}
-
+				chargesConsumed.increment(name);
+				MagicSpells.scheduleDelayedTask(() -> {
+					chargesConsumed.decrement(name);
+					if (rechargeSound == null) return;
+					if (rechargeSound.isEmpty()) return;
+					MagicSpells.getVolatileCodeHandler().playSound(player, rechargeSound, 1.0F, 1.0F);
 				}, Math.round(TimeUtil.TICKS_PER_SECOND * cooldown));
 			}
 		} else {
-			if (this.charges <= 0) {
-				this.nextCast.remove(player.getName());
-			} else {
-				this.chargesConsumed.remove(player.getName());
-			}
+			if (charges <= 0) nextCast.remove(player.getName());
+			else chargesConsumed.remove(player.getName());
 		}
-		if (this.serverCooldown > 0) {
-			this.nextCastServer = System.currentTimeMillis() + (long)(this.serverCooldown * TimeUtil.MILLISECONDS_PER_SECOND);
-		}
-		if (activateSharedCooldowns && this.sharedCooldowns != null) {
-			for (Map.Entry<Spell, Float> scd : this.sharedCooldowns.entrySet()) {
+		if (serverCooldown > 0) nextCastServer = System.currentTimeMillis() + (long) (serverCooldown * TimeUtil.MILLISECONDS_PER_SECOND);
+		if (activateSharedCooldowns && sharedCooldowns != null) {
+			for (Map.Entry<Spell, Float> scd : sharedCooldowns.entrySet()) {
 				scd.getKey().setCooldown(player, scd.getValue(), false);
 			}
 		}
@@ -1103,7 +1004,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	 * @return true if the player has the reagents, false otherwise
 	 */
 	protected boolean hasReagents(Player player) {
-		return hasReagents(player, this.reagents);
+		return hasReagents(player, reagents);
 	}
 
 	// FIXME this doesn't seem strictly tied to Spell logic, could probably be moved
@@ -1134,7 +1035,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		if (healthCost > 0 && player.getHealth() <= healthCost) return false;
 
 		// Mana costs
-		if (manaCost > 0 && (MagicSpells.plugin.mana == null || !MagicSpells.plugin.mana.hasMana(player, manaCost))) return false;
+		if (manaCost > 0 && (MagicSpells.getManaHandler() == null || !MagicSpells.getManaHandler().hasMana(player, manaCost))) return false;
 
 		// Hunger costs
 		if (hungerCost > 0 && player.getFoodLevel() < hungerCost) return false;
@@ -1191,7 +1092,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	 * @param player the player to remove reagents from
 	 */
 	protected void removeReagents(Player player) {
-		removeReagents(player, this.reagents);
+		removeReagents(player, reagents);
 	}
 
 	// TODO can this safely be made varargs?
@@ -1222,9 +1123,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 
 		if (reagents != null) {
 			for (ItemStack item : reagents) {
-				if (item != null) {
-					Util.removeFromInventory(player.getInventory(), item);
-				}
+				if (item != null) Util.removeFromInventory(player.getInventory(), item);
 			}
 		}
 
@@ -1235,7 +1134,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 			player.setHealth(h);
 		}
 
-		if (manaCost != 0) MagicSpells.plugin.mana.addMana(player, -manaCost, ManaChangeReason.SPELL_COST);
+		if (manaCost != 0) MagicSpells.getManaHandler().addMana(player, -manaCost, ManaChangeReason.SPELL_COST);
 
 		if (hungerCost != 0) {
 			int f = player.getFoodLevel() - hungerCost;
@@ -1263,11 +1162,8 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		if (moneyCost != 0) {
 			MoneyHandler moneyHandler = MagicSpells.getMoneyHandler();
 			if (moneyHandler != null) {
-				if (moneyCost > 0) {
-					moneyHandler.removeMoney(player, moneyCost);
-				} else {
-					moneyHandler.addMoney(player, moneyCost);
-				}
+				if (moneyCost > 0) moneyHandler.removeMoney(player, moneyCost);
+				else moneyHandler.addMoney(player, moneyCost);
 			}
 		}
 
@@ -1292,9 +1188,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		int count = 0;
 		ItemStack[] items = inventory.getContents();
 		for (int i = 0; i < 36; i++) {
-			if (items[i] != null && item.isSimilar(items[i])) {
-				count += items[i].getAmount();
-			}
+			if (items[i] != null && item.isSimilar(items[i])) count += items[i].getAmount();
 			if (count >= item.getAmount()) return true;
 		}
 		return false;
@@ -1321,7 +1215,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	}*/
 
 	protected int getRange(float power) {
-		return this.spellPowerAffectsRange ? Math.round(this.range * power) : this.range;
+		return spellPowerAffectsRange ? Math.round(range * power) : range;
 	}
 
 	/**
@@ -1335,7 +1229,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		TargetInfo<LivingEntity> target = getTargetedEntity(player, power, true, null);
 		if (target == null) return null;
 		if (!(target.getTarget() instanceof Player)) return null;
-		return new TargetInfo<>((Player)target.getTarget(), target.getPower());
+		return new TargetInfo<>((Player) target.getTarget(), target.getPower());
 	}
 
 	protected TargetInfo<Player> getTargetPlayer(Player player, float power) {
@@ -1358,12 +1252,12 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 
 		// Get valid targets
 		List<LivingEntity> entities;
-		if (MagicSpells.plugin.checkWorldPvpFlag && this.validTargetList.canTargetPlayers() && !isBeneficial() && !player.getWorld().getPVP()) {
-			entities = this.validTargetList.filterTargetListCastingAsLivingEntities(player, ne, false);
+		if (MagicSpells.plugin.checkWorldPvpFlag && validTargetList.canTargetPlayers() && !isBeneficial() && !player.getWorld().getPVP()) {
+			entities = validTargetList.filterTargetListCastingAsLivingEntities(player, ne, false);
 		} else if (forceTargetPlayers) {
-			entities = this.validTargetList.filterTargetListCastingAsLivingEntities(player, ne, true);
+			entities = validTargetList.filterTargetListCastingAsLivingEntities(player, ne, true);
 		} else {
-			entities = this.validTargetList.filterTargetListCastingAsLivingEntities(player, ne);
+			entities = validTargetList.filterTargetListCastingAsLivingEntities(player, ne);
 		}
 
 		// Find target
@@ -1403,105 +1297,104 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 			if (obeyLos && !BlockUtils.isTransparent(this, b)) {
 				// Line of sight is broken, stop without target
 				break;
-			} else {
-				// Check for entities near this block in the line of sight
-				for (LivingEntity e : entities) {
-					l = e.getLocation();
-					ex = l.getX();
-					ey = l.getY();
-					ez = l.getZ();
+			}
+			// Check for entities near this block in the line of sight
+			for (LivingEntity e : entities) {
+				l = e.getLocation();
+				ex = l.getX();
+				ey = l.getY();
+				ez = l.getZ();
 
-					if (!(bx - xTolLower <= ex && ex <= bx + xTolUpper)) continue;
-					if (!(bz - zTolLower <= ez && ez <= bz + zTolUpper)) continue;
-					if (!(by - yTolLower <= ey && ey <= by + yTolUpper)) continue;
+				if (!(bx - xTolLower <= ex && ex <= bx + xTolUpper)) continue;
+				if (!(bz - zTolLower <= ez && ez <= bz + zTolUpper)) continue;
+				if (!(by - yTolLower <= ey && ey <= by + yTolUpper)) continue;
 
-					// Entity is close enough, set target and stop
-					target = e;
+				// Entity is close enough, set target and stop
+				target = e;
 
-					// Check for invalid target
-					if (target instanceof Player && ((Player)target).getGameMode() == GameMode.CREATIVE) {
-						target = null;
-						continue;
-					}
+				// Check for invalid target
+				if (target instanceof Player && (((Player) target).getGameMode() == GameMode.CREATIVE || ((Player) target).getGameMode() == GameMode.SPECTATOR)) {
+					target = null;
+					continue;
+				}
 
-					// Check for anti-magic-zone
-					if (target != null && MagicSpells.getNoMagicZoneManager() != null && MagicSpells.getNoMagicZoneManager().willFizzle(target.getLocation(), this)) {
-						target = null;
-						continue;
-					}
+				// Check for anti-magic-zone
+				if (target != null && MagicSpells.getNoMagicZoneManager() != null && MagicSpells.getNoMagicZoneManager().willFizzle(target.getLocation(), this)) {
+					target = null;
+					continue;
+				}
 
-					// Check for teams
-					if (target instanceof Player && MagicSpells.plugin.checkScoreboardTeams) {
-						Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
-						Team playerTeam = scoreboard.getPlayerTeam(player);
-						Team targetTeam = scoreboard.getPlayerTeam((Player)target);
-						if (playerTeam != null && targetTeam != null) {
-							if (playerTeam.equals(targetTeam)) {
-								if (!playerTeam.allowFriendlyFire() && !this.isBeneficial()) {
-									target = null;
-									continue;
-								}
-							} else {
-								if (this.isBeneficial()) {
-									target = null;
-									continue;
-								}
+				// Check for teams
+				if (target instanceof Player && MagicSpells.plugin.checkScoreboardTeams) {
+					Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+					Team playerTeam = scoreboard.getPlayerTeam(player);
+					Team targetTeam = scoreboard.getPlayerTeam((Player)target);
+					if (playerTeam != null && targetTeam != null) {
+						if (playerTeam.equals(targetTeam)) {
+							if (!playerTeam.allowFriendlyFire() && !isBeneficial()) {
+								target = null;
+								continue;
+							}
+						} else {
+							if (isBeneficial()) {
+								target = null;
+								continue;
 							}
 						}
 					}
-
-					// Call event listeners
-					if (target != null) {
-						SpellTargetEvent event = new SpellTargetEvent(this, player, target, power);
-						EventUtil.call(event);
-						if (event.isCancelled()) {
-							target = null;
-							continue;
-						} else {
-							target = event.getTarget();
-							power = event.getPower();
-						}
-					}
-
-					// Call damage event
-					if (targetDamageCause != null) {
-						EntityDamageByEntityEvent event = new MagicSpellsEntityDamageByEntityEvent(player, target, targetDamageCause, targetDamageAmount);
-						EventUtil.call(event);
-						if (event.isCancelled()) {
-							target = null;
-							continue;
-						}
-					}
-
-					// Run checker
-					if (target != null && checker != null) {
-						if (!checker.isValidTarget(target)) {
-							target = null;
-							continue;
-						}
-					}
-
-					return new TargetInfo<>(target, power);
 				}
+
+				// Call event listeners
+				if (target != null) {
+					SpellTargetEvent event = new SpellTargetEvent(this, player, target, power);
+					EventUtil.call(event);
+					if (event.isCancelled()) {
+						target = null;
+						continue;
+					} else {
+						target = event.getTarget();
+						power = event.getPower();
+					}
+				}
+
+				// Call damage event
+				if (targetDamageCause != null) {
+					EntityDamageByEntityEvent event = new MagicSpellsEntityDamageByEntityEvent(player, target, targetDamageCause, targetDamageAmount);
+					EventUtil.call(event);
+					if (event.isCancelled()) {
+						target = null;
+						continue;
+					}
+				}
+
+				// Run checker
+				if (target != null && checker != null) {
+					if (!checker.isValidTarget(target)) {
+						target = null;
+						continue;
+					}
+				}
+				return new TargetInfo<>(target, power);
 			}
+
 		}
 		return null;
 	}
 
 	protected Block getTargetedBlock(LivingEntity entity, float power) {
-		return BlockUtils.getTargetBlock(this, entity, this.spellPowerAffectsRange ? Math.round(this.range * power) : this.range);
+		return BlockUtils.getTargetBlock(this, entity, spellPowerAffectsRange ? Math.round(range * power) : range);
 	}
 
 	protected List<Block> getLastTwoTargetedBlocks(LivingEntity entity, float power) {
-		return BlockUtils.getLastTwoTargetBlock(this, entity, this.spellPowerAffectsRange ? Math.round(this.range * power) : this.range);
+		return BlockUtils.getLastTwoTargetBlock(this, entity, spellPowerAffectsRange ? Math.round(range * power) : range);
 	}
 
-	public HashSet<Material> getLosTransparentBlocks() {
-		return this.losTransparentBlocks;
+	public Set<Material> getLosTransparentBlocks() {
+		return losTransparentBlocks;
 	}
 
 	public boolean isTransparent(Block block) {
-		return this.losTransparentBlocks.contains(block.getType());
+		return losTransparentBlocks.contains(block.getType());
 	}
 
 	protected void playSpellEffects(Entity pos1, Entity pos2) {
@@ -1529,75 +1422,66 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	}
 
 	protected void playSpellEffects(EffectPosition pos, Entity entity) {
-		if (this.effects != null) {
-			List<SpellEffect> effectsList = this.effects.get(pos);
-			if (effectsList != null) {
-				for (SpellEffect effect : effectsList) {
-					Runnable canceler = effect.playEffect(entity);
-					if (canceler == null) continue;
-					if (!(entity instanceof Player)) continue;
-					Player p = (Player)entity;
-					Map<EffectPosition, List<Runnable>> runnablesMap = this.callbacks.get(p.getUniqueId().toString());
-					if (runnablesMap == null) continue;
-					List<Runnable> runnables = runnablesMap.get(pos);
-					if (runnables == null) continue;
-					runnables.add(canceler);
-				}
-			}
+		if (effects == null) return;
+		List<SpellEffect> effectsList = effects.get(pos);
+		if (effectsList == null) return;
+		for (SpellEffect effect : effectsList) {
+			Runnable canceler = effect.playEffect(entity);
+			if (canceler == null) continue;
+			if (!(entity instanceof Player)) continue;
+			Player p = (Player) entity;
+			Map<EffectPosition, List<Runnable>> runnablesMap = callbacks.get(p.getUniqueId().toString());
+			if (runnablesMap == null) continue;
+			List<Runnable> runnables = runnablesMap.get(pos);
+			if (runnables == null) continue;
+			runnables.add(canceler);
 		}
 	}
 
 	protected void playSpellEffects(EffectPosition pos, Location location) {
-		if (this.effects != null) {
-			List<SpellEffect> effectsList = this.effects.get(pos);
-			if (effectsList != null) {
-				for (SpellEffect effect : effectsList) {
-					effect.playEffect(location);
-				}
-			}
+		if (effects == null) return;
+		List<SpellEffect> effectsList = effects.get(pos);
+		if (effectsList == null) return;
+		for (SpellEffect effect : effectsList) {
+			effect.playEffect(location);
 		}
 	}
 
 	protected void playSpellEffectsTrail(Location loc1, Location loc2) {
-		if (this.effects != null) {
-			if (!LocationUtil.isSameWorld(loc1, loc2)) return;
-			List<SpellEffect> effectsList = this.effects.get(EffectPosition.TRAIL);
-			if (effectsList != null) {
-				for (SpellEffect effect : effectsList) {
-					effect.playEffect(loc1, loc2);
-				}
+		if (effects == null) return;
+		if (!LocationUtil.isSameWorld(loc1, loc2)) return;
+		List<SpellEffect> effectsList = effects.get(EffectPosition.TRAIL);
+		if (effectsList != null) {
+			for (SpellEffect effect : effectsList) {
+				effect.playEffect(loc1, loc2);
 			}
-
-			List<SpellEffect> rTrailEffects = this.effects.get(EffectPosition.REVERSE_LINE);
-			if (rTrailEffects != null) {
-				for (SpellEffect effect: rTrailEffects) {
-					effect.playEffect(loc2, loc1);
-				}
+		}
+		List<SpellEffect> rTrailEffects = effects.get(EffectPosition.REVERSE_LINE);
+		if (rTrailEffects != null) {
+			for (SpellEffect effect: rTrailEffects) {
+				effect.playEffect(loc2, loc1);
 			}
 		}
 	}
 
 	public void playTrackingLinePatterns(EffectPosition pos, Location origin, Location target, Entity originEntity, Entity targetEntity) {
-		if (this.effects != null) {
-			List<SpellEffect> spellEffects = this.effects.get(pos);
-			if (spellEffects != null) {
-				for (SpellEffect e: spellEffects) {
-					e.playTrackingLinePatterns(origin, target, originEntity, targetEntity);
-				}
-			}
+		if (effects == null) return;
+		List<SpellEffect> spellEffects = effects.get(pos);
+		if (spellEffects == null) return;
+		for (SpellEffect e: spellEffects) {
+			e.playTrackingLinePatterns(origin, target, originEntity, targetEntity);
 		}
 	}
 
 	public void initializePlayerEffectTracker(Player p) {
-		if (this.callbacks != null) {
-			String key = p.getUniqueId().toString();
-			Map<EffectPosition, List<Runnable>> entry = new EnumMap<>(EffectPosition.class);
-			for (EffectPosition pos: EffectPosition.values()) {
-				List<Runnable> runnables = new ArrayList<>();
-				entry.put(pos, runnables);
-			}
-			this.callbacks.put(key, entry);
+		if (callbacks == null) return;
+		String key = p.getUniqueId().toString();
+		Map<EffectPosition, List<Runnable>> entry = new EnumMap<>(EffectPosition.class);
+		for (EffectPosition pos: EffectPosition.values()) {
+			List<Runnable> runnables = new ArrayList<>();
+			entry.put(pos, runnables);
 		}
+		callbacks.put(key, entry);
 	}
 
 	public void unloadPlayerEffectTracker(Player p) {
@@ -1605,13 +1489,13 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		for (EffectPosition pos: EffectPosition.values()) {
 			cancelEffects(pos, uuid);
 		}
-		this.callbacks.remove(uuid);
+		callbacks.remove(uuid);
 	}
 
 	public void cancelEffects(EffectPosition pos, String uuid) {
-		if (this.callbacks == null) return;
-		if (this.callbacks.get(uuid) == null) return;
-		List<Runnable> cancelers = this.callbacks.get(uuid).get(pos);
+		if (callbacks == null) return;
+		if (callbacks.get(uuid) == null) return;
+		List<Runnable> cancelers = callbacks.get(uuid).get(pos);
 		while (!cancelers.isEmpty()) {
 			Runnable c = cancelers.iterator().next();
 			if (c instanceof Effect) {
@@ -1625,24 +1509,23 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	}
 
 	public void cancelEffectForAllPlayers(EffectPosition pos) {
-		for (String key: this.callbacks.keySet()) {
+		for (String key: callbacks.keySet()) {
 			cancelEffects(pos, key);
 		}
 	}
 
 	protected void playSpellEffectsBuff(Entity entity, SpellEffect.SpellEffectActiveChecker checker) {
-		if (this.effects != null) {
-			List<SpellEffect> effectsList = this.effects.get(EffectPosition.BUFF);
-			if (effectsList != null) {
-				for (SpellEffect effect : effectsList) {
-					effect.playEffectWhileActiveOnEntity(entity, checker);
-				}
+		if (effects == null) return;
+		List<SpellEffect> effectsList = effects.get(EffectPosition.BUFF);
+		if (effectsList != null) {
+			for (SpellEffect effect : effectsList) {
+				effect.playEffectWhileActiveOnEntity(entity, checker);
 			}
-			effectsList = this.effects.get(EffectPosition.ORBIT);
-			if (effectsList != null) {
-				for (SpellEffect effect : effectsList) {
-					effect.playEffectWhileActiveOrbit(entity, checker);
-				}
+		}
+		effectsList = effects.get(EffectPosition.ORBIT);
+		if (effectsList != null) {
+			for (SpellEffect effect : effectsList) {
+				effect.playEffectWhileActiveOrbit(entity, checker);
 			}
 		}
 	}
@@ -1710,7 +1593,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	 * @param message the message to send
 	 */
 	protected void sendMessageNear(Player player, String message) {
-		sendMessageNear(player, null, message, this.broadcastRange, MagicSpells.NULL_ARGS);
+		sendMessageNear(player, null, message, broadcastRange, MagicSpells.NULL_ARGS);
 	}
 
 	// TODO can this safely be made varargs?
@@ -1741,61 +1624,61 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	}
 
 	public String getInternalName() {
-		return this.internalName;
+		return internalName;
 	}
 
 	public String getName() {
-		if (this.name != null && !this.name.isEmpty()) return this.name;
-		return this.internalName;
+		if (name != null && !name.isEmpty()) return name;
+		return internalName;
 	}
 
 	public String getPermissionName() {
-		return this.permName;
+		return permName;
 	}
 
 	public boolean isHelperSpell() {
-		return this.helperSpell;
+		return helperSpell;
 	}
 
 	public String getCantBindError() {
-		return this.strCantBind;
+		return strCantBind;
 	}
 
 	public String[] getAliases() {
-		return this.aliases;
+		return aliases;
 	}
 
 	public List<String> getIncantations() {
-		return this.incantations;
+		return incantations;
 	}
 
 	public CastItem getCastItem() {
-		if (this.castItems.length == 1) return this.castItems[0];
+		if (castItems.length == 1) return castItems[0];
 		return null;
 	}
 
 	public CastItem[] getCastItems() {
-		return this.castItems;
+		return castItems;
 	}
 
 	public CastItem[] getRightClickCastItems() {
-		return this.rightClickCastItems;
+		return rightClickCastItems;
 	}
 
 	public CastItem[] getConsumeCastItems() {
-		return this.consumeCastItems;
+		return consumeCastItems;
 	}
 
 	public String getDanceCastSequence() {
-		return this.danceCastSequence;
+		return danceCastSequence;
 	}
 
 	public String getDescription() {
-		return this.description;
+		return description;
 	}
 
 	public SpellReagents getReagents() {
-		return this.reagents;
+		return reagents;
 	}
 
 	public String getConsoleName() {
@@ -1803,11 +1686,11 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	}
 
 	public String getStrWrongCastItem() {
-		return this.strWrongCastItem;
+		return strWrongCastItem;
 	}
 
 	public final boolean isBeneficial() {
-		return this.beneficial;
+		return beneficial;
 	}
 
 	public boolean isBeneficialDefault() {
@@ -1815,43 +1698,43 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	}
 
 	public ModifierSet getModifiers() {
-		return this.modifiers;
+		return modifiers;
 	}
 
 	public ModifierSet getTargetModifiers() {
-		return this.targetModifiers;
+		return targetModifiers;
 	}
 
 	public String getStrModifierFailed() {
-		return this.strModifierFailed;
+		return strModifierFailed;
 	}
 
 	public Map<String, Integer> getXpGranted() {
-		return this.xpGranted;
+		return xpGranted;
 	}
 
 	public Map<String, Integer> getXpRequired() {
-		return this.xpRequired;
+		return xpRequired;
 	}
 
 	public String getStrXpLearned() {
-		return this.strXpAutoLearned;
+		return strXpAutoLearned;
 	}
 
-	Map<String, Long> getCooldowns() {
-		return this.nextCast;
+	public Map<String, Long> getCooldowns() {
+		return nextCast;
 	}
 
 	public Map<String, VariableMod> getVariableModsCast() {
-		return this.variableModsCast;
+		return variableModsCast;
 	}
 
 	public Map<String, VariableMod> getVariableModsCasted() {
-		return this.variableModsCasted;
+		return variableModsCasted;
 	}
 
 	public Map<String, VariableMod> getVariableModsTarget() {
-		return this.variableModsTarget;
+		return variableModsTarget;
 	}
 
 	void setCooldownManually(String name, long nextCast) {
@@ -1859,7 +1742,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	}
 
 	protected void debug(int level, String message) {
-		if (this.debug) MagicSpells.debug(level, message);
+		if (debug) MagicSpells.debug(level, message);
 	}
 
 	/**
@@ -1871,17 +1754,17 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 
 	@Override
 	public int compareTo(Spell spell) {
-		return this.name.compareTo(spell.name);
+		return name.compareTo(spell.name);
 	}
 
 	@Override
 	public boolean equals(Object o) {
-		return o instanceof Spell && ((Spell)o).internalName.equals(this.internalName);
+		return o instanceof Spell && ((Spell) o).internalName.equals(internalName);
 	}
 
 	@Override
 	public int hashCode() {
-		return this.internalName.hashCode();
+		return internalName.hashCode();
 	}
 
 	// TODO move this to its own class
@@ -1920,15 +1803,15 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		}
 
 		public boolean setCooldown() {
-			return this.cooldown;
+			return cooldown;
 		}
 
 		public boolean chargeReagents() {
-			return this.reagents;
+			return reagents;
 		}
 
 		public boolean sendMessages() {
-			return this.messages;
+			return messages;
 		}
 
 	}
@@ -1958,12 +1841,12 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		private double motionToleranceZ = 0.2;
 
 		public DelayedSpellCast(SpellCastEvent spellCast) {
-			this.player = spellCast.getCaster();
-			this.prevLoc = player.getLocation().clone();
-			this.spell = spellCast.getSpell();
 			this.spellCast = spellCast;
 
-			this.taskId = scheduleDelayedTask(this, spellCast.getCastTime());
+			spell = spellCast.getSpell();
+			player = spellCast.getCaster();
+			prevLoc = player.getLocation().clone();
+			taskId = scheduleDelayedTask(this, spellCast.getCastTime());
 			registerEvents(this);
 		}
 
@@ -1972,13 +1855,9 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 			if (!cancelled && player.isOnline() && !player.isDead()) {
 				Location currLoc = player.getLocation();
 				if (!interruptOnMove || (Math.abs(currLoc.getX() - prevLoc.getX()) < motionToleranceX && Math.abs(currLoc.getY() - prevLoc.getY()) < motionToleranceY && Math.abs(currLoc.getZ() - prevLoc.getZ()) < motionToleranceZ)) {
-					if (!spell.hasReagents(player, reagents)) {
-						spellCast.setSpellCastState(SpellCastState.MISSING_REAGENTS);
-					}
+					if (!spell.hasReagents(player, reagents)) spellCast.setSpellCastState(SpellCastState.MISSING_REAGENTS);
 					spell.handleCast(spellCast);
-				} else {
-					interrupt();
-				}
+				} else interrupt();
 			}
 			unregisterEvents(this);
 		}
@@ -1989,7 +1868,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 			if (cancelled) return;
 			if (!event.getEntity().equals(player)) return;
 			cancelled = true;
-			Bukkit.getScheduler().cancelTask(taskId);
+			MagicSpells.cancelTask(taskId);
 			interrupt();
 		}
 
@@ -2000,7 +1879,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 			if (event.getSpell() instanceof PassiveSpell) return;
 			if (!event.getCaster().equals(player)) return;
 			cancelled = true;
-			Bukkit.getScheduler().cancelTask(taskId);
+			MagicSpells.cancelTask(taskId);
 			interrupt();
 		}
 
@@ -2010,15 +1889,13 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 			if (cancelled) return;
 			if (!event.getPlayer().equals(player)) return;
 			cancelled = true;
-			Bukkit.getScheduler().cancelTask(taskId);
+			MagicSpells.cancelTask(taskId);
 			interrupt();
 		}
 
 		private void interrupt() {
 			sendMessage(strInterrupted, player, null);
-			if (spellOnInterrupt != null) {
-				spellOnInterrupt.castSpell(player, SpellCastState.NORMAL, spellCast.getPower(), null); // Null args
-			}
+			if (spellOnInterrupt != null) spellOnInterrupt.castSpell(player, SpellCastState.NORMAL, spellCast.getPower(), null);
 		}
 	}
 
@@ -2040,14 +1917,14 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		private double motionToleranceZ = 0.2;
 
 		public DelayedSpellCastWithBar(SpellCastEvent spellCast) {
-			this.player = spellCast.getCaster();
-			this.prevLoc = player.getLocation().clone();
-			this.spell = spellCast.getSpell();
 			this.spellCast = spellCast;
-			this.castTime = spellCast.getCastTime();
+
+			player = spellCast.getCaster();
+			spell = spellCast.getSpell();
+			prevLoc = player.getLocation().clone();
+			castTime = spellCast.getCastTime();
 
 			MagicSpells.getExpBarManager().lock(player, this);
-
 			taskId = scheduleRepeatingTask(this, interval, interval);
 			registerEvents(this);
 		}
@@ -2059,19 +1936,13 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 				Location currLoc = player.getLocation();
 				if (!interruptOnMove || (Math.abs(currLoc.getX() - prevLoc.getX()) < motionToleranceX && Math.abs(currLoc.getY() - prevLoc.getY()) < motionToleranceY && Math.abs(currLoc.getZ() - prevLoc.getZ()) < motionToleranceZ)) {
 					if (elapsed >= castTime) {
-						if (!spell.hasReagents(player, reagents)) {
-							spellCast.setSpellCastState(SpellCastState.MISSING_REAGENTS);
-						}
+						if (!spell.hasReagents(player, reagents)) spellCast.setSpellCastState(SpellCastState.MISSING_REAGENTS);
 						spell.handleCast(spellCast);
 						cancelled = true;
 					}
-					MagicSpells.getExpBarManager().update(player, 0, (float)elapsed / (float)castTime, this);
-				} else {
-					interrupt();
-				}
-			} else {
-				end();
-			}
+					MagicSpells.getExpBarManager().update(player, 0, (float) elapsed / (float) castTime, this);
+				} else interrupt();
+			} else end();
 		}
 
 		@EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)

@@ -1,9 +1,9 @@
 package com.nisovin.magicspells.util;
 
 import java.io.File;
-import java.io.FilenameFilter;
-import java.util.List;
 import java.util.Set;
+import java.util.List;
+import java.io.FilenameFilter;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -13,7 +13,8 @@ import com.nisovin.magicspells.MagicSpells;
 public class MagicConfig {
 	
 	private static final FilenameFilter FILENAME_FILTER = (File dir, String name) -> name.startsWith("spell") && name.endsWith(".yml");
-	
+	private static final FilenameFilter DIRECTORY_FILTER = (File dir, String name) -> name.startsWith("spells");
+
 	private YamlConfiguration mainConfig;
 	
 	public MagicConfig(File file) {
@@ -100,11 +101,11 @@ public class MagicConfig {
 			File file = new File(folder, "config.yml");
 			
 			// Load main config
-			this.mainConfig = new YamlConfiguration();
-			if (file.exists()) this.mainConfig.load(file);
-			if (!this.mainConfig.contains("general")) this.mainConfig.createSection("general");
-			if (!this.mainConfig.contains("mana")) this.mainConfig.createSection("mana");
-			if (!this.mainConfig.contains("spells")) this.mainConfig.createSection("spells");
+			mainConfig = new YamlConfiguration();
+			if (file.exists()) mainConfig.load(file);
+			if (!mainConfig.contains("general")) mainConfig.createSection("general");
+			if (!mainConfig.contains("mana")) mainConfig.createSection("mana");
+			if (!mainConfig.contains("spells")) mainConfig.createSection("spells");
 			
 			// Load general
 			File generalConfigFile = new File(folder, "general.yml");
@@ -114,7 +115,7 @@ public class MagicConfig {
 					generalConfig.load(generalConfigFile);
 					Set<String> keys = generalConfig.getKeys(true);
 					for (String key : keys) {
-						this.mainConfig.set("general." + key, generalConfig.get(key));
+						mainConfig.set("general." + key, generalConfig.get(key));
 					}
 				} catch (Exception e) {
 					MagicSpells.error("Error loading config file general.yml");
@@ -130,7 +131,7 @@ public class MagicConfig {
 					manaConfig.load(manaConfigFile);
 					Set<String> keys = manaConfig.getKeys(true);
 					for (String key : keys) {
-						this.mainConfig.set("mana." + key, manaConfig.get(key));
+						mainConfig.set("mana." + key, manaConfig.get(key));
 					}
 				} catch (Exception e) {
 					MagicSpells.error("Error loading config file mana.yml");
@@ -146,7 +147,7 @@ public class MagicConfig {
 					zonesConfig.load(zonesConfigFile);
 					Set<String> keys = zonesConfig.getKeys(true);
 					for (String key : keys) {
-						this.mainConfig.set("no-magic-zones." + key, zonesConfig.get(key));
+						mainConfig.set("no-magic-zones." + key, zonesConfig.get(key));
 					}
 				} catch (Exception e) {
 					MagicSpells.error("Error loading config file zones.yml");
@@ -154,41 +155,17 @@ public class MagicConfig {
 				}
 			}
 			
-			// Load spell configs
-			for (File spellConfigFile : folder.listFiles(FILENAME_FILTER)) {
-				YamlConfiguration spellConfig = new YamlConfiguration();
-				try {
-					spellConfig.load(spellConfigFile);
-					Set<String> keys = spellConfig.getKeys(false);
-					
-					// TODO this should be refactored to allow registration of additional "special sections"
-					for (String key : keys) {
-						if (key.equals("predefined-items")) {
-							ConfigurationSection sec = this.mainConfig.getConfigurationSection("general.predefined-items");
-							if (sec == null) sec = this.mainConfig.createSection("general.predefined-items");
-							for (String itemKey : spellConfig.getConfigurationSection("predefined-items").getKeys(false)) {
-								sec.set(itemKey, spellConfig.get("predefined-items." + itemKey));
-							}
-						} else if (key.equals("variables")) {
-							ConfigurationSection sec = this.mainConfig.getConfigurationSection("general.variables");
-							if (sec == null) sec = this.mainConfig.createSection("general.variables");
-							for (String itemKey : spellConfig.getConfigurationSection("variables").getKeys(false)) {
-								sec.set(itemKey, spellConfig.get("variables." + itemKey));
-							}
-						} else if (key.equals("modifiers")) {
-							ConfigurationSection sec = this.mainConfig.getConfigurationSection("general.modifiers");
-							if (sec == null) sec = this.mainConfig.createSection("general.modifiers");
-							for (String modifierKey : spellConfig.getConfigurationSection("modifiers").getKeys(false)) {
-								sec.set(modifierKey, spellConfig.get("modifiers." + modifierKey));
-							}
-						} else {
-							this.mainConfig.set("spells." + key, spellConfig.get(key));
-						}
-					}
-				} catch (Exception e) {
-					MagicSpells.error("Error loading config file " + spellConfigFile.getName());
-					MagicSpells.handleException(e);
+			// Load spell folders
+			for (File directoryFile : folder.listFiles(DIRECTORY_FILTER)) {
+				if (!directoryFile.isDirectory()) continue;
+				for (File spellConfigFile : directoryFile.listFiles(FILENAME_FILTER)) {
+					loadSpellFiles(spellConfigFile);
 				}
+			}
+
+			// load spell configs
+			for (File spellConfigFile : folder.listFiles(FILENAME_FILTER)) {
+				loadSpellFiles(spellConfigFile);
 			}
 			
 			// Load mini configs
@@ -196,6 +173,42 @@ public class MagicConfig {
 			if (spellConfigsFolder.exists()) loadSpellConfigs(spellConfigsFolder);
 		} catch (Exception ex) {
 			MagicSpells.handleException(ex);
+		}
+	}
+
+	private void loadSpellFiles(File spellConfigFile) {
+		YamlConfiguration spellConfig = new YamlConfiguration();
+		try {
+			spellConfig.load(spellConfigFile);
+			Set<String> keys = spellConfig.getKeys(false);
+
+			// TODO this should be refactored to allow registration of additional "special sections"
+			for (String key : keys) {
+				if (key.equals("predefined-items")) {
+					ConfigurationSection sec = mainConfig.getConfigurationSection("general.predefined-items");
+					if (sec == null) sec = mainConfig.createSection("general.predefined-items");
+					for (String itemKey : spellConfig.getConfigurationSection("predefined-items").getKeys(false)) {
+						sec.set(itemKey, spellConfig.get("predefined-items." + itemKey));
+					}
+				} else if (key.equals("variables")) {
+					ConfigurationSection sec = mainConfig.getConfigurationSection("general.variables");
+					if (sec == null) sec = mainConfig.createSection("general.variables");
+					for (String itemKey : spellConfig.getConfigurationSection("variables").getKeys(false)) {
+						sec.set(itemKey, spellConfig.get("variables." + itemKey));
+					}
+				} else if (key.equals("modifiers")) {
+					ConfigurationSection sec = mainConfig.getConfigurationSection("general.modifiers");
+					if (sec == null) sec = mainConfig.createSection("general.modifiers");
+					for (String modifierKey : spellConfig.getConfigurationSection("modifiers").getKeys(false)) {
+						sec.set(modifierKey, spellConfig.get("modifiers." + modifierKey));
+					}
+				} else {
+					mainConfig.set("spells." + key, spellConfig.get(key));
+				}
+			}
+		} catch (Exception e) {
+			MagicSpells.error("Error loading config file " + spellConfigFile.getName());
+			MagicSpells.handleException(e);
 		}
 	}
 	
@@ -213,7 +226,7 @@ public class MagicConfig {
 				try {
 					conf.load(file);
 					for(String key : conf.getKeys(false)) {
-						this.mainConfig.set("spells." + name + '.' + key, conf.get(key));
+						mainConfig.set("spells." + name + '.' + key, conf.get(key));
 					}
 				} catch (Exception e) {
 					MagicSpells.error("Error reading spell config file: " + file.getName());
@@ -224,91 +237,91 @@ public class MagicConfig {
 	}
 	
 	public boolean isLoaded() {
-		return this.mainConfig.contains("general") && this.mainConfig.contains("spells");
+		return mainConfig.contains("general") && mainConfig.contains("spells");
 	}
 	
 	public boolean contains(String path) {
-		return this.mainConfig.contains(path);
+		return mainConfig.contains(path);
 	}
 	
 	public int getInt(String path, int def) {
-		return this.mainConfig.getInt(path, def);
+		return mainConfig.getInt(path, def);
 	}
 	
 	public long getLong(String path, long def) {
-		return this.mainConfig.getLong(path, def);
+		return mainConfig.getLong(path, def);
 	}
 	
 	public double getDouble(String path, double def) {
-		if (this.mainConfig.contains(path) && this.mainConfig.isInt(path)) return this.mainConfig.getInt(path);
-		return this.mainConfig.getDouble(path, def);
+		if (mainConfig.contains(path) && mainConfig.isInt(path)) return mainConfig.getInt(path);
+		return mainConfig.getDouble(path, def);
 	}
 	
 	public boolean getBoolean(String path, boolean def) {		
-		return this.mainConfig.getBoolean(path, def);
+		return mainConfig.getBoolean(path, def);
 	}
 	
 	public boolean isString(String path) {
-		return this.mainConfig.contains(path) && this.mainConfig.isString(path);
+		return mainConfig.contains(path) && mainConfig.isString(path);
 	}
 	
 	public String getString(String path, String def) {
-		if (!this.mainConfig.contains(path)) return def;
-		return this.mainConfig.get(path).toString();
+		if (!mainConfig.contains(path)) return def;
+		return mainConfig.get(path).toString();
 	}
 	
 	public boolean isList(String path) {
-		return this.mainConfig.contains(path) && this.mainConfig.isList(path);
+		return mainConfig.contains(path) && mainConfig.isList(path);
 	}
 	
 	public List<Integer> getIntList(String path, List<Integer> def) {
-		if (!this.mainConfig.contains(path)) return def;
-		List<Integer> l = this.mainConfig.getIntegerList(path);
+		if (!mainConfig.contains(path)) return def;
+		List<Integer> l = mainConfig.getIntegerList(path);
 		if (l != null) return l;
 		return def;
 	}
 	
 	public List<Byte> getByteList(String path, List<Byte> def) {
-		if (!this.mainConfig.contains(path)) return def;
-		List<Byte> l = this.mainConfig.getByteList(path);
+		if (!mainConfig.contains(path)) return def;
+		List<Byte> l = mainConfig.getByteList(path);
 		if (l != null) return l;
 		return def;
 	}
 	
 	public List<String> getStringList(String path, List<String> def) {
-		if (!this.mainConfig.contains(path)) return def;
-		List<String> l = this.mainConfig.getStringList(path);
+		if (!mainConfig.contains(path)) return def;
+		List<String> l = mainConfig.getStringList(path);
 		if (l != null) return l;
 		return def;
 	}
 	
 	public List<?> getList(String path, List<?> def) {
-		if (!this.mainConfig.contains(path)) return def;
-		List<?> l = this.mainConfig.getList(path);
+		if (!mainConfig.contains(path)) return def;
+		List<?> l = mainConfig.getList(path);
 		if (l != null) return l;
 		return def;
 	}
 	
 	public Set<String> getKeys(String path) {
-		if (!this.mainConfig.contains(path)) return null;
-		if (!this.mainConfig.isConfigurationSection(path)) return null;
-		return this.mainConfig.getConfigurationSection(path).getKeys(false);
+		if (!mainConfig.contains(path)) return null;
+		if (!mainConfig.isConfigurationSection(path)) return null;
+		return mainConfig.getConfigurationSection(path).getKeys(false);
 	}
 	
 	public boolean isSection(String path) {
-		return this.mainConfig.contains(path) && this.mainConfig.isConfigurationSection(path);
+		return mainConfig.contains(path) && mainConfig.isConfigurationSection(path);
 	}
 	
 	public ConfigurationSection getSection(String path) {
-		if (this.mainConfig.contains(path)) return this.mainConfig.getConfigurationSection(path);
+		if (mainConfig.contains(path)) return mainConfig.getConfigurationSection(path);
 		return null;
 	}
 	
 	public Set<String> getSpellKeys() {
-		if (this.mainConfig == null) return null;
-		if (!this.mainConfig.contains("spells")) return null;
-		if (!this.mainConfig.isConfigurationSection("spells")) return null;
-		return this.mainConfig.getConfigurationSection("spells").getKeys(false);
+		if (mainConfig == null) return null;
+		if (!mainConfig.contains("spells")) return null;
+		if (!mainConfig.isConfigurationSection("spells")) return null;
+		return mainConfig.getConfigurationSection("spells").getKeys(false);
 	}
 	
 }

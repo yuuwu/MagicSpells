@@ -30,10 +30,10 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 	private static final Pattern LOOSE_PLAYER_NAME_PATTERN = Pattern.compile("^[A-Za-z0-9_]+$");
 	private static final Pattern LOCATION_PATTERN = Pattern.compile("^[^,]+,-?[0-9.]+,-?[0-9.]+,-?[0-9.]+(,-?[0-9.]+,-?[0-9.]+)?$");
 	
-	MagicSpells plugin;
-	boolean enableTabComplete;
+	private MagicSpells plugin;
+	private boolean enableTabComplete;
 	
-	public CastCommand(MagicSpells plugin, boolean enableTabComplete) {
+	CastCommand(MagicSpells plugin, boolean enableTabComplete) {
 		this.plugin = plugin;
 		this.enableTabComplete = enableTabComplete;
 	}
@@ -80,7 +80,7 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 							sender.sendMessage(plugin.textColor + "Player not found.");
 						} else {
 							Player player = players.get(0);
-							plugin.spellbooks.put(player.getName(), new Spellbook(player, plugin));
+							MagicSpells.getSpellbooks().put(player.getName(), new Spellbook(player, plugin));
 							sender.sendMessage(plugin.textColor + player.getName() + "'s spellbook reloaded.");
 						}
 					}
@@ -96,7 +96,7 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 							return true;
 						}
 					}
-					for (Spell spell : plugin.spells.values()) {
+					for (Spell spell : MagicSpells.getSpells().values()) {
 						if (p != null) {
 							spell.setCooldown(p, 0);
 						} else {
@@ -106,21 +106,21 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 					sender.sendMessage(plugin.textColor + "Cooldowns reset" + (p != null ? " for " + p.getName() : ""));
 					// End /c resetcd handling
 					
-				} else if (Perm.RESET_MANA.has(sender) && args[0].equals("resetmana") && args.length > 1 && plugin.mana != null) {
+				} else if (Perm.RESET_MANA.has(sender) && args[0].equals("resetmana") && args.length > 1 && MagicSpells.getManaHandler() != null) {
 					// /c resetmana
 					Player p = PlayerNameUtils.getPlayer(args[1]);
 					if (p != null) {
-						plugin.mana.createManaBar(p);
+						MagicSpells.getManaHandler().createManaBar(p);
 						sender.sendMessage(plugin.textColor + p.getName() + "'s mana reset.");
 					}
 					// End /c resetmana handling
 					
-				} else if (Perm.UPDATE_MANA_RANK.has(sender) && args[0].equals("updatemanarank") && args.length > 1 && plugin.mana != null) {
+				} else if (Perm.UPDATE_MANA_RANK.has(sender) && args[0].equals("updatemanarank") && args.length > 1 && MagicSpells.getManaHandler() != null) {
 					// /c updatemanarank
 					Player p = PlayerNameUtils.getPlayer(args[1]);
 					if (p != null) {
-						boolean updated = plugin.mana.updateManaRankIfNecessary(p);
-						plugin.mana.showMana(p);
+						boolean updated = MagicSpells.getManaHandler().updateManaRankIfNecessary(p);
+						MagicSpells.getManaHandler().showMana(p);
 						if (updated) {
 							sender.sendMessage(plugin.textColor + p.getName() + "'s mana rank updated.");
 						} else {
@@ -129,32 +129,32 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 					}
 					// End /c updatemanarank handling
 					
-				} else if (Perm.SET_MAX_MANA.has(sender) && args[0].equalsIgnoreCase("setmaxmana") && args.length == 3 && plugin.mana != null) {
+				} else if (Perm.SET_MAX_MANA.has(sender) && args[0].equalsIgnoreCase("setmaxmana") && args.length == 3 && MagicSpells.getManaHandler() != null) {
 					// /c setmaxmana
 					Player p = PlayerNameUtils.getPlayer(args[1]);
 					if (p != null) {
 						int amt = Integer.parseInt(args[2]);
-						plugin.mana.setMaxMana(p, amt);
+						MagicSpells.getManaHandler().setMaxMana(p, amt);
 						sender.sendMessage(plugin.textColor + p.getName() + "'s max mana set to " + amt + '.');
 					}
 					// End /c setmaxmana handling
 					
-				} else if (Perm.MODIFY_MANA.has(sender) && args[0].equalsIgnoreCase("modifymana") && args.length == 3 && plugin.mana != null) {
+				} else if (Perm.MODIFY_MANA.has(sender) && args[0].equalsIgnoreCase("modifymana") && args.length == 3 && MagicSpells.getManaHandler() != null) {
 					// /c modifymana
 					Player p = PlayerNameUtils.getPlayer(args[1]);
 					if (p != null) {
 						int amt = Integer.parseInt(args[2]);
-						plugin.mana.addMana(p, amt, ManaChangeReason.OTHER);
+						MagicSpells.getManaHandler().addMana(p, amt, ManaChangeReason.OTHER);
 						sender.sendMessage(plugin.textColor + p.getName() + "'s mana modified by " + amt + '.');
 					}
 					// End /c modifymana handling
-					
-				} else if (Perm.SET_MANA.has(sender) && args[0].equalsIgnoreCase("setmana") && args.length == 3 && plugin.mana != null) {
+
+				} else if (Perm.SET_MANA.has(sender) && args[0].equalsIgnoreCase("setmana") && args.length == 3 && MagicSpells.getManaHandler() != null) {
 					// /c setmana
 					Player p = PlayerNameUtils.getPlayer(args[1]);
 					if (p != null) {
 						int amt = Integer.parseInt(args[2]);
-						plugin.mana.setMana(p, amt, ManaChangeReason.OTHER);
+						MagicSpells.getManaHandler().setMana(p, amt, ManaChangeReason.OTHER);
 						sender.sendMessage(plugin.textColor + p.getName() + "'s mana set to " + amt + '.');
 					}
 					// End /c setmana handling
@@ -324,7 +324,7 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 						MagicSpells.sendMessage(plugin.strUnknownSpell, player, null);
 					}
 				} else { // Not a player
-					Spell spell = plugin.spellNames.get(args[0].toLowerCase());
+					Spell spell = MagicSpells.getSpellNames().get(args[0].toLowerCase());
 					if (spell == null) {
 						sender.sendMessage("Unknown spell.");
 					} else {
@@ -437,7 +437,7 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 				// /magicspellmana
 				if (plugin.enableManaBars && sender instanceof Player) {
 					Player player = (Player)sender;
-					plugin.mana.showMana(player, true);
+					MagicSpells.getManaHandler().showMana(player, true);
 				}
 				return true;
 				// End /magicspellmana handling
@@ -445,7 +445,7 @@ public class CastCommand implements CommandExecutor, TabCompleter {
 			} else if (command.getName().equalsIgnoreCase("magicspellxp")) {
 				// /magicspellxp
 				if (sender instanceof Player) {
-					MagicXpHandler xpHandler = plugin.magicXpHandler;
+					MagicXpHandler xpHandler = MagicSpells.getMagicExpHandler();
 					if (xpHandler != null) {
 						xpHandler.showXpInfo((Player)sender);
 					}
