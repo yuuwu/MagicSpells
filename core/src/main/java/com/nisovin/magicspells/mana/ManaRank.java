@@ -15,13 +15,13 @@ public class ManaRank {
 	@Override
 	public String toString() {
 		return "ManaRank:["
-			+ "name=" + this.name
-			+ ",startingMana=" + this.startingMana
-			+ ",maxMana=" + this.maxMana
-			+ ",regenAmount=" + this.regenAmount
-			+ ",prefix=" + this.prefix
-			+ ",colorFull=" + this.colorFull
-			+ ",colorEmpty=" + this.colorEmpty
+			+ "name=" + name
+			+ ",startingMana=" + startingMana
+			+ ",maxMana=" + maxMana
+			+ ",regenAmount=" + regenAmount
+			+ ",prefix=" + prefix
+			+ ",colorFull=" + colorFull
+			+ ",colorEmpty=" + colorEmpty
 			+ ']';
 	}
 	

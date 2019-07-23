@@ -1,8 +1,8 @@
 package com.nisovin.magicspells.events;
 
+import org.bukkit.event.Event;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 import com.nisovin.magicspells.Spell;
@@ -21,16 +21,16 @@ public class SpellForgetEvent extends Event implements Cancellable {
 	}
 	
 	public Player getForgetter() {
-		return this.forgetter;
+		return forgetter;
 	}
 	
 	public Spell getSpell() {
-		return this.spell;
+		return spell;
 	}
 	
 	@Override
 	public boolean isCancelled() {
-		return this.cancelled;
+		return cancelled;
 	}
 
 	@Override

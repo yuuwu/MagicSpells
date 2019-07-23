@@ -1,7 +1,7 @@
 package com.nisovin.magicspells.events;
 
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.Spell;
 
@@ -20,7 +20,7 @@ public abstract class SpellEvent extends Event implements IMagicSpellsCompatEven
 	 * @return the spell
 	 */
 	public Spell getSpell() {
-		return this.spell;
+		return spell;
 	}
 	
 	/**
@@ -28,7 +28,7 @@ public abstract class SpellEvent extends Event implements IMagicSpellsCompatEven
 	 * @return the casting player
 	 */
 	public Player getCaster() {
-		return this.caster;
+		return caster;
 	}
 	
 }

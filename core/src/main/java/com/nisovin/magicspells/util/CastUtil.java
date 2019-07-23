@@ -14,7 +14,7 @@ public class CastUtil {
 
 		private static Map<String, CastMode> nameMap = new HashMap<>();
 
-		private String[] names;
+		private final String[] names;
 
 		CastMode(String... names) {
 			this.names = names;
@@ -26,12 +26,9 @@ public class CastUtil {
 
 		static {
 			for (CastMode mode : CastMode.values()) {
-				CastMode m = CastMode.valueOf(mode.name());
-				if (m == null) continue;
-
 				nameMap.put(mode.name().toLowerCase(), mode);
 				for (String s : mode.names) {
-					nameMap.put(s.toLowerCase(), m);
+					nameMap.put(s.toLowerCase(), mode);
 				}
 			}
 		}

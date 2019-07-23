@@ -62,19 +62,17 @@ class ParticleUtil {
 		NAUTILUS( "nautilus"),
 		DOLPHIN( "dolphin");
 
-		private String[] names;
+		private final String[] names;
 
 		ParticleEffect(String... names) {
 			this.names = names;
 		}
 
-		private static Map<String, Particle> namesToType = null;
+		private static Map<String, Particle> namesToType = new HashMap<>();
 		private static boolean initialized = false;
 
 		private static void initialize() {
 			if (initialized) return;
-
-			namesToType = new HashMap<>();
 
 			for (ParticleEffect pe : ParticleEffect.values()) {
 				Particle particle = Particle.valueOf(pe.name());
