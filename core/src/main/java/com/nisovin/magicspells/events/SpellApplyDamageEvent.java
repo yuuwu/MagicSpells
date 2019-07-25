@@ -1,8 +1,8 @@
 package com.nisovin.magicspells.events;
 
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import com.nisovin.magicspells.Spell;
@@ -11,12 +11,12 @@ public class SpellApplyDamageEvent extends SpellEvent {
 
     private static final HandlerList handlers = new HandlerList();
 
-    LivingEntity target;
-    double damage;
-    DamageCause cause;
-    String spellDamageType;
-    long timestamp;
-    float modifier;
+    private LivingEntity target;
+	private double damage;
+	private DamageCause cause;
+	private String spellDamageType;
+	private long timestamp;
+	private float modifier;
     
     public SpellApplyDamageEvent(Spell spell, Player caster, LivingEntity target, double damage, DamageCause cause, String spellDamageType) {
 		super(spell, caster);
@@ -24,8 +24,8 @@ public class SpellApplyDamageEvent extends SpellEvent {
 		this.damage = damage;
 		this.cause = cause;
 		this.spellDamageType = spellDamageType;
-		this.timestamp = System.currentTimeMillis();
-		this.modifier = 1.0f;
+		timestamp = System.currentTimeMillis();
+		modifier = 1.0f;
 	}
     
     public void applyDamageModifier(float modifier) {
@@ -33,27 +33,27 @@ public class SpellApplyDamageEvent extends SpellEvent {
     }
     
     public LivingEntity getTarget() {
-    	return this.target;
+    	return target;
     }
     
     public double getDamage() {
-    	return this.damage;
+    	return damage;
     }
     
     public DamageCause getCause() {
-    	return this.cause;
+    	return cause;
     }
     
     public long getTimestamp() {
-    	return this.timestamp;
+    	return timestamp;
     }
     
     public float getDamageModifier() {
-    	return this.modifier;
+    	return modifier;
     }
     
     public double getFinalDamage() {
-    	return this.damage * this.modifier;
+    	return damage * modifier;
     }
     
     @Override

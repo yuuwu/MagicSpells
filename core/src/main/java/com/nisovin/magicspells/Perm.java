@@ -38,35 +38,47 @@ public enum Perm {
 	CAST_AT(null, true),
 	
 	;
-	
-	private final boolean requireOp;
-	public boolean requiresOp() { return this.requireOp; }
-	private final boolean requireNode;
-	public boolean requiresNode() { return this.requireNode; }
+
 	private final String node;
-	public String getNode() { return this.node; }
-	public String getNode(Spell spell) { return this.node + spell.getPermissionName(); }
+	private final boolean requireOp;
+	private final boolean requireNode;
+
+	Perm(String node) {
+		this(node, false);
+	}
+
+	Perm(String node, boolean requireOp) {
+		this.node = node;
+		this.requireOp = requireOp;
+		requireNode = node != null;
+	}
+
+	public String getNode() {
+		return node;
+	}
+
+	public String getNode(Spell spell) {
+		return node + spell.getPermissionName();
+	}
+
+	public boolean requiresOp() {
+		return requireOp;
+	}
+
+	public boolean requiresNode() {
+		return requireNode;
+	}
 	
 	public boolean has(Permissible permissible) {
-		if (this.requiresOp() && !permissible.isOp()) return false;
-		if (this.requiresNode() && !permissible.hasPermission(getNode())) return false;
+		if (requiresOp() && !permissible.isOp()) return false;
+		if (requiresNode() && !permissible.hasPermission(getNode())) return false;
 		return true;
 	}
 	
 	public boolean has(Permissible permissible, Spell spell) {
-		if (this.requiresOp() && !permissible.isOp()) return false;
-		if (this.requiresNode() && !permissible.hasPermission(getNode(spell))) return false;
+		if (requiresOp() && !permissible.isOp()) return false;
+		if (requiresNode() && !permissible.hasPermission(getNode(spell))) return false;
 		return true;
-	}
-	
-	Perm(String node) {
-		this(node, false);
-	}
-	
-	Perm(String node, boolean requireOp) {
-		this.node = node;
-		this.requireNode = node != null;
-		this.requireOp = requireOp;
 	}
 	
 }

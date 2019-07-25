@@ -26,6 +26,7 @@ public abstract class SpellEffect {
 	double forwardOffset;
 	
 	// for line
+	double maxDistance;
 	double distanceBetween;
 
 	// for buff/orbit
@@ -62,6 +63,7 @@ public abstract class SpellEffect {
 		heightOffset = config.getDouble("height-offset", 0);
 		forwardOffset = config.getDouble("forward-offset", 0);
 
+		maxDistance = config.getDouble("max-distance", 100);
 		distanceBetween = config.getDouble("distance-between", 1);
 
 		orbitRadius = (float) config.getDouble("orbit-radius", 1F);
@@ -81,6 +83,7 @@ public abstract class SpellEffect {
 		List<String> list = config.getStringList("modifiers");
 		if (list != null) modifiers = new ModifierSet(list);
 
+		maxDistance *= maxDistance;
 		ticksPerSecond = 20F / (float) tickInterval;
 		ticksPerRevolution = Math.round(ticksPerSecond * secondsPerRevolution);
 		distancePerTick = 6.28F / (ticksPerSecond * secondsPerRevolution);
@@ -142,6 +145,7 @@ public abstract class SpellEffect {
 	 * @param param the parameter specified in the spell config (can be ignored)
 	 */
 	public Runnable playEffect(Location location1, Location location2) {
+		if (location1.distanceSquared(location2) > maxDistance) return null;
 		Location loc1 = location1.clone();
 		Location loc2 = location2.clone();
 		//double localHeightOffset = heightOffsetExpression.resolveValue(null, null, location1, location2).doubleValue();

@@ -22,34 +22,34 @@ public class NoMagicZoneWorldGuard extends NoMagicZone {
 
 	@Override
 	public void initialize(ConfigurationSection config) {
-		this.worldName = config.getString("world", "");
-		this.regionName = config.getString("region", "");
+		worldName = config.getString("world", "");
+		regionName = config.getString("region", "");
 	}
 
 	@Override
 	public boolean inZone(Location location) {
 		// Check world
-		if (!this.worldName.equals(location.getWorld().getName())) return false;
+		if (!worldName.equals(location.getWorld().getName())) return false;
 
 		// Get region, if necessary
-		if (this.region == null) {
+		if (region == null) {
 			WorldGuardPlugin worldGuard = null;
 			if (CompatBasics.pluginEnabled("WorldGuard")) worldGuard = (WorldGuardPlugin)CompatBasics.getPlugin("WorldGuard");
 			if (worldGuard != null) {
-				World w = Bukkit.getServer().getWorld(this.worldName);
+				World w = Bukkit.getServer().getWorld(worldName);
 				if (w != null) {
 					RegionManager rm = WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(w));
-					if (rm != null) this.region = rm.getRegion(this.regionName);
+					if (rm != null) region = rm.getRegion(regionName);
 				}
 			}
 		}
 
 		// Check if contains
-		if (this.region != null) {
+		if (region != null) {
 			return region.contains(location.getBlockX(), location.getBlockY(), location.getBlockZ());
 		}
 
-		MagicSpells.error("Failed to access WorldGuard region '" + this.regionName + '\'');
+		MagicSpells.error("Failed to access WorldGuard region '" + regionName + '\'');
 		return false;
 	}
 

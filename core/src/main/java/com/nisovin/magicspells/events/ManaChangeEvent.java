@@ -1,7 +1,7 @@
 package com.nisovin.magicspells.events;
 
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
 import com.nisovin.magicspells.mana.ManaChangeReason;
@@ -33,7 +33,7 @@ public class ManaChangeEvent extends Event {
 	 * @return the player
 	 */
 	public Player getPlayer() {
-		return this.player;
+		return player;
 	}
 	
 	/**
@@ -41,7 +41,7 @@ public class ManaChangeEvent extends Event {
 	 * @return mana amount
 	 */
 	public int getOldAmount() {
-		return this.oldAmt;
+		return oldAmt;
 	}
 	
 	/**
@@ -49,7 +49,7 @@ public class ManaChangeEvent extends Event {
 	 * @return mana amount
 	 */
 	public int getNewAmount() {
-		return this.newAmt;
+		return newAmt;
 	}
 	
 	/**
@@ -57,7 +57,7 @@ public class ManaChangeEvent extends Event {
 	 * @param mana amount
 	 */
 	public void setNewAmount(int mana) {
-		this.newAmt = mana;
+		newAmt = mana;
 	}
 	
 	/**
@@ -65,7 +65,7 @@ public class ManaChangeEvent extends Event {
 	 * @return max mana
 	 */
 	public int getMaxMana() {
-		return this.maxMana;
+		return maxMana;
 	}
 	
 	/**
@@ -73,7 +73,7 @@ public class ManaChangeEvent extends Event {
 	 * @return the reason
 	 */
 	public ManaChangeReason getReason() {
-		return this.reason;
+		return reason;
 	}
 
     @Override

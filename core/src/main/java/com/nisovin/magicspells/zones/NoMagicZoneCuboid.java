@@ -15,7 +15,7 @@ public class NoMagicZoneCuboid extends NoMagicZone {
 	
 	@Override
 	public void initialize(ConfigurationSection config) {
-		this.worldName = config.getString("world", "");
+		worldName = config.getString("world", "");
 		
 		String[] p1 = config.getString("point1", "0,0,0").replace(" ", "").split(",");
 		String[] p2 = config.getString("point2", "0,0,0").replace(" ", "").split(",");
@@ -27,35 +27,35 @@ public class NoMagicZoneCuboid extends NoMagicZone {
 		int z2 = Integer.parseInt(p2[2]);
 		
 		if (x1 < x2) {
-			this.minx = x1;
-			this.maxx = x2;
+			minx = x1;
+			maxx = x2;
 		} else {
-			this.minx = x2;
-			this.maxx = x1;
+			minx = x2;
+			maxx = x1;
 		}
 		if (y1 < y2) {
-			this.miny = y1;
-			this.maxy = y2;
+			miny = y1;
+			maxy = y2;
 		} else {
-			this.miny = y2;
-			this.maxy = y1;
+			miny = y2;
+			maxy = y1;
 		}
 		if (z1 < z2) {
-			this.minz = z1;
-			this.maxz = z2;
+			minz = z1;
+			maxz = z2;
 		} else {
-			this.minz = z2;
-			this.maxz = z1;
+			minz = z2;
+			maxz = z1;
 		}
 	}
 
 	@Override
 	public boolean inZone(Location location) {
-		if (!this.worldName.equalsIgnoreCase(location.getWorld().getName())) return false;
+		if (!worldName.equalsIgnoreCase(location.getWorld().getName())) return false;
 		int x = location.getBlockX();
 		int y = location.getBlockY();
 		int z = location.getBlockZ();
-		return this.minx <= x && x <= this.maxx && this.miny <= y && y <= this.maxy && this.minz <= z && z <= this.maxz;
+		return minx <= x && x <= maxx && miny <= y && y <= maxy && minz <= z && z <= maxz;
 	}
 	
 }

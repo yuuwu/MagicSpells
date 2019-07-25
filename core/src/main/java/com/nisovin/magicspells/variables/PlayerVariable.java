@@ -1,7 +1,7 @@
 package com.nisovin.magicspells.variables;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 
@@ -9,20 +9,19 @@ import com.nisovin.magicspells.util.PlayerNameUtils;
 
 public class PlayerVariable extends Variable {
 
-	Map<String, Double> map = new HashMap<>();
+	private Map<String, Double> map = new HashMap<>();
 	
 	@Override
 	public boolean modify(String player, double amount) {
 		double value = getValue(player);
 		double newvalue = value + amount;
-		if (newvalue > this.maxValue) {
-			newvalue = this.maxValue;
-		} else if (newvalue < this.minValue) {
-			newvalue = this.minValue;
-		}
+
+		if (newvalue > maxValue) newvalue = maxValue;
+		else if (newvalue < minValue) newvalue = minValue;
+
 		if (value != newvalue) {
-			this.map.put(player, newvalue);
-			if (this.objective != null) this.objective.getScore(PlayerNameUtils.getOfflinePlayer(player)).setScore((int)newvalue);
+			map.put(player, newvalue);
+			if (objective != null) objective.getScore(PlayerNameUtils.getOfflinePlayer(player)).setScore((int) newvalue);
 			return true;
 		}
 		return false;
@@ -30,20 +29,20 @@ public class PlayerVariable extends Variable {
 
 	@Override
 	public void set(String player, double amount) {
-		this.map.put(player, amount);
-		if (this.objective != null) this.objective.getScore(PlayerNameUtils.getOfflinePlayer(player)).setScore((int)amount);
+		map.put(player, amount);
+		if (objective != null) objective.getScore(PlayerNameUtils.getOfflinePlayer(player)).setScore((int) amount);
 	}
 
 	@Override
 	public double getValue(String player) {
-		if (this.map.containsKey(player)) return this.map.get(player);
-		return this.defaultValue;
+		if (map.containsKey(player)) return map.get(player);
+		return defaultValue;
 	}
 
 	@Override
 	public void reset(String player) {
-		this.map.remove(player);
-		if (this.objective != null) this.objective.getScore(Bukkit.getOfflinePlayer(player)).setScore((int)this.defaultValue);
+		map.remove(player);
+		if (objective != null) objective.getScore(Bukkit.getOfflinePlayer(player)).setScore((int) defaultValue);
 	}
 	
 }

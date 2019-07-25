@@ -1,7 +1,7 @@
 package com.nisovin.magicspells.events;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.HashMap;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;

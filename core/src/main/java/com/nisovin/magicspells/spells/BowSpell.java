@@ -1,59 +1,58 @@
 package com.nisovin.magicspells.spells;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.HashMap;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.EntityType;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.entity.EntityType;
+import org.bukkit.event.EventHandler;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.event.entity.EntityShootBowEvent;
 
-import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spell;
-import com.nisovin.magicspells.Spellbook;
 import com.nisovin.magicspells.Subspell;
+import com.nisovin.magicspells.Spellbook;
+import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.events.SpellCastedEvent;
-import com.nisovin.magicspells.util.compat.EventUtil;
-import com.nisovin.magicspells.util.MagicConfig;
 
 public class BowSpell extends Spell {
 
 	private static BowSpellHandler handler;
 	
-	BowSpell thisSpell;
-	
-	String bowName;
-	
-	String spellNameOnShoot;
-	
-	Subspell spellOnShoot;
-	
-	boolean useBowForce;
+	private BowSpell thisSpell;
+
+	private String bowName;
+	private String spellOnShootName;
+
+	private Subspell spellOnShoot;
+
+	private boolean useBowForce;
 	
 	public BowSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		this.thisSpell = this;
-		this.bowName = ChatColor.translateAlternateColorCodes('&', getConfigString("bow-name", null));
-		this.spellNameOnShoot = getConfigString("spell", null);
-		this.useBowForce = getConfigBoolean("use-bow-force", true);
+		thisSpell = this;
+
+		bowName = ChatColor.translateAlternateColorCodes('&', getConfigString("bow-name", ""));
+		spellOnShootName = getConfigString("spell", "");
+
+		useBowForce = getConfigBoolean("use-bow-force", true);
 	}
 	
 	@Override
 	public void initialize() {
 		super.initialize();
-		
-		if (this.spellNameOnShoot != null && !this.spellNameOnShoot.isEmpty()) {
-			this.spellOnShoot = new Subspell(this.spellNameOnShoot);
-			if (!this.spellOnShoot.process()) {
-				this.spellOnShoot = null;
-				MagicSpells.error("Bow spell '" + this.internalName + "' has invalid spell defined: '" + this.spellNameOnShoot + '\'');
-			}
+
+		spellOnShoot = new Subspell(spellOnShootName);
+		if (!spellOnShoot.process()) {
+			MagicSpells.error("BowSpell '" + internalName + "' has an invalid spell defined!");
+			spellOnShoot = null;
 		}
 		
 		if (handler == null) handler = new BowSpellHandler();
@@ -63,6 +62,7 @@ public class BowSpell extends Spell {
 	@Override
 	public void turnOff() {
 		super.turnOff();
+
 		if (handler == null) return;
 		handler.turnOff();
 		handler = null;
@@ -83,33 +83,34 @@ public class BowSpell extends Spell {
 		return false;
 	}
 	
-	class BowSpellHandler implements Listener {
+	private class BowSpellHandler implements Listener {
+
+		private Map<String, BowSpell> spells = new HashMap<>();
 		
-		Map<String, BowSpell> spells = new HashMap<>();
-		
-		public BowSpellHandler() {
+		BowSpellHandler() {
 			registerEvents(this);
 		}
-		
-		public void registerSpell(BowSpell spell) {
-			this.spells.put(spell.bowName, spell);
+
+		private void registerSpell(BowSpell spell) {
+			spells.put(spell.bowName, spell);
 		}
 		
 		@EventHandler
 		public void onArrowLaunch(EntityShootBowEvent event) {
 			if (event.getEntity().getType() != EntityType.PLAYER) return;
-			Player shooter = (Player)event.getEntity();
+			Player shooter = (Player) event.getEntity();
 			ItemStack inHand = shooter.getEquipment().getItemInMainHand();
 			if (inHand == null || inHand.getType() != Material.BOW) return;
+
 			String bowName = inHand.getItemMeta().getDisplayName();
-			if (bowName == null) return;
 			if (bowName.isEmpty()) return;
+
 			Spellbook spellbook = MagicSpells.getSpellbook(shooter);
-			BowSpell spell = this.spells.get(bowName);
-			
+			BowSpell spell = spells.get(bowName);
 			if (spell == null) return;
 			if (!spellbook.hasSpell(spell)) return;
 			if (!spellbook.canCast(spell)) return;
+
 			if (thisSpell.onCooldown(shooter)) {
 				MagicSpells.sendMessage(formatMessage(thisSpell.strOnCooldown, "%c", Math.round(getCooldown(shooter)) + ""), shooter, null);
 				return;
@@ -131,8 +132,8 @@ public class BowSpell extends Spell {
 			SpellCastedEvent evt2 = new SpellCastedEvent(thisSpell, shooter, SpellCastState.NORMAL, evt1.getPower(), null, thisSpell.cooldown, thisSpell.reagents, PostCastAction.HANDLE_NORMALLY);
 			EventUtil.call(evt2);
 		}
-		
-		public void turnOff() {
+
+		private void turnOff() {
 			unregisterEvents(this);
 			spells.clear();
 		}

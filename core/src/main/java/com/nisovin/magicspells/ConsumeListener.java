@@ -1,27 +1,27 @@
 package com.nisovin.magicspells;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.HashMap;
 
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 
-import com.nisovin.magicspells.Spell.SpellCastResult;
-import com.nisovin.magicspells.Spell.SpellCastState;
 import com.nisovin.magicspells.util.CastItem;
+import com.nisovin.magicspells.Spell.SpellCastState;
+import com.nisovin.magicspells.Spell.SpellCastResult;
 
 public class ConsumeListener implements Listener {
 
-	MagicSpells plugin;
+	private MagicSpells plugin;
+
+	private Map<CastItem, Spell> consumeCastItems = new HashMap<>();
+	private HashMap<String, Long> lastCast = new HashMap<>();
 	
-	Map<CastItem, Spell> consumeCastItems = new HashMap<>();
-	HashMap<String, Long> lastCast = new HashMap<>();
-	
-	public ConsumeListener(MagicSpells plugin) {
+	ConsumeListener(MagicSpells plugin) {
 		this.plugin = plugin;
-		for (Spell spell : plugin.spells.values()) {
+		for (Spell spell : MagicSpells.getSpells().values()) {
 			CastItem[] items = spell.getConsumeCastItems();
 			if (items.length <= 0) continue;
 			for (CastItem item : items) {
@@ -32,14 +32,14 @@ public class ConsumeListener implements Listener {
 		}
 	}
 	
-	public boolean hasConsumeCastItems() {
+	boolean hasConsumeCastItems() {
 		return !consumeCastItems.isEmpty();
 	}
 	
 	@EventHandler
 	public void onConsume(final PlayerItemConsumeEvent event) {
 		CastItem castItem = new CastItem(event.getItem());
-		final Spell spell = this.consumeCastItems.get(castItem);
+		final Spell spell = consumeCastItems.get(castItem);
 		if (spell == null) return;
 
 		Player player = event.getPlayer();

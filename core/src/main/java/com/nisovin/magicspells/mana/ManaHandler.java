@@ -4,7 +4,6 @@ import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.castmodifiers.ModifierSet;
 
-
 public abstract class ManaHandler {
 
 	public abstract void initialize();

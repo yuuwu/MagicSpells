@@ -3,17 +3,18 @@ package com.nisovin.magicspells.spells;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Subspell;
+import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.MagicLocation;
 
 public class LocationSpell extends InstantSpell {
 
-	MagicLocation location;
+	private MagicLocation location;
 	
-	Subspell spell;
-	
+	private Subspell spellToCast;
+	private String spellToCastName;
+
 	public LocationSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 
@@ -28,34 +29,33 @@ public class LocationSpell extends InstantSpell {
 			float pitch = 0;
 			if (split.length > 4) yaw = Float.parseFloat(split[4]);
 			if (split.length > 5) pitch = Float.parseFloat(split[5]);
-			this.location = new MagicLocation(world, x, y, z, yaw, pitch);
+			location = new MagicLocation(world, x, y, z, yaw, pitch);
 		} catch (Exception e) {
-			MagicSpells.error("Invalid location on LocationSpell '" + spellName + '\'');
+			MagicSpells.error("LocationSpell '" + spellName + "' has an invalid location defined!");
 		}
-		this.spell = new Subspell(getConfigString("spell", ""));
+
+		spellToCastName = getConfigString("spell", "");
 	}
 	
 	@Override
 	public void initialize() {
 		super.initialize();
-		if (this.spell != null) {
-			boolean ok = this.spell.process();
-			if (!ok || !this.spell.isTargetedLocationSpell()) {
-				MagicSpells.error("Invalid spell on LocationSpell '" + this.name + '\'');
-			}
+
+		spellToCast = new Subspell(spellToCastName);
+		if (!spellToCast.process() || !spellToCast.isTargetedLocationSpell()) {
+			MagicSpells.error("LocationSpell '" + internalName + "' has an invalid spell defined!");
+			spellToCast = null;
 		}
 	}
 
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
-			Location loc = this.location.getLocation();
-			if (loc != null) {
-				this.spell.castAtLocation(player, loc, power);
-				playSpellEffects(player, loc);
-			} else {
-				return PostCastAction.ALREADY_HANDLED;
-			}
+			Location loc = location.getLocation();
+			if (loc == null) return PostCastAction.ALREADY_HANDLED;
+
+			if (spellToCast != null) spellToCast.castAtLocation(player, loc, power);
+			playSpellEffects(player, loc);
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}

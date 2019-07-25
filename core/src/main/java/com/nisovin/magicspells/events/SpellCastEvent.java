@@ -6,8 +6,8 @@ import org.bukkit.event.HandlerList;
 
 import com.nisovin.magicspells.Spell;
 import com.nisovin.magicspells.util.SpellReagents;
-
-/** 
+import com.nisovin.magicspells.Spell.SpellCastState;
+/**
  * The event that is called whenever a player attempts to cast a spell. 
  * This event is called just before the effects of the spell are performed.
  * Cancelling this event will prevent the spell from casting.
@@ -17,7 +17,7 @@ public class SpellCastEvent extends SpellEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
 
-    private Spell.SpellCastState state;
+    private SpellCastState state;
     private boolean stateChanged;
 	private float cooldown;
 	private SpellReagents reagents;
@@ -27,33 +27,33 @@ public class SpellCastEvent extends SpellEvent implements Cancellable {
 	private String[] args;
 	private boolean cancelled = false;
 	
-	public SpellCastEvent(Spell spell, Player caster, Spell.SpellCastState state, float power, String[] args, float cooldown, SpellReagents reagents, int castTime) {
+	public SpellCastEvent(Spell spell, Player caster, SpellCastState state, float power, String[] args, float cooldown, SpellReagents reagents, int castTime) {
 		super(spell, caster);
 		this.state = state;
-		this.stateChanged = false;
 		this.cooldown = cooldown;
 		this.reagents = reagents;
-		this.reagentsChanged = false;
 		this.power = power;
 		this.castTime = castTime;
 		this.args = args;
+		stateChanged = false;
+		reagentsChanged = false;
 	}
 	
 	/**
 	 * Gets the current spell cast state.
 	 * @return the spell cast state
 	 */
-	public Spell.SpellCastState getSpellCastState() {
-		return this.state;
+	public SpellCastState getSpellCastState() {
+		return state;
 	}
 	
 	/**
 	 * Changes the spell cast state.
 	 * @param state the new spell cast state
 	 */
-	public void setSpellCastState(Spell.SpellCastState state) {
+	public void setSpellCastState(SpellCastState state) {
 		this.state = state;
-		this.stateChanged = true;
+		stateChanged = true;
 	}
 	
 	/**
@@ -61,7 +61,7 @@ public class SpellCastEvent extends SpellEvent implements Cancellable {
 	 * @return true if it has been changed
 	 */
 	public boolean hasSpellCastStateChanged() {
-		return this.stateChanged;
+		return stateChanged;
 	}
 	
 	/**
@@ -69,7 +69,7 @@ public class SpellCastEvent extends SpellEvent implements Cancellable {
 	 * @return the cooldown
 	 */
 	public float getCooldown() {
-		return this.cooldown;
+		return cooldown;
 	}
 	
 	/**
@@ -85,7 +85,7 @@ public class SpellCastEvent extends SpellEvent implements Cancellable {
 	 * @return the reagents
 	 */
 	public SpellReagents getReagents() {
-		return this.reagents;
+		return reagents;
 	}
 	
 	/**
@@ -94,7 +94,7 @@ public class SpellCastEvent extends SpellEvent implements Cancellable {
 	 */
 	public void setReagents(SpellReagents reagents) {
 		this.reagents = reagents;
-		this.reagentsChanged = true;
+		reagentsChanged = true;
 	}
 	
 	/**
@@ -102,7 +102,7 @@ public class SpellCastEvent extends SpellEvent implements Cancellable {
 	 * @return true if reagents are changed
 	 */
 	public boolean haveReagentsChanged() {
-		return this.reagentsChanged;
+		return reagentsChanged;
 	}
 	
 	/**
@@ -119,7 +119,7 @@ public class SpellCastEvent extends SpellEvent implements Cancellable {
 	 * @return the power level
 	 */
 	public float getPower() {
-		return this.power;
+		return power;
 	}
 	
 	/**
@@ -143,7 +143,7 @@ public class SpellCastEvent extends SpellEvent implements Cancellable {
 	 * @return the cast time
 	 */
 	public int getCastTime() {
-		return this.castTime;
+		return castTime;
 	}
 	
 	/**
@@ -159,12 +159,12 @@ public class SpellCastEvent extends SpellEvent implements Cancellable {
 	 * @return the args, or null if there were none
 	 */
 	public String[] getSpellArgs() {
-		return this.args;
+		return args;
 	}
 	
 	@Override
 	public boolean isCancelled() {
-		return this.cancelled;
+		return cancelled;
 	}
 
 	@Override

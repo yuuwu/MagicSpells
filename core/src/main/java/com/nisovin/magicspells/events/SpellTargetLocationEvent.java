@@ -26,7 +26,7 @@ public class SpellTargetLocationEvent extends SpellEvent implements Cancellable 
 	 * @return the targeted living entity
 	 */
 	public Location getTargetLocation() {
-		return this.target;
+		return target;
 	}
 	
 	/**
@@ -42,7 +42,7 @@ public class SpellTargetLocationEvent extends SpellEvent implements Cancellable 
 	 * @return the power level
 	 */
 	public float getPower() {
-		return this.power;
+		return power;
 	}
 	
 	/**
@@ -63,7 +63,7 @@ public class SpellTargetLocationEvent extends SpellEvent implements Cancellable 
 
 	@Override
 	public boolean isCancelled() {
-		return this.cancelled;
+		return cancelled;
 	}
 
 	@Override

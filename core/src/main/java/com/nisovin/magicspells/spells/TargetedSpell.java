@@ -59,7 +59,7 @@ public abstract class TargetedSpell extends InstantSpell {
 	protected void sendMessages(Player caster, LivingEntity target) {
 		String targetName = getTargetName(target);
 		Player playerTarget = null;
-		if (target instanceof Player) playerTarget = (Player)target;
+		if (target instanceof Player) playerTarget = (Player) target;
 		sendMessage(prepareMessage(strCastSelf, caster, targetName, playerTarget), caster, MagicSpells.NULL_ARGS);
 		if (playerTarget != null) sendMessage(prepareMessage(strCastTarget, caster, targetName, playerTarget), playerTarget, MagicSpells.NULL_ARGS);
 		sendMessageNear(caster, playerTarget, prepareMessage(strCastOthers, caster, targetName, playerTarget), broadcastRange, MagicSpells.NULL_ARGS);
@@ -67,7 +67,7 @@ public abstract class TargetedSpell extends InstantSpell {
 	
 	private String prepareMessage(String message, Player caster, String targetName, Player playerTarget) {
 		if (message == null || message.isEmpty()) return message;
-		message = message.replace("%a", caster.getDisplayName());
+		message = message.replace("%a", caster.getName());
 		message = message.replace("%t", targetName);
 		if (playerTarget != null && MagicSpells.getVariableManager() != null && message.contains("%targetvar")) {
 			Matcher matcher = chatVarTargetMatchPattern.matcher(message);
@@ -94,7 +94,7 @@ public abstract class TargetedSpell extends InstantSpell {
 	}
 	
 	protected String getTargetName(LivingEntity target) {
-		if (target instanceof Player) return ((Player) target).getDisplayName();
+		if (target instanceof Player) return target.getName();
 		String name = MagicSpells.getEntityNames().get(target.getType());
 		if (name != null) return name;
 		return "unknown";

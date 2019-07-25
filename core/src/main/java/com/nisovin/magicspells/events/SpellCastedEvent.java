@@ -5,6 +5,8 @@ import org.bukkit.event.HandlerList;
 
 import com.nisovin.magicspells.Spell;
 import com.nisovin.magicspells.util.SpellReagents;
+import com.nisovin.magicspells.Spell.SpellCastState;
+import com.nisovin.magicspells.Spell.PostCastAction;
 
 /** 
  * The event that is called whenever a player casts a spell. 
@@ -15,14 +17,14 @@ public class SpellCastedEvent extends SpellEvent {
 	
     private static final HandlerList handlers = new HandlerList();
 
-    private Spell.SpellCastState state;
+    private SpellCastState state;
 	private float cooldown;
 	private SpellReagents reagents;
 	private float power;
 	private String[] args;
-	private Spell.PostCastAction action;
+	private PostCastAction action;
 	
-	public SpellCastedEvent(Spell spell, Player caster, Spell.SpellCastState state, float power, String[] args, float cooldown, SpellReagents reagents, Spell.PostCastAction action) {
+	public SpellCastedEvent(Spell spell, Player caster, SpellCastState state, float power, String[] args, float cooldown, SpellReagents reagents, PostCastAction action) {
 		super(spell, caster);
 		this.state = state;
 		this.cooldown = cooldown;
@@ -36,8 +38,8 @@ public class SpellCastedEvent extends SpellEvent {
 	 * Gets the current spell cast state.
 	 * @return the spell cast state
 	 */
-	public Spell.SpellCastState getSpellCastState() {
-		return this.state;
+	public SpellCastState getSpellCastState() {
+		return state;
 	}
 	
 	/**
@@ -45,7 +47,7 @@ public class SpellCastedEvent extends SpellEvent {
 	 * @return the cooldown
 	 */
 	public float getCooldown() {
-		return this.cooldown;
+		return cooldown;
 	}
 	
 	/**
@@ -53,7 +55,7 @@ public class SpellCastedEvent extends SpellEvent {
 	 * @return the reagents
 	 */
 	public SpellReagents getReagents() {
-		return this.reagents;
+		return reagents;
 	}
 	
 	/**
@@ -61,7 +63,7 @@ public class SpellCastedEvent extends SpellEvent {
 	 * @return the power level
 	 */
 	public float getPower() {
-		return this.power;
+		return power;
 	}
 	
 	/**
@@ -69,15 +71,15 @@ public class SpellCastedEvent extends SpellEvent {
 	 * @return the args, or null if there were none
 	 */
 	public String[] getSpellArgs() {
-		return this.args;
+		return args;
 	}
 	
 	/**
 	 * Gets the post cast action that was executed for the spell cast.
 	 * @return
 	 */
-	public Spell.PostCastAction getPostCastAction() {
-		return this.action;
+	public PostCastAction getPostCastAction() {
+		return action;
 	}
 
     @Override

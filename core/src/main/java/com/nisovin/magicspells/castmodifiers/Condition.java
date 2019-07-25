@@ -77,6 +77,7 @@ public abstract class Condition {
 		conditions.put("holding", HoldingCondition.class);
 		conditions.put("offhand", OffhandCondition.class);
 		conditions.put("durabilitylessthan", DurabilityLessThanCondition.class);
+		conditions.put("durabilitymorethan", DurabilityMoreThanCondition.class);
 		conditions.put("hasitem", HasItemCondition.class);
 		conditions.put("hasitemlessthan", HasItemLessThanCondition.class);
 		conditions.put("hasitemmorethan", HasItemMoreThanCondition.class);
@@ -154,6 +155,7 @@ public abstract class Condition {
 		conditions.put("powerequals", PowerEqualsCondition.class);
 		conditions.put("spelltag", SpellTagCondition.class);
 		conditions.put("beneficial", SpellBeneficialCondition.class);
+		conditions.put("customname", CustomNameCondition.class);
 		conditions.put("customnamevisible", CustomNameVisibleCondition.class);
 		conditions.put("canpickupitems", CanPickupItemsCondition.class);
 		conditions.put("gliding", GlidingCondition.class);

@@ -3,9 +3,9 @@ package com.nisovin.magicspells.castmodifiers;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.bukkit.event.Listener;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 
 import com.nisovin.magicspells.events.SpellTargetEvent;
 import com.nisovin.magicspells.events.SpellTargetLocationEvent;

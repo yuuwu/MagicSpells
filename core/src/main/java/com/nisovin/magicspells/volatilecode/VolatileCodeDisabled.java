@@ -1,6 +1,7 @@
 package com.nisovin.magicspells.volatilecode;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.ArrayList;
 import java.lang.reflect.Field;
 
@@ -12,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Fireball;
 import org.bukkit.inventory.ItemFlag;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
@@ -19,8 +21,10 @@ import org.bukkit.entity.SmallFireball;
 import org.bukkit.block.data.Powerable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.data.AnaloguePowerable;
 import org.bukkit.craftbukkit.v1_13_R2.CraftWorld;
+import org.bukkit.attribute.AttributeModifier.Operation;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftCreature;
 import org.bukkit.craftbukkit.v1_13_R2.inventory.CraftItemStack;
@@ -32,10 +36,22 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.BoundingBox;
 import com.nisovin.magicspells.util.DisguiseManager;
+import com.nisovin.magicspells.util.SafetyCheckUtils;
 
 public class VolatileCodeDisabled implements VolatileCodeHandle {
 
-	List<EntityFireworks> fireworks = new ArrayList<>();
+	private List<EntityFireworks> fireworks = new ArrayList<>();
+	private Field craftItemStackHandleField = null;
+
+	public VolatileCodeDisabled() {
+		try {
+			craftItemStackHandleField = CraftItemStack.class.getDeclaredField("handle");
+			craftItemStackHandleField.setAccessible(true);
+		} catch (Exception e) {
+			MagicSpells.error("THIS OCCURRED WHEN CREATING THE VOLATILE CODE HANDLE FOR 1.13, THE FOLLOWING ERROR IS MOST LIKELY USEFUL IF YOU'RE RUNNING THE LATEST VERSION OF MAGICSPELLS.");
+			e.printStackTrace();
+		}
+	}
 
 	@Override
 	public void addPotionGraphicalEffect(LivingEntity entity, int color, int duration) {
@@ -265,6 +281,20 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 
 	@Override
 	public ItemStack addAttributes(ItemStack item, String[] names, String[] types, double[] amounts, int[] operations, String[] slots) {
+		if (!(item instanceof CraftItemStack)) item = CraftItemStack.asCraftCopy(item);
+		NBTTagCompound tag = getTag(item);
+
+		NBTTagList list = new NBTTagList();
+		for (int i = 0; i < names.length; i++) {
+			if (names[i] == null) continue;
+			UUID uuid = UUID.randomUUID();
+			NBTTagCompound attr = buildAttributeTag(names[i], types[i], amounts[i], operations[i], uuid, slots[i]);
+			list.add(attr);
+		}
+
+		tag.set("AttributeModifiers", list);
+
+		setTag(item, tag);
 		return item;
 	}
 
@@ -275,7 +305,41 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 
 	@Override
 	public void addEntityAttribute(LivingEntity entity, String attribute, double amount, int operation) {
-		// Need the volatile code for this
+		Attribute attr = null;
+		switch (attribute) {
+			case "generic.maxHealth":
+				attr = Attribute.GENERIC_MAX_HEALTH;
+				break;
+			case "generic.followRange":
+				attr = Attribute.GENERIC_FOLLOW_RANGE;
+				break;
+			case "generic.knockbackResistance":
+				attr = Attribute.GENERIC_KNOCKBACK_RESISTANCE;
+				break;
+			case "generic.movementSpeed":
+				attr = Attribute.GENERIC_MOVEMENT_SPEED;
+				break;
+			case "generic.attackDamage":
+				attr = Attribute.GENERIC_ATTACK_DAMAGE;
+				break;
+			case "generic.attackSpeed":
+				attr = Attribute.GENERIC_ATTACK_SPEED;
+				break;
+			case "generic.armor":
+				attr = Attribute.GENERIC_ARMOR;
+				break;
+			case "generic.luck":
+				attr = Attribute.GENERIC_LUCK;
+				break;
+		}
+
+		Operation oper = null;
+		if (operation == 0) oper = Operation.ADD_NUMBER;
+		else if (operation == 1) oper = Operation.MULTIPLY_SCALAR_1;
+		else if (operation == 2) oper = Operation.ADD_SCALAR;
+
+		if (attr == null || oper == null) return;
+		entity.getAttribute(attr).addModifier(new AttributeModifier("MagicSpells " + attribute, amount, oper));
 	}
 
 	@Override
@@ -372,6 +436,61 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 		// Need volatile code for this
 	}
 
+	private NBTTagCompound getTag(ItemStack item) {
+		// Don't spam the user with errors, just stop
+		if (SafetyCheckUtils.areAnyNull(craftItemStackHandleField)) return null;
+
+		if (item instanceof CraftItemStack) {
+			try {
+				return ((net.minecraft.server.v1_13_R2.ItemStack) craftItemStackHandleField.get(item)).getTag();
+			} catch (Exception e) {
+				// No op currently
+			}
+		}
+		return null;
+	}
+
+	private NBTTagCompound buildAttributeTag(String name, String attributeName, double amount, int operation, UUID uuid, String slot) {
+		NBTTagCompound tag = new NBTTagCompound();
+
+		tag.setString("Name", name);
+		tag.setString("AttributeName", attributeName);
+		tag.setDouble("Amount", amount);
+		tag.setInt("Operation", operation);
+		tag.setLong("UUIDLeast", uuid.getLeastSignificantBits());
+		tag.setLong("UUIDMost", uuid.getMostSignificantBits());
+		if (slot != null) tag.setString("Slot", slot);
+
+		return tag;
+	}
+
+	private ItemStack setTag(ItemStack item, NBTTagCompound tag) {
+		CraftItemStack craftItem;
+		if (item instanceof CraftItemStack) craftItem = (CraftItemStack) item;
+		else craftItem = CraftItemStack.asCraftCopy(item);
+
+		net.minecraft.server.v1_13_R2.ItemStack nmsItem = null;
+		try {
+			nmsItem = (net.minecraft.server.v1_13_R2.ItemStack) craftItemStackHandleField.get(item);
+		} catch (Exception e) {
+			// No op currently
+		}
+
+		if (nmsItem == null) nmsItem = CraftItemStack.asNMSCopy(craftItem);
+
+		if (nmsItem != null) {
+			nmsItem.setTag(tag);
+			try {
+				craftItemStackHandleField.set(craftItem, nmsItem);
+			} catch (Exception e) {
+				// No op currently
+			}
+		}
+
+		return craftItem;
+	}
+
+	@Override
 	public void turnOff() {
 		for (EntityFireworks entity : fireworks) {
 			entity.die();

@@ -33,10 +33,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.bukkit.inventory.meta.SpawnEggMeta;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
+import com.nisovin.magicspells.util.CastUtil.CastMode;
 import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.materials.ItemNameResolver.ItemTypeAndData;
@@ -490,6 +490,10 @@ public class Util {
 
 	public static Particle getParticle(String type) {
 		return ParticleUtil.ParticleEffect.getParticle(type);
+	}
+
+	public static CastMode getCastMode(String type) {
+		return CastMode.getFromString(type);
 	}
 
 	public static void sendFakeBlockChange(Player player, Block block, MagicMaterial mat) {

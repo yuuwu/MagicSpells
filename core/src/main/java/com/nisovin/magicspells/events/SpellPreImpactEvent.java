@@ -2,36 +2,33 @@ package com.nisovin.magicspells.events;
 
 import java.util.Arrays;
 
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
+import org.bukkit.entity.LivingEntity;
 
-import com.nisovin.magicspells.DebugHandler;
-import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spell;
+import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.DebugHandler;
 
 public class SpellPreImpactEvent extends SpellEvent implements Cancellable {
 	
 	private static final HandlerList handlers = new HandlerList();
-	
-	private boolean canceled;
-	
+
 	private LivingEntity target;
 	private float power;
-	private boolean redirect;
 	private Spell deliverySpell;
-	
+	private boolean redirect;
+	private boolean cancelled;
+
 	public SpellPreImpactEvent(Spell spellPayload, Spell deliverySpell, Player caster, LivingEntity target, float power) {
 		super(spellPayload, caster);
 		this.target = target;
 		this.power = power;
-		this.redirect = false;
 		this.deliverySpell = deliverySpell;
-		this.canceled = false;
-		if (DebugHandler.isSpellPreImpactEventCheckEnabled()) {
-			MagicSpells.plugin.getLogger().info(this.toString());
-		}
+		redirect = false;
+		cancelled = false;
+		if (DebugHandler.isSpellPreImpactEventCheckEnabled()) MagicSpells.plugin.getLogger().info(toString());
 	}
 
 	@Override
@@ -44,11 +41,11 @@ public class SpellPreImpactEvent extends SpellEvent implements Cancellable {
 	}
 	
 	public LivingEntity getTarget() {
-		return this.target;
+		return target;
 	}
 	
 	public boolean getRedirected() {
-		return this.redirect;
+		return redirect;
 	}
 	
 	public void setRedirected(boolean redirect) {
@@ -56,7 +53,7 @@ public class SpellPreImpactEvent extends SpellEvent implements Cancellable {
 	}
 	
 	public float getPower() {
-		return this.power;
+		return power;
 	}
 	
 	public void setPower(float power) {
@@ -64,25 +61,25 @@ public class SpellPreImpactEvent extends SpellEvent implements Cancellable {
 	}
 	
 	public Spell getDeliverySpell() {
-		return this.deliverySpell;
+		return deliverySpell;
 	}
 
 	@Override
 	public boolean isCancelled() {
-		return this.canceled;
+		return cancelled;
 	}
 
 	@Override
-	public void setCancelled(boolean canceled) {
-		this.canceled = canceled;
+	public void setCancelled(boolean cancelled) {
+		this.cancelled = cancelled;
 	}
 	
 	@Override
 	public String toString() {
-		String casterLabel = "Caster: " + (this.caster == null ? "null" : this.caster.toString());
-		String targetLabel = "Target: " + (this.target == null ? "null" : this.target.toString());
-		String spellLabel = "SpellPayload: " + (this.spell == null ? "null" : this.spell.toString());
-		String payloadSpellLabel = "Delivery Spell: " + (this.deliverySpell == null ? "null" : this.deliverySpell.toString());
+		String casterLabel = "Caster: " + (caster == null ? "null" : caster.toString());
+		String targetLabel = "Target: " + (target == null ? "null" : target.toString());
+		String spellLabel = "SpellPayload: " + (spell == null ? "null" : spell.toString());
+		String payloadSpellLabel = "Delivery Spell: " + (deliverySpell == null ? "null" : deliverySpell.toString());
 		return Arrays.deepToString(new String[]{ casterLabel, targetLabel, spellLabel, payloadSpellLabel });
 	}
 	

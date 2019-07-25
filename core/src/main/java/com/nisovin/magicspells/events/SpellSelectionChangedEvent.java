@@ -17,14 +17,15 @@ public class SpellSelectionChangedEvent extends SpellEvent {
 	public SpellSelectionChangedEvent(Spell spell, Player caster, CastItem castItem, Spellbook spellbook) {
 		super(spell, caster);
 		this.castItem = castItem;
+		this.spellbook = spellbook;
 	}
 	
 	public CastItem getCastItem() {
-		return this.castItem;
+		return castItem;
 	}
 	
 	public Spellbook getSpellbook() {
-		return this.spellbook;
+		return spellbook;
 	}
 	
     @Override

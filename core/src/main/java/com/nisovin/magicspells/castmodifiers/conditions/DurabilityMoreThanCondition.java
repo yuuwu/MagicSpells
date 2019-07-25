@@ -10,7 +10,7 @@ import org.bukkit.inventory.meta.Damageable;
 import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.castmodifiers.Condition;
 
-public class DurabilityLessThanCondition extends Condition {
+public class DurabilityMoreThanCondition extends Condition {
 
 	private int slot;
 	private int durability;
@@ -76,7 +76,7 @@ public class DurabilityLessThanCondition extends Condition {
 		if (!(meta instanceof Damageable)) return false;
 
 		int max = item.getType().getMaxDurability();
-		if (max > 0) return max - ((Damageable) meta).getDamage() < durability;
+		if (max > 0) return max - ((Damageable) meta).getDamage() > durability;
 		return false;
 	}
 
@@ -84,10 +84,10 @@ public class DurabilityLessThanCondition extends Condition {
 	public boolean check(Player player, LivingEntity target) {
 		return target instanceof Player && check((Player) target);
 	}
-	
+
 	@Override
 	public boolean check(Player player, Location location) {
 		return false;
 	}
-	
+
 }

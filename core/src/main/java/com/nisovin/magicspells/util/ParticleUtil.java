@@ -4,9 +4,10 @@ import java.util.Map;
 import java.util.HashMap;
 import org.bukkit.Particle;
 
-public class ParticleUtil {
+class ParticleUtil {
 
 	public enum ParticleEffect {
+
 		EXPLOSION_NORMAL( "explosion_normal", "poof"),
 		EXPLOSION_LARGE( "explosion_large", "explosion"),
 		EXPLOSION_HUGE( "explosion_huge", "explosion_emitter"),
@@ -61,27 +62,25 @@ public class ParticleUtil {
 		NAUTILUS( "nautilus"),
 		DOLPHIN( "dolphin");
 
-		private String[] names;
+		private final String[] names;
 
 		ParticleEffect(String... names) {
 			this.names = names;
 		}
 
-		private static Map<String, Particle> namesToType = null;
+		private static Map<String, Particle> namesToType = new HashMap<>();
 		private static boolean initialized = false;
 
 		private static void initialize() {
 			if (initialized) return;
 
-			namesToType = new HashMap<>();
-
-			for (ParticleEffect pe: ParticleEffect.values()) {
+			for (ParticleEffect pe : ParticleEffect.values()) {
 				Particle particle = Particle.valueOf(pe.name());
 				if (particle == null) continue;
 
 				// handle the names
 				namesToType.put(pe.name().toLowerCase(), particle);
-				for (String s: pe.names) {
+				for (String s : pe.names) {
 					namesToType.put(s.toLowerCase(), particle);
 				}
 
@@ -96,4 +95,5 @@ public class ParticleUtil {
 		}
 
 	}
+
 }

@@ -1,33 +1,33 @@
 package com.nisovin.magicspells;
 
 import java.io.File;
+import java.util.Date;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
+import org.bukkit.entity.LivingEntity;
 
 import com.nisovin.magicspells.events.SpellCastEvent;
+import com.nisovin.magicspells.events.SpellLearnEvent;
 import com.nisovin.magicspells.events.SpellCastedEvent;
 import com.nisovin.magicspells.events.SpellForgetEvent;
-import com.nisovin.magicspells.events.SpellLearnEvent;
 import com.nisovin.magicspells.events.SpellTargetEvent;
 import com.nisovin.magicspells.events.SpellTargetLocationEvent;
 
 public class MagicLogger implements Listener {
 
-	DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	FileWriter writer;
+	private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	private FileWriter writer;
 	
-	public MagicLogger(MagicSpells plugin) {
+	MagicLogger(MagicSpells plugin) {
 		File file = new File(plugin.getDataFolder(), "log-" + System.currentTimeMillis() + ".txt");
 		try {
 			writer = new FileWriter(file, true);
@@ -37,7 +37,7 @@ public class MagicLogger implements Listener {
 		}
 	}
 	
-	public void disable() {
+	void disable() {
 		if (writer != null) {
 			try {
 				writer.flush();
@@ -131,12 +131,11 @@ public class MagicLogger implements Listener {
 	}
 	
 	private void log(String string) {
-		if (writer != null) {
-			try {
-				writer.write('[' + dateFormat.format(new Date()) + "] " + string + '\n');
-			} catch (IOException e) {
-				DebugHandler.debugIOException(e);
-			}
+		if (writer == null) return;
+		try {
+			writer.write('[' + dateFormat.format(new Date()) + "] " + string + '\n');
+		} catch (IOException e) {
+			DebugHandler.debugIOException(e);
 		}
 	}
 	
