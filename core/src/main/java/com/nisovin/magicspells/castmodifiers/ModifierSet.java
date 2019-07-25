@@ -44,6 +44,7 @@ public class ModifierSet {
 			castListener.unload();
 			castListener = null;
 		}
+
 		if (targetListener != null) {
 			targetListener.unload();
 			targetListener = null;

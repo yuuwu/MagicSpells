@@ -1,22 +1,23 @@
 package com.nisovin.magicspells.castmodifiers;
 
+import java.util.Map;
 import java.util.HashMap;
 
-import com.nisovin.magicspells.variables.Variable;
 import org.bukkit.entity.Player;
 
-import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.Spell;
+import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.util.VariableMod;
+import com.nisovin.magicspells.variables.Variable;
 import com.nisovin.magicspells.Spell.SpellCastState;
-import com.nisovin.magicspells.events.MagicSpellsGenericPlayerEvent;
-import com.nisovin.magicspells.events.ManaChangeEvent;
 import com.nisovin.magicspells.events.SpellCastEvent;
+import com.nisovin.magicspells.events.ManaChangeEvent;
 import com.nisovin.magicspells.events.SpellTargetEvent;
-import com.nisovin.magicspells.events.SpellTargetLocationEvent;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
-import com.nisovin.magicspells.util.VariableMod;
 import com.nisovin.magicspells.util.VariableMod.VariableOwner;
+import com.nisovin.magicspells.events.SpellTargetLocationEvent;
+import com.nisovin.magicspells.events.MagicSpellsGenericPlayerEvent;
 
 public enum ModifierType {
 	
@@ -137,7 +138,7 @@ public enum ModifierType {
 		@Override
 		public boolean apply(ManaChangeEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) {
-				int newAmt = event.getNewAmount() + (int)modifierVarFloat;
+				int newAmt = event.getNewAmount() + (int) modifierVarFloat;
 				if (newAmt > event.getMaxMana()) newAmt = event.getMaxMana();
 				if (newAmt < 0) newAmt = 0;
 				event.setNewAmount(newAmt);
@@ -326,7 +327,7 @@ public enum ModifierType {
 		public boolean apply(ManaChangeEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) {
 				Spell spell = MagicSpells.getSpellByInternalName(modifierVar);
-				if (spell != null) spell.cast(event.getPlayer(), 1, null);
+				if (spell != null) spell.cast(event.getPlayer(), 1F, null);
 			}
 			return true;
 		}
@@ -335,9 +336,7 @@ public enum ModifierType {
 		public boolean apply(SpellTargetEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) {
 				Spell spell = MagicSpells.getSpellByInternalName(modifierVar);
-				if (spell != null) {
-					spell.cast(event.getCaster(), 1, null);
-				}
+				if (spell != null) spell.cast(event.getCaster(), 1F, null);
 			}
 			return true;
 		}
@@ -346,9 +345,7 @@ public enum ModifierType {
 		public boolean apply(SpellTargetLocationEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) {
 				Spell spell = MagicSpells.getSpellByInternalName(modifierVar);
-				if (spell instanceof TargetedLocationSpell) {
-					((TargetedLocationSpell)spell).castAtLocation(event.getCaster(), event.getTargetLocation(), 1F);
-				}
+				if (spell instanceof TargetedLocationSpell) ((TargetedLocationSpell) spell).castAtLocation(event.getCaster(), event.getTargetLocation(), 1F);
 			}
 			return true;
 		}
@@ -357,7 +354,7 @@ public enum ModifierType {
 		public boolean apply(MagicSpellsGenericPlayerEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) {
 				Spell spell = MagicSpells.getSpellByInternalName(modifierVar);
-				if (spell != null) spell.cast(event.getPlayer(), 1, null);
+				if (spell != null) spell.cast(event.getPlayer(), 1F, null);
 			}
 			return true;
 		}
@@ -380,9 +377,8 @@ public enum ModifierType {
 		public boolean apply(ManaChangeEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) {
 				Spell spell = MagicSpells.getSpellByInternalName(modifierVar);
-				if (spell != null) {
-					spell.cast(event.getPlayer(), 1, null);
-				}
+				if (spell != null) spell.cast(event.getPlayer(), 1F, null);
+
 			}
 			return true;
 		}
@@ -392,11 +388,8 @@ public enum ModifierType {
 			if (check) {
 				Spell spell = MagicSpells.getSpellByInternalName(modifierVar);
 				if (spell != null) {
-					if (spell instanceof TargetedEntitySpell) {
-						((TargetedEntitySpell)spell).castAtEntity(event.getCaster(), event.getTarget(), 1F);
-					} else {
-						spell.castSpell(event.getCaster(), SpellCastState.NORMAL, 1F, null);
-					}
+					if (spell instanceof TargetedEntitySpell) ((TargetedEntitySpell) spell).castAtEntity(event.getCaster(), event.getTarget(), 1F);
+					else spell.castSpell(event.getCaster(), SpellCastState.NORMAL, 1F, null);
 				}
 			}
 			return true;
@@ -407,7 +400,7 @@ public enum ModifierType {
 			if (check) {
 				Spell spell = MagicSpells.getSpellByInternalName(modifierVar);
 				if (spell instanceof TargetedLocationSpell) {
-					((TargetedLocationSpell)spell).castAtLocation(event.getCaster(), event.getTargetLocation(), 1F);
+					((TargetedLocationSpell) spell).castAtLocation(event.getCaster(), event.getTargetLocation(), 1F);
 					event.setCancelled(true);
 				}
 			}
@@ -418,7 +411,7 @@ public enum ModifierType {
 		public boolean apply(MagicSpellsGenericPlayerEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) {
 				Spell spell = MagicSpells.getSpellByInternalName(modifierVar);
-				if (spell != null) spell.cast(event.getPlayer(), 1, null);
+				if (spell != null) spell.cast(event.getPlayer(), 1F, null);
 			}
 			return true;
 		}
@@ -441,7 +434,7 @@ public enum ModifierType {
 		}
 		
 		private void modifyVariable(String variableName, VariableOwner modifiedVariableOwner, Player caster, Player targetPlayer, VariableMod.Operation op, double amount) {
-			Player varToModifiyOwnerPlayer = modifiedVariableOwner == VariableOwner.CASTER ? caster: targetPlayer;
+			Player varToModifiyOwnerPlayer = modifiedVariableOwner == VariableOwner.CASTER ? caster : targetPlayer;
 			switch (op) {
 			case SET:
 				MagicSpells.getVariableManager().set(variableName, varToModifiyOwnerPlayer, amount);
@@ -466,7 +459,7 @@ public enum ModifierType {
 		@Override
 		public boolean apply(SpellCastEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) {
-				CustomData data = (CustomData)customData;
+				CustomData data = (CustomData) customData;
 				if (isDataOk(data, event.getCaster(), null)) {
 					double amount = data.mod.getValue(event.getCaster(), null);
 					modifyVariable(data.modifiedVariableName, data.modifiedVariableOwner, event.getCaster(), null, data.mod.getOperation(), amount);
@@ -478,7 +471,7 @@ public enum ModifierType {
 		@Override
 		public boolean apply(ManaChangeEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) {
-				CustomData data = (CustomData)customData;
+				CustomData data = (CustomData) customData;
 				if (isDataOk(data, event.getPlayer(), null)) {
 					double amount = data.mod.getValue(event.getPlayer(), null);
 					modifyVariable(data.modifiedVariableName, data.modifiedVariableOwner, event.getPlayer(), null, data.mod.getOperation(), amount);
@@ -490,9 +483,9 @@ public enum ModifierType {
 		@Override
 		public boolean apply(SpellTargetEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) {
-				CustomData data = (CustomData)customData;
-				Player targetPlayer = event.getTarget() instanceof Player ? (Player)event.getTarget(): null;
-				if (isDataOk(data, event.getCaster(), null)) {
+				CustomData data = (CustomData) customData;
+				Player targetPlayer = event.getTarget() instanceof Player ? (Player) event.getTarget() : null;
+				if (isDataOk(data, event.getCaster(), targetPlayer)) {
 					double amount = data.mod.getValue(event.getCaster(), targetPlayer);
 					modifyVariable(data.modifiedVariableName, data.modifiedVariableOwner, event.getCaster(), targetPlayer, data.mod.getOperation(), amount);
 				}
@@ -503,7 +496,7 @@ public enum ModifierType {
 		@Override
 		public boolean apply(SpellTargetLocationEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) {
-				CustomData data = (CustomData)customData;
+				CustomData data = (CustomData) customData;
 				if (isDataOk(data, event.getCaster(), null)) {
 					double amount = data.mod.getValue(event.getCaster(), null);
 					modifyVariable(data.modifiedVariableName, data.modifiedVariableOwner, event.getCaster(), null, data.mod.getOperation(), amount);
@@ -515,7 +508,7 @@ public enum ModifierType {
 		@Override
 		public boolean apply(MagicSpellsGenericPlayerEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
 			if (check) {
-				CustomData data = (CustomData)customData;
+				CustomData data = (CustomData) customData;
 				if (isDataOk(data, event.getPlayer(), null)) {
 					double amount = data.mod.getValue(event.getPlayer(), null);
 					modifyVariable(data.modifiedVariableName, data.modifiedVariableOwner, event.getPlayer(), null, data.mod.getOperation(), amount);
@@ -530,16 +523,13 @@ public enum ModifierType {
 			//[<caster|target>:]<variableToModify>;[=|+|*|/][-]<amount|[<caster|target>:]<modifyingVariableName>>
 			String[] splits = text.split(";");
 			String modifiedVariableData = splits[0];
-			VariableMod.VariableOwner modifiedVariableOwner;
+			VariableOwner modifiedVariableOwner;
 			String modifiedVariableName;
 			if (modifiedVariableData.contains(":")) {
 				String[] modifiedVariableSplits = modifiedVariableData.split(":");
-				if (modifiedVariableSplits[0].equalsIgnoreCase("target")) {
-					modifiedVariableOwner = VariableMod.VariableOwner.TARGET;
-				} else {
-					modifiedVariableOwner = VariableMod.VariableOwner.CASTER;
-				}
-				modifiedVariableName = splits[1];
+				if (modifiedVariableSplits[0].equalsIgnoreCase("target")) modifiedVariableOwner = VariableOwner.TARGET;
+				else modifiedVariableOwner = VariableOwner.CASTER;
+				modifiedVariableName = modifiedVariableSplits[1];
 			} else {
 				modifiedVariableOwner = VariableOwner.CASTER;
 				modifiedVariableName = modifiedVariableData;
@@ -570,41 +560,31 @@ public enum ModifierType {
 		
 		@Override
 		public boolean apply(SpellCastEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
-			if (check) {
-				setVariable(event.getCaster(), (CustomData) customData);
-			}
+			if (check) setVariable(event.getCaster(), (CustomData) customData);
 			return true;
 		}
 		
 		@Override
 		public boolean apply(ManaChangeEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
-			if (check) {
-				setVariable(event.getPlayer(), (CustomData) customData);
-			}
+			if (check) setVariable(event.getPlayer(), (CustomData) customData);
 			return true;
 		}
 		
 		@Override
 		public boolean apply(SpellTargetEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
-			if (check) {
-				setVariable(event.getCaster(), (CustomData) customData);
-			}
+			if (check) setVariable(event.getCaster(), (CustomData) customData);
 			return true;
 		}
 		
 		@Override
 		public boolean apply(SpellTargetLocationEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
-			if (check) {
-				setVariable(event.getCaster(), (CustomData) customData);
-			}
+			if (check) setVariable(event.getCaster(), (CustomData) customData);
 			return true;
 		}
 		
 		@Override
 		public boolean apply(MagicSpellsGenericPlayerEvent event, boolean check, String modifierVar, float modifierVarFloat, int modifierVarInt, Object customData) {
-			if (check) {
-				setVariable(event.getPlayer(), (CustomData) customData);
-			}
+			if (check) setVariable(event.getPlayer(), (CustomData) customData);
 			return true;
 		}
 		
@@ -668,12 +648,12 @@ public enum ModifierType {
 		return null;
 	}
 	
-	static HashMap<String, ModifierType> nameMap;
+	static Map<String, ModifierType> nameMap;
 	
 	static void initialize() {
 		nameMap = new HashMap<>();
-		for (ModifierType type: ModifierType.values()) {
-			for (String key: type.keys) {
+		for (ModifierType type : ModifierType.values()) {
+			for (String key : type.keys) {
 				nameMap.put(key.toLowerCase(), type);
 			}
 		}

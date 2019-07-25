@@ -5,8 +5,8 @@ import java.util.List;
 import org.bukkit.entity.Player;
 
 import com.nisovin.magicspells.MagicSpells;
-import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.spelleffects.EffectPosition;
 
 public class PermissionSpell extends InstantSpell {
 
@@ -17,15 +17,15 @@ public class PermissionSpell extends InstantSpell {
 	public PermissionSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 		
-		this.duration = getConfigInt("duration", 0);
-		this.permissionNodes = getConfigStringList("permission-nodes", null);
+		duration = getConfigInt("duration", 0);
+		permissionNodes = getConfigStringList("permission-nodes", null);
 	}
 
 	@Override
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
-		if (state == SpellCastState.NORMAL && duration > 0 && this.permissionNodes != null) {
-			for (String node : this.permissionNodes) {
-				player.addAttachment(MagicSpells.plugin, node, true, this.duration);
+		if (state == SpellCastState.NORMAL && duration > 0 && permissionNodes != null) {
+			for (String node : permissionNodes) {
+				player.addAttachment(MagicSpells.plugin, node, true, duration);
 			}
 			playSpellEffects(EffectPosition.CASTER, player);
 		}

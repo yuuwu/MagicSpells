@@ -1,15 +1,15 @@
 package com.nisovin.magicspells.castmodifiers;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
+import java.util.Map;
+import java.util.List;
+import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.LivingEntity;
 
 public class ProxyCondition extends Condition {
 	
@@ -28,30 +28,30 @@ public class ProxyCondition extends Condition {
 	}
 	
 	public static void loadBackends(Map<String, Class<? extends Condition>> externalConditionClasses) {
-		if (uninitialized != null && externalConditionClasses != null) {
-			Set<String> keysToRemove = new HashSet<>();
-			for (String key: uninitialized.keySet()) {
-				if (externalConditionClasses.containsKey(key)) {
-					Class<? extends Condition> clazz = externalConditionClasses.get(key);
-					for (ProxyCondition c: uninitialized.get(key)) {
-						try {
-							c.actualCondition = clazz.newInstance();
-							if (!c.actualCondition.setVar(c.conditionVar)) c.actualCondition = null;
-						} catch (InstantiationException | IllegalAccessException e) {
-						}
-					}
-					keysToRemove.add(key);
+		if (uninitialized == null || externalConditionClasses == null) return;
+		Set<String> keysToRemove = new HashSet<>();
+		for (String key: uninitialized.keySet()) {
+			if (!externalConditionClasses.containsKey(key)) continue;
+			Class<? extends Condition> clazz = externalConditionClasses.get(key);
+			for (ProxyCondition c: uninitialized.get(key)) {
+				try {
+					c.actualCondition = clazz.newInstance();
+					if (!c.actualCondition.setVar(c.conditionVar)) c.actualCondition = null;
+				} catch (InstantiationException | IllegalAccessException e) {
+					// empty
 				}
 			}
-			for (String s: keysToRemove) {
-				uninitialized.remove(s).clear();
-			}
+			keysToRemove.add(key);
+
+		}
+		for (String s: keysToRemove) {
+			uninitialized.remove(s).clear();
 		}
 	}
 	
 	@Override
 	public boolean setVar(String var) {
-		this.conditionVar = var;
+		conditionVar = var;
 		return true;
 	}
 

@@ -1,19 +1,21 @@
 package com.nisovin.magicspells.castmodifiers;
 
-import com.nisovin.magicspells.util.RegexUtil;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-
-import com.nisovin.magicspells.DebugHandler;
-import com.nisovin.magicspells.events.MagicSpellsGenericPlayerEvent;
-import com.nisovin.magicspells.events.ManaChangeEvent;
-import com.nisovin.magicspells.events.SpellCastEvent;
-import com.nisovin.magicspells.events.SpellTargetEvent;
-import com.nisovin.magicspells.events.SpellTargetLocationEvent;
-
 import java.util.regex.Pattern;
 
+import org.bukkit.entity.Player;
+import org.bukkit.entity.LivingEntity;
+
+import com.nisovin.magicspells.DebugHandler;
+import com.nisovin.magicspells.util.RegexUtil;
+import com.nisovin.magicspells.events.SpellCastEvent;
+import com.nisovin.magicspells.events.ManaChangeEvent;
+import com.nisovin.magicspells.events.SpellTargetEvent;
+import com.nisovin.magicspells.events.SpellTargetLocationEvent;
+import com.nisovin.magicspells.events.MagicSpellsGenericPlayerEvent;
+
 public class Modifier implements IModifier {
+
+	private static final Pattern MODIFIER_STR_FAILED_PATTERN = Pattern.compile("\\$\\$");
 
 	boolean negated = false;
 	Condition condition;
@@ -27,8 +29,6 @@ public class Modifier implements IModifier {
 
 	// Is this a condition that will want to access the events directly?
 	boolean alertCondition = false;
-
-	private static final Pattern MODIFIER_STR_FAILED_PATTERN = Pattern.compile("\\$\\$");
 
 	public static Modifier factory(String s) {
 		Modifier m = new Modifier();
@@ -61,11 +61,9 @@ public class Modifier implements IModifier {
 
 		// Process modifiervar
 		try {
-			if (m.type.usesModifierFloat()) {
-				m.modifierVarFloat = Float.parseFloat(m.modifierVar);
-			} else if (m.type.usesModifierInt()) {
-				m.modifierVarInt = Integer.parseInt(m.modifierVar);
-			} else if (m.type.usesCustomData()) {
+			if (m.type.usesModifierFloat()) m.modifierVarFloat = Float.parseFloat(m.modifierVar);
+			else if (m.type.usesModifierInt()) m.modifierVarInt = Integer.parseInt(m.modifierVar);
+			else if (m.type.usesCustomData()) {
 				m.customActionData = m.type.buildCustomActionData(m.modifierVar);
 				if (m.customActionData == null) return null;
 			}
@@ -88,7 +86,7 @@ public class Modifier implements IModifier {
 	public boolean apply(SpellCastEvent event) {
 		Player player = event.getCaster();
 		boolean check;
-		if (alertCondition) check = ((IModifier)condition).apply(event);
+		if (alertCondition) check = ((IModifier) condition).apply(event);
 		else check = condition.check(player);
 		if (negated) check = !check;
 		return type.apply(event, check, modifierVar, modifierVarFloat, modifierVarInt, customActionData);
@@ -98,7 +96,7 @@ public class Modifier implements IModifier {
 	public boolean apply(ManaChangeEvent event) {
 		Player player = event.getPlayer();
 		boolean check;
-		if (alertCondition) check = ((IModifier)condition).apply(event);
+		if (alertCondition) check = ((IModifier) condition).apply(event);
 		else check = condition.check(player);
 		if (negated) check = !check;
 		return type.apply(event, check, modifierVar, modifierVarFloat, modifierVarInt, customActionData);
@@ -108,7 +106,7 @@ public class Modifier implements IModifier {
 	public boolean apply(SpellTargetEvent event) {
 		Player player = event.getCaster();
 		boolean check;
-		if (alertCondition) check = ((IModifier)condition).apply(event);
+		if (alertCondition) check = ((IModifier) condition).apply(event);
 		else check = condition.check(player, event.getTarget());
 		if (negated) check = !check;
 		return type.apply(event, check, modifierVar, modifierVarFloat, modifierVarInt, customActionData);
@@ -118,7 +116,7 @@ public class Modifier implements IModifier {
 	public boolean apply(SpellTargetLocationEvent event) {
 		Player player = event.getCaster();
 		boolean check;
-		if (alertCondition) check = ((IModifier)condition).apply(event);
+		if (alertCondition) check = ((IModifier) condition).apply(event);
 		else check = condition.check(player, event.getTargetLocation());
 		if (negated) check = !check;
 		return type.apply(event, check, modifierVar, modifierVarFloat, modifierVarInt, customActionData);

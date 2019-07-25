@@ -1,8 +1,8 @@
 package com.nisovin.magicspells.variables;
 
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Objective;
+import org.bukkit.configuration.ConfigurationSection;
 
 public abstract class Variable {
 
