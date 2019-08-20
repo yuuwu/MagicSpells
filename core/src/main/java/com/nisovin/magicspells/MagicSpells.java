@@ -964,11 +964,9 @@ public class MagicSpells extends JavaPlugin {
 				String[] argData = argText.substring(5, argText.length() - 1).split(":");
 				int argIndex = Integer.parseInt(argData[0]) - 1;
 				String newValue;
-				if (args != null && args.length < argIndex + 1) {
-					newValue = args[argIndex];
-				} else {
-					newValue = argData[1];
-				}
+				if (args != null && argIndex < args.length) newValue = args[argIndex];
+				else newValue = argData[1];
+
 				string = string.replace(argText, newValue);
 			}
 		}

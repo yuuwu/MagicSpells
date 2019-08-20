@@ -23,7 +23,7 @@ import com.nisovin.magicspells.events.SpellForgetEvent;
 // No trigger variable currently used
 public class BuffListener extends PassiveListener {
 
-	List<PassiveSpell> spells = new ArrayList<>();
+	private List<PassiveSpell> spells = new ArrayList<>();
 
 	@Override
 	public void registerSpell(PassiveSpell spell, PassiveTrigger trigger, String var) {
@@ -82,19 +82,19 @@ public class BuffListener extends PassiveListener {
 		}
 	}
 
-	void on(Player player) {
+	private void on(Player player) {
 		Spellbook spellbook = MagicSpells.getSpellbook(player);
 		for (PassiveSpell spell : spells) {
-			if (spellbook.hasSpell(spell, true)) on(player, spell);
+			if (spellbook.hasSpell(spell)) on(player, spell);
 		}
 	}
 
-	void on(Player player, PassiveSpell spell) {
+	private void on(Player player, PassiveSpell spell) {
 		for (Subspell s : spell.getActivatedSpells()) {
 			if (!(s.getSpell() instanceof BuffSpell)) continue;
 			BuffSpell buff = (BuffSpell) s.getSpell();
 			if (buff.isActive(player)) continue;
-			buff.castBuff(player, 1F, null);
+			buff.castAtEntity(player, player, 1F);
 		}
 	}
 

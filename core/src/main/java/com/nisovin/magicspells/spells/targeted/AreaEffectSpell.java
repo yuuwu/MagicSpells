@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import org.bukkit.Location;
-import org.bukkit.block.Block;
 import org.bukkit.util.Vector;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.LivingEntity;
@@ -19,7 +19,6 @@ import com.nisovin.magicspells.util.BoundingBox;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.events.SpellTargetEvent;
-import com.nisovin.magicspells.castmodifiers.ModifierSet;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
 import com.nisovin.magicspells.events.SpellTargetLocationEvent;
@@ -27,9 +26,6 @@ import com.nisovin.magicspells.events.SpellTargetLocationEvent;
 import org.apache.commons.math3.util.FastMath;
 
 public class AreaEffectSpell extends TargetedSpell implements TargetedLocationSpell {
-
-	private ModifierSet entityTargetModifiers;
-	private ModifierSet locationTargetModifiers;
 
 	private List<Subspell> spells;
 	private List<String> spellNames;
@@ -46,11 +42,6 @@ public class AreaEffectSpell extends TargetedSpell implements TargetedLocationSp
 	
 	public AreaEffectSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
-
-		List<String> list = getConfigStringList("entity-target-modifiers", null);
-		if (list != null) entityTargetModifiers = new ModifierSet(list);
-		list = getConfigStringList("location-target-modifiers", null);
-		if (list != null) locationTargetModifiers = new ModifierSet(list);
 
 		spellNames = getConfigStringList("spells", null);
 
@@ -104,7 +95,7 @@ public class AreaEffectSpell extends TargetedSpell implements TargetedLocationSp
 			else {
 				try {
 					Block block = getTargetedBlock(player, power);
-					if (block != null && !BlockUtils.isAir(block.getType())) loc = block.getLocation();
+					if (block != null && !BlockUtils.isAir(block.getType())) loc = block.getLocation().add(0.5, 0, 0.5);
 				} catch (IllegalStateException e) {
 					loc = null;
 				}
@@ -114,7 +105,6 @@ public class AreaEffectSpell extends TargetedSpell implements TargetedLocationSp
 
 			SpellTargetLocationEvent event = new SpellTargetLocationEvent(this, player, loc, power);
 			EventUtil.call(event);
-			if (locationTargetModifiers != null) locationTargetModifiers.apply(event);
 			if (event.isCancelled()) loc = null;
 			else {
 				loc = event.getTargetLocation();
@@ -165,31 +155,18 @@ public class AreaEffectSpell extends TargetedSpell implements TargetedLocationSp
 			if (player == null && !validTargetList.canTarget(target)) continue;
 			if (player != null && !validTargetList.canTarget(player, target)) continue;
 
-			if (player != null) {
-				SpellTargetEvent event = new SpellTargetEvent(this, player, target, power);
-				EventUtil.call(event);
-				if (entityTargetModifiers != null) entityTargetModifiers.apply(event);
-				if (event.isCancelled()) continue;
+			SpellTargetEvent event = new SpellTargetEvent(this, player, target, power);
+			EventUtil.call(event);
+			if (event.isCancelled()) continue;
 
-				target = event.getTarget();
-				power = event.getPower();
-			} else if (entityTargetModifiers != null) {
-				SpellTargetEvent event = new SpellTargetEvent(this, player, target, power);
-				entityTargetModifiers.apply(event);
-				if (event.isCancelled()) continue;
-			}
+			target = event.getTarget();
+			power = event.getPower();
 
 			for (Subspell spell : spells) {
-				if (player != null) {
-					if (spellSourceInCenter && spell.isTargetedEntityFromLocationSpell()) spell.castAtEntityFromLocation(player, location, target, power);
-					else if (spell.isTargetedEntitySpell()) spell.castAtEntity(player, target, power);
-					else if (spell.isTargetedLocationSpell()) spell.castAtLocation(player, target.getLocation(), power);
-					continue;
-				}
-
-				if (spell.isTargetedEntityFromLocationSpell()) spell.castAtEntityFromLocation(null, location, target, power);
-				else if (spell.isTargetedEntitySpell()) spell.castAtEntity(null, target, power);
-				else if (spell.isTargetedLocationSpell()) spell.castAtLocation(null, target.getLocation(), power);
+				if (spellSourceInCenter && spell.isTargetedEntityFromLocationSpell()) spell.castAtEntityFromLocation(player, location, target, power);
+				else if (player != null && spell.isTargetedEntityFromLocationSpell()) spell.castAtEntityFromLocation(player, player.getLocation(), target, power);
+				else if (spell.isTargetedEntitySpell()) spell.castAtEntity(player, target, power);
+				else if (spell.isTargetedLocationSpell()) spell.castAtLocation(player, target.getLocation(), power);
 			}
 
 			playSpellEffects(EffectPosition.TARGET, target);

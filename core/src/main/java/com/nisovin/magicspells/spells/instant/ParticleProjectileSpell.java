@@ -1,32 +1,26 @@
 package com.nisovin.magicspells.spells.instant;
 
-import java.util.Set;
 import java.util.Map;
+import java.util.Set;
 import java.util.List;
-import java.util.Random;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.util.Vector;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
 import com.nisovin.magicspells.Subspell;
-import com.nisovin.magicspells.util.Util;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.util.TimeUtil;
 import com.nisovin.magicspells.util.BlockUtils;
 import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.BoundingBox;
 import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.util.ValidTargetList;
-import com.nisovin.magicspells.util.compat.EventUtil;
-import com.nisovin.magicspells.events.SpellTargetEvent;
+import com.nisovin.magicspells.util.ProjectileTracker;
 import com.nisovin.magicspells.castmodifiers.ModifierSet;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spelleffects.EffectPosition;
@@ -36,10 +30,6 @@ import com.nisovin.magicspells.spells.TargetedEntityFromLocationSpell;
 public class ParticleProjectileSpell extends InstantSpell implements TargetedLocationSpell, TargetedEntitySpell, TargetedEntityFromLocationSpell {
 
 	private static Set<ProjectileTracker> trackerSet;
-
-	private ParticleProjectileSpell thisSpell;
-
-	private Random rand;
 
 	private float targetYOffset;
 	private float startXOffset;
@@ -64,12 +54,16 @@ public class ParticleProjectileSpell extends InstantSpell implements TargetedLoc
 	private int intermediateEffects;
 	private int specialEffectInterval;
 
+	private int intermediateHitboxes;
 	private int maxEntitiesHit;
 	private float hitRadius;
 	private float verticalHitRadius;
+	private int groundHitRadius;
+	private int groundVerticalHitRadius;
+	private Set<Material> groundMaterials;
 
-	private int maxDuration;
-	private int maxDistanceSquared;
+	private double maxDuration;
+	private double maxDistanceSquared;
 
 	private boolean hugSurface;
 	private float heightFromSurface;
@@ -89,7 +83,6 @@ public class ParticleProjectileSpell extends InstantSpell implements TargetedLoc
 	private boolean allowCasterInteract;
 	private boolean powerAffectsVelocity;
 
-	private ValidTargetList targetList;
 	private ModifierSet projModifiers;
 	private List<String> projModifiersStrings;
 	private List<String> interactions;
@@ -117,9 +110,6 @@ public class ParticleProjectileSpell extends InstantSpell implements TargetedLoc
 		super(config, spellName);
 
 		trackerSet = new HashSet<>();
-		thisSpell = this;
-
-		rand = new Random();
 
 		// Compatibility with start-forward-offset
 		float startForwardOffset = getConfigFloat("start-forward-offset", 1F);
@@ -155,12 +145,31 @@ public class ParticleProjectileSpell extends InstantSpell implements TargetedLoc
 		intermediateEffects = getConfigInt("intermediate-effects", 0);
 		specialEffectInterval = getConfigInt("special-effect-interval", 1);
 
-		maxDistanceSquared = getConfigInt("max-distance", 15);
+		maxDistanceSquared = getConfigDouble("max-distance", 15);
 		maxDistanceSquared *= maxDistanceSquared;
-		maxDuration = (int) (getConfigInt("max-duration", 0) * TimeUtil.MILLISECONDS_PER_SECOND);
-		hitRadius = getConfigFloat("hit-radius", 1.5F);
+		maxDuration = getConfigDouble("max-duration", 0) * TimeUtil.MILLISECONDS_PER_SECOND;
+
+		intermediateHitboxes = getConfigInt("intermediate-hitboxes", 0);
 		maxEntitiesHit = getConfigInt("max-entities-hit", 0);
+		hitRadius = getConfigFloat("hit-radius", 1.5F);
 		verticalHitRadius = getConfigFloat("vertical-hit-radius", hitRadius);
+		groundHitRadius = getConfigInt("ground-hit-radius", 1);
+		groundVerticalHitRadius = getConfigInt("ground-vertical-hit-radius", groundHitRadius);
+		groundMaterials = new HashSet<>();
+		List<String> groundMaterialNames = getConfigStringList("ground-materials", null);
+		if (groundMaterialNames != null) {
+			for (String str : groundMaterialNames) {
+				Material material = Material.getMaterial(str.toUpperCase());
+				if (material == null) continue;
+				if (!material.isBlock()) continue;
+				groundMaterials.add(material);
+			}
+		} else {
+			for (Material material : Material.values()) {
+				if (BlockUtils.isPathable(material)) continue;
+				groundMaterials.add(material);
+			}
+		}
 
 		hugSurface = getConfigBoolean("hug-surface", false);
 		if (hugSurface) heightFromSurface = getConfigFloat("height-from-surface", 0.6F);
@@ -182,10 +191,9 @@ public class ParticleProjectileSpell extends InstantSpell implements TargetedLoc
 		if (stopOnHitEntity) maxEntitiesHit = 1;
 
 		// Target List
-		targetList = new ValidTargetList(this, getConfigStringList("can-target", null));
-		if (hitSelf) targetList.enforce(ValidTargetList.TargetingElement.TARGET_SELF, true);
-		if (hitPlayers) targetList.enforce(ValidTargetList.TargetingElement.TARGET_PLAYERS, true);
-		if (hitNonPlayers) targetList.enforce(ValidTargetList.TargetingElement.TARGET_NONPLAYERS, true);
+		validTargetList.enforce(ValidTargetList.TargetingElement.TARGET_SELF, hitSelf);
+		validTargetList.enforce(ValidTargetList.TargetingElement.TARGET_PLAYERS, hitPlayers);
+		validTargetList.enforce(ValidTargetList.TargetingElement.TARGET_NONPLAYERS, hitNonPlayers);
 		projModifiersStrings = getConfigStringList("projectile-modifiers", null);
 		interactions = getConfigStringList("interactions", null);
 		interactionSpells = new HashMap<>();
@@ -296,17 +304,21 @@ public class ParticleProjectileSpell extends InstantSpell implements TargetedLoc
 	}
 
 	@Override
-	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
+	public PostCastAction castSpell(Player caster, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
-			new ProjectileTracker(player, player.getLocation(), power);
-			playSpellEffects(EffectPosition.CASTER, player);
+			ProjectileTracker tracker = new ProjectileTracker(caster, power);
+			setupProjectile(tracker);
+			tracker.start(caster.getLocation());
+			playSpellEffects(EffectPosition.CASTER, caster);
 		}
 		return PostCastAction.HANDLE_NORMALLY;
 	}
 
 	@Override
 	public boolean castAtLocation(Player caster, Location target, float power) {
-		new ProjectileTracker(caster, target, power);
+		ProjectileTracker tracker = new ProjectileTracker(caster, power);
+		setupProjectile(tracker);
+		tracker.start(target);
 		playSpellEffects(EffectPosition.CASTER, caster);
 		return true;
 	}
@@ -315,7 +327,9 @@ public class ParticleProjectileSpell extends InstantSpell implements TargetedLoc
 	public boolean castAtLocation(Location target, float power) {
 		Location targetLoc = target.clone();
 		if (Float.isNaN(targetLoc.getPitch())) targetLoc.setPitch(0);
-		new ProjectileTracker(null, targetLoc, power);
+		ProjectileTracker tracker = new ProjectileTracker(null, power);
+		setupProjectile(tracker);
+		tracker.start(target);
 		return true;
 	}
 
@@ -324,16 +338,21 @@ public class ParticleProjectileSpell extends InstantSpell implements TargetedLoc
 		if (!caster.getLocation().getWorld().equals(target.getLocation().getWorld())) return false;
 		Location targetLoc = from.clone();
 		if (Float.isNaN(targetLoc.getPitch())) targetLoc.setPitch(0);
-		new ProjectileTracker(caster, targetLoc, target, power);
+		ProjectileTracker tracker = new ProjectileTracker(caster, power);
+		setupProjectile(tracker);
+		tracker.startTarget(from, target);
 		playSpellEffects(from, target);
 		return true;
 	}
 
 	@Override
 	public boolean castAtEntityFromLocation(Location from, LivingEntity target, float power) {
+		if (!from.getWorld().equals(target.getLocation().getWorld())) return false;
 		Location targetLoc = from.clone();
 		if (Float.isNaN(targetLoc.getPitch())) targetLoc.setPitch(0);
-		new ProjectileTracker(null, targetLoc, target, power);
+		ProjectileTracker tracker = new ProjectileTracker(null, power);
+		setupProjectile(tracker);
+		tracker.startTarget(from, target);
 		playSpellEffects(from, target);
 		return true;
 	}
@@ -341,7 +360,9 @@ public class ParticleProjectileSpell extends InstantSpell implements TargetedLoc
 	@Override
 	public boolean castAtEntity(Player caster, LivingEntity target, float power) {
 		if (!caster.getLocation().getWorld().equals(target.getLocation().getWorld())) return false;
-		new ProjectileTracker(caster, caster.getLocation(), target, power);
+		ProjectileTracker tracker = new ProjectileTracker(caster, power);
+		setupProjectile(tracker);
+		tracker.startTarget(caster.getLocation(), target);
 		playSpellEffects(caster, target);
 		return true;
 	}
@@ -351,332 +372,79 @@ public class ParticleProjectileSpell extends InstantSpell implements TargetedLoc
 		return false;
 	}
 
-	// TODO move to a separate Java file and use getters for field access
-	class ProjectileTracker implements Runnable {
+	public static Set<ProjectileTracker> getProjectileTrackers() {
+		return trackerSet;
+	}
 
-		Player caster;
-		float power;
-		long startTime;
-		Location startLocation;
-		Location previousLocation;
-		Location currentLocation;
-		Vector currentVelocity;
-		Vector startDirection;
-		int currentX;
-		int currentZ;
-		int taskId;
-		BoundingBox hitBox;
-		List<LivingEntity> inRange;
-		List<LivingEntity> maxHitLimit;
-		Map<LivingEntity, Long> immune;
-		ValidTargetChecker entitySpellChecker;
-		ProjectileTracker tracker;
-		ParticleProjectileSpell projectileSpell;
+	public void playEffects(EffectPosition position, Location loc) {
+		playSpellEffects(position, loc);
+	}
 
-		int counter = 0;
+	public void playEffects(EffectPosition position, Entity entity) {
+		playSpellEffects(position, entity);
+	}
 
-		ProjectileTracker(Player caster, Location from, float power) {
-			this.caster = caster;
-			this.power = power;
-			startTime = System.currentTimeMillis();
-			if (!changePitch) from.setPitch(0F);
-			startLocation = from.clone();
+	private void setupProjectile(ProjectileTracker tracker) {
+		tracker.setSpell(this);
+		tracker.setStartXOffset(startXOffset);
+		tracker.setStartYOffset(startYOffset);
+		tracker.setStartZOffset(startZOffset);
+		tracker.setTargetYOffset(targetYOffset);
 
-			// Changing the start location
-			startDirection = caster.getLocation().getDirection().normalize();
-			Vector horizOffset = new Vector(-startDirection.getZ(), 0.0, startDirection.getX()).normalize();
-			startLocation.add(horizOffset.multiply(startZOffset)).getBlock().getLocation();
-			startLocation.add(startLocation.getDirection().multiply(startXOffset));
-			startLocation.setY(startLocation.getY() + startYOffset);
+		tracker.setAcceleration(acceleration);
+		tracker.setAccelerationDelay(accelerationDelay);
 
-			previousLocation = startLocation.clone();
-			currentLocation = startLocation.clone();
-			currentVelocity = from.getDirection();
+		tracker.setProjectileTurn(projectileTurn);
+		tracker.setProjectileVelocity(projectileVelocity);
+		tracker.setProjectileVertOffset(projectileVertOffset);
+		tracker.setProjectileHorizOffset(projectileHorizOffset);
+		tracker.setProjectileVertGravity(projectileVertGravity);
+		tracker.setProjectileHorizGravity(projectileHorizGravity);
+		tracker.setProjectileVertSpread(projectileVertSpread);
+		tracker.setProjectileHorizSpread(projectileHorizSpread);
 
-			init();
-		}
+		tracker.setTickInterval(tickInterval);
+		tracker.setTicksPerSecond(ticksPerSecond);
+		tracker.setSpellInterval(spellInterval);
+		tracker.setIntermediateEffects(intermediateEffects);
+		tracker.setIntermediateHitboxes(intermediateHitboxes);
+		tracker.setSpecialEffectInterval(specialEffectInterval);
 
-		ProjectileTracker(Player caster, Location from, LivingEntity target, float power) {
-			this.caster = caster;
-			this.power = power;
-			startTime = System.currentTimeMillis();
-			if (!changePitch) from.setPitch(0F);
-			startLocation = from.clone();
+		tracker.setMaxDistanceSquared(maxDistanceSquared);
+		tracker.setMaxDuration(maxDuration);
 
-			// Changing the target location
-			Location targetLoc = target.getLocation().clone();
-			targetLoc.add(0, targetYOffset,0);
-			Vector dir = targetLoc.clone().subtract(from.clone()).toVector();
+		tracker.setMaxEntitiesHit(maxEntitiesHit);
+		tracker.setHorizontalHitRadius(hitRadius);
+		tracker.setVerticalHitRadius(verticalHitRadius);
+		tracker.setGroundHorizontalHitRadius(groundHitRadius);
+		tracker.setGroundVerticalHitRadius(groundVerticalHitRadius);
+		tracker.setGroundMaterials(groundMaterials);
 
-			// Changing the start location
-			startDirection = dir.clone().normalize();
-			Vector horizOffset = new Vector(-startDirection.getZ(), 0.0, startDirection.getX()).normalize();
-			startLocation.add(horizOffset.multiply(startZOffset)).getBlock().getLocation();
-			startLocation.add(startLocation.getDirection().multiply(startXOffset));
-			startLocation.setY(startLocation.getY() + startYOffset);
+		tracker.setHugSurface(hugSurface);
+		tracker.setHeightFromSurface(heightFromSurface);
 
-			dir = targetLoc.clone().subtract(startLocation.clone()).toVector();
+		tracker.setControllable(controllable);
+		tracker.setChangePitch(changePitch);
+		tracker.setHitGround(hitGround);
+		tracker.setHitAirAtEnd(hitAirAtEnd);
+		tracker.setHitAirDuring(hitAirDuring);
+		tracker.setHitAirAfterDuration(hitAirAfterDuration);
+		tracker.setStopOnHitGround(stopOnHitGround);
+		tracker.setStopOnModifierFail(stopOnModifierFail);
+		tracker.setAllowCasterInteract(allowCasterInteract);
+		tracker.setPowerAffectsVelocity(powerAffectsVelocity);
 
-			previousLocation = startLocation.clone();
-			currentLocation = startLocation.clone();
-			currentVelocity = from.setDirection(dir).getDirection();
+		tracker.setTargetList(validTargetList);
+		tracker.setProjectileModifiers(projModifiers);
+		tracker.setInteractionSpells(interactionSpells);
 
-			init();
-		}
-
-		private void init() {
-			if (projectileHorizOffset != 0) Util.rotateVector(currentVelocity, projectileHorizOffset);
-			if (projectileVertOffset != 0) currentVelocity.add(new Vector(0, projectileVertOffset, 0)).normalize();
-			if (projectileVertSpread > 0 || projectileHorizSpread > 0) {
-				float rx = -1 + rand.nextFloat() * (1 + 1);
-				float ry = -1 + rand.nextFloat() * (1 + 1);
-				currentVelocity.add(new Vector(rx * projectileHorizSpread, ry * projectileVertSpread, rx * projectileHorizSpread));
-			}
-			if (hugSurface) {
-				currentLocation.setY(currentLocation.getY() + heightFromSurface);
-				currentVelocity.setY(0).normalize();
-				currentLocation.setPitch(0);
-			}
-			if (powerAffectsVelocity) currentVelocity.multiply(power);
-			currentVelocity.multiply(projectileVelocity / ticksPerSecond);
-			taskId = MagicSpells.scheduleRepeatingTask(this, 0, tickInterval);
-			if (targetList.canTargetPlayers() || targetList.canTargetLivingEntities()) {
-				inRange = currentLocation.getWorld().getLivingEntities();
-				inRange.removeIf(e -> !targetList.canTarget(caster, e));
-			}
-			immune = new HashMap<>();
-			maxHitLimit = new ArrayList<>();
-			hitBox = new BoundingBox(currentLocation, hitRadius, verticalHitRadius);
-			currentLocation.setDirection(currentVelocity);
-			projectileSpell = thisSpell;
-			tracker = this;
-			trackerSet.add(tracker);
-		}
-
-		@Override
-		public void run() {
-			if (caster != null && !caster.isValid()) {
-				stop(true);
-				return;
-			}
-
-			if (maxDuration > 0 && startTime + maxDuration < System.currentTimeMillis()) {
-				if (hitAirAfterDuration && durationSpell != null && durationSpell.isTargetedLocationSpell()) {
-					durationSpell.castAtLocation(caster, currentLocation, power);
-					playSpellEffects(EffectPosition.TARGET, currentLocation);
-				}
-				stop(true);
-				return;
-			}
-
-			if (projModifiers != null && !projModifiers.check(caster)) {
-				if (modifierSpell != null) modifierSpell.castAtLocation(caster, currentLocation, power);
-				if (stopOnModifierFail) stop(true);
-				return;
-			}
-
-			if (controllable) {
-				currentVelocity = caster.getLocation().getDirection();
-				if (hugSurface) currentVelocity.setY(0).normalize();
-				currentVelocity.multiply(projectileVelocity / ticksPerSecond);
-				currentLocation.setDirection(currentVelocity);
-			}
-
-			// Move projectile and apply gravity
-			previousLocation = currentLocation.clone();
-			currentLocation.add(currentVelocity);
-
-			if (hugSurface && (currentLocation.getBlockX() != currentX || currentLocation.getBlockZ() != currentZ)) {
-				Block b = currentLocation.subtract(0, heightFromSurface, 0).getBlock();
-
-				int attempts = 0;
-				boolean ok = false;
-				while (attempts++ < 10) {
-					if (BlockUtils.isPathable(b)) {
-						b = b.getRelative(BlockFace.DOWN);
-						if (BlockUtils.isPathable(b)) currentLocation.add(0, -1, 0);
-						else {
-							ok = true;
-							break;
-						}
-					} else {
-						b = b.getRelative(BlockFace.UP);
-						currentLocation.add(0, 1, 0);
-						if (BlockUtils.isPathable(b)) {
-							ok = true;
-							break;
-						}
-					}
-				}
-				if (!ok) {
-					stop(true);
-					return;
-				}
-
-				currentLocation.setY((int) currentLocation.getY() + heightFromSurface);
-				currentX = currentLocation.getBlockX();
-				currentZ = currentLocation.getBlockZ();
-
-				// Apply vertical gravity
-			} else if (projectileVertGravity != 0) currentVelocity.setY(currentVelocity.getY() - (projectileVertGravity / ticksPerSecond));
-
-			// Apply turn
-			if (projectileTurn != 0) Util.rotateVector(currentVelocity, projectileTurn);
-
-			// Apply horizontal gravity
-			if (projectileHorizGravity != 0) Util.rotateVector(currentVelocity, (projectileHorizGravity / ticksPerSecond) * counter);
-
-			// Rotate effects properly
-			currentLocation.setDirection(currentVelocity);
-
-			// Play effects
-			if (specialEffectInterval > 0 && counter % specialEffectInterval == 0) playSpellEffects(EffectPosition.SPECIAL, currentLocation);
-
-			// Acceleration
-			if (acceleration != 0 && accelerationDelay > 0 && counter % accelerationDelay == 0) currentVelocity.multiply(acceleration);
-
-			// Intermediate effects
-			if (intermediateEffects > 0) playIntermediateEffects(previousLocation, currentVelocity);
-
-			counter++;
-
-			// Cast spell mid air
-			if (hitAirDuring && counter % spellInterval == 0 && tickSpell != null) {
-				tickSpell.castAtLocation(caster, currentLocation.clone(), power);
-			}
-
-			if (!BlockUtils.isPathable(currentLocation.getBlock())) {
-				if (hitGround && groundSpell != null) {
-					Util.setLocationFacingFromVector(previousLocation, currentVelocity);
-					groundSpell.castAtLocation(caster, previousLocation, power);
-					playSpellEffects(EffectPosition.TARGET, currentLocation);
-				}
-				if (stopOnHitGround) {
-					stop(true);
-					return;
-				}
-			}
-			if (currentLocation.distanceSquared(startLocation) >= maxDistanceSquared) {
-				if (hitAirAtEnd && airSpell != null) {
-					airSpell.castAtLocation(caster, currentLocation.clone(), power);
-					playSpellEffects(EffectPosition.TARGET, currentLocation);
-				}
-				stop(true);
-			} else if (inRange != null) {
-				hitBox.setCenter(currentLocation);
-				for (int i = 0; i < inRange.size(); i++) {
-					LivingEntity e = inRange.get(i);
-					if (e.isDead()) continue;
-					if (!hitBox.contains(e.getLocation().add(0, 0.6, 0))) continue;
-					if (entitySpell != null && entitySpell.isTargetedEntitySpell()) {
-						entitySpellChecker = entitySpell.getSpell().getValidTargetChecker();
-						if (entitySpellChecker != null && !entitySpellChecker.isValidTarget(e)) {
-							inRange.remove(i);
-							break;
-						}
-						SpellTargetEvent event = new SpellTargetEvent(thisSpell, caster, e, power);
-						EventUtil.call(event);
-						if (event.isCancelled()) {
-							inRange.remove(i);
-							break;
-						} else {
-							e = event.getTarget();
-							power = event.getPower();
-						}
-						entitySpell.castAtEntity(caster, e, power);
-						playSpellEffects(EffectPosition.TARGET, e);
-					} else if (entitySpell != null && entitySpell.isTargetedLocationSpell()) {
-						entitySpell.castAtLocation(caster, currentLocation.clone(), power);
-						playSpellEffects(EffectPosition.TARGET, currentLocation);
-					}
-
-					inRange.remove(i);
-					maxHitLimit.add(e);
-					immune.put(e, System.currentTimeMillis());
-
-					if (maxEntitiesHit > 0 && maxHitLimit.size() >= maxEntitiesHit) stop(true);
-					break;
-				}
-
-				if (immune != null && !immune.isEmpty()) {
-					Iterator<Map.Entry<LivingEntity, Long>> iter = immune.entrySet().iterator();
-					while (iter.hasNext()) {
-						Map.Entry<LivingEntity, Long> entry = iter.next();
-						if (entry.getValue() < System.currentTimeMillis() - (2 * TimeUtil.MILLISECONDS_PER_SECOND)) {
-							iter.remove();
-							inRange.add(entry.getKey());
-						}
-					}
-				}
-
-				if (projectileSpell.interactions == null || projectileSpell.interactions.isEmpty()) return;
-				Set<ProjectileTracker> toRemove = new HashSet<>();
-				for (ProjectileTracker collisionTracker : ParticleProjectileSpell.trackerSet) {
-					if (collisionTracker == null) continue;
-					if (tracker == null) continue;
-					if (tracker.caster == null) continue;
-					if (collisionTracker.caster == null) continue;
-					if (collisionTracker.equals(tracker)) continue;
-					if (!interactionSpells.containsKey(collisionTracker.projectileSpell.internalName)) continue;
-					if (!collisionTracker.currentLocation.getWorld().equals(tracker.currentLocation.getWorld())) continue;
-					if (!collisionTracker.hitBox.contains(tracker.currentLocation) && !tracker.hitBox.contains(collisionTracker.currentLocation)) continue;
-					if (!allowCasterInteract && collisionTracker.caster.equals(tracker.caster)) continue;
-
-					Subspell collisionSpell = interactionSpells.get(collisionTracker.projectileSpell.internalName);
-					if (collisionSpell == null) {
-						toRemove.add(collisionTracker);
-						toRemove.add(tracker);
-						collisionTracker.stop(false);
-						tracker.stop(false);
-					} else {
-						double x = (tracker.currentLocation.getX() + collisionTracker.currentLocation.getX()) / 2D;
-						double y = (tracker.currentLocation.getY() + collisionTracker.currentLocation.getY()) / 2D;
-						double z = (tracker.currentLocation.getZ() + collisionTracker.currentLocation.getZ()) / 2D;
-
-						Location middleLoc = new Location(tracker.currentLocation.getWorld(), x, y, z);
-						collisionSpell.castAtLocation(tracker.caster, middleLoc, tracker.power);
-						toRemove.add(collisionTracker);
-						toRemove.add(tracker);
-						collisionTracker.stop(false);
-						tracker.stop(false);
-					}
-				}
-
-				trackerSet.removeAll(toRemove);
-				toRemove.clear();
-			}
-		}
-
-		private void playIntermediateEffects(Location old, Vector movement) {
-			int divideFactor = intermediateEffects + 1;
-			Vector v = movement.clone();
-			v.setX(v.getX() / divideFactor);
-			v.setY(v.getY() / divideFactor);
-			v.setZ(v.getZ() / divideFactor);
-			for (int i = 0; i < intermediateEffects; i++) {
-				old = old.add(v).setDirection(v);
-				if (specialEffectInterval > 0 && counter % specialEffectInterval == 0) playSpellEffects(EffectPosition.SPECIAL, old);
-			}
-		}
-
-		public void stop(boolean removeTracker) {
-			if (removeTracker) trackerSet.remove(tracker);
-			playSpellEffects(EffectPosition.DELAYED, currentLocation);
-			MagicSpells.cancelTask(taskId);
-			caster = null;
-			startLocation = null;
-			previousLocation = null;
-			currentLocation = null;
-			currentVelocity = null;
-			maxHitLimit.clear();
-			maxHitLimit = null;
-			immune.clear();
-			immune = null;
-			if (inRange == null) return;
-			inRange.clear();
-			inRange = null;
-		}
-
+		tracker.setAirSpell(airSpell);
+		tracker.setTickSpell(tickSpell);
+		tracker.setCasterSpell(selfSpell);
+		tracker.setGroundSpell(groundSpell);
+		tracker.setEntitySpell(entitySpell);
+		tracker.setDurationSpell(durationSpell);
+		tracker.setModifierSpell(modifierSpell);
 	}
 
 }

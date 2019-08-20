@@ -260,6 +260,22 @@ public class Spellbook {
 		return allSpells;
 	}
 
+	public Map<CastItem, List<Spell>> getItemSpells() {
+		return itemSpells;
+	}
+
+	public Map<CastItem, Integer> getActiveSpells() {
+		return activeSpells;
+	}
+
+	public Map<Spell, Set<CastItem>> getCustomBindings() {
+		return customBindings;
+	}
+
+	public Map<Plugin, Set<Spell>> getTemporarySpells() {
+		return temporarySpells;
+	}
+
 	public List<String> tabComplete(String partial) {
 		String[] data = Util.splitParams(partial, 2);
 		if (data.length == 1) {

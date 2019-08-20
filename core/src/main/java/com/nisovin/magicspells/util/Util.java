@@ -2,53 +2,54 @@ package com.nisovin.magicspells.util;
 
 import java.io.File;
 import java.io.FileOutputStream;
+
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Random;
-import java.util.Set;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 
-import com.nisovin.magicspells.util.itemreader.alternative.AlternativeReaderManager;
-import org.apache.commons.math3.util.FastMath;
-import org.bukkit.*;
-import org.bukkit.attribute.Attribute;
+import java.util.Map;
+import java.util.Set;
+import java.util.List;
+import java.util.Arrays;
+import java.util.Random;
+import java.util.Objects;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+import java.util.function.Predicate;
+
+import org.bukkit.Color;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.ChatColor;
+import org.bukkit.util.Vector;
 import org.bukkit.block.Block;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.util.Vector;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 
-import com.nisovin.magicspells.util.CastUtil.CastMode;
-import com.nisovin.magicspells.DebugHandler;
 import com.nisovin.magicspells.MagicSpells;
-import com.nisovin.magicspells.materials.ItemNameResolver.ItemTypeAndData;
+import com.nisovin.magicspells.DebugHandler;
+import com.nisovin.magicspells.util.itemreader.*;
+import com.nisovin.magicspells.util.CastUtil.CastMode;
 import com.nisovin.magicspells.materials.MagicMaterial;
-import com.nisovin.magicspells.util.itemreader.BannerHandler;
-import com.nisovin.magicspells.util.itemreader.LeatherArmorHandler;
-import com.nisovin.magicspells.util.itemreader.LoreHandler;
-import com.nisovin.magicspells.util.itemreader.NameHandler;
-import com.nisovin.magicspells.util.itemreader.PotionHandler;
-import com.nisovin.magicspells.util.itemreader.RepairableHandler;
-import com.nisovin.magicspells.util.itemreader.SkullHandler;
-import com.nisovin.magicspells.util.itemreader.WrittenBookHandler;
+import com.nisovin.magicspells.materials.ItemNameResolver.ItemTypeAndData;
+import com.nisovin.magicspells.util.itemreader.alternative.AlternativeReaderManager;
+
+import org.apache.commons.math3.util.FastMath;
 
 public class Util {
 
@@ -305,6 +306,9 @@ public class Util {
 				((BlockStateMeta)meta).setBlockState(state);
 			}*/
 
+			// Durability
+			meta = DurabilityHandler.process(config, meta);
+
 			// Repair cost
 			meta = RepairableHandler.process(config, meta);
 
@@ -494,14 +498,6 @@ public class Util {
 
 	public static CastMode getCastMode(String type) {
 		return CastMode.getFromString(type);
-	}
-
-	public static void sendFakeBlockChange(Player player, Block block, MagicMaterial mat) {
-		player.sendBlockChange(block.getLocation(), mat.getMaterial(), mat.getMaterialData().getData());
-	}
-
-	public static void restoreFakeBlockChange(Player player, Block block) {
-		player.sendBlockChange(block.getLocation(), block.getType(), block.getData());
 	}
 
 	public static void setFacing(Player player, Vector vector) {
@@ -752,8 +748,6 @@ public class Util {
 	}
 
 	public static void createFire(Block block, byte d) {
-		// TODO verify this
-		//block.setTypeIdAndData(Material.FIRE.getId(), d, false);
 		block.setType(Material.FIRE);
 	}
 

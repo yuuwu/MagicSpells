@@ -16,6 +16,7 @@ import com.nisovin.magicspells.util.MagicConfig;
 import com.nisovin.magicspells.util.BoundingBox;
 import com.nisovin.magicspells.spells.TargetedSpell;
 import com.nisovin.magicspells.util.compat.EventUtil;
+import com.nisovin.magicspells.util.ValidTargetChecker;
 import com.nisovin.magicspells.castmodifiers.ModifierSet;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.events.SpellPreImpactEvent;

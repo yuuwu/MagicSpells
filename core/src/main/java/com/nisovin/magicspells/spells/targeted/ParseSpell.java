@@ -12,8 +12,13 @@ import com.nisovin.magicspells.spelleffects.EffectPosition;
 
 public class ParseSpell extends TargetedSpell implements TargetedEntitySpell {
 
+	private int op;
+
 	private String parseTo;
+	private String operation;
+	private String firstVariable;
 	private String expectedValue;
+	private String secondVariable;
 	private String parseToVariable;
 	private String variableToParse;
 
@@ -21,7 +26,10 @@ public class ParseSpell extends TargetedSpell implements TargetedEntitySpell {
 		super(config, spellName);
 
 		parseTo = getConfigString("parse-to", "");
+		operation = getConfigString("operation", "normal");
+		firstVariable = getConfigString("first-variable", "");
 		expectedValue = getConfigString("expected-value", "");
+		secondVariable = getConfigString("second-variable", "");
 		parseToVariable = getConfigString("parse-to-variable", "");
 		variableToParse = getConfigString("variable-to-parse", "");
 	}
@@ -30,17 +38,34 @@ public class ParseSpell extends TargetedSpell implements TargetedEntitySpell {
 	public void initialize() {
 		super.initialize();
 
-		if (variableToParse.isEmpty()) {
-			MagicSpells.error("You must define a variable to parse for ParseSpell");
-			return;
+		op = 0;
+		if (operation.contains("translate") || operation.contains("normal")) {
+			if (expectedValue.isEmpty()) {
+				MagicSpells.error("ParseSpell '" + internalName + "' has an invalid expected-value defined!");
+				return;
+			}
+			if (parseToVariable.isEmpty()) {
+				MagicSpells.error("ParseSpell '" + internalName + "' has an invalid parse-to-variable defined!");
+				return;
+			}
+			if (variableToParse.isEmpty() || MagicSpells.getVariableManager().getVariable(variableToParse) == null) {
+				MagicSpells.error("ParseSpell '" + internalName + "' has an invalid variable-to-parse defined!");
+				return;
+			}
+			op = 1;
 		}
 
-		if (expectedValue.isEmpty()) {
-			MagicSpells.error("You must define an expected variable for ParseSpell");
-			return;
+		if (operation.contains("difference")) {
+			if (firstVariable.isEmpty() || MagicSpells.getVariableManager().getVariable(firstVariable) == null) {
+				MagicSpells.error("ParseSpell '" + internalName + "' has an invalid first-variable defined!");
+				return;
+			}
+			if (secondVariable.isEmpty() || MagicSpells.getVariableManager().getVariable(secondVariable) == null) {
+				MagicSpells.error("ParseSpell '" + internalName + "' has an invalid second-variable defined!");
+				return;
+			}
+			op = 2;
 		}
-
-		if (parseToVariable.isEmpty()) MagicSpells.error("You must define a variable to parse to for ParseSpell");
 	}
 
 	@Override
@@ -73,11 +98,18 @@ public class ParseSpell extends TargetedSpell implements TargetedEntitySpell {
 
 	private void parse(LivingEntity target) {
 		if (!(target instanceof Player)) return;
+		if (op == 0) return;
 
-		String receivedValue = MagicSpells.getVariableManager().getStringValue(variableToParse, (Player) target);
-		if (!receivedValue.equalsIgnoreCase(expectedValue)) return;
-
-		MagicSpells.getVariableManager().set(parseToVariable, (Player) target, parseTo);
+		if (op == 1) {
+			String receivedValue = MagicSpells.getVariableManager().getStringValue(variableToParse, (Player) target);
+			if (!receivedValue.equalsIgnoreCase(expectedValue) && !expectedValue.contains("any")) return;
+			MagicSpells.getVariableManager().set(parseToVariable, (Player) target, parseTo);
+		} else if (op == 2) {
+			double primary = MagicSpells.getVariableManager().getValue(firstVariable, (Player) target);
+			double secondary = MagicSpells.getVariableManager().getValue(secondVariable, (Player) target);
+			double diff = Math.abs(primary - secondary);
+			MagicSpells.getVariableManager().set(parseToVariable, (Player) target, diff);
+		}
 	}
 
 }

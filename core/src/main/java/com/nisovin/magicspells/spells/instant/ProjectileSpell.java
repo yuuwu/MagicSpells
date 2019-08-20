@@ -129,7 +129,7 @@ public class ProjectileSpell extends InstantSpell implements TargetedLocationSpe
 		hitSpell = new Subspell(hitSpellName);
 		if (!hitSpell.process()) {
 			hitSpell = null;
-			MagicSpells.error("ProjectileSpell '" + internalName + "' has an invalid spell defined!");
+			if (!hitSpellName.isEmpty()) MagicSpells.error("ProjectileSpell '" + internalName + "' has an invalid spell defined!");
 		}
 
 		groundSpell = new Subspell(groundSpellName);
@@ -214,11 +214,11 @@ public class ProjectileSpell extends InstantSpell implements TargetedLocationSpe
 			if (monitor.projectile == null) continue;
 			if (!monitor.projectile.equals(projectile)) continue;
 
-			if (hitSpell.isTargetedEntitySpell()) hitSpell.castAtEntity(monitor.caster, entity, monitor.power);
-			else if (hitSpell.isTargetedLocationSpell()) hitSpell.castAtLocation(monitor.caster, entity.getLocation(), monitor.power);
+			if (hitSpell != null && hitSpell.isTargetedEntitySpell()) hitSpell.castAtEntity(monitor.caster, entity, monitor.power);
+			else if (hitSpell != null && hitSpell.isTargetedLocationSpell()) hitSpell.castAtLocation(monitor.caster, entity.getLocation(), monitor.power);
 			playSpellEffects(EffectPosition.TARGET, entity);
 			event.setCancelled(true);
-
+			event.setDamage(0);
 			monitor.stop();
 			break;
 		}
@@ -316,7 +316,8 @@ public class ProjectileSpell extends InstantSpell implements TargetedLocationSpe
 			if (horizSpread > 0 || vertSpread > 0) {
 				float rx = -1 + random.nextFloat() * (1 + 1);
 				float ry = -1 + random.nextFloat() * (1 + 1);
-				currentVelocity.add(new Vector(rx * horizSpread, ry * vertSpread, rx * horizSpread));
+				float rz = -1 + random.nextFloat() * (1 + 1);
+				currentVelocity.add(new Vector(rx * horizSpread, ry * vertSpread, rz * horizSpread));
 			}
 			projectile.setVelocity(currentVelocity);
 			projectile.setGravity(gravity);
@@ -357,6 +358,7 @@ public class ProjectileSpell extends InstantSpell implements TargetedLocationSpe
 			}
 
 			currentLocation = projectile.getLocation();
+			currentLocation.setDirection(projectile.getVelocity());
 
 			if (counter % airSpellInterval == 0 && airSpell != null) airSpell.castAtLocation(caster, currentLocation, power);
 
