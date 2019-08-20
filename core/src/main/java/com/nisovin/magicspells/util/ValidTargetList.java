@@ -30,16 +30,17 @@ public class ValidTargetList {
 		TARGET_NONLIVING_ENTITIES
 		
 	}
-	
-	boolean targetSelf = false;
-	boolean targetPlayers = false;
-	boolean targetInvisibles = false;
-	boolean targetNonPlayers = false;
-	boolean targetMonsters = false;
-	boolean targetAnimals = false;
-	boolean targetNonLivingEntities = false; // This will be kept as false for now during restructuring
-	Set<EntityType> types = new HashSet<>();
-	
+
+	private Set<EntityType> types = new HashSet<>();
+
+	private boolean targetSelf = false;
+	private boolean targetAnimals = false;
+	private boolean targetPlayers = false;
+	private boolean targetMonsters = false;
+	private boolean targetInvisibles = false;
+	private boolean targetNonPlayers = false;
+	private boolean targetNonLivingEntities = false; // This will be kept as false for now during restructuring
+
 	public ValidTargetList(Spell spell, String list) {
 		if (list != null) {
 			String[] ss = list.replace(" ", "").split(",");
@@ -49,27 +50,27 @@ public class ValidTargetList {
 	
 	public void enforce(TargetingElement element, boolean value) {
 		switch (element) {
-		case TARGET_SELF:
-			this.targetSelf = value;
-			break;
-		case TARGET_ANIMALS:
-			this.targetAnimals = value;
-			break;
-		case TARGET_INVISIBLES:
-			this.targetInvisibles = value;
-			break;
-		case TARGET_MONSTERS:
-			this.targetMonsters = value;
-			break;
-		case TARGET_NONLIVING_ENTITIES:
-			this.targetNonLivingEntities = value;
-			break;
-		case TARGET_NONPLAYERS:
-			this.targetNonPlayers = value;
-			break;
-		case TARGET_PLAYERS:
-			this.targetPlayers = value;
-			break;
+			case TARGET_SELF:
+				targetSelf = value;
+				break;
+			case TARGET_ANIMALS:
+				targetAnimals = value;
+				break;
+			case TARGET_INVISIBLES:
+				targetInvisibles = value;
+				break;
+			case TARGET_MONSTERS:
+				targetMonsters = value;
+				break;
+			case TARGET_NONLIVING_ENTITIES:
+				targetNonLivingEntities = value;
+				break;
+			case TARGET_NONPLAYERS:
+				targetNonPlayers = value;
+				break;
+			case TARGET_PLAYERS:
+				targetPlayers = value;
+				break;
 		}
 	}
 	
@@ -80,47 +81,42 @@ public class ValidTargetList {
 	}
 	
 	public ValidTargetList(Spell spell, List<String> list) {
-		if (list != null) {
-			init(spell, list);
-		}
+		if (list != null) init(spell, list);
 	}
 	
-	void init(Spell spell, List<String> list) {
+	private void init(Spell spell, List<String> list) {
 		for (String s : list) {
 			s = s.trim();
 			
 			switch (s.toLowerCase()) {
 				case "self":
 				case "caster":
-					this.targetSelf = true;
+					targetSelf = true;
 					break;
 				case "player":
 				case "players":
-					this.targetPlayers = true;
+					targetPlayers = true;
 					break;
 				case "invisible":
 				case "invisibles":
-					this.targetInvisibles = true;
+					targetInvisibles = true;
 					break;
 				case "nonplayer":
 				case "nonplayers":
-					this.targetNonPlayers = true;
+					targetNonPlayers = true;
 					break;
 				case "monster":
 				case "monsters":
-					this.targetMonsters = true;
+					targetMonsters = true;
 					break;
 				case "animal":
 				case "animals":
-					this.targetAnimals = true;
+					targetAnimals = true;
 					break;
 				default:
 					EntityType type = Util.getEntityType(s);
-					if (type != null) {
-						this.types.add(type);
-					} else {
-						MagicSpells.error("Invalid target type '" + s + "' on spell '" + spell.getInternalName() + '\'');
-					}
+					if (type != null) types.add(type);
+					else MagicSpells.error("Spell '" + spell.getInternalName() + "' has an invalid target type defined: " + s);
 			}
 		}
 	}
@@ -135,89 +131,91 @@ public class ValidTargetList {
 	}
 	
 	public boolean canTarget(Player caster, Entity target, boolean targetPlayers) {
-		if (!(target instanceof LivingEntity) && !this.targetNonLivingEntities) return false;
+		if (!(target instanceof LivingEntity) && !targetNonLivingEntities) return false;
 		boolean targetIsPlayer = target instanceof Player;
-		if (targetIsPlayer && ((Player)target).getGameMode() == GameMode.CREATIVE) return false;
-		if (this.targetSelf && target.equals(caster)) return true;
-		if (!this.targetSelf && target.equals(caster)) return false;
-		if (!this.targetInvisibles && targetIsPlayer && !caster.canSee((Player)target)) return false;
+		if (targetIsPlayer && ((Player) target).getGameMode() == GameMode.CREATIVE) return false;
+		if (targetIsPlayer && ((Player) target).getGameMode() == GameMode.SPECTATOR) return false;
+		if (targetSelf && target.equals(caster)) return true;
+		if (!targetSelf && target.equals(caster)) return false;
+		if (!targetInvisibles && targetIsPlayer && !caster.canSee((Player) target)) return false;
 		if (targetPlayers && targetIsPlayer) return true;
-		if (this.targetNonPlayers && !targetIsPlayer) return true;
-		if (this.targetMonsters && target instanceof Monster) return true;
-		if (this.targetAnimals && target instanceof Animals) return true;
-		if (this.types.contains(target.getType())) return true;
+		if (targetNonPlayers && !targetIsPlayer) return true;
+		if (targetMonsters && target instanceof Monster) return true;
+		if (targetAnimals && target instanceof Animals) return true;
+		if (types.contains(target.getType())) return true;
 		return false;
 	}
 	
 	public boolean canTarget(Entity target) {
-		if (!(target instanceof LivingEntity) && !this.targetNonLivingEntities) return false;
+		if (!(target instanceof LivingEntity) && !targetNonLivingEntities) return false;
 		boolean targetIsPlayer = target instanceof Player;
-		if (targetIsPlayer && ((Player)target).getGameMode() == GameMode.CREATIVE) return false;
-		if (this.targetPlayers && targetIsPlayer) return true;
-		if (this.targetNonPlayers && !targetIsPlayer) return true;
-		if (this.targetMonsters && target instanceof Monster) return true;
-		if (this.targetAnimals && target instanceof Animals) return true;
-		if (this.types.contains(target.getType())) return true;
+		if (targetIsPlayer && ((Player) target).getGameMode() == GameMode.CREATIVE) return false;
+		if (targetIsPlayer && ((Player) target).getGameMode() == GameMode.SPECTATOR) return false;
+		if (targetPlayers && targetIsPlayer) return true;
+		if (targetNonPlayers && !targetIsPlayer) return true;
+		if (targetMonsters && target instanceof Monster) return true;
+		if (targetAnimals && target instanceof Animals) return true;
+		if (types.contains(target.getType())) return true;
 		return false;
 	}
 	
 	public List<LivingEntity> filterTargetListCastingAsLivingEntities(Player caster, List<Entity> targets) {
-		return filterTargetListCastingAsLivingEntities(caster, targets, this.targetPlayers);
+		return filterTargetListCastingAsLivingEntities(caster, targets, targetPlayers);
 	}
 	
 	public List<LivingEntity> filterTargetListCastingAsLivingEntities(Player caster, List<Entity> targets, boolean targetPlayers) {
 		List<LivingEntity> realTargets = new ArrayList<>();
 		for (Entity e : targets) {
 			if (canTarget(caster, e, targetPlayers)) {
-				realTargets.add((LivingEntity)e);
+				realTargets.add((LivingEntity) e);
 			}
 		}
 		return realTargets;
 	}
 	
 	public boolean canTargetPlayers() {
-		return this.targetPlayers;
+		return targetPlayers;
 	}
 
 	public boolean canTargetAnimals() {
-		return this.targetAnimals;
+		return targetAnimals;
 	}
 
 	public boolean canTargetMonsters() {
-		return this.targetMonsters;
+		return targetMonsters;
 	}
 
 	public boolean canTargetNonPlayers() {
-		return this.targetNonPlayers;
+		return targetNonPlayers;
 	}
 
 	public boolean canTargetInvisibles() {
-		return this.targetInvisibles;
+		return targetInvisibles;
 	}
 
 	public boolean canTargetSelf() {
-		return this.targetSelf;
+		return targetSelf;
 	}
 
 	public boolean canTargetLivingEntities() {
-		return this.targetNonPlayers || this.targetMonsters || this.targetAnimals;
+		return targetNonPlayers || targetMonsters || targetAnimals;
 	}
 
 	public boolean canTargetNonLivingEntities() {
-		return this.targetNonLivingEntities;
+		return targetNonLivingEntities;
 	}
 	
 	@Override
 	public String toString() {
 		return "ValidTargetList:["
-			+ "targetSelf=" + this.targetSelf
-			+ ",targetPlayers=" + this.targetPlayers
-			+ ",targetInvisibles=" + this.targetInvisibles
-			+ ",targetNonPlayers=" + this.targetNonPlayers
-			+ ",targetMonsters=" + this.targetMonsters
-			+ ",targetAnimals=" + this.targetAnimals
-			+ ",types=" + this.types
-			+ ",targetNonLivingEntities=" + this.targetNonLivingEntities
+			+ "targetSelf=" + targetSelf
+			+ ",targetPlayers=" + targetPlayers
+			+ ",targetInvisibles=" + targetInvisibles
+			+ ",targetNonPlayers=" + targetNonPlayers
+			+ ",targetMonsters=" + targetMonsters
+			+ ",targetAnimals=" + targetAnimals
+			+ ",types=" + types
+			+ ",targetNonLivingEntities=" + targetNonLivingEntities
 			+ ']';
 	}
 	

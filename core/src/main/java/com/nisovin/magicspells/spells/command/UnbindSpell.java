@@ -3,6 +3,7 @@ package com.nisovin.magicspells.spells.command;
 import java.util.Set;
 import java.util.List;
 import java.util.HashSet;
+import java.util.ArrayList;
 
 import org.bukkit.entity.Player;
 import org.bukkit.command.CommandSender;
@@ -24,6 +25,7 @@ public class UnbindSpell extends CommandSpell {
 	private String strUsage;
 	private String strNoSpell;
 	private String strNotBound;
+	private String strUnbindAll;
 	private String strCantUnbind;
 	private String strCantBindSpell;
 
@@ -43,6 +45,7 @@ public class UnbindSpell extends CommandSpell {
 		strUsage = getConfigString("str-usage", "You must specify a spell name.");
 		strNoSpell = getConfigString("str-no-spell", "You do not know a spell by that name.");
 		strNotBound = getConfigString("str-not-bound", "That spell is not bound to that item.");
+		strUnbindAll = getConfigString("str-unbind-all", "All spells from your item were cleared.");
 		strCantUnbind = getConfigString("str-cant-unbind", "You cannot unbind this spell");
 		strCantBindSpell = getConfigString("str-cant-bind-spell", "That spell cannot be bound to an item.");
 	}
@@ -54,9 +57,29 @@ public class UnbindSpell extends CommandSpell {
 				sendMessage(strUsage, player, args);
 				return PostCastAction.ALREADY_HANDLED;
 			}
-			
-			Spell spell = MagicSpells.getSpellByInGameName(Util.arrayJoin(args, ' '));
+
+			CastItem item = new CastItem(player.getEquipment().getItemInMainHand());
 			Spellbook spellbook = MagicSpells.getSpellbook(player);
+
+			if (args[0] != null && args[0].equalsIgnoreCase("*")) {
+				List<Spell> spells = new ArrayList<>();
+
+				for (CastItem i : spellbook.getItemSpells().keySet()) {
+					if (!i.equals(item)) continue;
+					spells.addAll(spellbook.getItemSpells().get(i));
+				}
+
+				for (Spell s : spells) {
+					spellbook.removeCastItem(s, item);
+				}
+
+				spellbook.save();
+				sendMessage(strUnbindAll, player, args);
+				playSpellEffects(EffectPosition.CASTER, player);
+				return PostCastAction.NO_MESSAGES;
+			}
+
+			Spell spell = MagicSpells.getSpellByInGameName(Util.arrayJoin(args, ' '));
 			if (spell == null || spellbook == null) {
 				sendMessage(strNoSpell, player, args);
 				return PostCastAction.ALREADY_HANDLED;
@@ -74,7 +97,6 @@ public class UnbindSpell extends CommandSpell {
 				return PostCastAction.ALREADY_HANDLED;
 			}
 
-			CastItem item = new CastItem(player.getEquipment().getItemInMainHand());
 			boolean removed = spellbook.removeCastItem(spell, item);
 			if (!removed) {
 				sendMessage(strNotBound, player, args);

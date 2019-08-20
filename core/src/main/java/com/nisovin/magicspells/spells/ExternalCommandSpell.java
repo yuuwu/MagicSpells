@@ -165,7 +165,7 @@ public class ExternalCommandSpell extends TargetedSpell implements TargetedEntit
 
 				for (String comm : commandToExecute) {
 					if (comm == null || comm.isEmpty()) continue;
-					if (doVariableReplacement) comm = MagicSpells.doArgumentAndVariableSubstitution(comm,varOwner, args);
+					if (doVariableReplacement) comm = MagicSpells.doArgumentAndVariableSubstitution(comm, varOwner, args);
 					if (args != null && args.length > 0) {
 						for (int i = 0; i < args.length; i++) {
 							comm = comm.replace("%" + (i + 1), args[i]);

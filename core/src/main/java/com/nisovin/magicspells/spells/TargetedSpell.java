@@ -13,6 +13,7 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.util.TxtUtil;
 import com.nisovin.magicspells.util.TargetInfo;
 import com.nisovin.magicspells.util.MagicConfig;
+import com.nisovin.magicspells.util.ValidTargetChecker;
 
 public abstract class TargetedSpell extends InstantSpell {
 
@@ -120,7 +121,7 @@ public abstract class TargetedSpell extends InstantSpell {
 	
 	@Override
 	protected TargetInfo<LivingEntity> getTargetedEntity(Player player, float power, boolean forceTargetPlayers, ValidTargetChecker checker) {
-		if (targetSelf) return new TargetInfo<>(player, power);
+		if (targetSelf || validTargetList.canTargetSelf()) return new TargetInfo<>(player, power);
 		return super.getTargetedEntity(player, power, forceTargetPlayers, checker);
 	}
 	

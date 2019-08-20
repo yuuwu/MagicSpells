@@ -215,6 +215,7 @@ public class ItemProjectileSpell extends InstantSpell implements TargetedLocatio
 			count++;
 
 			currentLocation = entity.getLocation();
+			currentLocation.setDirection(entity.getVelocity());
 			if (specialEffectInterval > 0 && count % specialEffectInterval == 0) playSpellEffects(EffectPosition.SPECIAL, currentLocation);
 
 			if (count % spellInterval == 0 && spellOnTick != null && spellOnTick.isTargetedLocationSpell()) {

@@ -1,6 +1,7 @@
 package com.nisovin.magicspells.util;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -17,6 +18,18 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.DebugHandler;
 
 public class BlockUtils {
+
+	public static List<Block> getNearbyBlocks(Location location, int radius, int height) {
+		List<Block> blocks = new ArrayList<>();
+		for (int x = location.getBlockX() - radius; x <= location.getBlockX() + radius; x++) {
+			for (int y = location.getBlockY() - height; y <= location.getBlockY() + height; y++) {
+				for (int z = location.getBlockZ() - radius; z <= location.getBlockZ() + radius; z++) {
+					blocks.add(location.getWorld().getBlockAt(x, y, z));
+				}
+			}
+		}
+		return blocks;
+	}
 
 	public static boolean isTransparent(Spell spell, Block block) {
 		return spell.getLosTransparentBlocks().contains(block.getType());

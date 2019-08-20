@@ -79,7 +79,9 @@ public class NoMagicZoneManager {
 	}
 
 	public boolean willFizzle(Location location, Spell spell) {
+		if (zonesOrdered == null || zonesOrdered.isEmpty()) return false;
 		for (NoMagicZone zone : zonesOrdered) {
+			if (zone == null) return false;
 			ZoneCheckResult result = zone.check(location, spell);
 			if (result == ZoneCheckResult.DENY) return true;
 			if (result == ZoneCheckResult.ALLOW) return false;

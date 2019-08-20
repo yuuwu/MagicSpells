@@ -31,7 +31,7 @@ public class MagicBondSpell extends TargetedSpell implements TargetedEntitySpell
 
 	private SpellFilter filter;
 
-	public MagicBondSpell(MagicConfig config, String spellName){
+	public MagicBondSpell(MagicConfig config, String spellName) {
 		super(config, spellName);
 
 		duration = getConfigInt("duration", 200);
@@ -48,7 +48,7 @@ public class MagicBondSpell extends TargetedSpell implements TargetedEntitySpell
 	}
 
 	@Override
-	public PostCastAction castSpell(final Player player, SpellCastState state, float power, String[] args) {
+	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			TargetInfo<Player> target = getTargetedPlayer(player, power);
 			if (target == null) return noTarget(player);
@@ -102,8 +102,8 @@ public class MagicBondSpell extends TargetedSpell implements TargetedEntitySpell
 		}
 
 		@EventHandler
-		public void onPlayerLeave(PlayerQuitEvent e){
-			if (bondTarget.containsKey(e.getPlayer()) || bondTarget.containsValue(e.getPlayer())){
+		public void onPlayerLeave(PlayerQuitEvent e) {
+			if (bondTarget.containsKey(e.getPlayer()) || bondTarget.containsValue(e.getPlayer())) {
 				bondTarget.remove(caster);
 			}
 		}

@@ -57,6 +57,7 @@ import com.nisovin.magicspells.mana.ManaChangeReason;
 import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.events.SpellCastedEvent;
 import com.nisovin.magicspells.events.SpellTargetEvent;
+import com.nisovin.magicspells.util.ValidTargetChecker;
 import com.nisovin.magicspells.spelleffects.SpellEffect;
 import com.nisovin.magicspells.variables.VariableManager;
 import com.nisovin.magicspells.castmodifiers.ModifierSet;
@@ -94,6 +95,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	protected List<String> worldRestrictions;
 	protected List<String> rawSharedCooldowns;
 	protected List<String> targetModifierStrings;
+	protected List<String> locationModifierStrings;
 
 	protected boolean debug;
 	protected boolean obeyLos;
@@ -144,6 +146,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 
 	protected ModifierSet modifiers;
 	protected ModifierSet targetModifiers;
+	protected ModifierSet locationModifiers;
 
 	protected Spell spellOnInterrupt;
 
@@ -376,6 +379,7 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		// Modifiers
 		modifierStrings = config.getStringList(path + "modifiers", null);
 		targetModifierStrings = config.getStringList(path + "target-modifiers", null);
+		locationModifierStrings = config.getStringList(path + "location-modifiers", null);
 
 		// Hierarchy options
 		prerequisites = config.getStringList(path + "prerequisites", null);
@@ -561,6 +565,11 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 			debug(2, "Adding target modifiers to " + internalName + " spell");
 			targetModifiers = new ModifierSet(targetModifierStrings);
 			targetModifierStrings = null;
+		}
+		if (locationModifierStrings != null && !locationModifierStrings.isEmpty()) {
+			debug(2, "Adding location modifiers to " + internalName + " spell");
+			locationModifiers = new ModifierSet(locationModifierStrings);
+			locationModifierStrings = null;
 		}
 
 		// Process shared cooldowns
@@ -1705,6 +1714,10 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 		return targetModifiers;
 	}
 
+	public ModifierSet getLocationModifiers() {
+		return locationModifiers;
+	}
+
 	public String getStrModifierFailed() {
 		return strModifierFailed;
 	}
@@ -1993,14 +2006,6 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 
 	public ValidTargetChecker getValidTargetChecker() {
 		return null;
-	}
-
-	// TODO move this to its own class
-	@FunctionalInterface
-	public interface ValidTargetChecker {
-
-		boolean isValidTarget(LivingEntity entity);
-
 	}
 
 }

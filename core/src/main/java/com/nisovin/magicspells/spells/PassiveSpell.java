@@ -299,14 +299,14 @@ public class PassiveSpell extends Spell {
 					spellEffectsDone = true;
 				}
 			}
-			removeReagents(caster, event.getReagents());
-			sendMessage(strCastSelf, caster, MagicSpells.NULL_ARGS);
-			SpellCastedEvent event2 = new SpellCastedEvent(this, caster, SpellCastState.NORMAL, basePower, null, event.getCooldown(), event.getReagents(), PostCastAction.HANDLE_NORMALLY);
-			EventUtil.call(event2);
-			disabled = false;
-			return true;
 		}
-		return false;
+
+		removeReagents(caster, event.getReagents());
+		sendMessage(strCastSelf, caster, MagicSpells.NULL_ARGS);
+		SpellCastedEvent event2 = new SpellCastedEvent(this, caster, SpellCastState.NORMAL, basePower, null, event.getCooldown(), event.getReagents(), PostCastAction.HANDLE_NORMALLY);
+		EventUtil.call(event2);
+		disabled = false;
+		return true;
 	}
 
 }
