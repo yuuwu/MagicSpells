@@ -30,7 +30,7 @@ import com.nisovin.magicspells.util.DisguiseManager;
 public class VolatileCodeDisabled implements VolatileCodeHandle {
 
 	public VolatileCodeDisabled() {
-		MagicSpells.log("Volatile code handler not found, using fallback.");
+		
 	}
 
 	@Override
