@@ -215,8 +215,7 @@ public class BlockUtils {
 						mat == Material.FIRE ||
 						mat == Material.REDSTONE_WIRE ||
 						mat == Material.WHEAT ||
-						mat == Material.SIGN ||
-						mat == Material.WALL_SIGN ||
+						mat.name().contains("SIGN") ||
 						mat == Material.LADDER ||
 						mat == Material.RAIL ||
 						mat == Material.ACTIVATOR_RAIL ||

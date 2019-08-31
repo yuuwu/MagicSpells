@@ -20,7 +20,7 @@ public class EntityData {
 	private int var2 = 0;
 	private int var3 = 0;
 	
-	private static final Pattern PATTERN_VILLAGER_PROFESSION_INT = Pattern.compile("^[0-5]$");
+	private static final Pattern PATTERN_VILLAGER_PROFESSION_INT = Pattern.compile("^[0-" + Villager.Profession.values().length + "]$");
 	private static final Pattern PATTERN_WOLF_COLLAR = Pattern.compile("[0-9a-fA-F]+");
 	private static final Pattern PATTERN_HORSE_ARMOR_TYPE = Pattern.compile("^[0-9]+$");
 	private static final Pattern PATTERN_OZELOT_TYPE_DIGIT = Pattern.compile("ozelot [0-3]");
@@ -288,17 +288,7 @@ public class EntityData {
 				((Ocelot)entity).setCatType(Ocelot.Type.SIAMESE_CAT);
 			}
 		} else if (entityType == EntityType.VILLAGER) {
-			if (var1 == 0) {
-				((Villager)entity).setProfession(Villager.Profession.FARMER);
-			} else if (var1 == 1) {
-				((Villager)entity).setProfession(Villager.Profession.LIBRARIAN);
-			} else if (var1 == 2) {
-				((Villager)entity).setProfession(Villager.Profession.PRIEST);
-			} else if (var1 == 3) {
-				((Villager)entity).setProfession(Villager.Profession.BLACKSMITH);
-			} else if (var1 == 4) {
-				((Villager)entity).setProfession(Villager.Profession.BUTCHER);
-			}
+			((Villager) entity).setProfession(Villager.Profession.values()[var1]);
 		} else if (entityType == EntityType.SLIME) {
 			((Slime)entity).setSize(var1);
 		} else if (entityType == EntityType.MAGMA_CUBE) {
@@ -337,20 +327,6 @@ public class EntityData {
 	}
 	
 	private static int getProfessionId(Villager.Profession prof) {
-		switch (prof) {
-		case FARMER:
-			return 0;
-		case LIBRARIAN:
-			return 1;
-		case PRIEST:
-			return 2;
-		case BLACKSMITH:
-			return 3;
-		case BUTCHER:
-			return 4;
-		default:
-			return 0;
-		}
+		return prof.ordinal();
 	}
-	
 }
