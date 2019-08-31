@@ -1,4 +1,4 @@
-package com.nisovin.magicspells.volatilecode.v1_12_R1
+package com.nisovin.magicspells.volatilecode.v1_13_R2
 
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.properties.Property
@@ -10,39 +10,39 @@ import com.nisovin.magicspells.volatilecode.DisguiseManagerEmpty
 import com.nisovin.magicspells.volatilecode.DisguiseManagerLibsDisguises
 import com.nisovin.magicspells.volatilecode.VolatileCodeDisabled
 import com.nisovin.magicspells.volatilecode.VolatileCodeHandle
-import net.minecraft.server.v1_12_R1.*
-import net.minecraft.server.v1_12_R1.Item
+import net.minecraft.server.v1_13_R2.*
+import net.minecraft.server.v1_13_R2.Item
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.attribute.Attribute
 import org.bukkit.attribute.AttributeModifier
 import org.bukkit.block.Block
-import org.bukkit.craftbukkit.v1_12_R1.CraftServer
-import org.bukkit.craftbukkit.v1_12_R1.CraftWorld
-import org.bukkit.craftbukkit.v1_12_R1.entity.*
-import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack
+import org.bukkit.block.data.AnaloguePowerable
+import org.bukkit.block.data.Powerable
+import org.bukkit.craftbukkit.v1_13_R2.CraftServer
+import org.bukkit.craftbukkit.v1_13_R2.CraftWorld
+import org.bukkit.craftbukkit.v1_13_R2.entity.*
+import org.bukkit.craftbukkit.v1_13_R2.inventory.CraftItemStack
 import org.bukkit.entity.*
 import org.bukkit.event.entity.EntityTargetEvent
 import org.bukkit.event.entity.ExplosionPrimeEvent
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
-import org.bukkit.material.Button
-import org.bukkit.material.Lever
 import org.bukkit.util.Vector
 import java.io.File
 import java.io.FileWriter
-import java.lang.reflect.AccessibleObject
 import java.lang.reflect.Field
 import java.util.*
-import kotlin.experimental.xor
 
-private typealias nmsItemStack = net.minecraft.server.v1_12_R1.ItemStack
+private typealias nmsItemStack = net.minecraft.server.v1_13_R2.ItemStack
 
-class VolatileCode1_12_R1: VolatileCodeHandle {
+class VolatileCode1_13_R2: VolatileCodeHandle {
 
     private var fallback = VolatileCodeDisabled()
+
+    private val fireworks = ArrayList<EntityFireworks>()
 
     private var craftItemStackHandleField: Field? = null
     private var entityFallingBlockHurtEntitiesField: Field? = null
@@ -51,24 +51,8 @@ class VolatileCode1_12_R1: VolatileCodeHandle {
     private var craftMetaSkullClass: Class<*>? = null
     private var craftMetaSkullProfileField: Field? = null
 
-    private var packet63Fields = arrayOfNulls<Field>(11)
-    private var particleMap: MutableMap<String, EnumParticle> = HashMap()
-
     init {
         try {
-            this.packet63Fields[0] = PacketPlayOutWorldParticles::class.java.getDeclaredField("a")
-            this.packet63Fields[1] = PacketPlayOutWorldParticles::class.java.getDeclaredField("b")
-            this.packet63Fields[2] = PacketPlayOutWorldParticles::class.java.getDeclaredField("c")
-            this.packet63Fields[3] = PacketPlayOutWorldParticles::class.java.getDeclaredField("d")
-            this.packet63Fields[4] = PacketPlayOutWorldParticles::class.java.getDeclaredField("e")
-            this.packet63Fields[5] = PacketPlayOutWorldParticles::class.java.getDeclaredField("f")
-            this.packet63Fields[6] = PacketPlayOutWorldParticles::class.java.getDeclaredField("g")
-            this.packet63Fields[7] = PacketPlayOutWorldParticles::class.java.getDeclaredField("h")
-            this.packet63Fields[8] = PacketPlayOutWorldParticles::class.java.getDeclaredField("i")
-            this.packet63Fields[9] = PacketPlayOutWorldParticles::class.java.getDeclaredField("j")
-            this.packet63Fields[10] = PacketPlayOutWorldParticles::class.java.getDeclaredField("k")
-            AccessibleObject.setAccessible(this.packet63Fields, true)
-
             this.craftItemStackHandleField = CraftItemStack::class.java.getDeclaredField("handle")
             this.craftItemStackHandleField!!.isAccessible = true
 
@@ -81,16 +65,12 @@ class VolatileCode1_12_R1: VolatileCodeHandle {
             this.entityFallingBlockFallHurtMaxField = EntityFallingBlock::class.java.getDeclaredField("fallHurtMax")
             this.entityFallingBlockFallHurtMaxField!!.isAccessible = true
 
-            this.craftMetaSkullClass = Class.forName("org.bukkit.craftbukkit.v1_12_R1.inventory.CraftMetaSkull")
+            this.craftMetaSkullClass = Class.forName("org.bukkit.craftbukkit.v1_13_R2.inventory.CraftMetaSkull")
             this.craftMetaSkullProfileField = this.craftMetaSkullClass!!.getDeclaredField("profile")
             this.craftMetaSkullProfileField!!.isAccessible = true
         } catch (e: Exception) {
-            MagicSpells.error("THIS OCCURRED WHEN CREATING THE VOLATILE CODE HANDLE FOR 1.12, THE FOLLOWING ERROR IS MOST LIKELY USEFUL IF YOU'RE RUNNING THE LATEST VERSION OF MAGICSPELLS.")
+            MagicSpells.error("THIS OCCURRED WHEN CREATING THE VOLATILE CODE HANDLE FOR 1.13, THE FOLLOWING ERROR IS MOST LIKELY USEFUL IF YOU'RE RUNNING THE LATEST VERSION OF MAGICSPELLS.")
             e.printStackTrace()
-        }
-
-        for (particle in EnumParticle.values()) {
-            this.particleMap[particle.b()] = particle
         }
     }
 
@@ -183,21 +163,21 @@ class VolatileCode1_12_R1: VolatileCodeHandle {
     }
 
     override fun toggleLeverOrButton(block: Block) {
-        if (block.type.name.contains("BUTTON")) {
-            val state = block.state
-            val button = state.data as Button
-            button.isPowered = true
-            state.update()
-        } else if (block.type === Material.LEVER) {
-            val state = block.state
-            val lever = state.data as Lever
-            lever.isPowered = !lever.isPowered
-            state.update()
-        }
+        val powerable = block.blockData as Powerable
+        powerable.isPowered = true
+        block.setBlockData(powerable, true)
     }
 
     override fun pressPressurePlate(block: Block) {
-        block.state.rawData = (block.state.rawData xor 0x1)
+        if (block.type == Material.HEAVY_WEIGHTED_PRESSURE_PLATE || block.type == Material.LIGHT_WEIGHTED_PRESSURE_PLATE) {
+            val powerable = block.blockData as AnaloguePowerable
+            powerable.power = powerable.maximumPower
+            block.setBlockData(powerable, true)
+            return
+        }
+        val powerable = block.blockData as Powerable
+        powerable.isPowered = true
+        block.setBlockData(powerable, true)
     }
 
     override fun simulateTnt(target: Location, source: LivingEntity, explosionSize: Float, fire: Boolean): Boolean {
@@ -289,7 +269,7 @@ class VolatileCode1_12_R1: VolatileCodeHandle {
 
     override fun createFireworksExplosion(location: Location, flicker: Boolean, trail: Boolean, type: Int, colors: IntArray, fadeColors: IntArray, flightDuration: Int) {
         // Create item
-        val item = nmsItemStack(Item.getById(401), 1, 0)
+        val item = CraftItemStack.asNMSCopy(ItemStack(Material.FIREWORK_ROCKET))
 
         // Get tag
         var tag = item.tag
@@ -314,14 +294,23 @@ class VolatileCode1_12_R1: VolatileCodeHandle {
         // Set tag
         item.tag = tag
 
+        val world = (location.world as CraftWorld).handle
+
         // Create fireworks entity
-        val fireworks = EntityFireworks((location.world as CraftWorld).handle, location.x, location.y, location.z, item)
-        (location.world as CraftWorld).handle.addEntity(fireworks)
+        val firework = EntityFireworks((location.world as CraftWorld).handle, location.x, location.y, location.z, item)
+        (location.world as CraftWorld).handle.addEntity(firework)
+        fireworks.add(firework)
 
         // Cause explosion
         if (flightDuration == 0) {
-            (location.world as CraftWorld).handle.broadcastEntityEffect(fireworks, 17.toByte())
-            fireworks.die()
+            (location.world as CraftWorld).handle.broadcastEntityEffect(firework, 17.toByte())
+            firework.die()
+        } else {
+            MagicSpells.scheduleDelayedTask({
+                world.broadcastEntityEffect(firework, 17.toByte())
+                fireworks.remove(firework)
+                firework.die()
+            }, flightDuration)
         }
     }
 
@@ -330,54 +319,7 @@ class VolatileCode1_12_R1: VolatileCodeHandle {
     }
 
     override fun playParticleEffect(location: Location, name: String, spreadX: Float, spreadY: Float, spreadZ: Float, speed: Float, count: Int, radius: Int, yOffset: Float) {
-        var name = name
-        //location.getWorld().spawnParticle(null, location.getX(), location.getY() + yOffset, location.getZ(), count, spreadX, spreadY, spreadZ, speed);
-        val packet = PacketPlayOutWorldParticles()
-        var particle: EnumParticle? = this.particleMap[name]
-        var data: IntArray? = null
-        if (name.contains("_")) {
-            val split = name.split("_".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-            name = split[0] + '_'
-            particle = this.particleMap[name]
-            if (split.size > 1) {
-                val split2 = split[1].split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                data = IntArray(split2.size)
-                for (i in data.indices) {
-                    data[i] = Integer.parseInt(split2[i])
-                }
-            }
-        }
-        if (particle == null) {
-            MagicSpells.error("Invalid particle: $name")
-            return
-        }
-        try {
-            this.packet63Fields[0]!!.set(packet, particle)
-            this.packet63Fields[1]!!.setFloat(packet, location.x.toFloat())
-            this.packet63Fields[2]!!.setFloat(packet, location.y.toFloat() + yOffset)
-            this.packet63Fields[3]!!.setFloat(packet, location.z.toFloat())
-            this.packet63Fields[4]!!.setFloat(packet, spreadX)
-            this.packet63Fields[5]!!.setFloat(packet, spreadY)
-            this.packet63Fields[6]!!.setFloat(packet, spreadZ)
-            this.packet63Fields[7]!!.setFloat(packet, speed)
-            this.packet63Fields[8]!!.setInt(packet, count)
-            this.packet63Fields[9]!!.setBoolean(packet, radius >= 30)
-            if (data != null) {
-                this.packet63Fields[10]!!.set(packet, data)
-            }
-            val rSq = radius * radius
-
-            for (player in location.world!!.players) {
-                if (player.location.distanceSquared(location) <= rSq) {
-                    (player as CraftPlayer).handle.playerConnection.sendPacket(packet)
-                } else {
-                    // No op yet
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
+        location.world!!.spawnParticle(ParticleUtil.ParticleEffect.getParticle(name), location.add(0.0, yOffset as Double, 0.0), count, spreadX as Double, spreadY as Double, spreadZ as Double, speed)
     }
 
     override fun playDragonDeathEffect(location: Location) {
@@ -669,7 +611,10 @@ class VolatileCode1_12_R1: VolatileCodeHandle {
     }
 
     override fun turnOff() {
+        for (entity in fireworks) {
+            entity.die()
+        }
 
+        fireworks.clear()
     }
-
 }
