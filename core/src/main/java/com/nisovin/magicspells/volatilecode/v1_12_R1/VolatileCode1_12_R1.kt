@@ -14,6 +14,7 @@ import net.minecraft.server.v1_12_R1.*
 import net.minecraft.server.v1_12_R1.Item
 import org.bukkit.Bukkit
 import org.bukkit.Location
+import org.bukkit.Material
 import org.bukkit.attribute.Attribute
 import org.bukkit.attribute.AttributeModifier
 import org.bukkit.block.Block
@@ -27,12 +28,15 @@ import org.bukkit.event.entity.ExplosionPrimeEvent
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
+import org.bukkit.material.Button
+import org.bukkit.material.Lever
 import org.bukkit.util.Vector
 import java.io.File
 import java.io.FileWriter
 import java.lang.reflect.AccessibleObject
 import java.lang.reflect.Field
 import java.util.*
+import kotlin.experimental.xor
 
 private typealias nmsItemStack = net.minecraft.server.v1_12_R1.ItemStack
 
@@ -179,16 +183,21 @@ class VolatileCode1_12_R1: VolatileCodeHandle {
     }
 
     override fun toggleLeverOrButton(block: Block) {
-        this.fallback.toggleLeverOrButton(block)
-        //net.minecraft.server.v1_12_R1.Block.getById(block.getType().getId()).interact(((CraftWorld)block.getWorld()).getHandle(), new BlockPosition(block.getX(), block.getY(), block.getZ()), null, 0, 0, 0, 0);
+        if (block.type.name.contains("BUTTON")) {
+            val state = block.state
+            val button = state.data as Button
+            button.isPowered = true
+            state.update()
+        } else if (block.type === Material.LEVER) {
+            val state = block.state
+            val lever = state.data as Lever
+            lever.isPowered = !lever.isPowered
+            state.update()
+        }
     }
 
     override fun pressPressurePlate(block: Block) {
-        this.fallback.pressPressurePlate(block)
-        //block.setData((byte) (block.getData() ^ 0x1));
-        //net.minecraft.server.v1_12_R1.World w = ((CraftWorld)block.getWorld()).getHandle();
-        //w.applyPhysics(block.getX(), block.getY(), block.getZ(), net.minecraft.server.v1_12_R1.Block.getById(block.getType().getId()));
-        //w.applyPhysics(block.getX(), block.getY()-1, block.getZ(), net.minecraft.server.v1_12_R1.Block.getById(block.getType().getId()));
+        block.state.rawData = (block.state.rawData xor 0x1)
     }
 
     override fun simulateTnt(target: Location, source: LivingEntity, explosionSize: Float, fire: Boolean): Boolean {

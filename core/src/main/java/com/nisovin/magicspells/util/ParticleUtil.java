@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.HashMap;
 import org.bukkit.Particle;
 
-class ParticleUtil {
+public class ParticleUtil {
 
 	public enum ParticleEffect {
 

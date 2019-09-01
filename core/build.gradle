@@ -5,7 +5,8 @@ plugins {
 dependencies {
     shadow group: "org.apache.commons", name: "commons-math3", version: "3.0"
     shadow "com.github.Chronoken:EffectLib:59ded337a2"
-    compile "org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT"
+    compile ":spigot-1.14.4"
+    compile ":spigot-1.13.2"
     compile ":spigot-1.12"
     compile "com.github.MilkBowl:VaultAPI:68f14eca20"
     compile ":ProtocolLib"

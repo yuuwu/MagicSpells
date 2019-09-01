@@ -1,12 +1,12 @@
 package com.nisovin.magicspells.volatilecode;
 
-import java.util.List;
-import java.util.UUID;
-import java.util.ArrayList;
-import java.lang.reflect.Field;
-
+import com.nisovin.magicspells.util.ParticleUtil;
+import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.entity.Firework;
+import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.util.Vector;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -18,39 +18,19 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.entity.SmallFireball;
-import org.bukkit.block.data.Powerable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.attribute.AttributeModifier;
-import org.bukkit.block.data.AnaloguePowerable;
-import org.bukkit.craftbukkit.v1_13_R2.CraftWorld;
 import org.bukkit.attribute.AttributeModifier.Operation;
-import org.bukkit.craftbukkit.v1_13_R2.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_13_R2.entity.CraftCreature;
-import org.bukkit.craftbukkit.v1_13_R2.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.v1_13_R2.entity.CraftLivingEntity;
-
-import net.minecraft.server.v1_13_R2.*;
 
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.util.MagicConfig;
-import com.nisovin.magicspells.util.BoundingBox;
 import com.nisovin.magicspells.util.DisguiseManager;
-import com.nisovin.magicspells.util.SafetyCheckUtils;
 
 public class VolatileCodeDisabled implements VolatileCodeHandle {
 
-	private List<EntityFireworks> fireworks = new ArrayList<>();
-	private Field craftItemStackHandleField = null;
-
 	public VolatileCodeDisabled() {
-		try {
-			craftItemStackHandleField = CraftItemStack.class.getDeclaredField("handle");
-			craftItemStackHandleField.setAccessible(true);
-		} catch (Exception e) {
-			MagicSpells.error("THIS OCCURRED WHEN CREATING THE VOLATILE CODE HANDLE FOR 1.13, THE FOLLOWING ERROR IS MOST LIKELY USEFUL IF YOU'RE RUNNING THE LATEST VERSION OF MAGICSPELLS.");
-			e.printStackTrace();
-		}
+		
 	}
 
 	@Override
@@ -65,39 +45,22 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 
 	@Override
 	public void creaturePathToLoc(Creature creature, Location loc, float speed) {
-		EntityCreature entity = ((CraftCreature) creature).getHandle();
-		PathEntity pathEntity = entity.getNavigation().a(loc.getX(), loc.getY(), loc.getZ());
-		entity.getNavigation().a(pathEntity, speed);
+		// Need the volatile code for this
 	}
 
 	@Override
 	public void sendFakeSlotUpdate(Player player, int slot, ItemStack item) {
-		net.minecraft.server.v1_13_R2.ItemStack nmsItem;
-		if (item != null) nmsItem = CraftItemStack.asNMSCopy(item);
-		else nmsItem = null;
-
-		PacketPlayOutSetSlot packet = new PacketPlayOutSetSlot(0, (short) slot + 36, nmsItem);
-		((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
+		// Need the volatile code for this
 	}
 
 	@Override
 	public void toggleLeverOrButton(Block block) {
-		Powerable powerable = ((Powerable) block.getBlockData());
-		powerable.setPowered(true);
-		block.setBlockData(powerable, true);
+		// Need the volatile code for this
 	}
 
 	@Override
 	public void pressPressurePlate(Block block) {
-		if (block.getType() == Material.HEAVY_WEIGHTED_PRESSURE_PLATE || block.getType() == Material.LIGHT_WEIGHTED_PRESSURE_PLATE) {
-			AnaloguePowerable powerable = ((AnaloguePowerable) block.getBlockData());
-			powerable.setPower(powerable.getMaximumPower());
-			block.setBlockData(powerable, true);
-			return;
-		}
-		Powerable powerable = ((Powerable) block.getBlockData());
-		powerable.setPowered(true);
-		block.setBlockData(powerable, true);
+		// Need the volatile code for this
 	}
 
 	@Override
@@ -117,8 +80,7 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 
 	@Override
 	public void setExperienceBar(Player player, int level, float percent) {
-		PacketPlayOutExperience packet = new PacketPlayOutExperience(percent, player.getTotalExperience(), level);
-		((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
+		// Need the volatile code for this
 	}
 
 	@Override
@@ -155,54 +117,11 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 
 	@Override
 	public void createFireworksExplosion(Location location, boolean flicker, boolean trail, int type, int[] colors, int[] fadeColors, int flightDuration) {
-		if (flightDuration > 50) flightDuration = 50;
-
-		ItemStack firework = new ItemStack(Material.FIREWORK_ROCKET);
-
-		net.minecraft.server.v1_13_R2.ItemStack itemStack = CraftItemStack.asNMSCopy(firework);
-
-		NBTTagCompound tag = itemStack.getTag();
-		if (tag == null) tag = new NBTTagCompound();
-
-		NBTTagCompound expTag = new NBTTagCompound();
-		expTag.setByte("Flicker", flicker ? (byte) 1 : (byte) 0);
-		expTag.setByte("Trail", trail ? (byte) 1 : (byte) 0);
-		expTag.setByte("Type", (byte) type);
-		expTag.setIntArray("Colors", colors);
-		expTag.setIntArray("FadeColors", fadeColors);
-
-		NBTTagCompound fwTag = new NBTTagCompound();
-		fwTag.setByte("Flight", (byte) 3);
-		NBTTagList expList = new NBTTagList();
-		expList.add(expTag);
-		fwTag.set("Explosions", expList);
-		tag.set("Fireworks", fwTag);
-
-		itemStack.setTag(tag);
-
-		WorldServer world = ((CraftWorld) location.getWorld()).getHandle();
-
-		EntityFireworks entity = new EntityFireworks(world, location.getX(), location.getY(), location.getZ(), itemStack);
-		world.addEntity(entity);
-		fireworks.add(entity);
-
-		if (flightDuration == 0) {
-			world.broadcastEntityEffect(entity, (byte) 17);
-			fireworks.remove(entity);
-			entity.die();
-		} else {
-			MagicSpells.scheduleDelayedTask(() -> {
-				world.broadcastEntityEffect(entity, (byte) 17);
-				fireworks.remove(entity);
-				entity.die();
-			}, flightDuration);
-		}
-
-		/*FireworkEffect.Type t = Type.BALL;
-		if (type == 1) t = Type.BALL_LARGE;
-		else if (type == 2) t = Type.STAR;
-		else if (type == 3) t = Type.CREEPER;
-		else if (type == 4) t = Type.BURST;
+		FireworkEffect.Type t = FireworkEffect.Type.BALL;
+		if (type == 1) t = FireworkEffect.Type.BALL_LARGE;
+		else if (type == 2) t = FireworkEffect.Type.STAR;
+		else if (type == 3) t = FireworkEffect.Type.CREEPER;
+		else if (type == 4) t = FireworkEffect.Type.BURST;
 
 		Color[] c1 = new Color[colors.length];
 		for (int i = 0; i < colors.length; i++) {
@@ -230,48 +149,27 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 			if (!firework.isValid()) return;
 			if (firework.isDead()) return;
 			firework.detonate();
-		}, flightDuration); */
+		}, flightDuration);
 	}
 
 	@Override
 	public void playParticleEffect(Location location, String name, float spreadHoriz, float spreadVert, float speed, int count, int radius, float yOffset) {
-		// Can't do this without the volatile code
+		playParticleEffect(location, name, spreadHoriz, spreadVert, spreadHoriz, speed, count, radius, yOffset);
 	}
 
 	@Override
 	public void playParticleEffect(Location location, String name, float spreadX, float spreadY, float spreadZ, float speed, int count, int radius, float yOffset) {
-		// Need volatile code
+		location.getWorld().spawnParticle(ParticleUtil.ParticleEffect.getParticle(name), location.add(0.0, (double) yOffset, 0.0), count, (double) spreadX, (double) spreadY, (double) spreadZ, speed);
 	}
 
 	@Override
 	public void playDragonDeathEffect(Location location) {
-		EntityEnderDragon dragon = new EntityEnderDragon(((CraftWorld) location.getWorld()).getHandle());
-		dragon.setPositionRotation(location.getX(), location.getY(), location.getZ(), location.getYaw(), 0F);
-
-		PacketPlayOutSpawnEntityLiving packet24 = new PacketPlayOutSpawnEntityLiving(dragon);
-		PacketPlayOutEntityStatus packet38 = new PacketPlayOutEntityStatus(dragon, (byte) 3);
-		final PacketPlayOutEntityDestroy packet29 = new PacketPlayOutEntityDestroy(dragon.getBukkitEntity().getEntityId());
-
-		BoundingBox box = new BoundingBox(location, 64);
-		final List<Player> players = new ArrayList<>();
-		for (Player player : location.getWorld().getPlayers()) {
-			if (!box.contains(player)) continue;
-			players.add(player);
-			((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet24);
-			((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet38);
-		}
-
-		MagicSpells.scheduleDelayedTask(() -> {
-			for (Player player : players) {
-				if (!player.isValid()) continue;
-				((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet29);
-			}
-		}, 250);
+		// Need the volatile code for this
 	}
 
 	@Override
 	public void setKiller(LivingEntity entity, Player killer) {
-		((CraftLivingEntity) entity).getHandle().killer = ((CraftPlayer) killer).getHandle();
+		// Need the volatile code for this
 	}
 
 	@Override
@@ -281,20 +179,7 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 
 	@Override
 	public ItemStack addAttributes(ItemStack item, String[] names, String[] types, double[] amounts, int[] operations, String[] slots) {
-		if (!(item instanceof CraftItemStack)) item = CraftItemStack.asCraftCopy(item);
-		NBTTagCompound tag = getTag(item);
-
-		NBTTagList list = new NBTTagList();
-		for (int i = 0; i < names.length; i++) {
-			if (names[i] == null) continue;
-			UUID uuid = UUID.randomUUID();
-			NBTTagCompound attr = buildAttributeTag(names[i], types[i], amounts[i], operations[i], uuid, slots[i]);
-			list.add(attr);
-		}
-
-		tag.set("AttributeModifiers", list);
-
-		setTag(item, tag);
+		// Need the volatile code for this
 		return item;
 	}
 
@@ -344,17 +229,7 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 
 	@Override
 	public void addAILookAtPlayer(LivingEntity entity, int range) {
-		try {
-			EntityInsentient ev = (EntityInsentient) ((CraftLivingEntity) entity).getHandle();
-
-			Field goalsField = EntityInsentient.class.getDeclaredField("goalSelector");
-			goalsField.setAccessible(true);
-			PathfinderGoalSelector goals = (PathfinderGoalSelector) goalsField.get(ev);
-
-			goals.a(1, new PathfinderGoalLookAtPlayer(ev, EntityHuman.class, range, 1.0F));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		// Need the volatile code for this
 	}
 
 	@Override
@@ -372,24 +247,12 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 
 	@Override
 	public void sendTitleToPlayer(Player player, String title, String subtitle, int fadeIn, int stay, int fadeOut) {
-		PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
-		PacketPlayOutTitle packet = new PacketPlayOutTitle(PacketPlayOutTitle.EnumTitleAction.TIMES, null, fadeIn, stay, fadeOut);
-		connection.sendPacket(packet);
-		if (title != null) {
-			packet = new PacketPlayOutTitle(PacketPlayOutTitle.EnumTitleAction.TITLE, new ChatComponentText(title));
-			connection.sendPacket(packet);
-		}
-		if (subtitle != null) {
-			packet = new PacketPlayOutTitle(PacketPlayOutTitle.EnumTitleAction.SUBTITLE, new ChatComponentText(subtitle));
-			connection.sendPacket(packet);
-		}
+		player.sendTitle(title, subtitle, fadeIn, stay, fadeOut);
 	}
 
 	@Override
 	public void sendActionBarMessage(Player player, String message) {
-		PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
-		PacketPlayOutChat packet = new PacketPlayOutChat(new ChatComponentText(message), ChatMessageType.GAME_INFO);
-		connection.sendPacket(packet);
+		player.spigot().sendMessage(net.md_5.bungee.api.ChatMessageType.ACTION_BAR, new TextComponent(message));
 	}
 
 	@Override
@@ -407,13 +270,13 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 
 	@Override
 	public void setClientVelocity(Player player, Vector velocity) {
-		PacketPlayOutEntityVelocity packet = new PacketPlayOutEntityVelocity(player.getEntityId(), velocity.getX(), velocity.getY(), velocity.getZ());
-		((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
+		// Need the volatile code for this
 	}
 
 	@Override
 	public double getAbsorptionHearts(LivingEntity entity) {
-		return ((CraftLivingEntity) entity).getHandle().getAbsorptionHearts();
+		// Need the volatile code for this
+		return 0;
 	}
 
 	@Override
@@ -436,67 +299,8 @@ public class VolatileCodeDisabled implements VolatileCodeHandle {
 		// Need volatile code for this
 	}
 
-	private NBTTagCompound getTag(ItemStack item) {
-		// Don't spam the user with errors, just stop
-		if (SafetyCheckUtils.areAnyNull(craftItemStackHandleField)) return null;
-
-		if (item instanceof CraftItemStack) {
-			try {
-				return ((net.minecraft.server.v1_13_R2.ItemStack) craftItemStackHandleField.get(item)).getTag();
-			} catch (Exception e) {
-				// No op currently
-			}
-		}
-		return null;
-	}
-
-	private NBTTagCompound buildAttributeTag(String name, String attributeName, double amount, int operation, UUID uuid, String slot) {
-		NBTTagCompound tag = new NBTTagCompound();
-
-		tag.setString("Name", name);
-		tag.setString("AttributeName", attributeName);
-		tag.setDouble("Amount", amount);
-		tag.setInt("Operation", operation);
-		tag.setLong("UUIDLeast", uuid.getLeastSignificantBits());
-		tag.setLong("UUIDMost", uuid.getMostSignificantBits());
-		if (slot != null) tag.setString("Slot", slot);
-
-		return tag;
-	}
-
-	private ItemStack setTag(ItemStack item, NBTTagCompound tag) {
-		CraftItemStack craftItem;
-		if (item instanceof CraftItemStack) craftItem = (CraftItemStack) item;
-		else craftItem = CraftItemStack.asCraftCopy(item);
-
-		net.minecraft.server.v1_13_R2.ItemStack nmsItem = null;
-		try {
-			nmsItem = (net.minecraft.server.v1_13_R2.ItemStack) craftItemStackHandleField.get(item);
-		} catch (Exception e) {
-			// No op currently
-		}
-
-		if (nmsItem == null) nmsItem = CraftItemStack.asNMSCopy(craftItem);
-
-		if (nmsItem != null) {
-			nmsItem.setTag(tag);
-			try {
-				craftItemStackHandleField.set(craftItem, nmsItem);
-			} catch (Exception e) {
-				// No op currently
-			}
-		}
-
-		return craftItem;
-	}
-
 	@Override
 	public void turnOff() {
-		for (EntityFireworks entity : fireworks) {
-			entity.die();
-		}
 
-		fireworks.clear();
 	}
-
 }

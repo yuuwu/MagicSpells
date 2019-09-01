@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.event.inventory.InventoryType;
 
@@ -23,12 +24,12 @@ public class InventoryUtil {
 	 *     slot number: serialized itemstack
 	 *     slot number: serialized itemstack
 	 */
-	public static Map<Object, Object> serializeInventoryContents(Inventory inv) {
+	public static Map<Object, Object> serializeInventoryContents(Inventory inv, InventoryView view) {
 		Map<Object, Object> ret = new HashMap<>();
 		ItemStack[] contents = inv.getContents();
 		String inventoryType = inv.getType().name();
 		int size = inv.getSize();
-		String title = inv.getTitle();
+		String title = view.getTitle();
 		
 		// A map of slot to itemstack
 		Map<Object, Object> serializedContents = createContentsMap(contents);
