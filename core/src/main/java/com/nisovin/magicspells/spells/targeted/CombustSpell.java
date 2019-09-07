@@ -71,7 +71,7 @@ public class CombustSpell extends TargetedSpell implements TargetedEntitySpell {
 	}
 	
 	private boolean combust(Player player, final LivingEntity target, float power) {
-		if (target instanceof Player && checkPlugins && player != null) {
+		if (checkPlugins && player != null) {
 			MagicSpellsEntityDamageByEntityEvent event = new MagicSpellsEntityDamageByEntityEvent(player, target, DamageCause.ENTITY_ATTACK, 1);
 			EventUtil.call(event);
 			if (event.isCancelled()) return false;

@@ -79,7 +79,7 @@ public class GeyserSpell extends TargetedSpell implements TargetedEntitySpell {
 	private boolean geyser(Player caster, LivingEntity target, float power) {
 		double dam = damage * power;
 		
-		if (caster != null && target instanceof Player && checkPlugins && damage > 0) {
+		if (caster != null && checkPlugins && damage > 0) {
 			MagicSpellsEntityDamageByEntityEvent event = new MagicSpellsEntityDamageByEntityEvent(caster, target, DamageCause.ENTITY_ATTACK, dam);
 			EventUtil.call(event);
 			if (event.isCancelled()) return false;
