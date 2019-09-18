@@ -34,6 +34,7 @@ public class LevitateSpell extends TargetedSpell implements TargetedEntitySpell 
 	private int tickRate;
 	private int duration;
 
+	private float yOffset;
 	private float minDistance;
 	private float distanceChange;
 
@@ -50,6 +51,7 @@ public class LevitateSpell extends TargetedSpell implements TargetedEntitySpell 
 		duration = getConfigInt("duration", 10);
 		if (duration < tickRate) duration = tickRate;
 
+		yOffset = getConfigFloat("y-offset", 0F);
 		minDistance = getConfigFloat("min-distance", 1F);
 		distanceChange = getConfigFloat("distance-change", 0F);
 
@@ -193,11 +195,11 @@ public class LevitateSpell extends TargetedSpell implements TargetedEntitySpell 
 		private Levitator(Player caster, Entity target, int duration, double distance) {
 			this.caster = caster;
 			this.target = target;
-			this.distance = distance;
 			this.duration = duration;
-			this.counter = 0;
-			this.stopped = false;
-			this.taskId = MagicSpells.scheduleRepeatingTask(this, 0, tickRate);
+			this.distance = distance;
+			counter = 0;
+			stopped = false;
+			taskId = MagicSpells.scheduleRepeatingTask(this, 0, tickRate);
 			playTrackingLinePatterns(EffectPosition.DYNAMIC_CASTER_PROJECTILE_LINE, caster.getLocation(), target.getLocation(), caster, target);
 		}
 		
@@ -215,7 +217,7 @@ public class LevitateSpell extends TargetedSpell implements TargetedEntitySpell 
 			}
 
 			target.setFallDistance(0);
-			Vector wantedLocation = caster.getEyeLocation().toVector().add(caster.getLocation().getDirection().multiply(distance));
+			Vector wantedLocation = caster.getEyeLocation().toVector().add(caster.getLocation().getDirection().multiply(distance)).add(new Vector(0, yOffset, 0));
 			Vector v = wantedLocation.subtract(target.getLocation().toVector()).multiply(tickRate / 25F + 0.1);
 			target.setVelocity(v);
 			counter++;

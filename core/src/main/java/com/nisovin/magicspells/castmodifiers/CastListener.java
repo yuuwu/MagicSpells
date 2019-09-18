@@ -22,11 +22,11 @@ public class CastListener implements Listener {
 	@EventHandler(priority=EventPriority.LOW, ignoreCancelled=true)
 	public void onSpellCast(SpellCastEvent event) {
 		ModifierSet m = event.getSpell().getModifiers();
-		for (IModifier premod: preModifierHooks) {
+		for (IModifier premod : preModifierHooks) {
 			if (!premod.apply(event)) return;
 		}
 		if (m != null) m.apply(event);
-		for (IModifier postMod: postModifierHooks) {
+		for (IModifier postMod : postModifierHooks) {
 			if (!postMod.apply(event)) return;
 		}
 	}

@@ -2,7 +2,6 @@ package com.nisovin.magicspells.spells.targeted;
 
 import java.util.Collection;
 
-import org.bukkit.Material;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.util.Vector;
@@ -50,7 +49,7 @@ public class ForcebombSpell extends TargetedSpell implements TargetedLocationSpe
 	public PostCastAction castSpell(Player player, SpellCastState state, float power, String[] args) {
 		if (state == SpellCastState.NORMAL) {
 			Block block = getTargetedBlock(player, power);
-			if (block != null && block.getType() != Material.AIR) {
+			if (block != null && !BlockUtils.isAir(block.getType())) {
 				SpellTargetLocationEvent event = new SpellTargetLocationEvent(this, player, block.getLocation(), power);
 				EventUtil.call(event);
 				if (event.isCancelled()) block = null;

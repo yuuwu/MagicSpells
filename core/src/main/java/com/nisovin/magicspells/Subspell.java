@@ -14,8 +14,10 @@ import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.util.compat.EventUtil;
 import com.nisovin.magicspells.util.CastUtil.CastMode;
 import com.nisovin.magicspells.events.SpellCastedEvent;
+import com.nisovin.magicspells.events.SpellTargetEvent;
 import com.nisovin.magicspells.spells.TargetedEntitySpell;
 import com.nisovin.magicspells.spells.TargetedLocationSpell;
+import com.nisovin.magicspells.events.SpellTargetLocationEvent;
 import com.nisovin.magicspells.spells.TargetedEntityFromLocationSpell;
 
 public class Subspell {
@@ -157,7 +159,9 @@ public class Subspell {
 		if (mode == CastMode.FULL && player != null) {
 			boolean success = false;
 			SpellCastEvent spellCast = spell.preCast(player, power * subPower, null);
-			if (spellCast != null && spellCast.getSpellCastState() == SpellCastState.NORMAL) {
+			SpellTargetEvent spellTarget = new SpellTargetEvent(spell, player, target, power);
+			EventUtil.call(spellTarget);
+			if (!spellTarget.isCancelled() && spellCast != null && spellCast.getSpellCastState() == SpellCastState.NORMAL) {
 				success = ((TargetedEntitySpell) spell).castAtEntity(player, target, spellCast.getPower());
 				spell.postCast(spellCast, success ? PostCastAction.HANDLE_NORMALLY : PostCastAction.ALREADY_HANDLED);
 			}
@@ -166,8 +170,10 @@ public class Subspell {
 
 		if (mode == CastMode.PARTIAL) {
 			SpellCastEvent event = new SpellCastEvent(spell, player, SpellCastState.NORMAL, power * subPower, null, 0, null, 0);
+			SpellTargetEvent spellTarget = new SpellTargetEvent(spell, player, target, power);
+			EventUtil.call(spellTarget);
 			EventUtil.call(event);
-			if (!event.isCancelled() && event.getSpellCastState() == SpellCastState.NORMAL) {
+			if (!spellTarget.isCancelled() && !event.isCancelled() && event.getSpellCastState() == SpellCastState.NORMAL) {
 				if (player != null) ret = ((TargetedEntitySpell) spell).castAtEntity(player, target, event.getPower());
 				else ret = ((TargetedEntitySpell) spell).castAtEntity(target, event.getPower());
 				if (ret) EventUtil.call(new SpellCastedEvent(spell, player, SpellCastState.NORMAL, event.getPower(), null, 0, null, PostCastAction.HANDLE_NORMALLY));
@@ -199,7 +205,9 @@ public class Subspell {
 		if (mode == CastMode.FULL && player != null) {
 			boolean success = false;
 			SpellCastEvent spellCast = spell.preCast(player, power * subPower, null);
-			if (spellCast != null && spellCast.getSpellCastState() == SpellCastState.NORMAL) {
+			SpellTargetLocationEvent spellLocation = new SpellTargetLocationEvent(spell, player, target, power);
+			EventUtil.call(spellLocation);
+			if (!spellLocation.isCancelled() && spellCast != null && spellCast.getSpellCastState() == SpellCastState.NORMAL) {
 				success = ((TargetedLocationSpell) spell).castAtLocation(player, target, spellCast.getPower());
 				spell.postCast(spellCast, success ? PostCastAction.HANDLE_NORMALLY : PostCastAction.ALREADY_HANDLED);
 			}
@@ -208,8 +216,10 @@ public class Subspell {
 
 		if (mode == CastMode.PARTIAL) {
 			SpellCastEvent event = new SpellCastEvent(spell, player, SpellCastState.NORMAL, power * subPower, null, 0, null, 0);
+			SpellTargetLocationEvent spellLocation = new SpellTargetLocationEvent(spell, player, target, power);
+			EventUtil.call(spellLocation);
 			EventUtil.call(event);
-			if (!event.isCancelled() && event.getSpellCastState() == SpellCastState.NORMAL) {
+			if (!spellLocation.isCancelled() && !event.isCancelled() && event.getSpellCastState() == SpellCastState.NORMAL) {
 				if (player != null) ret = ((TargetedLocationSpell) spell).castAtLocation(player, target, event.getPower());
 				else ret = ((TargetedLocationSpell) spell).castAtLocation(target, event.getPower());
 				if (ret) EventUtil.call(new SpellCastedEvent(spell, player, SpellCastState.NORMAL, event.getPower(), null, 0, null, PostCastAction.HANDLE_NORMALLY));
@@ -241,7 +251,11 @@ public class Subspell {
 		if (mode == CastMode.FULL && player != null) {
 			boolean success = false;
 			SpellCastEvent spellCast = spell.preCast(player, power * subPower, MagicSpells.NULL_ARGS);
-			if (spellCast != null && spellCast.getSpellCastState() == SpellCastState.NORMAL) {
+			SpellTargetEvent spellTarget = new SpellTargetEvent(spell, player, target, power);
+			SpellTargetLocationEvent spellLocation = new SpellTargetLocationEvent(spell, player, from, power);
+			EventUtil.call(spellLocation);
+			EventUtil.call(spellTarget);
+			if (!spellLocation.isCancelled() && !spellTarget.isCancelled() && spellCast != null && spellCast.getSpellCastState() == SpellCastState.NORMAL) {
 				success = ((TargetedEntityFromLocationSpell) spell).castAtEntityFromLocation(player, from, target, spellCast.getPower());
 				spell.postCast(spellCast, success ? PostCastAction.HANDLE_NORMALLY : PostCastAction.ALREADY_HANDLED);
 			}
@@ -250,8 +264,12 @@ public class Subspell {
 
 		if (mode == CastMode.PARTIAL) {
 			SpellCastEvent event = new SpellCastEvent(spell, player, SpellCastState.NORMAL, power * subPower, null, 0, null, 0);
+			SpellTargetEvent spellTarget = new SpellTargetEvent(spell, player, target, power);
+			SpellTargetLocationEvent spellLocation = new SpellTargetLocationEvent(spell, player, from, power);
+			EventUtil.call(spellLocation);
+			EventUtil.call(spellTarget);
 			EventUtil.call(event);
-			if (!event.isCancelled() && event.getSpellCastState() == SpellCastState.NORMAL) {
+			if (!spellLocation.isCancelled() && !spellTarget.isCancelled() && !event.isCancelled() && event.getSpellCastState() == SpellCastState.NORMAL) {
 				if (player != null) ret = ((TargetedEntityFromLocationSpell) spell).castAtEntityFromLocation(player, from, target, event.getPower());
 				else ret = ((TargetedEntityFromLocationSpell) spell).castAtEntityFromLocation(from, target, event.getPower());
 				if (ret) EventUtil.call(new SpellCastedEvent(spell, player, SpellCastState.NORMAL, event.getPower(), null, 0, null, PostCastAction.HANDLE_NORMALLY));

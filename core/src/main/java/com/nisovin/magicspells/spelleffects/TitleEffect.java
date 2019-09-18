@@ -24,7 +24,7 @@ public class TitleEffect extends SpellEffect {
 		title = config.getString("title", "");
 		subtitle = config.getString("subtitle", "");
 		if (!title.isEmpty()) title = ChatColor.translateAlternateColorCodes('&', title);
-		if (!title.isEmpty()) subtitle = ChatColor.translateAlternateColorCodes('&', subtitle);
+		if (!subtitle.isEmpty()) subtitle = ChatColor.translateAlternateColorCodes('&', subtitle);
 
 		stay = config.getInt("stay", 40);
 		fadeIn = config.getInt("fade-in", 10);
