@@ -1230,8 +1230,6 @@ public abstract class Spell implements Comparable<Spell>, Listener {
 	/**
 	 * Gets the player a player is currently looking at, ignoring other living entities
 	 * @param player the player to get the target for
-	 * @param range the maximum range to check
-	 * @param checkLos whether to obey line-of-sight restrictions
 	 * @return the targeted Player, or null if none was found
 	 */
 	protected TargetInfo<Player> getTargetedPlayer(Player player, float power) {
