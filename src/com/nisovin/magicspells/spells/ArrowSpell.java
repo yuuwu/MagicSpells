@@ -1,6 +1,6 @@
 package com.nisovin.magicspells.spells;
 
-import java.util.HashMap;
+import java.util.HashMap;.
 import java.util.List;
 import java.util.Map;
 
